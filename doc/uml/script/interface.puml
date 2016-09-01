@@ -1,0 +1,9 @@
+@startuml
+
+interface Engine
+interface Arguments
+class JsCtrl
+
+Engine <.. JsCtrl
+
+@enduml

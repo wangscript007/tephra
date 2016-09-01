@@ -1,0 +1,18 @@
+@startuml
+
+package Tephra {
+[core]
+[core] <-- [dao]
+[dao] <-- [ctrl]
+[ctrl] <-- [script]
+[ctrl] <-- [weixin]
+[ctrl] <-- [hadoop]
+[ctrl] <-- [ctrl-http]
+[ctrl-http] <-- [web]
+[ctrl] <-- [workbench]
+[workbench] <-- [workbench-web]
+[web] <-- [workbench-web]
+[ctrl] <-- [test]
+}
+
+@enduml

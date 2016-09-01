@@ -1,0 +1,25 @@
+div.workbench-notice {
+    width: 256px;
+    margin: 25px auto 0px auto;
+    font-weight: bold;
+}
+
+div.workbench-success-notice {
+    color: green;
+}
+
+div.workbench-failure-notice {
+    color: brown;
+}
+
+a.menu-item {
+    display: block;
+    padding: 3px 8px;
+    text-decoration: none;
+    color: grey;
+}
+
+a.menu-item:hover {
+    color: white;
+    background-color: lightgray;
+}
