@@ -8,20 +8,20 @@ Core模块主要提供基础功能封装，包含Bean的管理、缓存的使用
 - freemarker——提供基于FreeMarker的模板文件解析。
 - util——提供部分常用功能封装，具体功能可参考接口说明。
 
-[BeanFactory](BeanFactory.md "BeanFactory")
+[BeanFactory](doc/BeanFactory.md "BeanFactory")
 
-[Class热更新](ClassReload.md "Class热更新")
+[Class热更新](doc/ClassReload.md "Class热更新")
 
-[NIO Server & Client](nio.md "NIO Server & Client")
+[NIO Server & Client](doc/nio.md "NIO Server & Client")
 
-[缓存](cache.md "缓存")
+[缓存](doc/cache.md "缓存")
 
-[定时器 & 定时任务](scheduler.md "定时器 & 定时任务")
+[定时器 & 定时任务](doc/scheduler.md "定时器 & 定时任务")
 
-[util工具包](util.md "util工具包")
+[util工具包](doc/util.md "util工具包")
 
-[spring.xml](spring.md "spring.xml")
+[spring.xml](doc/spring.md "spring.xml")
 
-[log4j2.xml](log4j2.md "log4j2.xml")
+[log4j2.xml](doc/log4j2.md "log4j2.xml")
 
-[core.tephra.config.properties](config.md "core.tephra.config.properties")
+[core.tephra.config.properties](doc/config.md "core.tephra.config.properties")
