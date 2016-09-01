@@ -28,5 +28,5 @@ Tephra旨在构建一个稳定、高效、易于集群、快速扩展的JavaEE�
 
 # 组件图
 
-![组件图](doc/front/first/module.png "组件图")
+![组件图](https://github.com/heisedebaise/tephra/tree/master/doc/uml/front/first/module.png "组件图")
 
