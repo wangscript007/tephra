@@ -34,4 +34,5 @@ Tephra旨在构建一个稳定、高效、易于集群、快速扩展的JavaEE�
 
 # 模块说明
 - [core](tephra-core/)——基础模块。
+- [dao](tephra-dao/)——持久化模块。
 
