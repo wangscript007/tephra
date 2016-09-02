@@ -14,7 +14,7 @@ JSON成为了Tephra最主要的数据传输格式，轻量、跨平台、跨终�
 
 最后说说Maven，确实比Ant进步不少，也许这也是一个毁灭旧体系，创建新体系的过程吧。
 
-[部署蓝图](deploy.md) | [快速开始](start.md)
+[部署蓝图](doc/deploy.md) | [快速开始](doc/start.md)
 
 # 特性
 
@@ -35,4 +35,5 @@ Tephra旨在构建一个稳定、高效、易于集群、快速扩展的JavaEE�
 # 模块说明
 - [core](tephra-core/)——基础模块。
 - [dao](tephra-dao/)——持久化模块。
+- [ctrl](tephra-ctrl/)——控制层模块。
 
