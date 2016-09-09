@@ -32,7 +32,10 @@ public class ContextImpl implements Context {
     public String getAbsolutePath(String path) {
         String absolutePath = map.get(path);
         if (absolutePath == null) {
-            absolutePath = new File(root + "/" + path).getAbsolutePath();
+            if (path.startsWith("abs:"))
+                absolutePath = path.substring(4);
+            else
+                absolutePath = new File(root + "/" + path).getAbsolutePath();
             map.put(path, absolutePath);
         }
 

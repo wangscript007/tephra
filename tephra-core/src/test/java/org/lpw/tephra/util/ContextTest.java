@@ -38,6 +38,8 @@ public class ContextTest {
             assertEquals(root + "root/path", context.getAbsolutePath("path"));
         for (int i = 0; i < 10; i++)
             assertEquals(root + "root/absolute-path", context.getAbsolutePath("absolute-path"));
+        for (int i = 0; i < 10; i++)
+            assertEquals("path", context.getAbsolutePath("abs:path"));
     }
 
     @Test
