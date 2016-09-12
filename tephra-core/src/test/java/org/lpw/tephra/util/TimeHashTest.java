@@ -21,7 +21,6 @@ public class TimeHashTest {
     @Test
     public void valid() {
         ((TimeHashImpl) timeHash).range_$eq(10);
-        ((TimeHashImpl) timeHash).onContextRefreshed();
 
         int[] ns = new int[5];
         for (int i = 0; i < ns.length; i++) {
