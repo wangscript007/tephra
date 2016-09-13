@@ -24,3 +24,26 @@ curl http://${server}/tephra/ctrl/status
 
 ## Node.js
 待续。
+
+## 忽略校验
+通过实现IgnoreTimeHash接口，可以指定当前请求不进行时间哈希校验：
+```java
+package org.lpw.tephra.ctrl.http;
+
+/**
+ * 忽略时间哈希校验。
+ *
+ * @author lpw
+ */
+public interface IgnoreTimeHash {
+    /**
+     * 验证当前请求是否忽略时间哈希校验。
+     *
+     * @return true表示忽略，即不校验时间哈希。
+     */
+    boolean ignore();
+}
+```
+在ignore实现中，可以通过注入Request获取到当前请求的URI或参数，来判断是否忽略。
+
+如果项目中未实现此借口，则默认进行校验。
