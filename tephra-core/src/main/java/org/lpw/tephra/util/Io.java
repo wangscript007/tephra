@@ -27,6 +27,14 @@ public interface Io {
     void write(String path, byte[] content);
 
     /**
+     * 移动文件。
+     *
+     * @param path   当前文件路径。
+     * @param target 目标文件路径。
+     */
+    void move(String path, String target);
+
+    /**
      * 将输入流中的数据复制到输出流中。
      *
      * @param input  输入流。

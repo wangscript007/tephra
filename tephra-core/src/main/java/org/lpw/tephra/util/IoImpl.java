@@ -3,7 +3,15 @@ package org.lpw.tephra.util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 /**
  * @author lpw
@@ -51,6 +59,24 @@ public class IoImpl implements Io {
             output.close();
         } catch (IOException e) {
             logger.warn(e, "写入文件[{}]时异常！", path);
+        }
+    }
+
+    @Override
+    public void move(String path, String target) {
+        if (validator.isEmpty(path) || validator.isEmpty(target))
+            return;
+
+        try {
+            new File(target.substring(0, target.lastIndexOf('/'))).mkdirs();
+            OutputStream outputStream = new FileOutputStream(target);
+            InputStream inputStream = new FileInputStream(path);
+            copy(inputStream, outputStream);
+            inputStream.close();
+            outputStream.close();
+            new File(path).delete();
+        } catch (IOException e) {
+            logger.warn(e, "移动文件[{}]到[{}]时发生异常！", path, target);
         }
     }
 
