@@ -19,6 +19,9 @@ public class OracleDialect implements Dialect {
 
     @Override
     public String getUrl(String ip, String schema) {
+        if (ip.charAt(0) == '/')
+            return "jdbc:oracle:thin:@" + ip + "/" + schema;
+
         return "jdbc:oracle:thin:@" + ip + ":" + schema;
     }
 
