@@ -22,7 +22,7 @@ import java.io.Writer;
  * @author lpw
  */
 @Component("tephra.freemarker")
-public class FreemarkerImpl implements Freemarker{
+public class FreemarkerImpl implements Freemarker {
     @Autowired
     protected Context context;
     @Autowired
@@ -59,9 +59,9 @@ public class FreemarkerImpl implements Freemarker{
 
     protected synchronized Configuration getConfiguration() throws IOException {
         if (configuration == null) {
-            configuration = new Configuration(Configuration.VERSION_2_3_22);
+            configuration = new Configuration(Configuration.VERSION_2_3_25);
             configuration.setDirectoryForTemplateLoading(new File(context.getAbsolutePath(root)));
-            configuration.setObjectWrapper(new DefaultObjectWrapper(Configuration.VERSION_2_3_22));
+            configuration.setObjectWrapper(new DefaultObjectWrapper(Configuration.VERSION_2_3_25));
             configuration.setTemplateExceptionHandler((TemplateException te, Environment env, Writer out) -> logger.warn(te, "解析FreeMarker模板时发生异常！"));
         }
 
