@@ -30,6 +30,6 @@ public interface Request {
 3、在服务端，可通过Validators.SIGN验证器进行验证：
 ```java
     @Execute(name = "query", validates = {
-            @Validate(validator = Validators.SIGN, failureCode = 91)
+            @Validate(validator = Validators.SIGN)
     })
 ```
