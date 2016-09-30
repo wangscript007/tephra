@@ -30,6 +30,8 @@ Ctrl接口图：
 
 [请求参数验证](doc/validate.md "请求参数验证")
 
+[请求参数签名](doc/sign.md "请求参数签名")
+
 [权限验证](doc/permit.md "权限验证")
 
 [服务跳转与页面转发](doc/forward.md "服务跳转与页面转发")

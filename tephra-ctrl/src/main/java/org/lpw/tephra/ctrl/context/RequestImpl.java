@@ -21,6 +21,7 @@ import java.util.*;
 @Controller("tephra.ctrl.context.request")
 public class RequestImpl implements Request, RequestAware {
     private static final String SIGN = "sign";
+    private static final String SIGN_TIME = "sign-time";
 
     @Autowired
     protected Validator validator;
@@ -37,7 +38,9 @@ public class RequestImpl implements Request, RequestAware {
     @Autowired(required = false)
     protected Coder coder;
     @Value("${tephra.ctrl.context.request.sign.key:}")
-    protected String key;
+    protected String signKey;
+    @Value("${tephra.ctrl.context.request.sign.time:10000}")
+    protected long signTime;
     protected ThreadLocal<RequestAdapter> adapter = new ThreadLocal<>();
 
     @Override
@@ -127,17 +130,26 @@ public class RequestImpl implements Request, RequestAware {
         if (map.get(SIGN) == null)
             return false;
 
-        List<String> list = new ArrayList<>();
-        list.addAll(getMap().keySet());
+        return System.currentTimeMillis() - converter.toLong(map.get(SIGN_TIME)) < signTime && getSign(map).equals(map.get(SIGN));
+    }
+
+    @Override
+    public void putSign(Map<String, String> map) {
+        map.put(SIGN_TIME, converter.toString(System.currentTimeMillis(), "0"));
+        map.put(SIGN, getSign(map));
+    }
+
+    protected String getSign(Map<String, String> map) {
+        List<String> list = new ArrayList<>(getMap().keySet());
         list.remove(SIGN);
         Collections.sort(list);
 
         StringBuilder sb = new StringBuilder();
         for (String key : list)
             sb.append(key).append('=').append(map.get(key)).append('&');
-        sb.append(key);
+        sb.append(signKey);
 
-        return security.md5(sb.toString()).equals(map.get(SIGN));
+        return security.md5(sb.toString());
     }
 
     @Override

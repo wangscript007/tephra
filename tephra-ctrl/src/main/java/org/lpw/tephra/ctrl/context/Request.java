@@ -90,6 +90,13 @@ public interface Request {
     boolean checkSign();
 
     /**
+     * 添加请求消息摘要验证串。
+     *
+     * @param map 参数集。
+     */
+    void putSign(Map<String, String> map);
+
+    /**
      * 获取服务器名。
      *
      * @return 服务器名。
