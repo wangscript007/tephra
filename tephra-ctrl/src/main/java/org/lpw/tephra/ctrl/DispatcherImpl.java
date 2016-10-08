@@ -5,8 +5,8 @@ import org.lpw.tephra.ctrl.console.Console;
 import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.ctrl.execute.ExecuteInvocation;
-import org.lpw.tephra.ctrl.execute.ExecuteMap;
 import org.lpw.tephra.ctrl.execute.Executor;
+import org.lpw.tephra.ctrl.execute.ExecutorHelper;
 import org.lpw.tephra.ctrl.status.Status;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateHelper;
@@ -53,7 +53,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
     @Autowired(required = false)
     protected List<Interceptor> interceptors;
     @Autowired
-    protected ExecuteMap executeMap;
+    protected ExecutorHelper executorHelper;
     @Autowired(required = false)
     protected Coder coder;
     @Autowired(required = false)
@@ -66,7 +66,6 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
     protected int max;
     protected ThreadLocal<Long> time = new ThreadLocal<>();
     protected AtomicInteger counter = new AtomicInteger();
-    protected ThreadLocal<Executor> executor = new ThreadLocal<>();
     protected ThreadLocal<Map<String, Object>> parameters = new ThreadLocal<>();
     protected ThreadLocal<Response> response = new ThreadLocal<>();
 
@@ -75,7 +74,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         time.set(System.currentTimeMillis());
         String uri = request.getUri();
         if (logger.isDebugEnable())
-            logger.debug("开始处理请求[{}]。", uri);
+            logger.debug("开始处理请求[{}:{}]。", uri, converter.toString(request.getMap()));
 
         boolean statusService = status.isStatus(uri);
         if (counter.incrementAndGet() > max && !statusService) {
@@ -89,8 +88,8 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
 
         boolean consoleService = console.isConsole(uri);
         if (!statusService && !consoleService)
-            executor.set(executeMap.get(uri));
-        if (!statusService && !consoleService && executor.get() == null) {
+            executorHelper.set(uri);
+        if (!statusService && !consoleService && executorHelper.get() == null) {
             counter.decrementAndGet();
             write(Failure.Exception, response);
 
@@ -124,7 +123,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         if (logger.isDebugEnable())
             logger.debug("跳转到：{}。", uri);
 
-        executor.set(executeMap.get(uri));
+        executorHelper.set(uri);
 
         return execute();
     }
@@ -135,10 +134,10 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         }
 
         try {
-            return new ExecuteInvocation(interceptors, validators, executor.get()).invoke();
+            return new ExecuteInvocation(interceptors, validators, executorHelper.get()).invoke();
         } catch (Throwable e) {
             commitables.forEach(Commitable::rollback);
-            logger.warn(e, "执行请求[{}:{}]时发生异常！", request.getUri(), executor.get().getMethod());
+            logger.warn(e, "执行请求[{}:{}]时发生异常！", request.getUri(), executorHelper.get().getMethod());
 
             return Failure.Exception;
         }
@@ -149,7 +148,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
             return;
 
         try {
-            Executor executor = this.executor.get();
+            Executor executor = executorHelper.get();
             Template template = executor == null ? templates.get() : executor.getTemplate();
             String view = executor == null ? null : executor.getView();
             if (!validator.isEmpty(templateHelper.getTemplate())) {

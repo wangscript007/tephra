@@ -163,6 +163,20 @@ public Object info() {
     return templates.get().success("", "spark.user.setting.info.saved");
 }
 ```
+可以在Execute中定义key，则failureArgKeys可自动设置为【key+"."+parameter】。如：
+```java
+@Execute(name = "info", key = "spark.user.setting.info", validates = {
+        @Validate(validator = Validators.MAX_LENGTH, parameter = "docTitle", number = {100}, failureCode = 1031, failureArgKeys = {"spark.user.setting.info.doc-title"}),
+        @Validate(validator = Validators.MAX_LENGTH, parameter = "realname", number = {100}, failureCode = 1032),
+        @Validate(validator = Validators.MAX_LENGTH, parameter = "mobile", number = {100}, failureCode = 1033),
+        @Validate(validator = Validators.MAX_LENGTH, parameter = "email", number = {100}, failureCode = 1034),
+        @Validate(validator = Validators.EMAIL, emptyable = true, parameter = "email", failureCode = 1035),
+        @Validate(validator = Validators.MAX_LENGTH, parameter = "address", number = {100}, failureCode = 1036)})
+public Object info() {
+    return templates.get().success("", "spark.user.setting.info.saved");
+}
+```
+并且如果类Execute设置了key而执行服务未设置key，则使用类设置。
 ## 自定义参数验证规则
 自定义验证器只需实现Validator接口，或继承ValidatorSupport，实现相应接口即可。如：
 ```java

@@ -15,7 +15,7 @@ import java.util.Map;
  * @author lpw
  */
 @Controller("tephra.script.js.ctrl")
-@Execute(name = "/tephra/script/", code = "99")
+@Execute(name = "/tephra/script/", key = "tephra.script", code = "99")
 public class JsCtrl {
     private static final String METHOD = "method";
 
@@ -27,7 +27,7 @@ public class JsCtrl {
     protected Engine engine;
 
     @Execute(name = "js", validates = {
-            @Validate(validator = Validators.NOT_EMPTY, parameter = METHOD, failureCode = 1, failureArgKeys = {"tephra.script.method"}),
+            @Validate(validator = Validators.NOT_EMPTY, parameter = METHOD, failureCode = 1),
             @Validate(validator = ScriptService.VALIDATOR_EXISTS_METHOD, parameter = METHOD, failureCode = 2)})
     public Object execute() {
         return engine.execute(request.get(METHOD));

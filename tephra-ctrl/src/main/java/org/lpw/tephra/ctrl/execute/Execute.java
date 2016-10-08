@@ -25,6 +25,13 @@ public @interface Execute {
     String name();
 
     /**
+     * 资源key。
+     *
+     * @return 资源key。
+     */
+    String key() default "";
+
+    /**
      * 验证规则集。
      *
      * @return 验证规则集。

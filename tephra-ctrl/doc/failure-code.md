@@ -57,5 +57,5 @@ public class FailureCodeTest {
 ```
 如果不同的URI地址设置了相同的编码前缀，则启动时将发出如下警告：
 ```log
-WARN  2016-05-16 16:19:45 org.lpw.tephra.ctrl.execute.ExecuteMapImpl 重复的错误编码[9901]设置！
+WARN  2016-05-16 16:19:45 org.lpw.tephra.ctrl.execute.ExecutorHelperImpl 重复的错误编码[9901]设置！
 ```

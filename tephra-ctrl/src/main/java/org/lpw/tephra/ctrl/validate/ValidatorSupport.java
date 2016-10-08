@@ -1,6 +1,7 @@
 package org.lpw.tephra.ctrl.validate;
 
 import org.lpw.tephra.ctrl.context.Request;
+import org.lpw.tephra.ctrl.execute.ExecutorHelper;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Message;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,11 @@ public abstract class ValidatorSupport implements Validator {
     @Autowired
     protected Converter converter;
     @Autowired
+    protected Message message;
+    @Autowired
     protected Request request;
     @Autowired
-    protected Message message;
+    protected ExecutorHelper executorHelper;
 
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
@@ -41,7 +44,7 @@ public abstract class ValidatorSupport implements Validator {
 
     protected Object[] getFailureMessageArgs(ValidateWrapper validate) {
         if (validator.isEmpty(validate.getFailureArgKeys()))
-            return null;
+            return new Object[]{message.get(executorHelper.get().getKey() + "." + validate.getParameter())};
 
         Object[] args = new Object[validate.getFailureArgKeys().length];
         for (int i = 0; i < args.length; i++)

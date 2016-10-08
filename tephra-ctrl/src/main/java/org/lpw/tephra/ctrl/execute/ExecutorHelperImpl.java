@@ -19,7 +19,7 @@ import java.util.Map;
  * @author lpw
  */
 @Controller("tephra.ctrl.execute.map")
-public class ExecuteMapImpl implements ExecuteMap, FailureCode, ContextRefreshedListener {
+public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextRefreshedListener {
     @Autowired
     protected Validator validator;
     @Autowired
@@ -32,18 +32,32 @@ public class ExecuteMapImpl implements ExecuteMap, FailureCode, ContextRefreshed
     protected Request request;
     protected Map<String, Executor> map;
     protected Map<String, String> codes;
+    protected ThreadLocal<Executor> executors = new ThreadLocal<>();
 
     @Override
-    public Executor get(String service) {
-        Executor executor = map.get(service);
-        if (executor != null)
-            return executor;
+    public void set(String service) {
+        if (setByKey(service))
+            return;
 
         for (String regex : map.keySet())
-            if (validator.isMatchRegex(regex, service))
-                return map.get(regex);
+            if (validator.isMatchRegex(regex, service) && setByKey(regex))
+                return;
+    }
 
-        return null;
+    protected boolean setByKey(String key) {
+        Executor executor = map.get(key);
+        if (executor != null) {
+            executors.set(executor);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public Executor get() {
+        return executors.get();
     }
 
     @Override
@@ -92,7 +106,8 @@ public class ExecuteMapImpl implements ExecuteMap, FailureCode, ContextRefreshed
                 if (execute == null || validator.isEmpty(execute.name()))
                     continue;
 
-                Executor executor = new ExecutorImpl(BeanFactory.getBean(name), method, execute.validates(), templates.get(execute.type()), prefix + execute.template());
+                Executor executor = new ExecutorImpl(BeanFactory.getBean(name), method, validator.isEmpty(execute.key()) ? classExecute.key() : execute.key(),
+                        execute.validates(), templates.get(execute.type()), prefix + execute.template());
                 String code = prefixCode + execute.code();
                 for (String service : converter.toArray(execute.name(), ",")) {
                     String key = prefix + service;

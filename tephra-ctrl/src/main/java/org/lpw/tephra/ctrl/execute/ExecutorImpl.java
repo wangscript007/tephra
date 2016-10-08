@@ -11,13 +11,15 @@ import java.lang.reflect.Method;
 public class ExecutorImpl implements Executor {
     private final Object bean;
     private final Method method;
+    private final String key;
     private final Validate[] validates;
     private final Template template;
     private final String view;
 
-    public ExecutorImpl(Object bean, Method method, Validate[] validates, Template template, String view) {
+    public ExecutorImpl(Object bean, Method method, String key, Validate[] validates, Template template, String view) {
         this.bean = bean;
         this.method = method;
+        this.key = key;
         this.validates = validates;
         this.template = template;
         this.view = view;
@@ -31,6 +33,11 @@ public class ExecutorImpl implements Executor {
     @Override
     public Method getMethod() {
         return method;
+    }
+
+    @Override
+    public String getKey() {
+        return key;
     }
 
     @Override

@@ -26,6 +26,13 @@ public interface Executor {
     Method getMethod();
 
     /**
+     * 获取资源key。
+     *
+     * @return 资源key。
+     */
+    String getKey();
+
+    /**
      * 获取验证规则集。
      *
      * @return 验证规则集。
