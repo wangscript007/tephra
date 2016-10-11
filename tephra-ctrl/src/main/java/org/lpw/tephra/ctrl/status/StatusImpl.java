@@ -52,9 +52,11 @@ public class StatusImpl implements Status, ContextRefreshedListener {
     public void onContextRefreshed() {
         enable = !validator.isEmpty(uri);
         if (logger.isInfoEnable())
-            logger.info("设置服务状态启动状态：{}", enable);
+            logger.info("设置服务状态启动状态：{}。", enable);
 
         version();
+        if (logger.isDebugEnable())
+            logger.debug("设置版本信息：{}。", version);
     }
 
     protected void version() {
@@ -67,7 +69,11 @@ public class StatusImpl implements Status, ContextRefreshedListener {
 
         Map<String, Set<String>> map = new HashMap<>();
         set.forEach(path -> {
-            path = path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf('.'));
+            int[] range = new int[]{path.lastIndexOf('/'), path.lastIndexOf('.')};
+            if (range[0] == -1 || range[1] == -1 || range[0] > range[1])
+                return;
+
+            path = path.substring(range[0] + 1, range[1]);
             if (path.startsWith("spring"))
                 return;
 

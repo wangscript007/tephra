@@ -106,7 +106,7 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
                 if (execute == null || validator.isEmpty(execute.name()))
                     continue;
 
-                Executor executor = new ExecutorImpl(BeanFactory.getBean(name), method, validator.isEmpty(execute.key()) ? classExecute.key() : execute.key(),
+                Executor executor = new ExecutorImpl(BeanFactory.getBean(name), method, getKey(classExecute, execute),
                         execute.validates(), templates.get(execute.type()), prefix + execute.template());
                 String code = prefixCode + execute.code();
                 for (String service : converter.toArray(execute.name(), ",")) {
@@ -128,5 +128,12 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
             }
             logger.info(sb.append("]。").toString());
         }
+    }
+
+    protected String getKey(Execute classExecute, Execute execute) {
+        if (!validator.isEmpty(execute.key()))
+            return execute.key();
+
+        return classExecute == null ? "" : classExecute.key();
     }
 }
