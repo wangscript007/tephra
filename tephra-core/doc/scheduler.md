@@ -90,3 +90,34 @@ public interface SchedulerJobListener {
 任意实现了SchedulerJobListener接口的实现，在任务开始、结束、异常时，都会得到通知。
 
 tephra-dao模块默认实现了SchedulerJobListener接口，因此在定时任务执行结束时会自动提交事务并关闭连接，而执行发生异常时自动回滚并关闭连接。
+
+## 使用SchedulerHelper
+SchedulerHelper允许动态指定执行时机：
+```java
+package org.lpw.tephra.scheduler;
+
+import java.util.Date;
+
+/**
+ * 定时任务支持。
+ *
+ * @auth lpw
+ */
+public interface SchedulerHelper {
+    /**
+     * 延迟执行任务。
+     *
+     * @param job  任务。
+     * @param time 延迟时间，单位：毫秒。
+     */
+    void delay(SchedulerJob job, long time);
+
+    /**
+     * 指定时间执行任务。
+     *
+     * @param job  任务。
+     * @param time 执行时间。
+     */
+    void at(SchedulerJob job, Date time);
+}
+```
