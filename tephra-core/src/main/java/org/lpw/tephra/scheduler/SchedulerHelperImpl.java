@@ -3,12 +3,9 @@ package org.lpw.tephra.scheduler;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
-import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.Set;
 import java.util.Timer;
 
 /**
@@ -16,10 +13,6 @@ import java.util.Timer;
  */
 @Component("tephra.scheduler.helper")
 public class SchedulerHelperImpl implements SchedulerHelper, ContextRefreshedListener, ContextClosedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired(required = false)
-    protected Set<SchedulerJobListener> listeners;
     protected Timer timer;
 
     @Override
