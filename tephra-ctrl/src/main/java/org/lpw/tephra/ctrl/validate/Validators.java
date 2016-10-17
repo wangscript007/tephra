@@ -61,6 +61,10 @@ public interface Validators {
      * 日期时间格式验证器Bean名称。如果验证的参数为日期时间格式数据则返回true；否则返回false。
      */
     String DATE_TIME = PREFIX + "date-time";
+    /**
+     * ID验证器Bean名称。
+     */
+    String ID = PREFIX + "id";
 
     /**
      * 参数签名验证器Bean名称。如果参数签名验证合法则返回true；否则返回false。

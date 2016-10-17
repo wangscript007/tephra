@@ -3,15 +3,15 @@ package org.lpw.tephra.ctrl.validate;
 import org.springframework.stereotype.Controller;
 
 /**
- * @author lpw
+ * @auth lpw
  */
-@Controller(Validators.SIGN)
-public class SignValidatorImpl extends ValidatorSupport {
-    private static final String DEFAULT_FAILURE_MESSAGE_KEY = Validators.PREFIX + "illegal-sign";
+@Controller(Validators.ID)
+public class IdValidatorImpl extends ValidatorSupport {
+    private static final String DEFAULT_FAILURE_MESSAGE_KEY = Validators.PREFIX + "illegal-id";
 
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
-        return request.checkSign();
+        return validator.isMatchRegex("[\\da-f-]{36}", parameter) && converter.toArray(parameter, "-").length == 5;
     }
 
     @Override
