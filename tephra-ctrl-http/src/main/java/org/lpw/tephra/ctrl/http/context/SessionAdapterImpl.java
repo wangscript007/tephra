@@ -2,8 +2,6 @@ package org.lpw.tephra.ctrl.http.context;
 
 import org.lpw.tephra.ctrl.context.SessionAdapter;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author lpw
  */

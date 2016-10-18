@@ -52,7 +52,7 @@ public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListen
             return;
         }
 
-        System.out.println("##count:"+counter.get());
+        System.out.println("##count:" + counter.get());
 
         String key = getKey(session);
         sessions.put(key, session);

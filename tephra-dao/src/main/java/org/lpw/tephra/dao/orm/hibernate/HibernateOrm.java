@@ -2,7 +2,6 @@ package org.lpw.tephra.dao.orm.hibernate;
 
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.orm.Orm;
-import org.lpw.tephra.dao.orm.PageList;
 
 import java.util.Iterator;
 

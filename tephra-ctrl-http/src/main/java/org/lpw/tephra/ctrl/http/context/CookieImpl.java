@@ -37,9 +37,9 @@ public class CookieImpl implements org.lpw.tephra.ctrl.http.context.Cookie, Cook
 
     @Override
     public String get(String name) {
-        String[] array=getAll(name);
+        String[] array = getAll(name);
 
-        return array.length==0?null:array[array.length-1];
+        return array.length == 0 ? null : array[array.length - 1];
     }
 
     @Override
