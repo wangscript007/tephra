@@ -46,6 +46,11 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     protected Map<String, List<MongoClient>> mongos;
 
     @Override
+    public MongoDatabase getDatabase() {
+        return getDatabase(null);
+    }
+
+    @Override
     public MongoDatabase getDatabase(String key) {
         if (key == null)
             key = "";
@@ -60,8 +65,18 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     }
 
     @Override
+    public MongoCollection<Document> getCollection(Class<? extends Model> modelClass) {
+        return getCollection(null, getCollectionName(modelClass));
+    }
+
+    @Override
     public MongoCollection<Document> getCollection(String key, Class<? extends Model> modelClass) {
-        return getCollection(key, getCollection(modelClass));
+        return getCollection(key, getCollectionName(modelClass));
+    }
+
+    @Override
+    public MongoCollection<Document> getCollection(String name) {
+        return getCollection(null, name);
     }
 
     @Override
@@ -72,8 +87,18 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     }
 
     @Override
+    public void insert(Class<? extends Model> modelClass, JSONObject object) {
+        insert(null, getCollectionName(modelClass), object);
+    }
+
+    @Override
     public void insert(String key, Class<? extends Model> modelClass, JSONObject object) {
-        insert(key, getCollection(modelClass), object);
+        insert(key, getCollectionName(modelClass), object);
+    }
+
+    @Override
+    public void insert(String collection, JSONObject object) {
+        insert(null, collection, object);
     }
 
     @Override
@@ -86,8 +111,18 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     }
 
     @Override
+    public void insert(Class<? extends Model> modelClass, JSONArray array) {
+        insert(null, getCollectionName(modelClass), array);
+    }
+
+    @Override
     public void insert(String key, Class<? extends Model> modelClass, JSONArray array) {
-        insert(key, getCollection(modelClass), array);
+        insert(key, getCollectionName(modelClass), array);
+    }
+
+    @Override
+    public void insert(String collection, JSONArray array) {
+        insert(null, collection, array);
     }
 
     @Override
@@ -101,8 +136,18 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     }
 
     @Override
+    public void update(Class<? extends Model> modelClass, JSONObject set, JSONObject where) {
+        update(null, getCollectionName(modelClass), set, where);
+    }
+
+    @Override
     public void update(String key, Class<? extends Model> modelClass, JSONObject set, JSONObject where) {
-        update(key, getCollection(modelClass), set, where);
+        update(key, getCollectionName(modelClass), set, where);
+    }
+
+    @Override
+    public void update(String collection, JSONObject set, JSONObject where) {
+        update(null, collection, set, where);
     }
 
     @Override
@@ -115,8 +160,18 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     }
 
     @Override
+    public void delete(Class<? extends Model> modelClass, JSONObject where) {
+        delete(null, getCollectionName(modelClass), where);
+    }
+
+    @Override
     public void delete(String key, Class<? extends Model> modelClass, JSONObject where) {
-        delete(key, getCollection(modelClass), where);
+        delete(key, getCollectionName(modelClass), where);
+    }
+
+    @Override
+    public void delete(String collection, JSONObject where) {
+        delete(null, collection, where);
     }
 
     @Override
@@ -129,8 +184,18 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     }
 
     @Override
+    public JSONObject findOne(Class<? extends Model> modelClass, JSONObject where) {
+        return findOne(null, getCollectionName(modelClass), where);
+    }
+
+    @Override
     public JSONObject findOne(String key, Class<? extends Model> modelClass, JSONObject where) {
-        return findOne(key, getCollection(modelClass), where);
+        return findOne(key, getCollectionName(modelClass), where);
+    }
+
+    @Override
+    public JSONObject findOne(String collection, JSONObject where) {
+        return findOne(null, collection, where);
     }
 
     @Override
@@ -145,8 +210,18 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     }
 
     @Override
+    public JSONArray find(Class<? extends Model> modelClass, JSONObject where) {
+        return find(null, getCollectionName(modelClass), where);
+    }
+
+    @Override
     public JSONArray find(String key, Class<? extends Model> modelClass, JSONObject where) {
-        return find(key, getCollection(modelClass), where);
+        return find(key, getCollectionName(modelClass), where);
+    }
+
+    @Override
+    public JSONArray find(String collection, JSONObject where) {
+        return find(null, collection, where);
     }
 
     @Override
@@ -162,7 +237,7 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
         return array;
     }
 
-    protected String getCollection(Class<? extends Model> modelClass) {
+    protected String getCollectionName(Class<? extends Model> modelClass) {
         return modelTables.get(modelClass).getTableName();
     }
 
