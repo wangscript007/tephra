@@ -97,6 +97,24 @@ public interface Mongo extends Commitable {
     void update(String key, String collection, JSONObject set, JSONObject where);
 
     /**
+     * 删除数据。
+     *
+     * @param key        配置key。
+     * @param modelClass 类名。
+     * @param where      条件。
+     */
+    void delete(String key, Class<? extends Model> modelClass, JSONObject where);
+
+    /**
+     * 删除数据。
+     *
+     * @param key        配置key。
+     * @param collection 文档名。
+     * @param where      条件。
+     */
+    void delete(String key, String collection, JSONObject where);
+
+    /**
      * 获取一个数据。
      *
      * @param key        配置key。

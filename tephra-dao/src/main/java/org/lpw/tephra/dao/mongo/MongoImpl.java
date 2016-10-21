@@ -20,7 +20,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -112,7 +111,21 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
         if (mc == null)
             return;
 
-        mc.updateMany(toDocument(where), toDocument(set));
+        mc.updateMany(toDocument(where), new Document("$set", toDocument(set)));
+    }
+
+    @Override
+    public void delete(String key, Class<? extends Model> modelClass, JSONObject where) {
+        delete(key, getCollection(modelClass), where);
+    }
+
+    @Override
+    public void delete(String key, String collection, JSONObject where) {
+        MongoCollection<Document> mc = getCollection(key, collection);
+        if (mc == null)
+            return;
+
+        mc.deleteMany(toDocument(where));
     }
 
     @Override
@@ -128,7 +141,7 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
 
         Document document = mc.find(toDocument(where)).first();
 
-        return document == null ? new JSONObject() : JSONObject.fromObject(document);
+        return document == null || document.isEmpty() ? new JSONObject() : JSONObject.fromObject(document);
     }
 
     @Override
@@ -143,8 +156,8 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
             return new JSONArray();
 
         JSONArray array = new JSONArray();
-        for (Iterator<Document> iterator = mc.find(toDocument(where)).iterator(); iterator.hasNext(); )
-            array.add(JSONObject.fromObject(iterator.next()));
+        for (Document document : mc.find(toDocument(where)))
+            array.add(JSONObject.fromObject(document));
 
         return array;
     }
@@ -155,11 +168,15 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
 
     @SuppressWarnings({"unchecked"})
     protected Document toDocument(JSONObject object) {
-        return new Document(object);
+        return object == null ? new Document() : new Document(object);
     }
 
     @Override
     public void create(JSONObject config) {
+        String key = config.getString("key");
+        if (mongos.containsKey(key))
+            return;
+
         String schema = config.getString("schema");
         if (validator.isEmpty(schema))
             throw new NullPointerException("未设置schema值[" + config + "]！");
@@ -174,7 +191,6 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
         List<MongoClient> list = new ArrayList<>();
         for (int i = 0; i < array.size(); i++)
             list.add(new MongoClient(new MongoClientURI("mongodb://" + username + ":" + password + "@" + array.getString(i) + "/" + schema, builder)));
-        String key = config.getString("key");
         schemas.put(key, schema);
         mongos.put(key, list);
 
