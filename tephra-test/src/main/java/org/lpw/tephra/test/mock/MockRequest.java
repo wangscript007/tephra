@@ -37,6 +37,13 @@ public interface MockRequest extends RequestAdapter {
     void setMethod(String method);
 
     /**
+     * 设置请求URL地址。
+     *
+     * @param url 请求URL地址。
+     */
+    void setUrl(String url);
+
+    /**
      * 设置请求URI地址。
      *
      * @param uri 请求URI地址。

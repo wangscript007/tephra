@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public class MockRequestImpl implements MockRequest {
     protected String method;
+    protected String url;
     protected String uri;
     protected String serverName;
     protected int serverPort;
@@ -33,6 +34,11 @@ public class MockRequestImpl implements MockRequest {
     @Override
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    @Override
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override
@@ -90,6 +96,11 @@ public class MockRequestImpl implements MockRequest {
     @Override
     public String getContextPath() {
         return contextPath;
+    }
+
+    @Override
+    public String getUrl() {
+        return url;
     }
 
     @Override

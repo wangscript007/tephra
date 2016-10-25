@@ -17,6 +17,7 @@ import java.util.Map;
  */
 public class RequestAdapterImpl implements RequestAdapter {
     protected HttpServletRequest request;
+    protected String url;
     protected String uri;
     protected Map<String, String> map;
     protected String content;
@@ -84,6 +85,14 @@ public class RequestAdapterImpl implements RequestAdapter {
     @Override
     public String getContextPath() {
         return request.getContextPath();
+    }
+
+    @Override
+    public String getUrl() {
+        if (url == null)
+            url = request.getRequestURL().toString().replaceAll(uri, "");
+
+        return url;
     }
 
     @Override

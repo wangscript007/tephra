@@ -118,6 +118,13 @@ public interface Request {
     String getContextPath();
 
     /**
+     * 获取请求URL。
+     *
+     * @return 请求URL。
+     */
+    String getUrl();
+
+    /**
      * 获取请求URI。
      *
      * @return 请求URI。

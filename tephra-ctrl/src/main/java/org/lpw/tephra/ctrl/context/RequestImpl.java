@@ -172,6 +172,11 @@ public class RequestImpl implements Request, RequestAware {
     }
 
     @Override
+    public String getUrl() {
+        return adapter.get().getUrl();
+    }
+
+    @Override
     public String getUri() {
         return adapter.get().getUri();
     }
