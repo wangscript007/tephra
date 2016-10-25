@@ -2,6 +2,7 @@ package org.lpw.tephra.ctrl;
 
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.ctrl.console.Console;
+import org.lpw.tephra.ctrl.context.Header;
 import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.ctrl.execute.ExecuteInvocation;
@@ -43,6 +44,8 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
     @Autowired
     protected Set<Commitable> commitables;
     @Autowired
+    protected Header header;
+    @Autowired
     protected Request request;
     @Autowired
     protected Status status;
@@ -74,7 +77,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         time.set(System.currentTimeMillis());
         String uri = request.getUri();
         if (logger.isDebugEnable())
-            logger.debug("开始处理请求[{}:{}]。", uri, converter.toString(request.getMap()));
+            logger.debug("开始处理请求[{}:{}:{}]。", uri, converter.toString(request.getMap()), converter.toString(header.getMap()));
 
         boolean statusService = status.isStatus(uri);
         if (counter.incrementAndGet() > max && !statusService) {
