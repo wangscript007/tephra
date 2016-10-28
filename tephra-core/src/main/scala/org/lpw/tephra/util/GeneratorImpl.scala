@@ -16,7 +16,7 @@ class GeneratorImpl extends Generator {
         val max: Int = 'z' - '0' + 1
         while (string.length < length) {
             val n: Int = Math.abs(Random.nextInt) % max + '0'
-            if ((n >= '0' && n <= '9') || (n >= 'a' && n <= 'z'))
+            if (n <= '9' || n >= 'a')
                 string += n.toChar
         }
 

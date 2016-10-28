@@ -13,7 +13,7 @@ import scala.xml.{Node, XML}
   */
 @Component("tephra.util.xml")
 class XmlImpl extends Xml {
-    @Autowired protected var validator: Validator = null
+    @Autowired protected val validator: Validator = null
 
     override def toJson(xml: String): JSONObject = {
         if (validator.isEmpty(xml))
