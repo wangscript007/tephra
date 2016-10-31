@@ -14,9 +14,8 @@
         <module>tephra-script</module>
         <module>tephra-weixin</module>
         <module>tephra-hadoop</module>
+        <module>tephra-carousel</module>
         <module>tephra-web</module>
-        <!--<module>tephra-workbench</module>-->
-        <!--<module>tephra-workbench-web</module>-->
         <module>tephra-test</module>
     </modules>
     <packaging>pom</packaging>

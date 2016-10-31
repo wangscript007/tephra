@@ -40,5 +40,6 @@ Tephra旨在构建一个稳定、高效、易于集群、快速扩展的JavaEE�
 - [ctrl-http](tephra-ctrl-http/)——HTTP(S)模块。
 - [script](tephra-script/)——脚本（JavaScript）模块。
 - [weixin](tephra-weixin/)——微信公众号模块。
+- [carousel](tephra-carousel/)——Carousel访问支持。
 - [test](tephra-test/)——单元测试模块。
 
