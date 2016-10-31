@@ -1,7 +1,7 @@
 # Ctrl-Http简介
 Ctrl-Http模块提供基于HTTP协议的请求处理，并将请求提交给Ctrl进行调度处理。
 
-![HTTP处理流程](../doc/uml/ctrl-http/sequence.png "HTTP处理流程")
+![HTTP处理流程](doc/uml/sequence.png "HTTP处理流程")
 
 ## 安全过滤器
 Ctrl-Http模块提供了一个安全过滤器，用于对一些Web攻击进行处理，可以通过以下参数设置是否启用，启用时如果涉及安全隐患的，将直接返回404状态。

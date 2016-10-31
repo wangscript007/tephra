@@ -3,7 +3,7 @@ Script模块提供JavaScript执行能力，允许项目在运行期动态载入�
 
 Script接口图：
 
-![Script接口图](../doc/uml/script/interface.png "Script接口图")
+![Script接口图](doc/uml/interface.png "Script接口图")
 
 [执行JavaScript](doc/execute.md "执行JavaScript")
 

@@ -4,7 +4,7 @@ Tephra提供了4个定时器，并分别定义了相应的定时任务接口，�
 - 串行——相同的任务在同一个时间点只有一个实例会被执行，其他新加入的实例都会被取消，以降低资源争夺造成的数据风险。
 - 线程池——通过线程池执行任务，降低系统资源的使用。
 
-![定时任务](../../doc/uml/core/scheduler/activity.png "定时任务")
+![定时任务](uml/scheduler.png "定时任务")
 
 Tephra默认提供了DateScheduler、HourScheduler、MinuteScheduler、SecondsScheduler四个定时器，对应的分别定义了DateJob、HourJob、MinuteJob、SecondsJob四个定时任务。可修改core.tephra.config.properties配置项设置执行时机：
 ```properties

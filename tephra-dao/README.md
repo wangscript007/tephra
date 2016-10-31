@@ -6,13 +6,13 @@ Dao模块提供对数据持久化的支持，包含SQL、Hibernate、及一个�
 在生产环境，通常建议对数据库做主从配置以降低风险，因此对持久化请求做读写分离可以有效降低数据库压力，保护数据；而一主多从的配置则更进一步降低数据库的读压力，保护数据库。
 
 ## Dao接口图
-![Dao接口图](../doc/uml/dao/main.png "Dao接口图")
+![Dao接口图](doc/uml/main.png "Dao接口图")
 
 ## Jdbc包接口图
-![Jdbc包接口图](../doc/uml/dao/jdbc.png "Jdbc包接口图")
+![Jdbc包接口图](doc/uml/jdbc.png "Jdbc包接口图")
 
 ## Orm包接口图
-![Orm包接口图](../doc/uml/dao/orm.png "Orm包接口图")
+![Orm包接口图](doc/uml/orm.png "Orm包接口图")
 
 [连接工厂与连接](doc/connection.md "连接工厂与连接")
 

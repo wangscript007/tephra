@@ -8,10 +8,8 @@ package Tephra {
 [ctrl] <-- [weixin]
 [ctrl] <-- [hadoop]
 [ctrl] <-- [ctrl-http]
+[ctrl] <-- [ctrl-socket]
 [ctrl-http] <-- [web]
-[ctrl] <-- [workbench]
-[workbench] <-- [workbench-web]
-[web] <-- [workbench-web]
 [ctrl] <-- [test]
 }
 

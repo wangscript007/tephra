@@ -18,7 +18,7 @@ Ctrl模块参考了Struts2和Spring MVC的设计，具有以下几个特点：
 
 Ctrl接口图：
 
-![Ctrl接口图](../doc/uml/ctrl/interface.png "Ctrl接口图")
+![Ctrl接口图](doc/uml/interface.png "Ctrl接口图")
 
 [使用Execute注解定义服务](doc/execute.md "使用Execute注解定义服务")
 

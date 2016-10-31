@@ -114,4 +114,4 @@ public interface Handler {
     <T> T remove(String key);
 }
 ```
-![缓存类图](../../doc/uml/core/cache.png "缓存类图")
+![缓存类图](uml/cache.png "缓存类图")
