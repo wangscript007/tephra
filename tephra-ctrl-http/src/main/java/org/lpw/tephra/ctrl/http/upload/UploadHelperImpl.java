@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     @Override
     public void upload(HttpServletRequest request, HttpServletResponse response) {
         try {
-            serviceHelper.setContext(request, response, URI);
+            OutputStream outputStream = serviceHelper.setContext(request, response, URI);
             getUpload(request).parseRequest(request).forEach(item -> {
                 if (item.isFormField())
                     return;
@@ -84,7 +85,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
                     item.delete();
 
                     if (!validator.isEmpty(result))
-                        response.getOutputStream().write(result.getBytes("UTF-8"));
+                        outputStream.write(result.getBytes("UTF-8"));
 
                     if (logger.isDebugEnable())
                         logger.debug("保存上传[{}:{}]的文件[{}:{}]。", item.getFieldName(), item.getName(), path, converter.toBitSize(item.getSize()));
@@ -92,9 +93,12 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
                     logger.warn(e, "保存上传文件时发生异常！");
                 }
             });
-            commitables.forEach(Commitable::close);
+            outputStream.flush();
+            outputStream.close();
         } catch (Throwable e) {
             logger.warn(e, "处理文件上传时发生异常！");
+        } finally {
+            commitables.forEach(Commitable::close);
         }
     }
 

@@ -1,11 +1,11 @@
 package org.lpw.tephra.ctrl.mock;
 
-import org.lpw.tephra.ctrl.context.Response;
+import org.lpw.tephra.ctrl.context.ResponseAdapter;
 
 /**
  * @author lpw
  */
-public interface MockResponse extends Response {
+public interface MockResponse extends ResponseAdapter {
     /**
      * 获取返回内容类型。
      *

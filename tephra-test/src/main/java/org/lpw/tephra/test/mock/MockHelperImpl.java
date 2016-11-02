@@ -3,6 +3,7 @@ package org.lpw.tephra.test.mock;
 import org.lpw.tephra.ctrl.Dispatcher;
 import org.lpw.tephra.ctrl.context.HeaderAware;
 import org.lpw.tephra.ctrl.context.RequestAware;
+import org.lpw.tephra.ctrl.context.ResponseAware;
 import org.lpw.tephra.ctrl.context.SessionAware;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Generator;
@@ -30,6 +31,8 @@ public class MockHelperImpl implements MockHelper {
     protected SessionAware sessionAware;
     @Autowired
     protected RequestAware requestAware;
+    @Autowired
+    protected ResponseAware responseAware;
     @Autowired
     protected Dispatcher dispatcher;
     protected ThreadLocal<MockHeader> header = new ThreadLocal<>();
@@ -66,9 +69,9 @@ public class MockHelperImpl implements MockHelper {
         sessionAware.set(getSession());
         getRequest().setUri(uri);
         requestAware.set(getRequest());
-
         MockResponse response = new MockResponseImpl();
-        dispatcher.execute(response);
+        responseAware.set(response);
+        dispatcher.execute();
 
         return response;
     }

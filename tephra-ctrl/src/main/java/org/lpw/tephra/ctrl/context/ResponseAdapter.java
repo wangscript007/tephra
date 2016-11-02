@@ -3,11 +3,11 @@ package org.lpw.tephra.ctrl.context;
 import java.io.OutputStream;
 
 /**
- * 响应。
+ * 输出适配器。
  *
- * @author lpw
+ * @auth lpw
  */
-public interface Response {
+public interface ResponseAdapter {
     /**
      * 设置类容类型。
      *
@@ -21,12 +21,6 @@ public interface Response {
      * @return 输出流。
      */
     OutputStream getOutputStream();
-
-    /**
-     * 输出数据。
-     * @param object 数据。
-     */
-    void write(Object object);
 
     /**
      * 跳转到指定URL地址。

@@ -3,6 +3,7 @@ package org.lpw.tephra.ctrl.http;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * @author lpw
@@ -32,6 +33,8 @@ public interface ServiceHelper {
      * @param request  请求HttpServletRequest信息。
      * @param response 输出HttpServletResponse信息。
      * @param uri      URI地址。
+     * @return 输出流。
+     * @throws IOException 如果写入流时发生IOException异常则抛出。
      */
-    void setContext(HttpServletRequest request, HttpServletResponse response, String uri);
+    OutputStream setContext(HttpServletRequest request, HttpServletResponse response, String uri) throws IOException;
 }

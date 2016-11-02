@@ -4,11 +4,12 @@ import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.ctrl.Dispatcher;
 import org.lpw.tephra.ctrl.context.HeaderAware;
 import org.lpw.tephra.ctrl.context.RequestAware;
+import org.lpw.tephra.ctrl.context.ResponseAware;
 import org.lpw.tephra.ctrl.context.SessionAware;
 import org.lpw.tephra.ctrl.http.context.CookieAware;
 import org.lpw.tephra.ctrl.http.context.HeaderAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.RequestAdapterImpl;
-import org.lpw.tephra.ctrl.http.context.ResponseImpl;
+import org.lpw.tephra.ctrl.http.context.ResponseAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.SessionAdapterImpl;
 import org.lpw.tephra.ctrl.http.upload.UploadHelper;
 import org.lpw.tephra.ctrl.status.Status;
@@ -56,6 +57,8 @@ public class ServiceHelperImpl implements ServiceHelper {
     protected SessionAware sessionAware;
     @Autowired
     protected RequestAware requestAware;
+    @Autowired
+    protected ResponseAware responseAware;
     @Autowired
     protected Dispatcher dispatcher;
     @Autowired
@@ -117,7 +120,7 @@ public class ServiceHelperImpl implements ServiceHelper {
             return false;
         }
 
-        setContext(request, response, uri);
+        OutputStream outputStream = setContext(request, response, uri);
         if (timeHash.isEnable() && !timeHash.valid(request.getIntHeader("time-hash")) && !status.isStatus(uri) && (ignoreTimeHash == null || !ignoreTimeHash.ignore())) {
             if (logger.isDebugEnable())
                 logger.debug("请求[{}]TimeHash[{}]验证不通过。", uri, request.getIntHeader("time-hash"));
@@ -125,11 +128,9 @@ public class ServiceHelperImpl implements ServiceHelper {
             return false;
         }
 
-        response.setCharacterEncoding("UTF-8");
-        OutputStream output = response.getOutputStream();
-        dispatcher.execute(new ResponseImpl(servletContextPath, response, output));
-        output.flush();
-        output.close();
+        dispatcher.execute();
+        outputStream.flush();
+        outputStream.close();
 
         return true;
     }
@@ -163,13 +164,17 @@ public class ServiceHelperImpl implements ServiceHelper {
         return false;
     }
 
-    @Override
-    public void setContext(HttpServletRequest request, HttpServletResponse response, String uri) {
+    public OutputStream setContext(HttpServletRequest request, HttpServletResponse response, String uri) throws IOException {
         context.setLocale(request.getLocale());
         headerAware.set(new HeaderAdapterImpl(request));
         sessionAware.set(new SessionAdapterImpl(getSessionId(request)));
         requestAware.set(new RequestAdapterImpl(request, uri));
         cookieAware.set(request, response);
+        response.setCharacterEncoding("UTF-8");
+        OutputStream outputStream = response.getOutputStream();
+        responseAware.set(new ResponseAdapterImpl(servletContextPath, response, outputStream));
+
+        return outputStream;
     }
 
     protected String getSessionId(HttpServletRequest request) {
