@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -27,6 +28,7 @@ public class TrustfulIpImpl implements TrustfulIp, MinuteJob {
     protected String trustfulIp;
     protected Set<String> ips = new HashSet<>();
     protected Set<Pattern> patterns = new HashSet<>();
+    protected long lastModified = 0L;
 
     @Override
     public boolean contains(String ip) {
@@ -42,9 +44,14 @@ public class TrustfulIpImpl implements TrustfulIp, MinuteJob {
 
     @Override
     public void executeMinuteJob() {
+        File file = new File(context.getAbsolutePath(trustfulIp));
+        if (lastModified >= file.lastModified())
+            return;
+
+        lastModified = file.lastModified();
         Set<String> ips = new HashSet<>();
         Set<Pattern> patterns = new HashSet<>();
-        for (String string : converter.toArray(new String(io.read(context.getAbsolutePath(trustfulIp))), "\n")) {
+        for (String string : converter.toArray(new String(io.read(file.getAbsolutePath())), "\n")) {
             string = string.trim();
             if (string.equals("") || string.startsWith("#"))
                 continue;

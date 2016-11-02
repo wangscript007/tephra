@@ -63,10 +63,11 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
                 if (item.isFormField())
                     return;
 
-                UploadListener listener = listeners.get(item.getFieldName());
+                String key = item.getFieldName();
+                UploadListener listener = getListener(key);
                 if (listener == null)
                     listener = jsonConfigs.get(item.getFieldName());
-                if (listener == null || !listener.isUploadEnable(item.getContentType(), item.getName())) {
+                if (listener == null || !listener.isUploadEnable(key, item.getContentType(), item.getName())) {
                     if (logger.isDebugEnable())
                         logger.debug("无法获得上传监听器[{}]。", item.getFieldName());
 
@@ -74,14 +75,14 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
                 }
 
                 try {
-                    int[] size = listener.getImageSize();
+                    int[] size = listener.getImageSize(key);
                     boolean image = item.getContentType().startsWith("image/") && size != null && size.length == 2 && (size[0] > 0 || size[1] > 0);
                     String path = getPath(listener, item);
                     File file = new File(context.getAbsolutePath(path));
                     file.getParentFile().mkdirs();
                     if (!image || !image(item, size, file))
                         item.write(file);
-                    String result = listener.upload(item.getName(), converter.toBitSize(item.getSize()), path);
+                    String result = listener.upload(key, item.getName(), converter.toBitSize(item.getSize()), path);
                     item.delete();
 
                     if (!validator.isEmpty(result))
@@ -113,9 +114,22 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
         return upload;
     }
 
+    protected UploadListener getListener(String key) {
+        if (listeners.containsKey(key))
+            return listeners.get(key);
+
+        for (String k : listeners.keySet())
+            if (validator.isMatchRegex(k, key))
+                return listeners.get(k);
+
+        return null;
+    }
+
     protected String getPath(UploadListener listener, FileItem item) {
-        StringBuilder path = new StringBuilder(ROOT).append(item.getContentType()).append('/').append(listener.getPath(item.getContentType(), item.getName())).append('/')
-                .append(converter.toString(new Date(), "yyyyMMdd")).append('/').append(generator.random(32)).append(item.getName().substring(item.getName().lastIndexOf('.')));
+        StringBuilder path = new StringBuilder(ROOT).append(item.getContentType()).append('/')
+                .append(listener.getPath(item.getFieldName(), item.getContentType(), item.getName())).append('/')
+                .append(converter.toString(new Date(), "yyyyMMdd")).append('/').append(generator.random(32))
+                .append(item.getName().substring(item.getName().lastIndexOf('.')));
 
         return path.toString().replaceAll("[/]+", "/");
     }

@@ -28,7 +28,7 @@ public class JsonConfigImpl implements JsonConfig {
     }
 
     @Override
-    public boolean isUploadEnable(String contentType, String name) {
+    public boolean isUploadEnable(String key, String contentType, String name) {
         for (Pattern pattern : map.keySet())
             if (pattern.matcher(contentType).find())
                 return true;
@@ -48,7 +48,7 @@ public class JsonConfigImpl implements JsonConfig {
     }
 
     @Override
-    public String getPath(String contentType, String name) {
+    public String getPath(String key, String contentType, String name) {
         for (Pattern pattern : map.keySet())
             if (pattern.matcher(contentType).find())
                 return map.get(pattern);
@@ -62,12 +62,12 @@ public class JsonConfigImpl implements JsonConfig {
     }
 
     @Override
-    public int[] getImageSize() {
+    public int[] getImageSize(String key) {
         return imageSize;
     }
 
     @Override
-    public String upload(String name, String size, String uri) {
+    public String upload(String key, String name, String size, String uri) {
         return uri;
     }
 }
