@@ -1,5 +1,6 @@
 package org.lpw.tephra.ctrl;
 
+import org.lpw.tephra.cache.Cache;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Controller("tephra.ctrl.counter")
 public class CounterImpl implements Counter {
+    private static final String CACHE_DELAY = "tephra.ctrl.counter.delay:";
+
+    @Autowired
+    protected Cache cache;
     @Autowired
     protected Converter converter;
     @Autowired
@@ -25,6 +30,8 @@ public class CounterImpl implements Counter {
     protected int max;
     @Value("${tephra.ctrl.counter.ip-max:5}")
     protected int ipMax;
+    @Value("${tephra.ctrl.counter.ip-delay:5000}")
+    protected int delay;
     protected AtomicInteger counter = new AtomicInteger();
     protected Map<String, Integer> ipMap = new HashMap<>();
 
@@ -39,8 +46,15 @@ public class CounterImpl implements Counter {
         if (trustfulIp.contains(ip))
             return true;
 
+        String key = CACHE_DELAY + ip;
+        Long time = cache.get(key);
+        if (time != null && System.currentTimeMillis() - time < delay)
+            return false;
+
         int n = converter.toInt(ipMap.get(ip)) + 1;
         if (n > ipMax) {
+            cache.put(key, System.currentTimeMillis(), false);
+
             logger.warn(null, "超过IP[{}]最大并发处理数[{}]。", ip, max);
 
             return false;

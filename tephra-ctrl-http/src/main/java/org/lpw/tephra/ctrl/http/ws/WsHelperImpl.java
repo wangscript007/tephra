@@ -2,11 +2,11 @@ package org.lpw.tephra.ctrl.http.ws;
 
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.ctrl.http.IgnoreUri;
 import org.lpw.tephra.dao.Commitable;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListen
     @Autowired
     protected Generator generator;
     @Autowired
-    protected Security security;
+    protected Digest digest;
     @Autowired
     protected Logger logger;
     @Autowired
@@ -93,7 +93,7 @@ public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListen
     }
 
     protected String getKey(Session session) {
-        return security.md5(key + session.getId());
+        return digest.md5(key + session.getId());
     }
 
     @Override

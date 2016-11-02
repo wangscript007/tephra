@@ -1,13 +1,13 @@
 package org.lpw.tephra.weixin.gateway;
 
 import net.sf.json.JSONObject;
+import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.ctrl.context.Header;
 import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Security;
 import org.lpw.tephra.util.Xml;
 import org.lpw.tephra.weixin.WeixinHelper;
 import org.lpw.tephra.weixin.WeixinListener;
@@ -34,7 +34,7 @@ public abstract class PayGatewaySupport implements PayGateway {
     @Autowired
     protected Xml xml;
     @Autowired
-    protected Security security;
+    protected Digest digest;
     @Autowired
     protected Logger logger;
     @Autowired
@@ -114,6 +114,6 @@ public abstract class PayGatewaySupport implements PayGateway {
         list.forEach(key -> sb.append(key).append('=').append(map.get(key)).append('&'));
         sb.append("key=").append(mchKey);
 
-        return security.md5(sb.toString()).toUpperCase();
+        return digest.md5(sb.toString()).toUpperCase();
     }
 }

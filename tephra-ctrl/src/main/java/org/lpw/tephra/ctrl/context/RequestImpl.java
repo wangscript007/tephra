@@ -1,5 +1,6 @@
 package org.lpw.tephra.ctrl.context;
 
+import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.ctrl.Coder;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelHelper;
@@ -7,7 +8,6 @@ import org.lpw.tephra.dao.model.ModelTable;
 import org.lpw.tephra.dao.model.ModelTables;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Security;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +32,7 @@ public class RequestImpl implements Request, RequestAware {
     @Autowired
     protected Converter converter;
     @Autowired
-    protected Security security;
+    protected Digest digest;
     @Autowired
     protected Logger logger;
     @Autowired
@@ -153,7 +153,7 @@ public class RequestImpl implements Request, RequestAware {
             sb.append(key).append('=').append(map.get(key)).append('&');
         sb.append(signKey);
 
-        return security.md5(sb.toString());
+        return digest.md5(sb.toString());
     }
 
     @Override

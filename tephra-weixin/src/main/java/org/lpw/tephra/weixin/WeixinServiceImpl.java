@@ -4,6 +4,7 @@ import net.sf.json.JSONObject;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.cache.Cache;
+import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.ctrl.context.Session;
 import org.lpw.tephra.dao.Commitable;
 import org.lpw.tephra.util.Context;
@@ -11,7 +12,6 @@ import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Security;
 import org.lpw.tephra.util.Validator;
 import org.lpw.tephra.util.Xml;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
     private static final String CACHE_NICKNAME = "tephra.weixin.service.nickname:";
 
     @Autowired
-    protected Security security;
+    protected Digest digest;
     @Autowired
     protected Validator validator;
     @Autowired
@@ -75,7 +75,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
         Collections.sort(list);
         StringBuilder sb = new StringBuilder();
         list.forEach(sb::append);
-        boolean success = security.sha1(sb.toString()).equals(signature);
+        boolean success = digest.sha1(sb.toString()).equals(signature);
 
         if (logger.isDebugEnable())
             logger.debug("验证服务器[{}:signature={};timestamp={};nonce={}]。", success, signature, timestamp, nonce);
