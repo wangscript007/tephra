@@ -16,6 +16,14 @@ public interface ResponseAdapter {
     void setContentType(String contentType);
 
     /**
+     * 设置头信息。
+     *
+     * @param name  名称。
+     * @param value 值。
+     */
+    void setHeader(String name, String value);
+
+    /**
      * 获取输出流。
      *
      * @return 输出流。

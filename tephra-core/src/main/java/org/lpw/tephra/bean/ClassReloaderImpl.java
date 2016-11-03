@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -56,6 +57,7 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
     protected Set<String> names;
     protected Map<Class<?>, List<Autowire>> autowires;
     protected ApplicationContext applicationContext;
+    protected long lastModified = 0L;
 
     @Override
     public boolean isReloadEnable(String name) {
@@ -98,7 +100,12 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
 
     protected Set<String> names() {
         Set<String> set = new HashSet<>();
-        String path = context.getAbsolutePath(classPath + "/name");
+        File file = new File(context.getAbsolutePath(classPath + "/name"));
+        if (file.lastModified() <= lastModified)
+            return set;
+
+        lastModified = file.lastModified();
+        String path = file.getAbsolutePath();
         String names = new String(io.read(path)).trim();
         if (validator.isEmpty(names))
             return set;

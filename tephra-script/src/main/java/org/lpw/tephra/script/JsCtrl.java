@@ -1,6 +1,7 @@
 package org.lpw.tephra.script;
 
 import org.lpw.tephra.ctrl.context.Request;
+import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.ctrl.execute.Execute;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.ctrl.validate.Validate;
@@ -22,7 +23,7 @@ public class JsCtrl {
     @Autowired
     protected Request request;
     @Autowired
-    protected Templates templates;
+    protected Response response;
     @Autowired
     protected Engine engine;
 
@@ -45,7 +46,7 @@ public class JsCtrl {
             @Validate(validator = ScriptValidator.NAME, parameter = "parameter", string = {"validator1", "validator2"})
     })
     public Object debugScript() {
-        templates.get(Templates.STREAM).setContentType("text/javascript");
+        response.setContentType("text/javascript");
         String uri = request.getUri();
 
         return engine.read(uri.substring(uri.lastIndexOf('/')));

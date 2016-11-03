@@ -32,10 +32,16 @@ public class ResponseImpl implements Response, ResponseAware {
     @Autowired(required = false)
     protected Coder coder;
     protected ThreadLocal<ResponseAdapter> adapter = new ThreadLocal<>();
+    protected ThreadLocal<String> contentType = new ThreadLocal<>();
 
     @Override
     public void setContentType(String contentType) {
-        adapter.get().setContentType(contentType);
+        this.contentType.set(contentType);
+    }
+
+    @Override
+    public void setHeader(String name, String value) {
+        adapter.get().setHeader(name, value);
     }
 
     @Override
@@ -56,7 +62,7 @@ public class ResponseImpl implements Response, ResponseAware {
                 view = templateHelper.getTemplate();
                 templateHelper.setTemplate(null);
             }
-            setContentType(template.getContentType());
+            setContentType(validator.isEmpty(contentType.get()) ? template.getContentType() : contentType.get());
             if (coder == null) {
                 template.process(view, object, getOutputStream());
 

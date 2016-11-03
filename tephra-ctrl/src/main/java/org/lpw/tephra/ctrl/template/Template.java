@@ -24,13 +24,6 @@ public interface Template {
     String getContentType();
 
     /**
-     * 设置当前请求输出内容类型。
-     *
-     * @param contentType 当前请求输出内容类型。
-     */
-    void setContentType(String contentType);
-
-    /**
      * 封装验证失败结果信息。
      *
      * @param code      验证失败编码。

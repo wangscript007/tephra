@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl;
 
-import org.lpw.tephra.scheduler.MinuteJob;
+import org.lpw.tephra.scheduler.SecondsJob;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
@@ -17,7 +17,7 @@ import java.util.Set;
  * @auth lpw
  */
 @Controller("tephra.ctrl.trustful-ip")
-public class TrustfulIpImpl implements TrustfulIp, MinuteJob {
+public class TrustfulIpImpl implements TrustfulIp, SecondsJob {
     @Autowired
     protected Context context;
     @Autowired
@@ -45,9 +45,9 @@ public class TrustfulIpImpl implements TrustfulIp, MinuteJob {
     }
 
     @Override
-    public void executeMinuteJob() {
+    public void executeSecondsJob() {
         File file = new File(context.getAbsolutePath(trustfulIp));
-        if (lastModified >= file.lastModified())
+        if (file.lastModified()<=lastModified)
             return;
 
         lastModified = file.lastModified();

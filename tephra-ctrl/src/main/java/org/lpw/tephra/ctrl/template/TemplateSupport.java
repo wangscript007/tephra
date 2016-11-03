@@ -23,26 +23,6 @@ public abstract class TemplateSupport implements Template {
     protected int busy;
     @Value("${tephra.ctrl.dispatcher.exception:9999}")
     protected int exception;
-    protected ThreadLocal<String> contentType = new ThreadLocal<>();
-
-    @Override
-    public String getContentType() {
-        String contentType = this.contentType.get();
-
-        return validator.isEmpty(contentType) ? getDefaultContentType() : contentType;
-    }
-
-    @Override
-    public void setContentType(String contentType) {
-        this.contentType.set(contentType);
-    }
-
-    /**
-     * 获取默认请求输出内容类型。
-     *
-     * @return 请求输出内容类型。
-     */
-    protected abstract String getDefaultContentType();
 
     @Override
     public Object failure(int code, String message, String parameter, String value) {

@@ -28,7 +28,7 @@ public class TemplateImpl extends TemplateSupport implements Template {
     }
 
     @Override
-    protected String getDefaultContentType() {
+    public String getContentType() {
         return "text/plain";
     }
 

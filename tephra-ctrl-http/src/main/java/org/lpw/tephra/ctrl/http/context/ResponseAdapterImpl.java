@@ -1,7 +1,6 @@
 package org.lpw.tephra.ctrl.http.context;
 
 import org.lpw.tephra.bean.BeanFactory;
-import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.ctrl.context.ResponseAdapter;
 import org.lpw.tephra.util.Logger;
 
@@ -26,6 +25,11 @@ public class ResponseAdapterImpl implements ResponseAdapter {
     @Override
     public void setContentType(String contentType) {
         response.setContentType(contentType);
+    }
+
+    @Override
+    public void setHeader(String name, String value) {
+        response.setHeader(name, value);
     }
 
     @Override

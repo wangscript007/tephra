@@ -17,6 +17,10 @@ public class MockResponseImpl implements MockResponse {
     }
 
     @Override
+    public void setHeader(String name, String value) {
+    }
+
+    @Override
     public String getRedirectTo() {
         return url;
     }

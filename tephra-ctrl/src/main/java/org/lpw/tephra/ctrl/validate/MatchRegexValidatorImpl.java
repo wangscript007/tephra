@@ -16,10 +16,9 @@ public class MatchRegexValidatorImpl extends ValidatorSupport {
 
     @Override
     protected Object[] getFailureMessageArgs(ValidateWrapper validate) {
-        if (validator.isEmpty(validate.getFailureArgKeys()))
-            return new Object[]{validate.getString()[0]};
+        Object[] args = super.getFailureMessageArgs(validate);
 
-        return new Object[]{message.get(validate.getFailureArgKeys()[0]), validate.getString()[0]};
+        return new Object[]{args[0], validate.getString()[0]};
     }
 
     @Override
