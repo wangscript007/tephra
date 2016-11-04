@@ -62,7 +62,7 @@ public class ResponseImpl implements Response, ResponseAware {
                 view = templateHelper.getTemplate();
                 templateHelper.setTemplate(null);
             }
-            setContentType(validator.isEmpty(contentType.get()) ? template.getContentType() : contentType.get());
+            adapter.get().setContentType(validator.isEmpty(contentType.get()) ? template.getContentType() : contentType.get());
             if (coder == null) {
                 template.process(view, object, getOutputStream());
 

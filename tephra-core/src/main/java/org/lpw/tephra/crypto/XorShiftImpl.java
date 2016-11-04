@@ -1,5 +1,7 @@
 package org.lpw.tephra.crypto;
 
+import org.lpw.tephra.util.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -7,8 +9,14 @@ import org.springframework.stereotype.Component;
  */
 @Component("tephra.crypto.xor-shift")
 public class XorShiftImpl implements XorShift {
+    @Autowired
+    protected Validator validator;
+
     @Override
     public byte[] encrypt(byte[] key, byte[] message) {
+        if (validator.isEmpty(key) || validator.isEmpty(message))
+            return null;
+
         byte[] k = key(key, message.length);
         byte[] msg = copy(message);
         xor(k, msg);
@@ -20,6 +28,9 @@ public class XorShiftImpl implements XorShift {
 
     @Override
     public byte[] decrypt(byte[] key, byte[] message) {
+        if (validator.isEmpty(key) || validator.isEmpty(message))
+            return null;
+
         byte[] k = key(key, message.length);
         byte[] msg = copy(message);
         for (int i = msg.length - 1; i > -1; i--)

@@ -18,7 +18,7 @@ public abstract class CipherSupport {
     protected Validator validator;
     @Autowired
     protected Logger logger;
-    protected Map<StringBuilder, SecretKey> secretKeys = new ConcurrentHashMap<>();
+    protected Map<String, SecretKey> secretKeys = new ConcurrentHashMap<>();
 
     public byte[] encrypt(byte[] key, byte[] message) {
         return doFinal(key, message, Cipher.ENCRYPT_MODE);
@@ -33,8 +33,12 @@ public abstract class CipherSupport {
             return null;
 
         try {
+            SecretKey secretKey = getSecretKey(key);
+            if (secretKey == null)
+                return null;
+
             Cipher cipher = Cipher.getInstance(getAlgorithm());
-            cipher.init(mode, getSecretKey(key));
+            cipher.init(mode, secretKey);
 
             return cipher.doFinal(input);
         } catch (Exception e) {
@@ -52,11 +56,11 @@ public abstract class CipherSupport {
         sb.append(getAlgorithm());
         for (byte by : key)
             sb.append(by);
-
-        SecretKey secretKey = secretKeys.get(sb);
+        String mapKey = sb.toString();
+        SecretKey secretKey = secretKeys.get(mapKey);
         if (secretKey == null) {
             secretKey = new SecretKeySpec(key, getAlgorithm());
-            secretKeys.put(sb, secretKey);
+            secretKeys.put(mapKey, secretKey);
         }
 
         return secretKey;

@@ -26,7 +26,7 @@ public class DigestImpl implements Digest {
 
     @Override
     public String md5(byte[] text) {
-        return text == null ? null : digest(MD5, text);
+        return digest(MD5, text);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DigestImpl implements Digest {
 
     @Override
     public String sha1(byte[] text) {
-        return text == null ? null : digest(SHA1, text);
+        return digest(SHA1, text);
     }
 
     protected String digest(String algorithm, byte[] input) {
