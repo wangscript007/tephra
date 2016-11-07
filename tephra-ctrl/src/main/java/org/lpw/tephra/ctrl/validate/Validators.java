@@ -70,6 +70,10 @@ public interface Validators {
      * 参数签名验证器Bean名称。如果参数签名验证合法则返回true；否则返回false。
      */
     String SIGN = PREFIX + "sign";
+    /**
+     * 可信任IP验证器Bean名称。如果请求IP在可信任IP名单内则返回true；否则返回false。
+     */
+    String TRUSTFUL_IP = PREFIX + "trustful-ip";
 
     /**
      * 验证参数是否合法。
