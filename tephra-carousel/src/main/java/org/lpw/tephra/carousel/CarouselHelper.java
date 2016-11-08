@@ -7,7 +7,7 @@ import java.util.Map;
  */
 public interface CarouselHelper {
     /**
-     * 更新配置。
+     * 更新消息配置。
      *
      * @param name          配置名称。
      * @param description   配置描述。
@@ -17,7 +17,7 @@ public interface CarouselHelper {
     boolean config(String name, String description, ActionBuilder actionBuilder);
 
     /**
-     * 更新配置。
+     * 更新消息配置。
      *
      * @param name          配置名称。
      * @param description   配置描述。
@@ -31,7 +31,7 @@ public interface CarouselHelper {
     boolean config(String name, String description, ActionBuilder actionBuilder, int delay, int interval, int times, boolean wait);
 
     /**
-     * 执行流程。
+     * 执行消息流程。
      *
      * @param name   流程配置名称。
      * @param delay  延迟时间，单位：秒。
@@ -39,5 +39,24 @@ public interface CarouselHelper {
      * @param data   数据。
      * @return 执行结果。
      */
-    String execute(String name, int delay, Map<String, String> header, String data);
+    String process(String name, int delay, Map<String, String> header, String data);
+
+    /**
+     * 注册服务。
+     *
+     * @param key     服务key。
+     * @param service 服务URI地址。
+     * @return 注册结果；注册成功则返回true；否则返回false。
+     */
+    boolean register(String key, String service);
+
+    /**
+     * 执行服务。
+     *
+     * @param key       服务key。
+     * @param header    头信息。
+     * @param parameter 请求参数。
+     * @return 执行结果。
+     */
+    String service(String key, Map<String, String> header, Map<String, String> parameter);
 }

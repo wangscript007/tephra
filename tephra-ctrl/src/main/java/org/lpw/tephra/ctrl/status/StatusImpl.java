@@ -29,6 +29,11 @@ public class StatusImpl implements Status, ContextRefreshedListener {
     protected JSONObject version;
 
     @Override
+    public String getUri() {
+        return uri;
+    }
+
+    @Override
     public boolean isStatus(String uri) {
         return enable && this.uri.equals(uri);
     }

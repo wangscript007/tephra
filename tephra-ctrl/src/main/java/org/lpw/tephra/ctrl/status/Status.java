@@ -10,6 +10,13 @@ import net.sf.json.JSONObject;
  */
 public interface Status {
     /**
+     * 获取URI地址。
+     *
+     * @return URI地址。
+     */
+    String getUri();
+
+    /**
      * 验证是否执行状态服务。
      *
      * @param uri 服务URI地址。

@@ -238,8 +238,12 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     }
 
     protected CloseableHttpResponse execute(HttpUriRequest request, Map<String, String> headers) throws IOException {
-        if (!validator.isEmpty(headers))
-            headers.forEach(request::addHeader);
+        if (!validator.isEmpty(headers)) {
+            headers.forEach((name, value) -> {
+                if (!name.toLowerCase().equals("content-length"))
+                    request.addHeader(name, value);
+            });
+        }
         request.addHeader("time-hash", converter.toString(timeHash.generate()));
 
         return HttpClients.custom().setConnectionManager(manager).build().execute(request, HttpClientContext.create());
