@@ -66,7 +66,7 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
     }
 
     @Override
-    public void rollback() {
+    public void fail(Throwable throwable) {
         Map<String, Connection> connections = this.connections.get();
         if (validator.isEmpty(connections))
             return;
@@ -106,7 +106,7 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
             } catch (SQLException e) {
                 logger.warn(e, "关闭数据库连接时发生异常！");
 
-                rollback();
+                fail(e);
             }
         });
 

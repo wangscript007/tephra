@@ -1,6 +1,7 @@
 package org.lpw.tephra.dao;
 
 import net.sf.json.JSONObject;
+import org.lpw.tephra.atomic.Atomicable;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.dao.jdbc.DataSource;
 
@@ -72,6 +73,6 @@ public class DaoUtil {
     }
 
     public static void close() {
-        BeanFactory.getBeans(Commitable.class).forEach(Commitable::close);
+        BeanFactory.getBeans(Atomicable.class).forEach(Atomicable::close);
     }
 }

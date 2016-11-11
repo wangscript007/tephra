@@ -95,8 +95,8 @@ public abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
     }
 
     @Override
-    public void rollback() {
-        connection.rollback();
+    public void fail(Throwable throwable) {
+        connection.fail(throwable);
     }
 
     @Override

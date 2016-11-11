@@ -45,6 +45,15 @@ public interface UploadListener {
     }
 
     /**
+     * 获取存储处理器。
+     *
+     * @return 存储处理器。
+     */
+    default String getStorage() {
+        return null;
+    }
+
+    /**
      * 处理上传信息。
      *
      * @param key  上传文件key。

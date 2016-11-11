@@ -1,5 +1,7 @@
 package org.lpw.tephra.scheduler;
 
+import org.lpw.tephra.atomic.Closable;
+import org.lpw.tephra.atomic.Failable;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Logger;
@@ -23,7 +25,9 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
     @Autowired
     protected Logger logger;
     @Autowired(required = false)
-    protected Set<SchedulerJobListener> listeners;
+    protected Set<Failable> failables;
+    @Autowired(required = false)
+    protected Set<Closable> closables;
     protected Set<Integer> runningJobs;
     protected ExecutorService executorService;
 
@@ -45,9 +49,6 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
     protected void begin(T job) {
         if (job != null)
             runningJobs.add(job.hashCode());
-
-        if (!validator.isEmpty(listeners))
-            listeners.forEach(SchedulerJobListener::begin);
     }
 
     /**
@@ -85,8 +86,8 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
      * @param throwable 异常信息。
      */
     protected void exception(Throwable throwable) {
-        if (!validator.isEmpty(listeners))
-            listeners.forEach(listener -> listener.exception(throwable));
+        if (!validator.isEmpty(failables))
+            failables.forEach(failable -> failable.fail(throwable));
 
         logger.warn(throwable, "执行定时器任务时发生异常！");
     }
@@ -100,8 +101,8 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
         if (job != null)
             runningJobs.remove(job.hashCode());
 
-        if (!validator.isEmpty(listeners))
-            listeners.forEach(SchedulerJobListener::finish);
+        if (!validator.isEmpty(closables))
+            closables.forEach(Closable::close);
     }
 
     @Override

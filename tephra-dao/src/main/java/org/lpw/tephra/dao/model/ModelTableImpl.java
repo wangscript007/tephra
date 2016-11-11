@@ -36,6 +36,7 @@ public class ModelTableImpl implements ModelTable {
     protected String tableName;
     protected String memoryName;
     protected String idColumnName;
+    protected boolean uuid;
     protected Map<String, Method> getMethods = new HashMap<>();
     protected Map<String, Method> jsonableMethods = new HashMap<>();
     protected Map<String, Jsonable> jsonables = new HashMap<>();
@@ -83,6 +84,16 @@ public class ModelTableImpl implements ModelTable {
     @Override
     public void setIdColumnName(String idColumnName) {
         this.idColumnName = idColumnName.toLowerCase();
+    }
+
+    @Override
+    public boolean isUuid() {
+        return uuid;
+    }
+
+    @Override
+    public void setUuid(boolean uuid) {
+        this.uuid = uuid;
     }
 
     @Override

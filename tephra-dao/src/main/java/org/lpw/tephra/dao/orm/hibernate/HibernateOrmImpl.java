@@ -193,8 +193,8 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
     }
 
     @Override
-    public void rollback() {
-        session.rollback();
+    public void fail(Throwable throwable) {
+        session.fail(throwable);
     }
 
     @Override

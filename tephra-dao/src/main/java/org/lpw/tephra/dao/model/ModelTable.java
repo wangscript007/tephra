@@ -66,6 +66,20 @@ public interface ModelTable {
     void setIdColumnName(String idColumnName);
 
     /**
+     * 获取ID是否为UUID。
+     *
+     * @return ID为UUID则返回true；否则返回false。
+     */
+    boolean isUuid();
+
+    /**
+     * 设置ID是否为UUID。
+     *
+     * @param uuid ID为UUID则为true；否则为false。
+     */
+    void setUuid(boolean uuid);
+
+    /**
      * 增加GET方法。
      *
      * @param name   方法名。

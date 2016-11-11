@@ -183,7 +183,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     protected <T extends Model> int insert(String dataSource, T model, ModelTable modelTable) {
         StringBuilder insertSql = new StringBuilder().append("INSERT INTO ").append(modelTable.getTableName()).append('(');
         List<Object> args = new ArrayList<>();
-        if (model.getId() == null)
+        if (model.getId() == null && modelTable.isUuid())
             model.setId(generator.uuid());
         int columnCount = 0;
         if (model.getId() != null) {
@@ -323,8 +323,8 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     }
 
     @Override
-    public void rollback() {
-        sql.rollback();
+    public void fail(Throwable throwable) {
+        sql.fail(throwable);
     }
 
     @Override

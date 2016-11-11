@@ -66,7 +66,7 @@ public class SessionImpl extends ConnectionSupport<Session> implements org.lpw.t
     }
 
     @Override
-    public void rollback() {
+    public void fail(Throwable throwable) {
         Map<String, Session> sessions = this.sessions.get();
         if (validator.isEmpty(sessions))
             return;

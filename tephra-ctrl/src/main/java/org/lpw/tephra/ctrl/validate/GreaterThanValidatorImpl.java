@@ -16,10 +16,9 @@ public class GreaterThanValidatorImpl extends ValidatorSupport {
 
     @Override
     protected Object[] getFailureMessageArgs(ValidateWrapper validate) {
-        if (validator.isEmpty(validate.getFailureArgKeys()))
-            return new Object[]{validate.getNumber()[0]};
+        Object[] args = super.getFailureMessageArgs(validate);
 
-        return new Object[]{message.get(validate.getFailureArgKeys()[0]), validate.getNumber()[0]};
+        return new Object[]{args[0], validate.getNumber()[0]};
     }
 
     @Override

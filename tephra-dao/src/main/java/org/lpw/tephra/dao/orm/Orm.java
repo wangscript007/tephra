@@ -1,6 +1,6 @@
 package org.lpw.tephra.dao.orm;
 
-import org.lpw.tephra.dao.Commitable;
+import org.lpw.tephra.atomic.Atomicable;
 import org.lpw.tephra.dao.model.Model;
 
 import java.util.Collection;
@@ -10,7 +10,7 @@ import java.util.Collection;
  *
  * @author lpw
  */
-public interface Orm<Q extends Query> extends Commitable {
+public interface Orm<Q extends Query> extends Atomicable {
     /**
      * 根据ID值获取Model实例。
      *

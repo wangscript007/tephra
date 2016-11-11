@@ -1,5 +1,6 @@
 package org.lpw.tephra.dao.orm.mybatis;
 
+import org.lpw.tephra.atomic.Atomicable;
 import org.lpw.tephra.dao.Mode;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.Map;
  *
  * @author lpw
  */
-public interface MybatisOrm {
+public interface MybatisOrm extends Atomicable {
     /**
      * 获取Mapper实例。
      *
@@ -87,14 +88,4 @@ public interface MybatisOrm {
      * @return 受影响记录数。
      */
     int delete(MybatisBuilder builder);
-
-    /**
-     * 手动回滚本次事务所有更新操作。
-     */
-    void rollback();
-
-    /**
-     * 提交持久化，并关闭当前线程的所有连接。
-     */
-    void close();
 }

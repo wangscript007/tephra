@@ -274,14 +274,6 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     }
 
     @Override
-    public void rollback() {
-    }
-
-    @Override
-    public void close() {
-    }
-
-    @Override
     public int getContextRefreshedSort() {
         return 5;
     }

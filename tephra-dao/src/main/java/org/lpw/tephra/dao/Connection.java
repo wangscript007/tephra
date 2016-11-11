@@ -1,12 +1,14 @@
 package org.lpw.tephra.dao;
 
+import org.lpw.tephra.atomic.Atomicable;
+
 /**
  * DAO连接。
  * 定义DAO连接接口。
  *
  * @author lpw
  */
-public interface Connection<T> extends Commitable {
+public interface Connection<T> extends Atomicable {
     /**
      * 开始事务控制。
      * 开始后当前线程通过get方法请求的Connection均为同一个，并且为可读写连接实例。

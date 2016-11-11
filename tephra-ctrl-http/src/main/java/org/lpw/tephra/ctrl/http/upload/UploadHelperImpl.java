@@ -3,12 +3,13 @@ package org.lpw.tephra.ctrl.http.upload;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.lpw.tephra.atomic.Closable;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.ctrl.http.IgnoreUri;
 import org.lpw.tephra.ctrl.http.ServiceHelper;
-import org.lpw.tephra.dao.Commitable;
-import org.lpw.tephra.util.Context;
+import org.lpw.tephra.storage.Storage;
+import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
@@ -37,15 +38,15 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     @Autowired
     protected Validator validator;
     @Autowired
-    protected Context context;
-    @Autowired
     protected Generator generator;
     @Autowired
     protected Converter converter;
     @Autowired
     protected Logger logger;
     @Autowired
-    protected Set<Commitable> commitables;
+    protected Storages storages;
+    @Autowired(required = false)
+    protected Set<Closable> closables;
     @Autowired
     protected ServiceHelper serviceHelper;
     @Autowired
@@ -65,11 +66,12 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
 
                 String key = item.getFieldName();
                 UploadListener listener = getListener(key);
-                if (listener == null)
-                    listener = jsonConfigs.get(item.getFieldName());
-                if (listener == null || !listener.isUploadEnable(key, item.getContentType(), item.getName())) {
-                    if (logger.isDebugEnable())
-                        logger.debug("无法获得上传监听器[{}]。", item.getFieldName());
+                if (listener == null || !listener.isUploadEnable(key, item.getContentType(), item.getName()))
+                    return;
+
+                Storage storage = storages.get(listener.getStorage());
+                if (storage == null) {
+                    logger.warn(null, "无法获得存储处理器[{}]，文件上传失败！", listener.getStorage());
 
                     return;
                 }
@@ -78,10 +80,9 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
                     int[] size = listener.getImageSize(key);
                     boolean image = item.getContentType().startsWith("image/") && size != null && size.length == 2 && (size[0] > 0 || size[1] > 0);
                     String path = getPath(listener, item);
-                    File file = new File(context.getAbsolutePath(path));
-                    file.getParentFile().mkdirs();
-                    if (!image || !image(item, size, file))
-                        item.write(file);
+
+                    if (!image || !image(item, size, storage, path))
+                        storage.write(path, item.getInputStream());
                     String result = listener.upload(key, item.getName(), converter.toBitSize(item.getSize()), path);
                     item.delete();
 
@@ -99,7 +100,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
         } catch (Throwable e) {
             logger.warn(e, "处理文件上传时发生异常！");
         } finally {
-            commitables.forEach(Commitable::close);
+            closables.forEach(Closable::close);
         }
     }
 
@@ -122,7 +123,11 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
             if (validator.isMatchRegex(k, key))
                 return listeners.get(k);
 
-        return null;
+        UploadListener listener = jsonConfigs.get(key);
+        if (listener == null)
+            logger.warn(null, "无法获得上传监听器[{}]，文件上传失败！", key);
+
+        return listener;
     }
 
     protected String getPath(UploadListener listener, FileItem item) {
@@ -134,7 +139,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
         return path.toString().replaceAll("[/]+", "/");
     }
 
-    protected boolean image(FileItem item, int[] size, File file) {
+    protected boolean image(FileItem item, int[] size, Storage storage, String path) {
         try {
             Image image = ImageIO.read(item.getInputStream());
             int width = image.getWidth(null);
@@ -154,7 +159,9 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
             Graphics graphics = bufferedImage.getGraphics();
             graphics.drawImage(image, 0, 0, width, height, null);
             graphics.dispose();
-            ImageIO.write(bufferedImage, item.getContentType().substring(item.getContentType().indexOf('/') + 1), file);
+            OutputStream outputStream = storage.getOutputStream(path);
+            ImageIO.write(bufferedImage, item.getContentType().substring(item.getContentType().indexOf('/') + 1), outputStream);
+            outputStream.close();
 
             return true;
         } catch (Exception e) {
@@ -165,11 +172,18 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     }
 
     @Override
-    public void remove(String uri) {
-        new File(context.getAbsolutePath(uri)).delete();
+    public void remove(String key, String uri) {
+        UploadListener listener = getListener(key);
+        if (listener == null) {
+            logger.warn(null, "无法获得上传监听key[{}]，删除失败！", key);
+
+            return;
+        }
+
+        storages.get(listener.getStorage()).delete(uri);
 
         if (logger.isDebugEnable())
-            logger.debug("删除上传的文件[{}]。", uri);
+            logger.debug("删除上传的文件[{}:{}]。", listener.getStorage(), uri);
     }
 
     @Override

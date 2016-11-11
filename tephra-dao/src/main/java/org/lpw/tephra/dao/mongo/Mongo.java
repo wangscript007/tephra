@@ -5,7 +5,6 @@ import com.mongodb.client.MongoDatabase;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.bson.Document;
-import org.lpw.tephra.dao.Commitable;
 import org.lpw.tephra.dao.model.Model;
 
 /**
@@ -13,7 +12,7 @@ import org.lpw.tephra.dao.model.Model;
  *
  * @author lpw
  */
-public interface Mongo extends Commitable {
+public interface Mongo {
     /**
      * 获取Mongo数据库。
      *

@@ -64,7 +64,7 @@ public class SessionImpl extends ConnectionSupport<SqlSession> implements Sessio
     }
 
     @Override
-    public void rollback() {
+    public void fail(Throwable throwable) {
         Map<String, SqlSession> sessions = this.sessions.get();
         if (validator.isEmpty(sessions))
             return;

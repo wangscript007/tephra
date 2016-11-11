@@ -70,8 +70,8 @@ public class MybatisOrmImpl implements MybatisOrm {
     }
 
     @Override
-    public void rollback() {
-        session.rollback();
+    public void fail(Throwable throwable) {
+        session.fail(throwable);
     }
 
     @Override

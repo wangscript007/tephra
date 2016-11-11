@@ -1,5 +1,7 @@
 package org.lpw.tephra.ctrl;
 
+import org.lpw.tephra.atomic.Closable;
+import org.lpw.tephra.atomic.Failable;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.ctrl.console.Console;
 import org.lpw.tephra.ctrl.context.Header;
@@ -8,10 +10,7 @@ import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.ctrl.execute.ExecuteInvocation;
 import org.lpw.tephra.ctrl.execute.ExecutorHelper;
 import org.lpw.tephra.ctrl.status.Status;
-import org.lpw.tephra.ctrl.template.TemplateHelper;
-import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.ctrl.validate.Validators;
-import org.lpw.tephra.dao.Commitable;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
@@ -35,8 +34,10 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
     protected Converter converter;
     @Autowired
     protected Logger logger;
-    @Autowired
-    protected Set<Commitable> commitables;
+    @Autowired(required = false)
+    protected Set<Failable> failables;
+    @Autowired(required = false)
+    protected Set<Closable> closables;
     @Autowired
     protected Header header;
     @Autowired
@@ -89,7 +90,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         }
 
         execute(statusService, consoleService);
-        commitables.forEach(Commitable::close);
+        closables.forEach(Closable::close);
         counter.decrease(ip);
 
         if (logger.isDebugEnable())
@@ -125,7 +126,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         try {
             return new ExecuteInvocation(interceptors, validators, executorHelper.get()).invoke();
         } catch (Throwable e) {
-            commitables.forEach(Commitable::rollback);
+            failables.forEach(failable -> failable.fail(e));
             logger.warn(e, "执行请求[{}:{}]时发生异常！", request.getUri(), executorHelper.get().getMethod());
 
             return Failure.Exception;

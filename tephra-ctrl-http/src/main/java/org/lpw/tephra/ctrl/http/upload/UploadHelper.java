@@ -27,7 +27,8 @@ public interface UploadHelper {
     /**
      * 删除上传的文件。
      *
+     * @param key 上传key。
      * @param uri 文件URI地址。
      */
-    void remove(String uri);
+    void remove(String key, String uri);
 }

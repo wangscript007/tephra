@@ -1,5 +1,5 @@
 # Carousel访问支持
-carousel模块提供访问Carousel服务的封装。
+carousel模块提供访问[Carousel](https://github.com/heisedebaise/carousel)服务的封装。
 
 [CarouselHelper](doc/helper.md "CarouselHelper")
 

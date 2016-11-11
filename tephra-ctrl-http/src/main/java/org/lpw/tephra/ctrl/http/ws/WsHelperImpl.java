@@ -1,10 +1,11 @@
 package org.lpw.tephra.ctrl.http.ws;
 
+import org.lpw.tephra.atomic.Closable;
+import org.lpw.tephra.atomic.Failable;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.ctrl.http.IgnoreUri;
-import org.lpw.tephra.dao.Commitable;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,10 @@ public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListen
     protected Digest digest;
     @Autowired
     protected Logger logger;
-    @Autowired
-    protected Set<Commitable> commitables;
+    @Autowired(required = false)
+    protected Set<Failable> failables;
+    @Autowired(required = false)
+    protected Set<Closable> closables;
     @Autowired(required = false)
     protected WsListener listener;
     @Value("${tephra.ctrl.http.web-socket.max:64}")
@@ -57,7 +60,7 @@ public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListen
         String key = getKey(session);
         sessions.put(key, session);
         listener.open(key);
-        commitables.forEach(Commitable::close);
+        closables.forEach(Closable::close);
     }
 
     @Override
@@ -66,7 +69,7 @@ public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListen
             return;
 
         listener.message(getKey(session), message);
-        commitables.forEach(Commitable::close);
+        closables.forEach(Closable::close);
     }
 
     @Override
@@ -77,7 +80,7 @@ public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListen
         String key = getKey(session);
         listener.error(key, throwable);
         logger.warn(throwable, "WebSocket执行异常！");
-        commitables.forEach(Commitable::close);
+        failables.forEach(failable -> failable.fail(throwable));
     }
 
     @Override
@@ -88,7 +91,7 @@ public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListen
         String key = getKey(session);
         listener.close(key);
         sessions.remove(key);
-        commitables.forEach(Commitable::close);
+        closables.forEach(Closable::close);
         counter.decrementAndGet();
     }
 

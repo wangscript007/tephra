@@ -1,13 +1,14 @@
 package org.lpw.tephra.dao.jdbc;
 
 import net.sf.json.JSONArray;
+import org.lpw.tephra.atomic.Atomicable;
 
 /**
  * JDBC操作接口。
  *
  * @author lpw
  */
-public interface Jdbc {
+public interface Jdbc extends Atomicable {
     /**
      * 执行检索操作。
      *
@@ -70,14 +71,4 @@ public interface Jdbc {
      * @return 影响记录数。
      */
     int update(String dataSource, String sql, Object[] args);
-
-    /**
-     * 手动回滚本次事务所有更新操作。
-     */
-    void rollback();
-
-    /**
-     * 提交持久化，并关闭当前线程的所有连接。
-     */
-    void close();
 }

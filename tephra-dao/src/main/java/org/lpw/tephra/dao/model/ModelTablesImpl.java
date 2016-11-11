@@ -1,5 +1,6 @@
 package org.lpw.tephra.dao.model;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Validator;
@@ -76,6 +77,9 @@ public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
 
             if (name.equals("getId")) {
                 modelTable.setIdColumnName(method.getAnnotation(Column.class).name());
+                GenericGenerator generator = method.getAnnotation(GenericGenerator.class);
+                if (generator != null && generator.name().toLowerCase().startsWith("uuid"))
+                    modelTable.setUuid(true);
 
                 continue;
             }

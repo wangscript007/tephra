@@ -1,12 +1,12 @@
 package org.lpw.tephra.weixin;
 
 import net.sf.json.JSONObject;
+import org.lpw.tephra.atomic.Atomicable;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.cache.Cache;
 import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.ctrl.context.Session;
-import org.lpw.tephra.dao.Commitable;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
@@ -55,7 +55,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
     @Autowired
     protected Xml xml;
     @Autowired
-    protected Set<Commitable> commitables;
+    protected Set<Atomicable> atomicables;
     @Autowired
     protected Session session;
     @Autowired
@@ -124,7 +124,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
                 String type = map.get("MsgType");
                 String messageId = map.get("MsgId");
                 xml(map, appId, userOpenId, time, type, messageId);
-                commitables.forEach(Commitable::close);
+                atomicables.forEach(Atomicable::close);
             });
         }
 

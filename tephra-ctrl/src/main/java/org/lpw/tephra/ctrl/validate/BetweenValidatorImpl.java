@@ -18,10 +18,9 @@ public class BetweenValidatorImpl extends ValidatorSupport {
 
     @Override
     protected Object[] getFailureMessageArgs(ValidateWrapper validate) {
-        if (validator.isEmpty(validate.getFailureArgKeys()))
-            return new Object[]{validate.getNumber()[0], validate.getNumber()[1]};
+        Object[] args = super.getFailureMessageArgs(validate);
 
-        return new Object[]{message.get(validate.getFailureArgKeys()[0]), validate.getNumber()[0], validate.getNumber()[1]};
+        return new Object[]{args[0], validate.getNumber()[0], validate.getNumber()[1]};
     }
 
     @Override
