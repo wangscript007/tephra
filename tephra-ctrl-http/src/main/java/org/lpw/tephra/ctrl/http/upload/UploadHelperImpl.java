@@ -66,8 +66,11 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
 
                 String key = item.getFieldName();
                 UploadListener listener = getListener(key);
-                if (listener == null || !listener.isUploadEnable(key, item.getContentType(), item.getName()))
+                if (listener == null || !listener.isUploadEnable(key, item.getContentType(), item.getName())) {
+                    logger.warn(null, "无法处理文件上传请求[key={}&content-type={}&name={}]！", key, item.getContentType(), item.getName());
+
                     return;
+                }
 
                 Storage storage = storages.get(listener.getStorage());
                 if (storage == null) {
