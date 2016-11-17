@@ -29,6 +29,11 @@
             <version>2.7.3</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <dependency>
             <groupId>org.lpw.tephra</groupId>
             <artifactId>tephra-ctrl</artifactId>
             <version>1.0.0-RELEASE</version>

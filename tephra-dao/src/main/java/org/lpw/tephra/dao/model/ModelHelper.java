@@ -67,4 +67,13 @@ public interface ModelHelper {
      * @param <T>       Model类。
      */
     <T extends Model> void copy(T source, T target, boolean containId);
+
+    /**
+     * 将Model转化为字符串。
+     *
+     * @param model Model实例。
+     * @param <T>   Model类型。
+     * @return 字符串。
+     */
+    <T extends Model> String toString(T model);
 }

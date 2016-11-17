@@ -361,4 +361,12 @@ public class ModelTableImpl implements ModelTable {
             }
         });
     }
+
+    @Override
+    public <T extends Model> String toString(T model) {
+        StringBuilder string = new StringBuilder().append("table=").append(tableName).append(";id=").append(model.getId());
+        columns.forEach((column, property) -> string.append(';').append(column).append('&').append(property).append('=').append(get(model, column)));
+
+        return string.toString();
+    }
 }

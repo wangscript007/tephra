@@ -144,4 +144,9 @@ public class ModelHelperImpl implements ModelHelper {
 
         modelTables.get(source.getClass()).copy(source, target, containId);
     }
+
+    @Override
+    public <T extends Model> String toString(T model) {
+        return modelTables.get(getModelClass(model.getClass())).toString(model);
+    }
 }
