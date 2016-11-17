@@ -37,7 +37,7 @@ public abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
     protected JSONArray queryAsJson(ResultSet rs) throws SQLException {
         JSONArray array = new JSONArray();
         String[] columns = new String[rs.getMetaData().getColumnCount()];
-        for (int i = 0; i <= columns.length; i++)
+        for (int i = 0; i < columns.length; i++)
             columns[i] = rs.getMetaData().getColumnLabel(i + 1);
         for (; rs.next(); ) {
             JSONObject object = new JSONObject();
