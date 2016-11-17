@@ -6,4 +6,6 @@ Hadoop模块提供hadoop操作支持。
 
 [上传文件到Hadppp](doc/upload.md)
 
+[Hbase](doc/hbase.md)
+
 [hadoop.tephra.config.properties](doc/config.md)
