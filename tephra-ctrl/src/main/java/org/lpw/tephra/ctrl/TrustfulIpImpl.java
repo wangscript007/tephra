@@ -4,6 +4,7 @@ import org.lpw.tephra.scheduler.SecondsJob;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
+import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,8 @@ public class TrustfulIpImpl implements TrustfulIp, SecondsJob {
     protected Validator validator;
     @Autowired
     protected Io io;
+    @Autowired
+    protected Logger logger;
     @Value("${tephra.ctrl.trustful-ip:/WEB-INF/trustful-ip}")
     protected String trustfulIp;
     protected Set<String> ips = new HashSet<>();
@@ -47,7 +50,7 @@ public class TrustfulIpImpl implements TrustfulIp, SecondsJob {
     @Override
     public void executeSecondsJob() {
         File file = new File(context.getAbsolutePath(trustfulIp));
-        if (file.lastModified()<=lastModified)
+        if (file.lastModified() <= lastModified)
             return;
 
         lastModified = file.lastModified();
@@ -65,5 +68,8 @@ public class TrustfulIpImpl implements TrustfulIp, SecondsJob {
         }
         this.ips = ips;
         this.patterns = patterns;
+
+        if (logger.isInfoEnable())
+            logger.info("更新信任IP[{}|{}]集。", converter.toString(ips), converter.toString(patterns));
     }
 }

@@ -55,7 +55,7 @@ public class CounterImpl implements Counter {
         if (n > ipMax) {
             cache.put(key, System.currentTimeMillis(), false);
 
-            logger.warn(null, "超过IP[{}]最大并发处理数[{}]。", ip, max);
+            logger.warn(null, "超过IP[{}]最大并发处理数[{}]。", ip, ipMax);
 
             return false;
         }

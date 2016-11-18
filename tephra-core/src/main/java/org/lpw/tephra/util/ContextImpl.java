@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component("tephra.util.context")
 public class ContextImpl implements Context {
     @Autowired
+    protected Thread thread;
+    @Autowired
     protected Logger logger;
     protected String root;
     protected Map<String, String> map = new ConcurrentHashMap<>();
@@ -30,6 +32,9 @@ public class ContextImpl implements Context {
 
     @Override
     public String getAbsolutePath(String path) {
+        while (root == null)
+            thread.sleep(100, TimeUnit.MilliSecond);
+
         String absolutePath = map.get(path);
         if (absolutePath == null) {
             if (path.startsWith("abs:"))
