@@ -64,7 +64,7 @@ public class DiskStorageImpl implements Storage {
     protected String getAbsolutePath(String path, boolean parent) {
         String absolutePath = context.getAbsolutePath(path);
         if (parent)
-            new File(absolutePath.substring(0, absolutePath.lastIndexOf('/'))).mkdirs();
+            new File(absolutePath.substring(0, absolutePath.lastIndexOf(File.separatorChar))).mkdirs();
 
         return absolutePath;
     }
