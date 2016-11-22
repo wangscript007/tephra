@@ -33,6 +33,16 @@ public class DiskStorageImpl implements Storage {
     }
 
     @Override
+    public String getAbsolutePath(String path) {
+        return context.getAbsolutePath(path);
+    }
+
+    @Override
+    public long lastModified(String path) {
+        return new File(path).lastModified();
+    }
+
+    @Override
     public void read(String path, OutputStream outputStream) throws IOException {
         InputStream inputStream = getInputStream(path);
         io.copy(inputStream, outputStream);

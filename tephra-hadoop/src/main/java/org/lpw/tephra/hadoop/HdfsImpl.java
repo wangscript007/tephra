@@ -6,6 +6,7 @@ import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.lpw.tephra.storage.Storage;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
@@ -24,7 +25,7 @@ import java.util.List;
  * @auth lpw
  */
 @Component("tephra.hadoop.hdfs")
-public class HdfsImpl implements Hdfs, ContextRefreshedListener {
+public class HdfsImpl implements Hdfs, Storage, ContextRefreshedListener {
     @Autowired
     protected Validator validator;
     @Autowired
@@ -38,6 +39,11 @@ public class HdfsImpl implements Hdfs, ContextRefreshedListener {
     protected ThreadLocal<FileSystem> fileSystem = new ThreadLocal<>();
 
     @Override
+    public String getType() {
+        return "hdfs";
+    }
+
+    @Override
     public List<String> list(String path, boolean recursive) {
         List<String> list = new ArrayList<>();
         if (isDisabled())
@@ -47,7 +53,7 @@ public class HdfsImpl implements Hdfs, ContextRefreshedListener {
             for (RemoteIterator<LocatedFileStatus> iterator = getFileSystem().listFiles(new Path(path), recursive); iterator.hasNext(); )
                 list.add(iterator.next().getPath().toUri().getPath());
         } catch (IOException e) {
-            logger.warn(e, "列出Hadoop文件[{}]时发生异常！", path);
+            logger.warn(e, "列出HDFS文件[{}]时发生异常！", path);
         }
 
         return list;
@@ -61,7 +67,26 @@ public class HdfsImpl implements Hdfs, ContextRefreshedListener {
         try {
             getFileSystem().mkdirs(new Path(path));
         } catch (IOException e) {
-            logger.warn(e, "创建Hadoop路径[{}]时发生异常！", path);
+            logger.warn(e, "创建HDFS路径[{}]时发生异常！", path);
+        }
+    }
+
+    @Override
+    public String getAbsolutePath(String path) {
+        return path;
+    }
+
+    @Override
+    public long lastModified(String path) {
+        if (isDisabled())
+            return 0L;
+
+        try {
+            return getFileSystem().getFileStatus(new Path(path)).getModificationTime();
+        } catch (IOException e) {
+            logger.warn(e, "获取HDFS文件[{}]最后修改时间时发生异常！", path);
+
+            return 0L;
         }
     }
 
@@ -89,8 +114,13 @@ public class HdfsImpl implements Hdfs, ContextRefreshedListener {
         try {
             io.copy(getFileSystem().open(new Path(path)), outputStream);
         } catch (IOException e) {
-            logger.warn(e, "读取Hadoop文件[{}]时发生异常！", path);
+            logger.warn(e, "读取HDFS文件[{}]时发生异常！", path);
         }
+    }
+
+    @Override
+    public void write(String path, InputStream inputStream) throws IOException {
+        write(inputStream, path);
     }
 
     @Override
@@ -104,7 +134,7 @@ public class HdfsImpl implements Hdfs, ContextRefreshedListener {
             outputStream.close();
             inputStream.close();
         } catch (IOException e) {
-            logger.warn(e, "写入Hadoop文件[{}]时发生异常！", path);
+            logger.warn(e, "写入HDFS文件[{}]时发生异常！", path);
         }
     }
 
@@ -118,7 +148,7 @@ public class HdfsImpl implements Hdfs, ContextRefreshedListener {
             outputStream.write(data, 0, data.length);
             outputStream.close();
         } catch (IOException e) {
-            logger.warn(e, "写入Hadoop文件[{}]时发生异常！", path);
+            logger.warn(e, "写入HDFS文件[{}]时发生异常！", path);
         }
     }
 
@@ -130,7 +160,7 @@ public class HdfsImpl implements Hdfs, ContextRefreshedListener {
         try {
             getFileSystem().delete(new Path(path), true);
         } catch (IOException e) {
-            logger.warn(e, "删除Hadoop文件[{}]时发生异常！", path);
+            logger.warn(e, "删除HDFS文件[{}]时发生异常！", path);
         }
     }
 
@@ -142,7 +172,7 @@ public class HdfsImpl implements Hdfs, ContextRefreshedListener {
         try {
             getFileSystem().copyFromLocalFile(new Path(file), new Path(path));
         } catch (IOException e) {
-            logger.warn(e, "上传文件[{}]到Hadoop目录[{}]时发生异常！", file, path);
+            logger.warn(e, "上传文件[{}]到HDFS目录[{}]时发生异常！", file, path);
         }
     }
 
@@ -154,7 +184,7 @@ public class HdfsImpl implements Hdfs, ContextRefreshedListener {
         try {
             getFileSystem().copyToLocalFile(new Path(file), new Path(path));
         } catch (IOException e) {
-            logger.warn(e, "下载Hadoop文件[{}]到目录[{}]时发生异常！", file, path);
+            logger.warn(e, "下载HDFS文件[{}]到目录[{}]时发生异常！", file, path);
         }
     }
 
@@ -214,7 +244,7 @@ public class HdfsImpl implements Hdfs, ContextRefreshedListener {
             fileSystem.close();
             this.fileSystem.remove();
         } catch (IOException e) {
-            logger.warn(e, "关闭Hadoop文件系统时发生异常！");
+            logger.warn(e, "关闭HDFS文件系统时发生异常！");
         }
     }
 }

@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl;
 
-import org.lpw.tephra.scheduler.SecondsJob;
+import org.lpw.tephra.storage.StorageListener;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +17,7 @@ import java.util.Set;
  * @auth lpw
  */
 @Controller("tephra.ctrl.trustful-ip")
-public class TrustfulIpImpl implements TrustfulIp, SecondsJob {
+public class TrustfulIpImpl implements TrustfulIp, StorageListener {
     @Autowired
     protected Context context;
     @Autowired
@@ -33,7 +32,6 @@ public class TrustfulIpImpl implements TrustfulIp, SecondsJob {
     protected String trustfulIp;
     protected Set<String> ips = new HashSet<>();
     protected Set<String> patterns = new HashSet<>();
-    protected long lastModified = 0L;
 
     @Override
     public boolean contains(String ip) {
@@ -48,15 +46,20 @@ public class TrustfulIpImpl implements TrustfulIp, SecondsJob {
     }
 
     @Override
-    public void executeSecondsJob() {
-        File file = new File(context.getAbsolutePath(trustfulIp));
-        if (file.lastModified() <= lastModified)
-            return;
+    public String getStorageType() {
+        return "disk";
+    }
 
-        lastModified = file.lastModified();
+    @Override
+    public String[] getScanPathes() {
+        return new String[]{trustfulIp};
+    }
+
+    @Override
+    public void onStorageChanged(String path, String absolutePath) {
         Set<String> ips = new HashSet<>();
         Set<String> patterns = new HashSet<>();
-        for (String string : converter.toArray(new String(io.read(file.getAbsolutePath())), "\n")) {
+        for (String string : converter.toArray(new String(io.read(absolutePath)), "\n")) {
             string = string.trim();
             if (string.equals("") || string.startsWith("#"))
                 continue;

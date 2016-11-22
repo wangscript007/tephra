@@ -30,6 +30,13 @@ public interface Hdfs extends Closable {
     void mkdirs(String path);
 
     /**
+     * 获取文件最后修改时间。
+     * @param path 路径。
+     * @return 最后修改时间。
+     */
+    long lastModified(String path);
+
+    /**
      * 读取文件。
      *
      * @param path 文件路径。

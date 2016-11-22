@@ -1,10 +1,13 @@
 package org.lpw.tephra.scheduler;
 
+import io.netty.util.internal.ConcurrentSet;
 import org.lpw.tephra.atomic.Closable;
 import org.lpw.tephra.atomic.Failable;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Thread;
+import org.lpw.tephra.util.TimeUnit;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,6 +25,8 @@ import java.util.concurrent.Executors;
 public abstract class SchedulerSupport<T> implements ContextRefreshedListener, ContextClosedListener {
     @Autowired
     protected Validator validator;
+    @Autowired
+    protected Thread thread;
     @Autowired
     protected Logger logger;
     @Autowired(required = false)
@@ -57,6 +62,9 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
      * @param job 要执行的任务实例。
      */
     protected void pool(T job) {
+        while (runningJobs == null)
+            thread.sleep(100, TimeUnit.MilliSecond);
+
         if (isRunning(job))
             return;
 
@@ -107,18 +115,18 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
 
     @Override
     public int getContextRefreshedSort() {
-        return 6;
+        return 4;
     }
 
     @Override
     public void onContextRefreshed() {
-        runningJobs = Collections.synchronizedSet(new HashSet<>());
+        runningJobs = new ConcurrentSet<>();
         executorService = Executors.newCachedThreadPool();
     }
 
     @Override
     public int getContextClosedSort() {
-        return 6;
+        return 4;
     }
 
     @Override
