@@ -32,15 +32,17 @@ public class ContextImpl implements Context {
 
     @Override
     public String getAbsolutePath(String path) {
-        while (root == null)
-            thread.sleep(100, TimeUnit.MilliSecond);
-
         String absolutePath = map.get(path);
         if (absolutePath == null) {
             if (path.startsWith("abs:"))
                 absolutePath = path.substring(4);
-            else
+            else if (path.startsWith("classpath:"))
+                absolutePath = getClass().getClassLoader().getResource(path.substring(10)).getPath();
+            else {
+                while (root == null)
+                    thread.sleep(100, TimeUnit.MilliSecond);
                 absolutePath = new File(root + "/" + path).getAbsolutePath();
+            }
             map.put(path, absolutePath);
         }
 
