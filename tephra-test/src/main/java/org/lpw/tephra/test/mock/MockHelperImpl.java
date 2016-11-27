@@ -38,6 +38,7 @@ public class MockHelperImpl implements MockHelper {
     protected ThreadLocal<MockHeader> header = new ThreadLocal<>();
     protected ThreadLocal<MockSession> session = new ThreadLocal<>();
     protected ThreadLocal<MockRequest> request = new ThreadLocal<>();
+    protected ThreadLocal<MockResponse> response = new ThreadLocal<>();
 
     @Override
     public MockHeader getHeader() {
@@ -64,26 +65,31 @@ public class MockHelperImpl implements MockHelper {
     }
 
     @Override
-    public MockResponse mock(String uri) {
+    public MockResponse getResponse() {
+        if (response.get() == null)
+            response.set(new MockResponseImpl());
+
+        return response.get();
+    }
+
+    @Override
+    public void mock(String uri) {
         headerAware.set(getHeader());
         sessionAware.set(getSession());
         getRequest().setUri(uri);
         requestAware.set(getRequest());
-        MockResponse response = new MockResponseImpl();
-        responseAware.set(response);
+        responseAware.set(getResponse());
         dispatcher.execute();
-
-        return response;
     }
 
     @Override
-    public MockResponse mock(String web, String uri) {
+    public void mock(String web, String uri) {
         try {
             context.setRoot(new File(web).getCanonicalPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return mock(uri);
+        mock(uri);
     }
 }

@@ -28,19 +28,23 @@ public interface MockHelper {
     MockRequest getRequest();
 
     /**
+     * 获取Mock输出实例。
+     * @return Mock输出实例。
+     */
+    MockResponse getResponse();
+
+    /**
      * 以Mock方式执行请求。
      *
      * @param uri 请求URI地址。
-     * @return 输出。
      */
-    MockResponse mock(String uri);
+    void mock(String uri);
 
     /**
      * 以Mock方式执行请求。
      *
      * @param web WebApp目录，支持相对路径与绝对路径。
      * @param uri 请求URI地址。
-     * @return 输出。
      */
-    MockResponse mock(String web, String uri);
+    void mock(String web, String uri);
 }
