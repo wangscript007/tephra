@@ -72,6 +72,7 @@ public class HelloCtrlTest extends TephraTestSupport {
  
     @Test
     public void hello() {
+        mockHelper.reset();
         mockHelper.getRequest().addParameter("name", "tephra");
         mockHelper.mock("/hello");
         assertEquals("{\"code\":0,\"data\":\"hello tephra\"}", mockHelper.getResponse().getOutputStream().toString());
@@ -79,6 +80,7 @@ public class HelloCtrlTest extends TephraTestSupport {
  
     @Test
     public void hi() {
+        mockHelper.reset();
         mockHelper.getRequest().addParameter("name", "tephra");
         mockHelper.mock("../hello-tephra-web/src/main/webapp", "/hi");
         assertEquals("hi tephra !", mockHelper.getResponse().getOutputStream().toString());
