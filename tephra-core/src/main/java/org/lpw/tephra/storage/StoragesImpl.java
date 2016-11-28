@@ -26,7 +26,6 @@ public class StoragesImpl implements Storages, ContextRefreshedListener, Seconds
     protected String type;
     protected Map<String, Storage> storages;
     protected Map<String, String> types;
-    protected Map<String, String> pathes;
     protected Map<String, StorageListener> listeners;
     protected Map<String, Long> times;
 
@@ -55,7 +54,6 @@ public class StoragesImpl implements Storages, ContextRefreshedListener, Seconds
             return;
 
         types = new HashMap<>();
-        pathes = new HashMap<>();
         this.listeners = new HashMap<>();
         times = new HashMap<>();
         listeners.forEach(listener -> {
@@ -81,9 +79,10 @@ public class StoragesImpl implements Storages, ContextRefreshedListener, Seconds
             return;
 
         types.forEach((path, type) -> {
-            String absolutePath = pathes.get(path);
-            if (absolutePath == null)
-                pathes.put(path, absolutePath = get(types.get(path)).getAbsolutePath(path));
+            String absolutePath = get(types.get(path)).getAbsolutePath(path);
+            if (validator.isEmpty(absolutePath))
+                return;
+
             long time = get(type).lastModified(absolutePath);
             Long cacheTime = times.get(path);
             if (cacheTime != null && cacheTime >= time)

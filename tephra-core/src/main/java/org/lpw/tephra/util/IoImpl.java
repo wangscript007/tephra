@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class IoImpl implements Io {
 
     @Override
     public byte[] read(String path) {
-        if (validator.isEmpty(path))
+        if (validator.isEmpty(path) || !new File(path).exists())
             return null;
 
         try {

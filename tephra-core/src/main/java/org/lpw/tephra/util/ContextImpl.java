@@ -39,8 +39,9 @@ public class ContextImpl implements Context {
             else if (path.startsWith("classpath:"))
                 absolutePath = getClass().getClassLoader().getResource(path.substring(10)).getPath();
             else {
-                while (root == null)
-                    thread.sleep(100, TimeUnit.MilliSecond);
+                if (root == null)
+                    return null;
+
                 absolutePath = new File(root + "/" + path).getAbsolutePath();
             }
             map.put(path, absolutePath);

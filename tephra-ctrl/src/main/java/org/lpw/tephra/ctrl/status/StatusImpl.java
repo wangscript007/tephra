@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -68,8 +69,11 @@ public class StatusImpl implements Status, ContextRefreshedListener {
         Set<String> set = new HashSet<>();
         for (String beanName : BeanFactory.getBeanNames()) {
             Object bean = BeanFactory.getBean(beanName);
-            if (bean != null)
-                set.add(bean.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+            if (bean != null) {
+                CodeSource source = bean.getClass().getProtectionDomain().getCodeSource();
+                if (source != null)
+                    set.add(source.getLocation().getPath());
+            }
         }
 
         Map<String, Set<String>> map = new HashMap<>();

@@ -37,26 +37,6 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
     protected ExecutorService executorService;
 
     /**
-     * 判断指定Job是否正在运行。
-     *
-     * @param job 要验证的Job对象。
-     * @return 如果正在运行则返回true；否则返回false。
-     */
-    protected boolean isRunning(T job) {
-        return job != null && runningJobs.contains(job.hashCode());
-    }
-
-    /**
-     * 将Job设置为正在运行。
-     *
-     * @param job 要设置的Job对象。
-     */
-    protected void begin(T job) {
-        if (job != null)
-            runningJobs.add(job.hashCode());
-    }
-
-    /**
      * 添加到执行线程池中。
      *
      * @param job 要执行的任务实例。
@@ -79,6 +59,26 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
 
             finish(job);
         });
+    }
+
+    /**
+     * 判断指定Job是否正在运行。
+     *
+     * @param job 要验证的Job对象。
+     * @return 如果正在运行则返回true；否则返回false。
+     */
+    protected boolean isRunning(T job) {
+        return job != null && runningJobs.contains(job.hashCode());
+    }
+
+    /**
+     * 将Job设置为正在运行。
+     *
+     * @param job 要设置的Job对象。
+     */
+    protected void begin(T job) {
+        if (job != null)
+            runningJobs.add(job.hashCode());
     }
 
     /**
