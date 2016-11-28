@@ -73,6 +73,14 @@ public class MockHelperImpl implements MockHelper {
     }
 
     @Override
+    public void reset() {
+        header.remove();
+        session.remove();
+        request.remove();
+        response.remove();
+    }
+
+    @Override
     public void mock(String uri) {
         headerAware.set(getHeader());
         sessionAware.set(getSession());

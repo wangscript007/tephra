@@ -23,7 +23,7 @@ public class ContextImpl implements Context {
 
     @Override
     public void setRoot(String root) {
-        this.root = root;
+        this.root = root.replace(File.separatorChar, '/');
         map.clear();
 
         if (logger.isInfoEnable())

@@ -29,9 +29,15 @@ public interface MockHelper {
 
     /**
      * 获取Mock输出实例。
+     *
      * @return Mock输出实例。
      */
     MockResponse getResponse();
+
+    /**
+     * 重置Mock环境。
+     */
+    void reset();
 
     /**
      * 以Mock方式执行请求。
