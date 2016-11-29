@@ -53,9 +53,7 @@ public class MockRequestImpl implements MockRequest {
 
     @Override
     public void addParameter(String name, String value) {
-        if (parameters == null)
-            parameters = new HashMap<>();
-        parameters.put(name, value);
+        getMap().put(name, value);
     }
 
     @Override
@@ -70,11 +68,14 @@ public class MockRequestImpl implements MockRequest {
 
     @Override
     public String[] getAsArray(String name) {
-        return new String[0];
+        return null;
     }
 
     @Override
     public Map<String, String> getMap() {
+        if (parameters == null)
+            parameters = new HashMap<>();
+
         return parameters;
     }
 

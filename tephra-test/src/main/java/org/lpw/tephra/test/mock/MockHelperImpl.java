@@ -1,13 +1,14 @@
 package org.lpw.tephra.test.mock;
 
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.lpw.tephra.ctrl.Dispatcher;
 import org.lpw.tephra.ctrl.context.HeaderAware;
 import org.lpw.tephra.ctrl.context.RequestAware;
 import org.lpw.tephra.ctrl.context.ResponseAware;
 import org.lpw.tephra.ctrl.context.SessionAware;
 import org.lpw.tephra.util.Context;
-import org.lpw.tephra.util.Generator;
-import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -17,14 +18,11 @@ import java.io.IOException;
 /**
  * @author lpw
  */
+@Aspect
 @Controller("tephra.test.mock.helper")
 public class MockHelperImpl implements MockHelper {
     @Autowired
     protected Context context;
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Generator generator;
     @Autowired
     protected HeaderAware headerAware;
     @Autowired
@@ -39,6 +37,7 @@ public class MockHelperImpl implements MockHelper {
     protected ThreadLocal<MockSession> session = new ThreadLocal<>();
     protected ThreadLocal<MockRequest> request = new ThreadLocal<>();
     protected ThreadLocal<MockResponse> response = new ThreadLocal<>();
+    protected ThreadLocal<MockFreemarker> freemarker = new ThreadLocal<>();
 
     @Override
     public MockHeader getHeader() {
@@ -73,20 +72,44 @@ public class MockHelperImpl implements MockHelper {
     }
 
     @Override
+    public MockFreemarker getFreemarker() {
+        return freemarker.get();
+    }
+
+    @Around("target(org.lpw.tephra.freemarker.Freemarker)")
+    public Object process(ProceedingJoinPoint point) throws Throwable {
+        if (getFreemarker() != null) {
+            getFreemarker().process((String) point.getArgs()[0], point.getArgs()[1], null);
+
+            return null;
+        }
+
+        return point.proceed();
+    }
+
+    @Override
     public void reset() {
         header.remove();
         session.remove();
         request.remove();
         response.remove();
+        freemarker.remove();
     }
 
     @Override
     public void mock(String uri) {
+        mock(uri, false);
+    }
+
+    @Override
+    public void mock(String uri, boolean freemarker) {
         headerAware.set(getHeader());
         sessionAware.set(getSession());
         getRequest().setUri(uri);
         requestAware.set(getRequest());
         responseAware.set(getResponse());
+        if (freemarker)
+            this.freemarker.set(new MockFreemarkerImpl());
         dispatcher.execute();
     }
 
@@ -98,6 +121,6 @@ public class MockHelperImpl implements MockHelper {
             throw new RuntimeException(e);
         }
 
-        mock(uri);
+        mock(uri, false);
     }
 }

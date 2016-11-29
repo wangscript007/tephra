@@ -1,5 +1,6 @@
 package org.lpw.tephra.test.mock;
 
+import net.sf.json.JSONObject;
 import org.lpw.tephra.ctrl.context.ResponseAdapter;
 
 /**
@@ -19,4 +20,11 @@ public interface MockResponse extends ResponseAdapter {
      * @return 跳转地址。
      */
     String getRedirectTo();
+
+    /**
+     * 获取JSON格式的输出。
+     *
+     * @return 输出。
+     */
+    JSONObject asJson();
 }

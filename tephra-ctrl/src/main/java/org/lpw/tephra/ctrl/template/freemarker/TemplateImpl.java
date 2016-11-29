@@ -23,10 +23,6 @@ public class TemplateImpl extends TemplateSupport implements Template {
     protected Freemarker freemarker;
     @Autowired
     protected Request request;
-    @Value("${tephra.ctrl.template.freemarker.not-permit:not-permit}")
-    protected String notPermit;
-    @Value("${tephra.ctrl.template.freemarker.failure:failure}")
-    protected String failure;
 
     @Override
     public String getType() {
@@ -41,16 +37,24 @@ public class TemplateImpl extends TemplateSupport implements Template {
     @Override
     public void process(String name, Object data, OutputStream output) throws IOException {
         if (data instanceof Failure) {
-            name = data == Failure.NotPermit ? notPermit : failure;
-            StringBuilder root = new StringBuilder();
-            for (char ch : request.getUri().toCharArray())
-                if (ch == '/')
-                    root.append("../");
-            root.delete(0, 3);
-            JSONObject object = getFailure((Failure) data);
-            object.put("root", root.toString());
-            data = object;
+            failure(getFailure((Failure) data), output);
+
+            return;
         }
+
+        if (data instanceof JSONObject && failure((JSONObject) data, output))
+            return;
+
         freemarker.process(name, data, output);
+    }
+
+    protected boolean failure(JSONObject object, OutputStream output) throws IOException {
+        if (object.has("code") && object.getInt("code") > 0) {
+            output.write(object.toString().getBytes());
+
+            return true;
+        }
+
+        return false;
     }
 }

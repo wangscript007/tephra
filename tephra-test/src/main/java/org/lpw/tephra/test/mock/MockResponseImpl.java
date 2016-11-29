@@ -1,5 +1,7 @@
 package org.lpw.tephra.test.mock;
 
+import net.sf.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
@@ -45,5 +47,10 @@ public class MockResponseImpl implements MockResponse {
 
     @Override
     public void sendError(int code) {
+    }
+
+    @Override
+    public JSONObject asJson() {
+        return JSONObject.fromObject(getOutputStream().toString());
     }
 }

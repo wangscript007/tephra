@@ -144,7 +144,7 @@ public class RequestImpl implements Request, RequestAware {
     }
 
     protected String getSign(Map<String, String> map) {
-        List<String> list = new ArrayList<>(getMap().keySet());
+        List<String> list = new ArrayList<>(map.keySet());
         list.remove(SIGN);
         Collections.sort(list);
 

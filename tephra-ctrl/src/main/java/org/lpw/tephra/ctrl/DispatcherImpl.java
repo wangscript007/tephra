@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -169,6 +170,6 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
     public void onContextRefreshed() {
         if (interceptors == null)
             interceptors = new ArrayList<>();
-        Collections.sort(interceptors, (a, b) -> a.getSort() - b.getSort());
+        Collections.sort(interceptors, Comparator.comparingInt(Interceptor::getSort));
     }
 }

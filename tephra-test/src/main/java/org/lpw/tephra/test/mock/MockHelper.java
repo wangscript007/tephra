@@ -35,6 +35,13 @@ public interface MockHelper {
     MockResponse getResponse();
 
     /**
+     * 获取Mock模板。
+     *
+     * @return Mock模板。
+     */
+    MockFreemarker getFreemarker();
+
+    /**
      * 重置Mock环境。
      */
     void reset();
@@ -45,6 +52,14 @@ public interface MockHelper {
      * @param uri 请求URI地址。
      */
     void mock(String uri);
+
+    /**
+     * 以Mock方式执行请求。
+     *
+     * @param uri        请求URI地址。
+     * @param freemarker 是否Mock Freemarker模板。
+     */
+    void mock(String uri, boolean freemarker);
 
     /**
      * 以Mock方式执行请求。
