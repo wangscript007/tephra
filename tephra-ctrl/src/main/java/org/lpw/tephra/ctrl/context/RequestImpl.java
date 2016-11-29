@@ -3,7 +3,6 @@ package org.lpw.tephra.ctrl.context;
 import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.ctrl.Coder;
 import org.lpw.tephra.dao.model.Model;
-import org.lpw.tephra.dao.model.ModelHelper;
 import org.lpw.tephra.dao.model.ModelTable;
 import org.lpw.tephra.dao.model.ModelTables;
 import org.lpw.tephra.util.Converter;
@@ -37,8 +36,6 @@ public class RequestImpl implements Request, RequestAware {
     protected Logger logger;
     @Autowired
     protected ModelTables modelTables;
-    @Autowired
-    protected ModelHelper modelHelper;
     @Autowired(required = false)
     protected Coder coder;
     @Value("${tephra.ctrl.context.request.sign.key:}")
