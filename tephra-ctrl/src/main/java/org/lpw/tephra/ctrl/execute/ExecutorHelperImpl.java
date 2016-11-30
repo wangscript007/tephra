@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author lpw
@@ -30,6 +31,8 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
     protected Templates templates;
     @Autowired
     protected Request request;
+    @Autowired(required = false)
+    protected Set<ExecuteListener> listeners;
     protected Map<String, Executor> map;
     protected Map<String, String> codes;
     protected ThreadLocal<Executor> executors = new ThreadLocal<>();
@@ -114,6 +117,8 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
                     map.put(key, executor);
                     codes.put(key, code);
                 }
+                if (!validator.isEmpty(listeners))
+                    listeners.forEach(listener -> listener.definition(classExecute, execute));
             }
         }
 

@@ -41,14 +41,8 @@ public class ContainerImpl implements Container, ApplicationListener<Application
     @Override
     public <T> T getBean(Class<T> clazz) {
         Collection<T> beans = getBeans(clazz);
-        if (beans.isEmpty())
-            return null;
 
-        T bean = null;
-        for (T t : beans)
-            bean = t;
-
-        return bean;
+        return beans.isEmpty() ? null : beans.iterator().next();
     }
 
     @SuppressWarnings("unchecked")
