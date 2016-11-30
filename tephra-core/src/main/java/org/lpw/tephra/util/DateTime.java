@@ -10,6 +10,13 @@ import java.util.Date;
  */
 public interface DateTime {
     /**
+     * 获取当前时间。
+     *
+     * @return 当前时间。
+     */
+    Timestamp now();
+
+    /**
      * 获取指定日期当天的开始时间，即当天的00:00:00.000。
      *
      * @param date 目标日期。

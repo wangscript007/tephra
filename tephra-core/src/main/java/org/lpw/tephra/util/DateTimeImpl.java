@@ -16,6 +16,11 @@ public class DateTimeImpl implements DateTime {
     protected Converter converter;
 
     @Override
+    public Timestamp now() {
+        return new Timestamp(System.currentTimeMillis());
+    }
+
+    @Override
     public Date getStart(Date date) {
         if (date == null)
             return null;

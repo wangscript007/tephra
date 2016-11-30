@@ -6,10 +6,10 @@ import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.cache.Cache;
 import org.lpw.tephra.crypto.Digest;
+import org.lpw.tephra.ctrl.context.LocalSessionAdapter;
 import org.lpw.tephra.ctrl.context.Session;
-import org.lpw.tephra.util.Context;
+import org.lpw.tephra.ctrl.context.SessionAware;
 import org.lpw.tephra.util.Converter;
-import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
@@ -33,7 +33,6 @@ import java.util.concurrent.Executors;
  */
 @Service("tephra.weixin.service")
 public class WeixinServiceImpl implements WeixinService, ContextRefreshedListener, ContextClosedListener {
-    private static final String SESSION_OPEN_ID = "tephra.weixin.service.open-id";
     private static final String CACHE_NICKNAME = "tephra.weixin.service.nickname:";
 
     @Autowired
@@ -45,10 +44,6 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
     @Autowired
     protected Http http;
     @Autowired
-    protected Context context;
-    @Autowired
-    protected Generator generator;
-    @Autowired
     protected Cache cache;
     @Autowired
     protected Logger logger;
@@ -56,6 +51,8 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
     protected Xml xml;
     @Autowired
     protected Set<Atomicable> atomicables;
+    @Autowired
+    protected SessionAware sessionAware;
     @Autowired
     protected Session session;
     @Autowired
@@ -95,7 +92,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
             return;
 
         String openId = json.getString("openid");
-        session.set(SESSION_OPEN_ID, openId);
+        sessionAware.set(new LocalSessionAdapter(openId));
         if (!json.has("access_token") || getNickname(openId) != null)
             return;
 
@@ -211,7 +208,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
 
     @Override
     public String getOpenId() {
-        return session.get(SESSION_OPEN_ID);
+        return session.getId();
     }
 
     @Override
