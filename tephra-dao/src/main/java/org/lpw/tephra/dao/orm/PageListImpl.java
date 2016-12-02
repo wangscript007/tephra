@@ -79,6 +79,11 @@ public class PageListImpl<T extends Model> implements PageList<T> {
 
     @Override
     public JSONObject toJson() {
+        return toJson(true);
+    }
+
+    @Override
+    public JSONObject toJson(boolean listable) {
         JSONObject object = new JSONObject();
         object.put("count", count);
         object.put("size", size);
@@ -86,7 +91,8 @@ public class PageListImpl<T extends Model> implements PageList<T> {
         object.put("page", page);
         object.put("pageStart", pageStart);
         object.put("pageEnd", pageEnd);
-        object.put("list", modelHelper.toJson(list));
+        if (listable)
+            object.put("list", modelHelper.toJson(list));
 
         return object;
     }

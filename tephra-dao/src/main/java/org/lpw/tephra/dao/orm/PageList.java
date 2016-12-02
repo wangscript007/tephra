@@ -80,4 +80,12 @@ public interface PageList<T extends Model> {
      * @return JSON格式的数据。
      */
     JSONObject toJson();
+
+    /**
+     * 转化为JSON格式的数据。
+     *
+     * @param listable 是否包含列表数据。
+     * @return JSON格式的数据。
+     */
+    JSONObject toJson(boolean listable);
 }

@@ -32,4 +32,12 @@ public interface DataSource extends ConnectionFactory<javax.sql.DataSource> {
      * @return 数据库方言。
      */
     Map<String, Dialect> getDialects();
+
+    /**
+     * 获取配置所使用的方言。
+     *
+     * @param key 配置key。
+     * @return 方言实例。
+     */
+    Dialect getDialect(String key);
 }

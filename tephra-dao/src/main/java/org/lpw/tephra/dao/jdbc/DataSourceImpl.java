@@ -5,6 +5,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.dao.dialect.Dialect;
+import org.lpw.tephra.dao.dialect.DialectFactory;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
@@ -19,7 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -36,7 +36,7 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
     @Autowired
     protected Logger logger;
     @Autowired
-    protected Set<Dialect> dialects;
+    protected DialectFactory dialectFactory;
     @Value("${tephra.dao.database.initial-size:0}")
     protected int initialSize;
     @Value("${tephra.dao.database.max-active:5}")
@@ -49,7 +49,7 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
     protected int removeAbandonedTimeout;
     @Value("${tephra.dao.database.config:}")
     protected String config;
-    protected Map<String, Dialect> dialectMap = new HashMap<>();
+    protected Map<String, Dialect> dialects = new HashMap<>();
     protected Map<String, DataSource> writeables = new ConcurrentHashMap<>();
     protected Map<String, List<DataSource>> readonlys = new ConcurrentHashMap<>();
     protected Map<String, Boolean> readonly = new ConcurrentHashMap<>();
@@ -97,16 +97,12 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
     @Override
     public synchronized void create(JSONObject config) {
         String key = config.getString("key");
-        Dialect dialect = getDialect(config.getString("type"));
-        dialectMap.put(key, dialect);
+        Dialect dialect = dialectFactory.get(config.getString("type"));
+        dialects.put(key, dialect);
         createDataSource(key, dialect, config.getString("username"), config.getString("password"), config.getJSONArray("ips"), config.getString("schema"));
 
         if (logger.isInfoEnable())
             logger.info("成功创建数据库[{}]连接池。", config);
-    }
-
-    protected Dialect getDialect(String type) {
-        return dialects.stream().filter((dialect) -> dialect.getName().equalsIgnoreCase(type)).findFirst().get();
     }
 
     protected void createDataSource(String name, Dialect dialect, String username, String password, JSONArray ips, String schema) {
@@ -152,6 +148,11 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
 
     @Override
     public Map<String, Dialect> getDialects() {
-        return dialectMap;
+        return dialects;
+    }
+
+    @Override
+    public Dialect getDialect(String key) {
+        return dialects.get(validator.isEmpty(key) ? "" : key);
     }
 }
