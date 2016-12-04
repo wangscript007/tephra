@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Component("tephra.hadoop.hbase")
 public class HbaseImpl implements Hbase, Closable, ContextRefreshedListener {

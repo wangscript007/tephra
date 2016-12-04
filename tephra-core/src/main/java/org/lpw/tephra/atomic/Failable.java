@@ -3,7 +3,7 @@ package org.lpw.tephra.atomic;
 /**
  * 可失败事务。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface Failable {
     /**

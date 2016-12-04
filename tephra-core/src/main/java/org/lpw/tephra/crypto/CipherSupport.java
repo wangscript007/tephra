@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 public abstract class CipherSupport {
     @Autowired

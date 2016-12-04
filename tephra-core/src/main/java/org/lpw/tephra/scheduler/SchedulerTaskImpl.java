@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.TimerTask;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Component("tephra.scheduler.task")
 public class SchedulerTaskImpl extends TimerTask implements SchedulerTask {

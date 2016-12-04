@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Hadoop文件系统支持。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface Hdfs {
     /**

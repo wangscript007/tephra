@@ -3,7 +3,7 @@ package org.lpw.tephra.carousel;
 import java.util.Map;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 public interface CarouselHelper {
     /**

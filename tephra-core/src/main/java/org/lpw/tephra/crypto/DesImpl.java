@@ -3,7 +3,7 @@ package org.lpw.tephra.crypto;
 import org.springframework.stereotype.Component;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Component("tephra.crypto.des")
 public class DesImpl extends CipherSupport implements Des {

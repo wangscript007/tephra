@@ -9,7 +9,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.lpw.tephra.dao.model.Model;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 public class HbaseQuery {
     enum Where {

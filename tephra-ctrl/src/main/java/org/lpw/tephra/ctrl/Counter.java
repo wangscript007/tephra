@@ -1,7 +1,7 @@
 package org.lpw.tephra.ctrl;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 public interface Counter {
     /**

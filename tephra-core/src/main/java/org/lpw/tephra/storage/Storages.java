@@ -3,7 +3,7 @@ package org.lpw.tephra.storage;
 /**
  * 文件存储处理器集。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface Storages {
     /**

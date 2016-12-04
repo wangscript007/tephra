@@ -1,7 +1,7 @@
 package org.lpw.tephra.test;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 public interface MockScheduler {
     /**

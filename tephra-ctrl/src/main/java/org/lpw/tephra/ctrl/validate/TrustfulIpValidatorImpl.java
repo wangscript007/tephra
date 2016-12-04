@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Controller(Validators.TRUSTFUL_IP)
 public class TrustfulIpValidatorImpl extends ValidatorSupport {

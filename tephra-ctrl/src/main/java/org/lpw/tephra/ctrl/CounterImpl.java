@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Controller("tephra.ctrl.counter")
 public class CounterImpl implements Counter {

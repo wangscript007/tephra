@@ -3,7 +3,7 @@ package org.lpw.tephra.atomic;
 /**
  * 可关闭事务。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface Closable {
     /**

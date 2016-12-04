@@ -101,7 +101,7 @@ import java.util.Date;
 /**
  * 定时任务支持。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface SchedulerHelper {
     /**
@@ -128,7 +128,7 @@ package org.lpw.tephra.scheduler;
 /**
  * 定时任务。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface SchedulerJob {
     /**

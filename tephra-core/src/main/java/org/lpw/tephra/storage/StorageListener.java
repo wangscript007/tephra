@@ -3,7 +3,7 @@ package org.lpw.tephra.storage;
 /**
  * 存储监听器。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface StorageListener {
     /**

@@ -7,7 +7,7 @@ package org.lpw.tephra.ctrl.http.upload;
 import org.springframework.stereotype.Controller;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Controller("tephra.ctrl.http.upload-listener.hdfs")
 public class HdfsUploadListenerImpl implements UploadListener {

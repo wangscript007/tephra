@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Action配置构造器。
  *
- * @auth lpw
+ * @author lpw
  */
 public class ActionBuilder {
     protected Validator validator;

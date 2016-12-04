@@ -3,7 +3,7 @@ package org.lpw.tephra.crypto;
 /**
  * 消息摘要。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface Digest {
     /**

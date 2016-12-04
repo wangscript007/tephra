@@ -7,7 +7,7 @@ import java.io.OutputStream;
 /**
  * 文件存储处理器。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface Storage {
     /**

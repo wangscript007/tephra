@@ -3,7 +3,7 @@ package org.lpw.tephra.ctrl.validate;
 import org.springframework.stereotype.Controller;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Controller(Validators.ID)
 public class IdValidatorImpl extends ValidatorSupport {

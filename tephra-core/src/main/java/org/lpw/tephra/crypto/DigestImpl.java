@@ -9,7 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Component("tephra.crypto.digest")
 public class DigestImpl implements Digest {

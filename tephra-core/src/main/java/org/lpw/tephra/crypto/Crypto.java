@@ -3,7 +3,7 @@ package org.lpw.tephra.crypto;
 /**
  * 标准加解密。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface Crypto {
     /**

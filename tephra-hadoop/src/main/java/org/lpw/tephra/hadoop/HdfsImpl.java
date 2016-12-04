@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Component("tephra.hadoop.hdfs")
 public class HdfsImpl implements Hdfs, Storage, ContextRefreshedListener {

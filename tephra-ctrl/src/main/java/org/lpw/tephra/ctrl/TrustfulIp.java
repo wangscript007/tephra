@@ -3,7 +3,7 @@ package org.lpw.tephra.ctrl;
 /**
  * IP白名单。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface TrustfulIp {
     /**

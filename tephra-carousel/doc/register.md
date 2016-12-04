@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Carousel服务注册器，在系统启动时自动注册服务。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface CarouselRegister {
     /**

@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Aspect
 @Component("tephra.test.mock-scheduler")

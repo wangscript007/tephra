@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * HBase数据库支持。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface Hbase {
     /**

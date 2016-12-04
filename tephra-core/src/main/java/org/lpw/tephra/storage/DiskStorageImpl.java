@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Component("tephra.storage.disk")
 public class DiskStorageImpl implements Storage {

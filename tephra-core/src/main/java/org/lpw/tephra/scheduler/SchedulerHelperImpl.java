@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Timer;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Component("tephra.scheduler.helper")
 public class SchedulerHelperImpl implements SchedulerHelper, ContextRefreshedListener, ContextClosedListener {

@@ -3,7 +3,7 @@ package org.lpw.tephra.ctrl.context;
 /**
  * 输出参数注入器。用于设置输出参数。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface ResponseAware {
     /**

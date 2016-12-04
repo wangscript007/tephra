@@ -3,7 +3,7 @@ package org.lpw.tephra.scheduler;
 /**
  * 定时任务。
  *
- * @auth lpw
+ * @author lpw
  */
 public interface SchedulerJob {
     /**

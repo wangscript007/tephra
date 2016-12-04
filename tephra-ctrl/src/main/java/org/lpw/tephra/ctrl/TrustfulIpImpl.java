@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Controller("tephra.ctrl.trustful-ip")
 public class TrustfulIpImpl implements TrustfulIp, StorageListener {

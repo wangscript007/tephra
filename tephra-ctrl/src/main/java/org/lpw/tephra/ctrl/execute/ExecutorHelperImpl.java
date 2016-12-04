@@ -104,7 +104,7 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
             Execute classExecute = clazz.getAnnotation(Execute.class);
             String prefix = classExecute == null ? "" : classExecute.name();
             String prefixCode = classExecute == null ? "" : classExecute.code();
-            for (Method method : clazz.getDeclaredMethods()) {
+            for (Method method : clazz.getMethods()) {
                 Execute execute = method.getAnnotation(Execute.class);
                 if (execute == null || validator.isEmpty(execute.name()))
                     continue;

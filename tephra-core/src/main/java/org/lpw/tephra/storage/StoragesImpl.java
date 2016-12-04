@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Component("tephra.storages")
 public class StoragesImpl implements Storages, ContextRefreshedListener, SecondsJob {

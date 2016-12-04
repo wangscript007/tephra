@@ -15,7 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
 /**
- * @auth lpw
+ * @author lpw
  */
 @Controller("tephra.ctrl.context.response")
 public class ResponseImpl implements Response, ResponseAware {
