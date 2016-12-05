@@ -5,6 +5,9 @@ import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
 import org.lpw.tephra.ctrl.template.Templates;
+import org.lpw.tephra.dao.model.Model;
+import org.lpw.tephra.dao.model.ModelHelper;
+import org.lpw.tephra.dao.orm.PageList;
 import org.lpw.tephra.util.Message;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,8 @@ public class TemplateImpl extends TemplateSupport implements Template {
     protected Validator validator;
     @Autowired
     protected Message message;
+    @Autowired
+    protected ModelHelper modelHelper;
 
     @Override
     public String getType() {
@@ -40,6 +45,11 @@ public class TemplateImpl extends TemplateSupport implements Template {
 
             return;
         }
+
+        if (data instanceof Model)
+            data = modelHelper.toJson((Model) data);
+        else if (data instanceof PageList)
+            data = ((PageList<? extends Model>) data).toJson();
 
         write(pack(data), output);
     }
