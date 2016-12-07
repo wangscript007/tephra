@@ -111,4 +111,6 @@ public class DigestTest extends TephraTestSupport {
 > 使用TephraTestSupport不需要在classpath中添加spring.xml文件。
 
 ## Mock SQL脚本
-当使用TephraTestSupport时，会自动在每次测试前，执行/src/test/sql/mock.sql里面的脚本，可用来创建测试表结构及测试数据。
+当使用TephraTestSupport时，会自动在每次测试前，执行以下SQL脚本，可用来创建测试表结构及测试数据。
+- /src/main/sql/create.sql
+- /src/test/sql/mock.sql

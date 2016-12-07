@@ -51,7 +51,8 @@ public class ModelHelperImpl implements ModelHelper {
                 return;
 
             Object json = getJson(modelTable, name, modelTable.get(model, name), jsonable);
-            object.put(converter.toFirstLowerCase(name), json == null ? "" : json);
+            if (json != null)
+                object.put(converter.toFirstLowerCase(name), json);
         });
 
         return object;

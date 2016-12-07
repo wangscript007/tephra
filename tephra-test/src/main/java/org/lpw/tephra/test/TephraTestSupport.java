@@ -33,8 +33,9 @@ public class TephraTestSupport {
     @Before
     public void before() throws IOException {
         String path = getClass().getResource("/").getPath();
-        path = path.substring(0, path.lastIndexOf("/target/")) + "/src/test/sql/";
-        sql(path + "mock.sql");
+        path = path.substring(0, path.lastIndexOf("/target/")) + "/src/";
+        sql(path + "main/sql/create.sql");
+        sql(path + "test/sql/mock.sql");
     }
 
     private void sql(String path) throws IOException {
