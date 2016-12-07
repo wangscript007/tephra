@@ -23,6 +23,11 @@ public class SignValidatorImpl extends ValidatorSupport {
     }
 
     @Override
+    public int getFailureCode(ValidateWrapper validate) {
+        return validate.getFailureCode() > 0 ? validate.getFailureCode() : 91;
+    }
+
+    @Override
     protected String getDefaultFailureMessageKey() {
         return DEFAULT_FAILURE_MESSAGE_KEY;
     }

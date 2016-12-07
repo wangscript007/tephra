@@ -92,7 +92,12 @@ public class ValidatorsImpl implements Validators {
 
     protected int getFailureCode(ValidateWrapper validate, Validator validator) {
         int failureCode = validator.getFailureCode(validate);
+        if (failureCode == 0)
+            return this.failureCode.get(validate.getFailureCode());
 
-        return failureCode == 0 ? this.failureCode.get(validate.getFailureCode()) : failureCode;
+        if (failureCode < 100)
+            return this.failureCode.get(failureCode);
+
+        return failureCode;
     }
 }
