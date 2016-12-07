@@ -15,7 +15,6 @@ import org.lpw.tephra.ctrl.http.upload.UploadHelper;
 import org.lpw.tephra.ctrl.status.Status;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
-import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.TimeHash;
 import org.lpw.tephra.util.Validator;
@@ -47,8 +46,6 @@ public class ServiceHelperImpl implements ServiceHelper {
     protected Context context;
     @Autowired
     protected TimeHash timeHash;
-    @Autowired
-    protected Generator generator;
     @Autowired
     protected Logger logger;
     @Autowired
@@ -84,7 +81,6 @@ public class ServiceHelperImpl implements ServiceHelper {
 
     @Override
     public void setPath(String real, String context) {
-        this.context.setRoot(real);
         contextPath = validator.isEmpty(context) || context.equals(ROOT) ? 0 : context.length();
         servletContextPath = contextPath > 0 ? context : "";
         if (logger.isInfoEnable())

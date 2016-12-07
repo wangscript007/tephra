@@ -60,12 +60,4 @@ public interface MockHelper {
      * @param freemarker 是否Mock Freemarker模板。
      */
     void mock(String uri, boolean freemarker);
-
-    /**
-     * 以Mock方式执行请求。
-     *
-     * @param web WebApp目录，支持相对路径与绝对路径。
-     * @param uri 请求URI地址。
-     */
-    void mock(String web, String uri);
 }

@@ -1,5 +1,6 @@
 package org.lpw.tephra.util;
 
+import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author lpw
  */
 @Component("tephra.util.context")
-public class ContextImpl implements Context {
+public class ContextImpl implements Context, ContextRefreshedListener {
     @Autowired
     protected Thread thread;
     @Autowired
@@ -22,15 +23,6 @@ public class ContextImpl implements Context {
     protected ThreadLocal<Locale> locale = new ThreadLocal<>();
 
     @Override
-    public void setRoot(String root) {
-        this.root = root.replace(File.separatorChar, '/');
-        map.clear();
-
-        if (logger.isInfoEnable())
-            logger.info("设置运行期根路径：{}", root);
-    }
-
-    @Override
     public String getAbsolutePath(String path) {
         String absolutePath = map.get(path);
         if (absolutePath == null) {
@@ -38,12 +30,8 @@ public class ContextImpl implements Context {
                 absolutePath = path.substring(4);
             else if (path.startsWith("classpath:"))
                 absolutePath = getClass().getClassLoader().getResource(path.substring(10)).getPath();
-            else {
-                if (root == null)
-                    return null;
-
+            else
                 absolutePath = new File(root + "/" + path).getAbsolutePath();
-            }
             map.put(path, absolutePath);
         }
 
@@ -62,5 +50,26 @@ public class ContextImpl implements Context {
             locale = Locale.getDefault();
 
         return locale;
+    }
+
+    @Override
+    public int getContextRefreshedSort() {
+        return 1;
+    }
+
+    @Override
+    public void onContextRefreshed() {
+        String path = getClass().getResource("/").getPath();
+        for (String name : new String[]{"/classes/", "/WEB-INF/"}) {
+            int indexOf = path.lastIndexOf(name);
+            if (indexOf > -1)
+                path = path.substring(0, indexOf + 1);
+        }
+
+        root = path.replace(File.separatorChar, '/');
+        map.clear();
+
+        if (logger.isInfoEnable())
+            logger.info("设置运行期根路径：{}", root);
     }
 }

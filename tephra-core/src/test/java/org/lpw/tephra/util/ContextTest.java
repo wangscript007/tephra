@@ -24,25 +24,6 @@ public class ContextTest {
     protected Context context;
 
     @Test
-    public void setRoot() {
-        context.setRoot("root");
-        assertEquals("root", ((ContextImpl) context).root);
-        assertTrue(((ContextImpl) context).map.isEmpty());
-    }
-
-    @Test
-    public void getAbsolutePath() {
-        context.setRoot("root");
-        String root = new File("").getAbsolutePath() + "/";
-        for (int i = 0; i < 10; i++)
-            assertEquals(root + "root/path", context.getAbsolutePath("path"));
-        for (int i = 0; i < 10; i++)
-            assertEquals(root + "root/absolute-path", context.getAbsolutePath("absolute-path"));
-        for (int i = 0; i < 10; i++)
-            assertEquals("path", context.getAbsolutePath("abs:path"));
-    }
-
-    @Test
     public void local() {
         assertEquals(Locale.getDefault(), context.getLocale());
         context.setLocale(Locale.ENGLISH);

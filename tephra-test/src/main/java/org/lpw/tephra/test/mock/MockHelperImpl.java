@@ -12,9 +12,6 @@ import org.lpw.tephra.util.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import java.io.File;
-import java.io.IOException;
-
 /**
  * @author lpw
  */
@@ -111,16 +108,5 @@ public class MockHelperImpl implements MockHelper {
         if (freemarker)
             this.freemarker.set(new MockFreemarkerImpl());
         dispatcher.execute();
-    }
-
-    @Override
-    public void mock(String web, String uri) {
-        try {
-            context.setRoot(new File(web).getCanonicalPath());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        mock(uri, false);
     }
 }

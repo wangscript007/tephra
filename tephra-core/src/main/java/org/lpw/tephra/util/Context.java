@@ -9,13 +9,6 @@ import java.util.Locale;
  */
 public interface Context {
     /**
-     * 设置运行根路径。
-     *
-     * @param root 根路径。
-     */
-    void setRoot(String root);
-
-    /**
      * 获取绝对路径。
      *
      * @param path 相对路径。

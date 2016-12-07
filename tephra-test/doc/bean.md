@@ -1,5 +1,7 @@
 # 测试普通Java Bean
+
 ## 使用SpringJUnit4ClassRunner
+
 普通Java Bean可以直接使用SpringJUnit4ClassRunner运行，首先需引入以下依赖
 ```xml
         <dependency>
@@ -17,7 +19,7 @@
 ```
 然后在测试类上添加RunWith、ContextConfiguration注解，如：
 ```java
-package org.lpw.tephra.util;
+package org.lpw.tephra.crypto;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,74 +28,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.File;
-import java.lang.Thread;
-import java.util.Locale;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 /**
  * @author lpw
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath*:**/spring.xml"})
-public class ContextTest {
+public class DigestTest {
     @Autowired
-    protected Context context;
+    protected Digest digest;
 
     @Test
-    public void setRoot() {
-        context.setRoot("root");
-        assertEquals("root", ((ContextImpl) context).root);
-        assertTrue(((ContextImpl) context).map.isEmpty());
+    public void md5() {
+        String string = null;
+        Assert.assertNull(digest.md5(string));
+        byte[] bytes = null;
+        Assert.assertNull(digest.md5(bytes));
+        Assert.assertEquals("c10f77963a2b21079156a0e5c5a4bb3c", digest.md5("digest"));
+        Assert.assertEquals("c10f77963a2b21079156a0e5c5a4bb3c", digest.md5("digest".getBytes()));
     }
 
     @Test
-    public void getAbsolutePath() {
-        context.setRoot("root");
-        String root = new File("").getAbsolutePath() + "/";
-        for (int i = 0; i < 10; i++)
-            assertEquals(root + "root/path", context.getAbsolutePath("path"));
-        for (int i = 0; i < 10; i++)
-            assertEquals(root + "root/absolute-path", context.getAbsolutePath("absolute-path"));
-    }
-
-    @Test
-    public void local() {
-        assertEquals(Locale.getDefault(), context.getLocale());
-        context.setLocale(Locale.ENGLISH);
-        assertEquals(Locale.ENGLISH, context.getLocale());
-        assertEquals(Locale.ENGLISH, context.getLocale());
-
-        Locale[] locales = new Locale[]{Locale.ENGLISH, Locale.CANADA, Locale.CHINA};
-        Thread[] threads = new Thread[locales.length];
-        for (int i = 0; i < locales.length; i++) {
-            final Locale locale = locales[i];
-            threads[i] = new Thread(() -> {
-                for (int j = 0; j < 100; j++) {
-                    context.setLocale(locale);
-                    try {
-                        Thread.sleep(5L);
-                    } catch (InterruptedException e) {
-                        Assert.assertTrue(false);
-                    }
-                    assertEquals(locale, context.getLocale());
-                }
-            });
-        }
-        for (Thread thread : threads)
-            thread.start();
-
-        try {
-            Thread.sleep(200 * 5L);
-        } catch (InterruptedException e) {
-            Assert.assertTrue(false);
-        }
+    public void sha1() {
+        String string = null;
+        Assert.assertNull(digest.sha1(string));
+        byte[] bytes = null;
+        Assert.assertNull(digest.sha1(bytes));
+        Assert.assertEquals("2923f6fa36614586ea09b4424b438915cc1b9b67", digest.sha1("digest"));
+        Assert.assertEquals("2923f6fa36614586ea09b4424b438915cc1b9b67", digest.sha1("digest".getBytes()));
     }
 }
 ```
+> 使用ContextConfiguration需要在classpath中添加spring.xml文件。
+
 ## 继承TephraTestSupport
+
 首先需引入以下依赖：
 ```xml
 <dependency>
@@ -104,48 +72,43 @@ public class ContextTest {
 ```
 然后测试类继承TephraTestSupport类，如：
 ```java
-package org.lpw.tephra.util;
- 
+package org.lpw.tephra.crypto;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 import org.lpw.tephra.test.TephraTestSupport;
- 
-import java.io.File;
-import java.util.Locale;
- 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
- 
+
 /**
  * @author lpw
  */
-public class ContextTest extends TephraTestSupport{
+public class DigestTest extends TephraTestSupport {
     @Autowired
-    protected Context context;
- 
+    protected Digest digest;
+
     @Test
-    public void setRoot() {
-        context.setRoot("root");
-        assertEquals("root", ((ContextImpl) context).root);
-        assertTrue(((ContextImpl) context).map.isEmpty());
+    public void md5() {
+        String string = null;
+        Assert.assertNull(digest.md5(string));
+        byte[] bytes = null;
+        Assert.assertNull(digest.md5(bytes));
+        Assert.assertEquals("c10f77963a2b21079156a0e5c5a4bb3c", digest.md5("digest"));
+        Assert.assertEquals("c10f77963a2b21079156a0e5c5a4bb3c", digest.md5("digest".getBytes()));
     }
- 
+
     @Test
-    public void getAbsolutePath() {
-        context.setRoot("root");
-        String root = new File("").getAbsolutePath() + "/";
-        for (int i = 0; i < 10; i++)
-            assertEquals(root + "root/path", context.getAbsolutePath("path"));
-        for (int i = 0; i < 10; i++)
-            assertEquals(root + "root/absolute-path", context.getAbsolutePath("absolute-path"));
-    }
- 
-    @Test
-    public void local() {
-        assertEquals(Locale.getDefault(), context.getLocale());
-        context.setLocale(Locale.ENGLISH);
-        assertEquals(Locale.ENGLISH, context.getLocale());
-        assertEquals(Locale.ENGLISH, context.getLocale());
+    public void sha1() {
+        String string = null;
+        Assert.assertNull(digest.sha1(string));
+        byte[] bytes = null;
+        Assert.assertNull(digest.sha1(bytes));
+        Assert.assertEquals("2923f6fa36614586ea09b4424b438915cc1b9b67", digest.sha1("digest"));
+        Assert.assertEquals("2923f6fa36614586ea09b4424b438915cc1b9b67", digest.sha1("digest".getBytes()));
     }
 }
 ```
+> 使用TephraTestSupport不需要在classpath中添加spring.xml文件。
+
+## Mock SQL脚本
+当使用TephraTestSupport时，会自动在每次测试前，执行/src/test/sql/mock.sql里面的脚本，可用来创建测试表结构及测试数据。

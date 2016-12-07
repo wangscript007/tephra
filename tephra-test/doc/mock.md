@@ -1,4 +1,5 @@
 # 使用Mock测试控制器
+
 1、引入tephra-test依赖，如：
 ```xml
         <dependency>
@@ -46,6 +47,8 @@ hi.ftl代码如下：
 ```freemarker
 hi ${data.name} !
 ```
+> 模板文件需保存到classpath下${tephra.freemarker.root}设置路径中。
+
 3、则HelloCtrl测试代码参考如下：
 ```java
 package org.lpw.hellotephra;
@@ -82,7 +85,7 @@ public class HelloCtrlTest extends TephraTestSupport {
     public void hi() {
         mockHelper.reset();
         mockHelper.getRequest().addParameter("name", "tephra");
-        mockHelper.mock("../hello-tephra-web/src/main/webapp", "/hi");
+        mockHelper.mock("/hi");
         assertEquals("hi tephra !", mockHelper.getResponse().getOutputStream().toString());
     }
 }
