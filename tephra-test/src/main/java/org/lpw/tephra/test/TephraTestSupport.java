@@ -4,9 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lpw.tephra.dao.jdbc.Sql;
-import org.lpw.tephra.dao.model.Model;
-import org.lpw.tephra.dao.orm.lite.LiteOrm;
-import org.lpw.tephra.dao.orm.lite.LiteQuery;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,8 +24,6 @@ public class TephraTestSupport {
     protected Validator validator;
     @Autowired
     protected Sql sql;
-    @Autowired
-    protected LiteOrm liteOrm;
 
     @Before
     public void before() throws IOException {
@@ -56,15 +51,6 @@ public class TephraTestSupport {
             }
         }
         reader.close();
-    }
-
-    /**
-     * 清空数据。
-     *
-     * @param modelClass Model类。
-     */
-    protected void clean(Class<? extends Model> modelClass) {
-        liteOrm.delete(new LiteQuery(modelClass), null);
     }
 
     @Test
