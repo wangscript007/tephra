@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl.context;
 
-import org.lpw.tephra.crypto.Digest;
+import org.lpw.tephra.crypto.Sign;
 import org.lpw.tephra.ctrl.Coder;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelTable;
@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,25 +20,20 @@ import java.util.Map;
  */
 @Controller("tephra.ctrl.context.request")
 public class RequestImpl implements Request, RequestAware {
-    private static final String SIGN = "sign";
-    private static final String SIGN_TIME = "sign-time";
-
     @Autowired
     protected Validator validator;
     @Autowired
     protected Converter converter;
     @Autowired
-    protected Digest digest;
-    @Autowired
     protected Logger logger;
+    @Autowired
+    protected Sign sign;
     @Autowired
     protected ModelTables modelTables;
     @Autowired(required = false)
     protected Coder coder;
-    @Value("${tephra.ctrl.context.request.sign.key:}")
-    protected String signKey;
-    @Value("${tephra.ctrl.context.request.sign.time:10000}")
-    protected long signTime;
+    @Value("${tephra.ctrl.content.request.sign:tephra-ctrl-sign}")
+    protected String signName;
     protected ThreadLocal<RequestAdapter> adapter = new ThreadLocal<>();
 
     @Override
@@ -127,30 +119,12 @@ public class RequestImpl implements Request, RequestAware {
 
     @Override
     public boolean checkSign() {
-        Map<String, String> map = getMap();
-        if (map.get(SIGN) == null)
-            return false;
-
-        return System.currentTimeMillis() - converter.toLong(map.get(SIGN_TIME)) < signTime && getSign(map).equals(map.get(SIGN));
+        return sign.verify(getMap(), get(signName));
     }
 
     @Override
     public void putSign(Map<String, String> map) {
-        map.put(SIGN_TIME, converter.toString(System.currentTimeMillis(), "0"));
-        map.put(SIGN, getSign(map));
-    }
-
-    protected String getSign(Map<String, String> map) {
-        List<String> list = new ArrayList<>(map.keySet());
-        list.remove(SIGN);
-        Collections.sort(list);
-
-        StringBuilder sb = new StringBuilder();
-        for (String key : list)
-            sb.append(key).append('=').append(map.get(key)).append('&');
-        sb.append(signKey);
-
-        return digest.md5(sb.toString());
+        sign.put(map, get(signName));
     }
 
     @Override

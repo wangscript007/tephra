@@ -1,4 +1,4 @@
-package org.lpw.tephra.test;
+package org.lpw.tephra.test.mock;
 
 /**
  * @author lpw
