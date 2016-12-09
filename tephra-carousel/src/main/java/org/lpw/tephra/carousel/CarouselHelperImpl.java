@@ -4,6 +4,7 @@ import net.sf.json.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.lpw.tephra.cache.Cache;
 import org.lpw.tephra.ctrl.context.Header;
 import org.lpw.tephra.ctrl.context.Session;
 import org.lpw.tephra.ctrl.execute.Execute;
@@ -30,6 +31,8 @@ import java.util.concurrent.Future;
  */
 @Component("tephra.carousel.helper")
 public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, ContextRefreshedListener, ContextClosedListener {
+    private static final String CACHE_SERVICE = "tephra.carousel.helper.service:";
+
     @Autowired
     protected Validator validator;
     @Autowired
@@ -38,6 +41,8 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     protected Http http;
     @Autowired
     protected Logger logger;
+    @Autowired
+    protected Cache cache;
     @Autowired
     protected Status status;
     @Autowired
@@ -113,13 +118,21 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     }
 
     @Override
-    public String service(String key, Map<String, String> header, Map<String, String> parameter) {
+    public String service(String key, Map<String, String> header, Map<String, String> parameter, boolean cacheable) {
+        String cacheKey = null;
+        if (cacheable) {
+            cacheKey = CACHE_SERVICE + key + converter.toString(header) + converter.toString(parameter);
+            String string = cache.get(cacheKey);
+            if (string != null)
+                return string;
+        }
+
         if (services.containsKey(key)) {
             try {
                 Future<String> future = executorService.submit(BeanFactory.getBean(LocalService.class)
                         .build(services.get(key), this.header.getIp(), session.getId(), header, parameter));
 
-                return future.get();
+                return cacheService(cacheable, cacheKey, future.get());
             } catch (Exception e) {
                 logger.warn(e, "执行本地服务[{}:{}]时发生异常！", key, services.get(key));
 
@@ -134,7 +147,14 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
             header = new HashMap<>();
         header.put("carousel-ds-key", key);
 
-        return http.post(carouselUrl + "/discovery/execute", header, parameter);
+        return cacheService(cacheable, cacheKey, http.post(carouselUrl + "/discovery/execute", header, parameter));
+    }
+
+    protected String cacheService(boolean cacheable, String cacheKey, String result) {
+        if (cacheable)
+            cache.put(cacheKey, result, false);
+
+        return result;
     }
 
     protected boolean code0(String string) {
