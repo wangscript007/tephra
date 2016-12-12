@@ -104,7 +104,6 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
 
     @Override
     public boolean register(String key, String service) {
-        services.put(key, service);
         if (emptyCarouselUrl || emptyServiceUrl)
             return false;
 
@@ -176,7 +175,7 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
             return;
 
         for (String name : converter.toArray(methodExecute.name(), ","))
-            register(classExecute.key() + name, classExecute.name() + name);
+            services.put(classExecute.key() + "." + name, classExecute.name() + name);
     }
 
     @Override
@@ -190,6 +189,7 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
         emptyServiceUrl = validator.isEmpty(serviceUrl);
         if (!validator.isEmpty(registers))
             registers.forEach(register -> register.getKeyService().forEach(this::register));
+        services.forEach(this::register);
         if (executorService == null)
             executorService = Executors.newCachedThreadPool();
 
