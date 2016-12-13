@@ -38,15 +38,15 @@ public class TemplateImpl extends TemplateSupport implements Template {
     }
 
     @Override
-    public void process(String name, Object data, OutputStream output) throws IOException {
+    public void process(String name, Object data, OutputStream outputStream) throws IOException {
         if (data instanceof Failure) {
             InputStream input = new FileInputStream(context.getAbsolutePath(failure));
-            io.copy(input, output);
+            io.copy(input, outputStream);
             input.close();
 
             return;
         }
 
-        output.write((byte[]) data);
+        outputStream.write((byte[]) data);
     }
 }

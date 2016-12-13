@@ -47,10 +47,10 @@ public interface Template {
     /**
      * 处理模版输出。
      *
-     * @param name   模版文件名。
-     * @param data   数据。
-     * @param output 输出流。
+     * @param name         模版文件名。
+     * @param data         数据。
+     * @param outputStream 输出流。
      * @throws IOException 未处理IOException异常。
      */
-    void process(String name, Object data, OutputStream output) throws IOException;
+    void process(String name, Object data, OutputStream outputStream) throws IOException;
 }

@@ -33,18 +33,18 @@ public class TemplateImpl extends TemplateSupport implements Template {
     }
 
     @Override
-    public void process(String name, Object data, OutputStream output) throws IOException {
+    public void process(String name, Object data, OutputStream outputStream) throws IOException {
         if (data instanceof Failure) {
             Failure failure = (Failure) data;
-            write(getFailureCode(failure) + ":" + message.get(failure.getMessageKey()), output);
+            write(getFailureCode(failure) + ":" + message.get(failure.getMessageKey()), outputStream);
 
             return;
         }
 
-        write(data, output);
+        write(data, outputStream);
     }
 
-    protected void write(Object data, OutputStream output) throws IOException {
-        output.write(data.toString().getBytes("UTF-8"));
+    protected void write(Object data, OutputStream outputStream) throws IOException {
+        outputStream.write(data.toString().getBytes("UTF-8"));
     }
 }

@@ -39,9 +39,9 @@ public class TemplateImpl extends TemplateSupport implements Template {
     }
 
     @Override
-    public void process(String name, Object data, OutputStream output) throws IOException {
+    public void process(String name, Object data, OutputStream outputStream) throws IOException {
         if (data instanceof Failure) {
-            write(getFailure((Failure) data), output);
+            write(getFailure((Failure) data), outputStream);
 
             return;
         }
@@ -51,11 +51,11 @@ public class TemplateImpl extends TemplateSupport implements Template {
         else if (data instanceof PageList)
             data = ((PageList<? extends Model>) data).toJson();
 
-        write(pack(data), output);
+        write(pack(data), outputStream);
     }
 
-    protected void write(Object data, OutputStream output) throws IOException {
-        output.write(data.toString().getBytes("UTF-8"));
+    protected void write(Object data, OutputStream outputStream) throws IOException {
+        outputStream.write(data.toString().getBytes("UTF-8"));
     }
 
     protected Object pack(Object object) {

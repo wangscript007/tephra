@@ -27,6 +27,11 @@ public interface Templates {
     String STREAM = "stream";
 
     /**
+     * Excel模板类型。
+     */
+    String EXCEL = "excel";
+
+    /**
      * 获取默认模板实例。
      *
      * @return 默认模板实例。

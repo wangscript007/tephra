@@ -48,9 +48,9 @@ public class TemplateImpl extends TemplateSupport implements Template {
         freemarker.process(name, data, output);
     }
 
-    protected boolean failure(JSONObject object, OutputStream output) throws IOException {
+    protected boolean failure(JSONObject object, OutputStream outputStream) throws IOException {
         if (object.has("code") && object.getInt("code") > 0) {
-            output.write(object.toString().getBytes());
+            outputStream.write(object.toString().getBytes());
 
             return true;
         }

@@ -38,4 +38,6 @@ Ctrl接口图：
 
 [验证错误编码管理](doc/failure-code.md "验证错误编码管理")
 
+[导出Excel](doc/excel.md "导出Excel")
+
 [ctrl.tephra.config.properties](doc/config.md "ctrl.tephra.config.properties")
