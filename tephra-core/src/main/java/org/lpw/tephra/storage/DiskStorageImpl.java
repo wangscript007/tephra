@@ -38,6 +38,11 @@ public class DiskStorageImpl implements Storage {
     }
 
     @Override
+    public boolean exists(String absolutePath) {
+        return new File(absolutePath).exists();
+    }
+
+    @Override
     public long lastModified(String path) {
         return new File(path).lastModified();
     }

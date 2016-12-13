@@ -77,6 +77,20 @@ public class HdfsImpl implements Hdfs, Storage, ContextRefreshedListener {
     }
 
     @Override
+    public boolean exists(String absolutePath) {
+        if (isDisabled())
+            return false;
+
+        try {
+            return getFileSystem().exists(new Path(absolutePath));
+        } catch (IOException e) {
+            logger.warn(e, "验证HDFS文件[{}]是否存在时发生异常！", absolutePath);
+
+            return false;
+        }
+    }
+
+    @Override
     public long lastModified(String path) {
         if (isDisabled())
             return 0L;

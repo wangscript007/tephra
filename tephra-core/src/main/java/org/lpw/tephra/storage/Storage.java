@@ -33,6 +33,14 @@ public interface Storage {
     String getAbsolutePath(String path);
 
     /**
+     * 验证文件是否存在。
+     *
+     * @param absolutePath 文件绝对路径。
+     * @return 如果存在则返回true；否则返回false。
+     */
+    boolean exists(String absolutePath);
+
+    /**
      * 获取文件最后修改时间。
      *
      * @param path 文件路径。
