@@ -8,4 +8,4 @@ Hadoop模块提供hadoop操作支持。
 
 [Hbase](doc/hbase.md)
 
-[hadoop.tephra.config.properties](doc/config.md)
+[配置参数](src/main/resources/hadoop.tephra.config)

@@ -14,28 +14,28 @@ Dao模块提供对数据持久化的支持，包含SQL、Hibernate、及一个�
 ## Orm包接口图
 ![Orm包接口图](doc/uml/orm.png "Orm包接口图")
 
-[连接工厂与连接](doc/connection.md "连接工厂与连接")
+[连接工厂与连接](doc/connection.md)
 
-[管理数据源](doc/data-source.md "管理数据源")
+[管理数据源](doc/data-source.md)
 
-[管理JDBC连接](doc/jdbc-connection.md "管理JDBC连接")
+[管理JDBC连接](doc/jdbc-connection.md)
 
-[执行SQL](doc/sql.md "执行SQL")
+[执行SQL](doc/sql.md)
 
-[Model定义](doc/model.md "Model定义")
+[Model定义](doc/model.md)
 
-[使用ModelHelper管理Model](doc/model-helper.md "使用ModelHelper管理Model")
+[使用ModelHelper管理Model](doc/model-helper.md)
 
-[ORM接口说明](doc/orm.md "ORM接口说明")
+[ORM接口说明](doc/orm.md)
 
-[使用LiteOrm持久化数据](doc/lite.md "使用LiteOrm持久化数据")
+[使用LiteOrm持久化数据](doc/lite.md)
 
-[使用HibernateOrm持久化数据](doc/hibernate.md "使用HibernateOrm持久化数据")
+[使用HibernateOrm持久化数据](doc/hibernate.md)
 
-[使用MybatisOrm持久化数据](doc/mybatis.md "使用MybatisOrm持久化数据")
+[使用MybatisOrm持久化数据](doc/mybatis.md)
 
-[使用内存表映射提升检索速度](doc/memory.md "使用内存表映射提升检索速度")
+[使用内存表映射提升检索速度](doc/memory.md)
 
-[使用MongoDB持久化数据](doc/mongo.md "使用MongoDB持久化数据")
+[使用MongoDB持久化数据](doc/mongo.md)
 
-[dao.tephra.config.properties](doc/config.md "dao.tephra.config.properties")
+[配置参数](src/main/resources/dao.tephra.config)

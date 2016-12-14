@@ -35,12 +35,12 @@ Ctrl-Http模块自动对静态资源进行最后更新时间的判断，如果�
 #tephra.ctrl.http.ignor.suffixes = .ico,.js,.css,.html
 ```
 
-[跨容器Session管理](doc/session.md "跨容器Session管理")
+[跨容器Session管理](doc/session.md)
 
-[上传文件](doc/upload.md "上传文件")
+[上传文件](doc/upload.md)
 
-[使用WebSocket](doc/web-socket.md "使用WebSocket")
+[使用WebSocket](doc/web-socket.md)
 
-[时间哈希验证](doc/time-hash.md "时间哈希验证")
+[时间哈希验证](doc/time-hash.md)
 
-[http.ctrl.tephra.config.properties](doc/config.md "http.ctrl.tephra.config.properties")
+[配置参数](src/main/resources/http.ctrl.tephra.config)

@@ -18,26 +18,26 @@ Ctrl模块参考了Struts2和Spring MVC的设计，具有以下几个特点：
 
 Ctrl接口图：
 
-![Ctrl接口图](doc/uml/interface.png "Ctrl接口图")
+![Ctrl接口图](doc/uml/interface.png)
 
-[使用Execute注解定义服务](doc/execute.md "使用Execute注解定义服务")
+[使用Execute注解定义服务](doc/execute.md)
 
-[输出与模板](doc/template.md "输出与模板")
+[输出与模板](doc/template.md)
 
-[自动事务控制](doc/transaction.md "自动事务控制")
+[自动事务控制](doc/transaction.md)
 
-[使用拦截器](doc/interceptor.md "使用拦截器")
+[使用拦截器](doc/interceptor.md)
 
-[请求参数验证](doc/validate.md "请求参数验证")
+[请求参数验证](doc/validate.md)
 
-[请求参数签名](doc/sign.md "请求参数签名")
+[请求参数签名](doc/sign.md)
 
-[权限验证](doc/permit.md "权限验证")
+[权限验证](doc/permit.md)
 
-[服务跳转与页面转发](doc/forward.md "服务跳转与页面转发")
+[服务跳转与页面转发](doc/forward.md)
 
-[验证错误编码管理](doc/failure-code.md "验证错误编码管理")
+[验证错误编码管理](doc/failure-code.md)
 
-[导出Excel](doc/excel.md "导出Excel")
+[导出Excel](doc/excel.md)
 
-[ctrl.tephra.config.properties](doc/config.md "ctrl.tephra.config.properties")
+[配置参数](src/main/resources/ctrl.tephra.config)
