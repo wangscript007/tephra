@@ -12,11 +12,14 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -135,6 +138,15 @@ public class ConverterImpl implements Converter {
             array[i] = toArray(list.get(i), separator[1]);
 
         return array;
+    }
+
+    @Override
+    public <T> Set<T> toSet(T[] array) {
+        Set<T> set = new HashSet<>();
+        if (array != null)
+            Collections.addAll(set, array);
+
+        return set;
     }
 
     @Override

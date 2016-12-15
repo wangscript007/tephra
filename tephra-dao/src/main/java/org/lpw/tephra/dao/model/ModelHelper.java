@@ -4,6 +4,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Model支持类。用于操作Model属性。
@@ -40,6 +41,17 @@ public interface ModelHelper {
     <T extends Model> JSONObject toJson(T model);
 
     /**
+     * 将Model转化为JSON格式的数据。
+     * 转化时将调用所有get方法输出属性值。
+     *
+     * @param model   Model实例。
+     * @param ignores 忽略转化的属性集，为空表示不忽略。
+     * @param <T>     Model类型。
+     * @return JSON数据。
+     */
+    <T extends Model> JSONObject toJson(T model, Set<String> ignores);
+
+    /**
      * 将Model集转化为JSON格式的数据集。
      * 转化时将调用所有get方法输出属性值。
      *
@@ -48,6 +60,17 @@ public interface ModelHelper {
      * @return JSON数据集。
      */
     <T extends Model> JSONArray toJson(Collection<T> models);
+
+    /**
+     * 将Model集转化为JSON格式的数据集。
+     * 转化时将调用所有get方法输出属性值。
+     *
+     * @param models  Model集。
+     * @param ignores 忽略转化的属性集，为空表示不忽略。
+     * @param <T>     Model类型。
+     * @return JSON数据集。
+     */
+    <T extends Model> JSONArray toJson(Collection<T> models, Set<String> ignores);
 
     /**
      * 将JSON对象转化为Model对象。

@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author lpw
@@ -39,21 +41,33 @@ public class ModelHelperImpl implements ModelHelper {
 
     @Override
     public <T extends Model> JSONObject toJson(T model) {
+        return toJson(model, new HashSet<>());
+    }
+
+    @Override
+    public <T extends Model> JSONObject toJson(T model, Set<String> ignores) {
         if (model == null)
             return null;
 
+        if (ignores == null)
+            ignores = new HashSet<>();
+
         JSONObject object = new JSONObject();
         ModelTable modelTable = modelTables.get(getModelClass(model.getClass()));
-        object.put("id", model.getId());
-        modelTable.getPropertyNames().forEach(name -> {
+        if (!ignores.contains("id"))
+            object.put("id", model.getId());
+        for (String name : modelTable.getPropertyNames()) {
+            if (ignores.contains(name))
+                continue;
+
             Jsonable jsonable = modelTable.getJsonable(name);
             if (jsonable == null)
-                return;
+                continue;
 
             Object json = getJson(modelTable, name, modelTable.get(model, name), jsonable);
             if (json != null)
-                object.put(converter.toFirstLowerCase(name), json);
-        });
+                object.put(name, json);
+        }
 
         return object;
     }
@@ -111,11 +125,16 @@ public class ModelHelperImpl implements ModelHelper {
 
     @Override
     public <T extends Model> JSONArray toJson(Collection<T> models) {
+        return toJson(models, new HashSet<>());
+    }
+
+    @Override
+    public <T extends Model> JSONArray toJson(Collection<T> models, Set<String> ignores) {
         JSONArray array = new JSONArray();
         if (validator.isEmpty(models))
             return array;
 
-        models.forEach(model -> array.add(toJson(model)));
+        models.forEach(model -> array.add(toJson(model, ignores)));
 
         return array;
     }

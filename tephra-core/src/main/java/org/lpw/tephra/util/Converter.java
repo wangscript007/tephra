@@ -2,6 +2,7 @@ package org.lpw.tephra.util;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 转换器。提供常用转换操作。
@@ -53,6 +54,15 @@ public interface Converter {
      * @return 转化后的二维数组；如果字符串为空或分隔符数组不为两个元素的数组则返回空二维数组。
      */
     String[][] toArray(String string, String[] separator);
+
+    /**
+     * 将数组转化为Set集。
+     *
+     * @param array 数组。
+     * @param <T>   元素类。
+     * @return Set集合；如果array为空则返回空集。
+     */
+    <T> Set<T> toSet(T[] array);
 
     /**
      * 将数值转化为使用K、M、G、T等单位表示的字符串。

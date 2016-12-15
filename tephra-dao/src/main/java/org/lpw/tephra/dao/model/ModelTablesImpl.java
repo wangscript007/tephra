@@ -3,6 +3,7 @@ package org.lpw.tephra.dao.model;
 import org.hibernate.annotations.GenericGenerator;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -22,6 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
     @Autowired
     protected Validator validator;
+    @Autowired
+    protected Converter converter;
     @Autowired(required = false)
     protected Set<Model> models;
     protected Map<Class<? extends Model>, ModelTable> map;
@@ -84,7 +87,7 @@ public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
                 continue;
             }
 
-            String propertyName = name.substring(3);
+            String propertyName = converter.toFirstLowerCase(name.substring(3));
             if (name.startsWith("get")) {
                 modelTable.addGetMethod(propertyName, method);
                 Column column = method.getAnnotation(Column.class);
