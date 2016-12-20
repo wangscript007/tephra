@@ -5,15 +5,10 @@ import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author lpw
@@ -23,34 +18,40 @@ public class SignImpl implements Sign, StorageListener {
     private static final String SIGN = "sign";
     private static final String SIGN_TIME = "sign-time";
 
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Io io;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected Digest digest;
+    private final Converter converter;
+    private final Validator validator;
+    private final Io io;
+    private final Logger logger;
+    private final Digest digest;
     @Value("${tephra.crypto.sign.path:/WEB-INF/sign}")
-    protected String path;
+    private String path;
     @Value("${tephra.crypto.sign.time:10000}")
-    protected long time;
-    protected Map<String, String> map = new HashMap<>();
+    private long time;
+    private final Map<String, String> map;
+
+    public SignImpl(Converter converter, Validator validator, Io io, Logger logger, Digest digest) {
+        this.converter = converter;
+        this.validator = validator;
+        this.io = io;
+        this.logger = logger;
+        this.digest = digest;
+        map = new HashMap<>();
+    }
 
     @Override
     public void put(Map<String, String> map, String name) {
+        if (map == null)
+            return;
+
         map.put(SIGN_TIME, converter.toString(System.currentTimeMillis(), "0"));
         map.put(SIGN, get(map, name));
     }
 
     @Override
     public boolean verify(Map<String, String> map, String name) {
-        if (map.get(SIGN) == null)
-            return false;
-
-        return System.currentTimeMillis() - converter.toLong(map.get(SIGN_TIME)) < time && get(map, name).equals(map.get(SIGN));
+        return map.containsKey(SIGN) && map.containsKey(SIGN_TIME) &&
+                System.currentTimeMillis() - converter.toLong(map.get(SIGN_TIME)) < time &&
+                get(map, name).equals(map.get(SIGN));
     }
 
     protected String get(Map<String, String> map, String name) {
@@ -66,8 +67,12 @@ public class SignImpl implements Sign, StorageListener {
         return digest.md5(sb.toString());
     }
 
-    protected String getKey(String name) {
-        return map.get(validator.isEmpty(name) ? "" : name);
+    private String getKey(String name) {
+        String key = map.get(validator.isEmpty(name) ? "" : name);
+        if (key == null)
+            key = map.get("");
+
+        return key;
     }
 
     @Override
@@ -91,7 +96,8 @@ public class SignImpl implements Sign, StorageListener {
 
             map.put(string.substring(0, indexOf).trim(), string.substring(indexOf + 1).trim());
         }
-        this.map = map;
+        this.map.clear();
+        this.map.putAll(map);
 
         if (logger.isInfoEnable())
             logger.info("更新签名密钥[{}]。", converter.toString(map.keySet()));

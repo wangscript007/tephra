@@ -1,16 +1,21 @@
 package org.lpw.tephra.crypto;
 
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
 @Component("tephra.crypto.xor-shift")
 public class XorShiftImpl implements XorShift {
-    @Autowired
-    protected Validator validator;
+    private final Validator validator;
+
+    @Inject
+    public XorShiftImpl(Validator validator) {
+        this.validator = validator;
+    }
 
     @Override
     public byte[] encrypt(byte[] key, byte[] message) {
@@ -42,8 +47,7 @@ public class XorShiftImpl implements XorShift {
 
     private byte[] copy(byte[] message) {
         byte[] msg = new byte[message.length];
-        for (int i = 0; i < msg.length; i++)
-            msg[i] = message[i];
+        System.arraycopy(message, 0, msg, 0, message.length);
 
         return msg;
     }

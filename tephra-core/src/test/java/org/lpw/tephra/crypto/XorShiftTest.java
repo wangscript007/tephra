@@ -2,19 +2,16 @@ package org.lpw.tephra.crypto;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.lpw.tephra.TestSupport;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class XorShiftTest {
-    @Autowired
-    protected XorShift xorShift;
+public class XorShiftTest extends TestSupport {
+    @Inject
+    private XorShift xorShift;
 
     @Test
     public void crypto() {

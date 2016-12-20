@@ -2,9 +2,9 @@ package org.lpw.tephra.crypto;
 
 import org.apache.commons.codec.binary.Hex;
 import org.lpw.tephra.util.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -16,8 +16,12 @@ public class DigestImpl implements Digest {
     private static final String MD5 = "MD5";
     private static final String SHA1 = "SHA1";
 
-    @Autowired
-    protected Logger logger;
+    private final Logger logger;
+
+    @Inject
+    public DigestImpl(Logger logger) {
+        this.logger = logger;
+    }
 
     @Override
     public String md5(String text) {
@@ -39,7 +43,7 @@ public class DigestImpl implements Digest {
         return digest(SHA1, text);
     }
 
-    protected String digest(String algorithm, byte[] input) {
+    private String digest(String algorithm, byte[] input) {
         if (input == null)
             return null;
 
