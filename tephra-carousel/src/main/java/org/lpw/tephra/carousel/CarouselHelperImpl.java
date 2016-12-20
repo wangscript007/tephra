@@ -13,6 +13,7 @@ import org.lpw.tephra.ctrl.status.Status;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.TimeUnit;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -118,10 +119,17 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     }
 
     @Override
-    public String service(String key, Map<String, String> header, Map<String, String> parameter, boolean cacheable) {
+    public String service(String key, Map<String, String> header, Map<String, String> parameter) {
+        return service(key, header, parameter, 0);
+    }
+
+    @Override
+    public String service(String key, Map<String, String> header, Map<String, String> parameter, int cacheTime) {
         String cacheKey = null;
+        boolean cacheable = cacheTime > 0;
         if (cacheable) {
-            cacheKey = CACHE_SERVICE + key + converter.toString(header) + converter.toString(parameter);
+            cacheKey = CACHE_SERVICE + key + converter.toString(header) + converter.toString(parameter)
+                    + (System.currentTimeMillis() / cacheTime / TimeUnit.Minute.getTime());
             String string = cache.get(cacheKey);
             if (string != null)
                 return string;

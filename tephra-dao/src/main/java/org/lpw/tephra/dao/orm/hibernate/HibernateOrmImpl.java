@@ -1,7 +1,7 @@
 package org.lpw.tephra.dao.orm.hibernate;
 
 import org.hibernate.LockOptions;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.dao.Mode;
 import org.lpw.tephra.dao.model.Model;
@@ -26,7 +26,6 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
     @Autowired
     protected Session session;
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T extends Model> T findById(String dataSource, Class<T> modelClass, String id, boolean lock) {
         if (validator.isEmpty(id))
@@ -35,10 +34,10 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         if (lock) {
             session.beginTransaction();
 
-            return (T) session.get(dataSource, Mode.Write).get(modelClass, id, LockOptions.UPGRADE);
+            return session.get(dataSource, Mode.Write).get(modelClass, id, LockOptions.UPGRADE);
         }
 
-        return (T) session.get(dataSource, Mode.Read).get(modelClass, id);
+        return session.get(dataSource, Mode.Read).get(modelClass, id);
     }
 
     @SuppressWarnings("unchecked")

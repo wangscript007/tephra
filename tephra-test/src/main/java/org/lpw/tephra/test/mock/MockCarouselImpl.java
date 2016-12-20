@@ -39,7 +39,7 @@ public class MockCarouselImpl implements MockCarousel {
         if (point.getSignature().getName().equals("service")) {
             String key = (String) point.getArgs()[0];
             if (services.containsKey(key))
-                return services.get(key).service(key, (Map<String, String>) point.getArgs()[1], (Map<String, String>) point.getArgs()[2], (Boolean) point.getArgs()[3]);
+                return services.get(key).service(key, (Map<String, String>) point.getArgs()[1], (Map<String, String>) point.getArgs()[2], (Integer) point.getArgs()[3]);
 
             if (results.containsKey(key))
                 return results.get(key);

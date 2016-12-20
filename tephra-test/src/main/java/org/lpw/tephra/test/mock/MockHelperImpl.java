@@ -9,6 +9,7 @@ import org.lpw.tephra.ctrl.context.RequestAware;
 import org.lpw.tephra.ctrl.context.ResponseAware;
 import org.lpw.tephra.ctrl.context.SessionAware;
 import org.lpw.tephra.util.Context;
+import org.lpw.tephra.util.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Controller;
 public class MockHelperImpl implements MockHelper {
     @Autowired
     protected Context context;
+    @Autowired
+    protected Generator generator;
     @Autowired
     protected HeaderAware headerAware;
     @Autowired
@@ -46,10 +49,14 @@ public class MockHelperImpl implements MockHelper {
 
     @Override
     public MockSession getSession() {
-        if (session.get() == null)
-            session.set(new MockSessionImpl());
+        MockSession mockSession = session.get();
+        if (mockSession == null) {
+            mockSession = new MockSessionImpl();
+            mockSession.setId(generator.random(32));
+            session.set(mockSession);
+        }
 
-        return session.get();
+        return mockSession;
     }
 
     @Override
