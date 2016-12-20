@@ -92,7 +92,7 @@ public class ValidatorsImpl implements Validators {
 
     protected int getFailureCode(ValidateWrapper validate, Validator validator) {
         int failureCode = validate.getFailureCode();
-        if (failureCode == 0)
+        if (failureCode <= 0)
             failureCode = validator.getFailureCode(validate);
 
         if (failureCode < 100)
