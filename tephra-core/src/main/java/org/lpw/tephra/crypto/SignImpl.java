@@ -8,7 +8,11 @@ import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author lpw
@@ -49,9 +53,8 @@ public class SignImpl implements Sign, StorageListener {
 
     @Override
     public boolean verify(Map<String, String> map, String name) {
-        return map.containsKey(SIGN) && map.containsKey(SIGN_TIME) &&
-                System.currentTimeMillis() - converter.toLong(map.get(SIGN_TIME)) < time &&
-                get(map, name).equals(map.get(SIGN));
+        return !validator.isEmpty(map) && map.containsKey(SIGN) && map.containsKey(SIGN_TIME) &&
+                System.currentTimeMillis() - converter.toLong(map.get(SIGN_TIME)) < time && get(map, name).equals(map.get(SIGN));
     }
 
     protected String get(Map<String, String> map, String name) {
@@ -60,11 +63,9 @@ public class SignImpl implements Sign, StorageListener {
         Collections.sort(list);
 
         StringBuilder sb = new StringBuilder();
-        String key = getKey(name);
-        list.forEach(k -> sb.append(key).append('=').append(map.get(k)).append('&'));
-        sb.append(key);
+        list.forEach(key -> sb.append(key).append('=').append(map.get(key)).append('&'));
 
-        return digest.md5(sb.toString());
+        return digest.md5(sb.append(getKey(name)).toString());
     }
 
     private String getKey(String name) {
