@@ -1,9 +1,11 @@
-package org.lpw.tephra.test.mock;
+package org.lpw.tephra.test;
 
 /**
+ * 定时器切片。主要实现对定时器执行的控制。
+ *
  * @author lpw
  */
-public interface MockScheduler {
+public interface SchedulerAspect {
     /**
      * 暂停定时器。
      */

@@ -3,20 +3,21 @@ package org.lpw.tephra.script;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.lpw.tephra.test.CoreTestSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.inject.Inject;
+
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class ArgumentsTest {
-    @Autowired
-    protected Engine engine;
-    @Autowired
-    protected Arguments arguments;
+public class ArgumentsTest extends CoreTestSupport{
+    @Inject
+    private Engine engine;
+    @Inject
+    private Arguments arguments;
 
     @Test
     public void execute() throws Exception {

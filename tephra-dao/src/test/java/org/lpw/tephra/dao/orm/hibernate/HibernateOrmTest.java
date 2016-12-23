@@ -2,33 +2,26 @@ package org.lpw.tephra.dao.orm.hibernate;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.lpw.tephra.dao.DaoUtil;
 import org.lpw.tephra.dao.orm.PageList;
 import org.lpw.tephra.dao.orm.TestModel;
+import org.lpw.tephra.test.DaoTestSupport;
 import org.lpw.tephra.util.Converter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class HibernateOrmTest {
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected HibernateOrm hibernateOrm;
+public class HibernateOrmTest extends DaoTestSupport {
+    @Inject
+    private Converter converter;
+    @Inject
+    private HibernateOrm hibernateOrm;
 
     @Test
     public void crud() {
-        DaoUtil.createTable(null);
-
         PageList<TestModel> pl = hibernateOrm.query(new HibernateQuery(TestModel.class), null);
         Assert.assertNotNull(pl);
         Assert.assertEquals(0, pl.getCount());

@@ -2,27 +2,22 @@ package org.lpw.tephra.dao.jdbc;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.lpw.tephra.dao.DaoUtil;
+import org.lpw.tephra.test.DaoTestSupport;
 import org.lpw.tephra.util.Converter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class SqlTest {
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Sql sql;
+public class SqlTest extends DaoTestSupport {
+    @Inject
+    private Converter converter;
+    @Inject
+    private Sql sql;
 
     @Test
     public void crud() {
-        DaoUtil.createTable(null);
         SqlTable table = sql.query("select * from t_tephra_test", null);
         Assert.assertNotNull(table);
         Assert.assertEquals(0, table.getRowCount());
@@ -61,7 +56,7 @@ public class SqlTest {
         sql.close();
     }
 
-    protected void check(SqlTable table, int start, int off) {
+    private void check(SqlTable table, int start, int off) {
         for (int i = start; i < 9 - off; i++) {
             Assert.assertEquals("id" + (i + off), table.get(i, 0));
             Assert.assertEquals(i + off, converter.toInt(table.get(i, 1)));

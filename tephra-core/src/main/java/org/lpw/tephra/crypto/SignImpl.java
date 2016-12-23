@@ -1,6 +1,7 @@
 package org.lpw.tephra.crypto;
 
 import org.lpw.tephra.storage.StorageListener;
+import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
@@ -8,7 +9,6 @@ import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -79,7 +79,7 @@ public class SignImpl implements Sign, StorageListener {
 
     @Override
     public String getStorageType() {
-        return "disk";
+        return Storages.TYPE_DISK;
     }
 
     @Override

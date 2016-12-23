@@ -127,6 +127,7 @@ public class HbaseImpl implements Hbase, Closable, ContextRefreshedListener {
         return array.isEmpty() ? null : array.getJSONObject(0);
     }
 
+    @SuppressWarnings({"unchecked"})
     @Override
     public <T extends Model> List<T> query(HbaseQuery query) {
         List<T> list = new ArrayList<>();

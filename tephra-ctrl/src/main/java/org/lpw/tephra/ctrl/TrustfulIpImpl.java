@@ -1,6 +1,7 @@
 package org.lpw.tephra.ctrl;
 
 import org.lpw.tephra.storage.StorageListener;
+import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
@@ -47,7 +48,7 @@ public class TrustfulIpImpl implements TrustfulIp, StorageListener {
 
     @Override
     public String getStorageType() {
-        return "disk";
+        return Storages.TYPE_DISK;
     }
 
     @Override

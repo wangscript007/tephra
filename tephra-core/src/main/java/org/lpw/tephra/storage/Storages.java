@@ -7,6 +7,11 @@ package org.lpw.tephra.storage;
  */
 public interface Storages {
     /**
+     * 磁盘文件类型名。
+     */
+    String TYPE_DISK = "disk";
+
+    /**
      * 获取默认文件处理器。
      *
      * @return 文件处理器；如果不存在则返回null。

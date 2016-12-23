@@ -2,34 +2,28 @@ package org.lpw.tephra.dao.orm.lite;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.lpw.tephra.dao.DaoUtil;
 import org.lpw.tephra.dao.jdbc.Sql;
 import org.lpw.tephra.dao.jdbc.SqlTable;
 import org.lpw.tephra.dao.orm.PageList;
 import org.lpw.tephra.dao.orm.TestModel;
+import org.lpw.tephra.test.DaoTestSupport;
 import org.lpw.tephra.util.Converter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class LiteOrmTest {
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Sql sql;
-    @Autowired
-    protected LiteOrm liteOrm;
+public class LiteOrmTest extends DaoTestSupport {
+    @Inject
+    private Converter converter;
+    @Inject
+    private Sql sql;
+    @Inject
+    private LiteOrm liteOrm;
 
     @Test
     public void crud() {
-        DaoUtil.createTable(null);
-
         PageList<TestModel> pl = liteOrm.query(new LiteQuery(TestModel.class), null);
         Assert.assertNotNull(pl);
         Assert.assertEquals(0, pl.getCount());
@@ -84,13 +78,11 @@ public class LiteOrmTest {
             Assert.assertEquals("name" + i, model.getName());
         }
 
-        DaoUtil.close();
+        close();
     }
 
     @Test
     public void memory() {
-        DaoUtil.createTable(null);
-
         MemoryModel model1 = new MemoryModel();
         model1.setSort(1);
         model1.setName("LiteOrm");
@@ -164,6 +156,6 @@ public class LiteOrmTest {
             Assert.assertEquals("name" + i, table.get(i, "c_name"));
         }
 
-        DaoUtil.close();
+        close();
     }
 }

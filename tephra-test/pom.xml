@@ -16,12 +16,12 @@
     <dependencies>
         <dependency>
             <groupId>org.lpw.tephra</groupId>
-            <artifactId>tephra-test-support</artifactId>
+            <artifactId>tephra-ctrl</artifactId>
             <version>1.0.0-RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.lpw.tephra</groupId>
-            <artifactId>tephra-ctrl</artifactId>
+            <artifactId>tephra-dao-test</artifactId>
             <version>1.0.0-RELEASE</version>
         </dependency>
     </dependencies>

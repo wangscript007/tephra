@@ -2,7 +2,7 @@ package org.lpw.tephra.crypto;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.lpw.tephra.test.TestSupport;
+import org.lpw.tephra.test.CoreTestSupport;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author lpw
  */
-public class SignTest extends TestSupport {
+public class SignCoreTest extends CoreTestSupport {
     @Inject
     private Converter converter;
     @Inject

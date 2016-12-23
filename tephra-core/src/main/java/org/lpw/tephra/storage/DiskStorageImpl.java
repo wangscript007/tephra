@@ -24,7 +24,7 @@ public class DiskStorageImpl implements Storage {
 
     @Override
     public String getType() {
-        return "disk";
+        return Storages.TYPE_DISK;
     }
 
     @Override

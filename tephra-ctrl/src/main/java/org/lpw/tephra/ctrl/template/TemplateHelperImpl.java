@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 /**
  * @author lpw
  */
-@Controller("commons.ctrl.template.helper")
+@Controller("tephra.ctrl.template.helper")
 public class TemplateHelperImpl implements TemplateHelper {
     protected ThreadLocal<String> template = new ThreadLocal<>();
 

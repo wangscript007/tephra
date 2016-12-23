@@ -1,7 +1,7 @@
 package org.lpw.tephra.nio;
 
+import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.lpw.tephra.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author lpw
  */
-public abstract class Handler extends ChannelInboundHandlerAdapter {
+public abstract class Handler extends ChannelHandlerAdapter {
     @Autowired
     protected Logger logger;
     @Autowired

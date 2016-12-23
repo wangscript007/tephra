@@ -15,8 +15,10 @@
         <module>tephra-weixin</module>
         <module>tephra-carousel</module>
         <module>tephra-hadoop</module>
-        <module>tephra-test</module>
         <module>tephra-web</module>
+        <module>tephra-core-test</module>
+        <module>tephra-dao-test</module>
+        <module>tephra-test</module>
     </modules>
     <packaging>pom</packaging>
 

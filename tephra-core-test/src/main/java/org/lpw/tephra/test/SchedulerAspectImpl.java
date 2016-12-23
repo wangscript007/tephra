@@ -1,4 +1,4 @@
-package org.lpw.tephra.test.mock;
+package org.lpw.tephra.test;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
  * @author lpw
  */
 @Aspect
-@Component("tephra.test.mock.scheduler")
-public class MockSchedulerImpl implements MockScheduler {
+@Component("tephra.test.aspect.scheduler")
+public class SchedulerAspectImpl implements SchedulerAspect {
     protected boolean paused;
 
     @Override

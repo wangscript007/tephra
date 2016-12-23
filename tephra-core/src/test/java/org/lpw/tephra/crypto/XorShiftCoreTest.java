@@ -2,14 +2,14 @@ package org.lpw.tephra.crypto;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.lpw.tephra.test.TestSupport;
+import org.lpw.tephra.test.CoreTestSupport;
 
 import javax.inject.Inject;
 
 /**
  * @author lpw
  */
-public class XorShiftTest extends TestSupport {
+public class XorShiftCoreTest extends CoreTestSupport {
     @Inject
     private XorShift xorShift;
 

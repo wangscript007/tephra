@@ -2,7 +2,7 @@ package org.lpw.tephra.crypto;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.lpw.tephra.test.TestSupport;
+import org.lpw.tephra.test.CoreTestSupport;
 
 import javax.inject.Inject;
 import java.lang.reflect.Method;
@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 /**
  * @author lpw
  */
-public class DigestTest extends TestSupport {
+public class DigestCoreTest extends CoreTestSupport {
     @Inject
     private Digest digest;
 

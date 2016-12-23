@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author lpw
  */
-@Repository("commons.dao.jdbc.sql")
+@Repository("tephra.dao.jdbc.sql")
 public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
     @Override
     public SqlTable query(String dataSource, String sql, Object[] args) {

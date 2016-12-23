@@ -1,6 +1,9 @@
 @startuml
 
 package Tephra {
+[core-test] <-- [dao-test]
+[dao-test] <-- [test]
+
 [core] <-- [dao]
 [dao] <-- [ctrl]
 [ctrl] <-- [ctrl-http]
@@ -11,13 +14,6 @@ package Tephra {
 [ctrl] <-- [hadoop]
 [script] <-- [web]
 [ctrl-http] <-- [web]
-
-[core-test] <-l- [core]
-[dao-test] <-l- [dao]
-[core-test] <-- [dao-test]
-[ctrl-test] <-l- [ctrl]
-[dao-test] <-- [ctrl-test]
-[ctrl-test] <-- [test]
 }
 
 @enduml

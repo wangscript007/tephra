@@ -6,27 +6,26 @@ import org.junit.runner.RunWith;
 import org.lpw.tephra.dao.DaoUtil;
 import org.lpw.tephra.dao.Mode;
 import org.lpw.tephra.dao.orm.TestModel;
+import org.lpw.tephra.test.DaoTestSupport;
 import org.lpw.tephra.util.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.inject.Inject;
 import java.util.List;
 
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class MybatisOrmTest {
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected MybatisOrm mybatisOrm;
+public class MybatisOrmTest extends DaoTestSupport{
+    @Inject
+    private Generator generator;
+    @Inject
+    private MybatisOrm mybatisOrm;
 
     @Test
     public void crudByMapper() {
-        DaoUtil.createMybatisTable(null);
         TestMapper mapper = mybatisOrm.getMapper(null, Mode.Write, TestMapper.class);
         Assert.assertNotNull(mapper);
         Assert.assertNull(mapper.findById("id"));
@@ -67,7 +66,7 @@ public class MybatisOrmTest {
         }
         checkList(mapper.selectAll());
 
-        DaoUtil.close();
+        close();
     }
 
     @Test
@@ -81,7 +80,6 @@ public class MybatisOrmTest {
     }
 
     protected void crudUseStatement(String suffix) {
-        DaoUtil.createMybatisTable(null);
         Assert.assertNull(mybatisOrm.selectOne(new MybatisBuilder().statement("org.lpw.tephra.dao.orm.mybatis.TestMapper.findById" + suffix).parameter("id")));
 
         TestModel model1 = new TestModel();
@@ -120,7 +118,7 @@ public class MybatisOrmTest {
         }
         checkList(mybatisOrm.selectList(new MybatisBuilder().statement("org.lpw.tephra.dao.orm.mybatis.TestMapper.selectAll" + suffix)));
 
-        DaoUtil.close();
+        close();
     }
 
     protected void checkList(List<TestModel> list) {

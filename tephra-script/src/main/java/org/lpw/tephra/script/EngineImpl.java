@@ -1,14 +1,16 @@
 package org.lpw.tephra.script;
 
+import org.lpw.tephra.storage.StorageListener;
+import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -25,25 +27,26 @@ import java.util.List;
  * @author lpw
  */
 @Service("tephra.script.engine")
-public class EngineImpl implements Engine {
+public class EngineImpl implements Engine, StorageListener {
     private static final String METHOD = "();";
     private static final byte[] READY = "tephra.ready.execute();".getBytes();
     private static final String HAS_METHOD_NAME = "tephra.existsMethod";
 
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected Io io;
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Context context;
+    @Inject
+    private Io io;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Logger logger;
     @Value("${tephra.script.path:/WEB-INF/script}")
-    protected String path;
-    protected ScriptEngineManager manager;
-    protected ScriptEngine engine;
+    private String path;
+    private ScriptEngineManager manager;
+    private ScriptEngine engine;
+    private List<String> names;
 
     @Override
     public synchronized void refresh() {
@@ -59,7 +62,7 @@ public class EngineImpl implements Engine {
         }
     }
 
-    protected String read() throws IOException {
+    private String read() throws IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         String root = context.getAbsolutePath(path);
         for (String name : names()) {
@@ -94,18 +97,6 @@ public class EngineImpl implements Engine {
 
     @Override
     public List<String> names() {
-        List<String> names = new ArrayList<>();
-        try {
-            String root = context.getAbsolutePath(path);
-            BufferedReader reader = new BufferedReader(new FileReader(root + "/name"));
-            for (String string; (string = reader.readLine()) != null; )
-                if (!validator.isEmpty(string))
-                    names.add(string);
-            reader.close();
-        } catch (IOException e) {
-            logger.warn(e, "读取脚本文件名时发生异常！");
-        }
-
         return names;
     }
 
@@ -119,5 +110,31 @@ public class EngineImpl implements Engine {
             refresh();
 
         return engine;
+    }
+
+    @Override
+    public String getStorageType() {
+        return Storages.TYPE_DISK;
+    }
+
+    @Override
+    public String[] getScanPathes() {
+        return new String[]{path + "/name"};
+    }
+
+    @Override
+    public void onStorageChanged(String path, String absolutePath) {
+        List<String> names = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(absolutePath));
+            for (String string; (string = reader.readLine()) != null; )
+                if (!validator.isEmpty(string))
+                    names.add(string);
+            reader.close();
+        } catch (IOException e) {
+            logger.warn(e, "读取脚本文件名[{}]列表时发生异常！", absolutePath);
+        }
+        this.names = names;
+        refresh();
     }
 }

@@ -12,7 +12,7 @@ import java.sql.Types;
 /**
  * @author lpw
  */
-@Repository("commons.dao.jdbc.procedure")
+@Repository("tephra.dao.jdbc.procedure")
 public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Procedure {
     @Override
     public SqlTable query(String dataSource, String sql, Object[] args) {
