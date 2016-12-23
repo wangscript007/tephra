@@ -2,9 +2,7 @@ package org.lpw.tephra.crypto;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.lpw.tephra.test.TestSupport;
 
 import javax.inject.Inject;
 import java.lang.reflect.Method;
@@ -12,9 +10,7 @@ import java.lang.reflect.Method;
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class DigestTest {
+public class DigestTest extends TestSupport {
     @Inject
     private Digest digest;
 

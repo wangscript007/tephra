@@ -1,5 +1,6 @@
 package org.lpw.tephra.ctrl.http.context;
 
+import net.sf.json.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.ctrl.context.RequestAdapter;
 import org.lpw.tephra.util.Converter;
@@ -22,20 +23,20 @@ public class RequestAdapterImpl implements RequestAdapter {
     protected Map<String, String> map;
     protected String content;
 
+    @SuppressWarnings({"unchecked"})
     public RequestAdapterImpl(HttpServletRequest request, String uri) {
         this.request = request;
         this.uri = uri;
+        content = getFromInputStream();
+        if (content.length() == 0)
+            map = new HashMap<>();
+        else
+            map = content.charAt(0) == '{' ? JSONObject.fromObject(content) : BeanFactory.getBean(Converter.class).toParameterMap(getFromInputStream());
+        request.getParameterMap().forEach((key, value) -> map.put(key, value[0]));
     }
 
     @Override
     public String get(String name) {
-        String value = request.getParameter(name);
-        if (value != null)
-            return value;
-
-        if (map == null)
-            map = BeanFactory.getBean(Converter.class).toParameterMap(getFromInputStream());
-
         return map.get(name);
     }
 
@@ -48,10 +49,6 @@ public class RequestAdapterImpl implements RequestAdapter {
 
     @Override
     public Map<String, String> getMap() {
-        Map<String, String> map = new HashMap<>();
-        Map<String, String[]> parameters = request.getParameterMap();
-        parameters.forEach((key, value) -> map.put(key, value[0]));
-
         return map;
     }
 

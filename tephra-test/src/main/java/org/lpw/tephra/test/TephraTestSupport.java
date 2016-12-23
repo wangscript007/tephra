@@ -2,12 +2,9 @@ package org.lpw.tephra.test;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.lpw.tephra.dao.jdbc.Sql;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,9 +14,7 @@ import java.io.IOException;
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class TephraTestSupport {
+public class TephraTestSupport extends TestSupport {
     @Autowired
     protected Validator validator;
     @Autowired
@@ -51,9 +46,5 @@ public class TephraTestSupport {
             }
         }
         reader.close();
-    }
-
-    @Test
-    public void test() {
     }
 }

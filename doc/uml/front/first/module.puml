@@ -1,17 +1,23 @@
 @startuml
 
 package Tephra {
-[core]
 [core] <-- [dao]
 [dao] <-- [ctrl]
 [ctrl] <-- [ctrl-http]
 [ctrl] <-- [ctrl-socket]
 [ctrl] <-- [script]
 [ctrl] <-- [weixin]
-[ctrl] <-- [hadoop]
 [ctrl] <-- [carousel]
+[ctrl] <-- [hadoop]
+[script] <-- [web]
 [ctrl-http] <-- [web]
-[ctrl] <-- [test]
+
+[core-test] <-l- [core]
+[dao-test] <-l- [dao]
+[core-test] <-- [dao-test]
+[ctrl-test] <-l- [ctrl]
+[dao-test] <-- [ctrl-test]
+[ctrl-test] <-- [test]
 }
 
 @enduml

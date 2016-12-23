@@ -2,7 +2,7 @@ package org.lpw.tephra.crypto;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.lpw.tephra.TestSupport;
+import org.lpw.tephra.test.TestSupport;
 
 import javax.inject.Inject;
 
