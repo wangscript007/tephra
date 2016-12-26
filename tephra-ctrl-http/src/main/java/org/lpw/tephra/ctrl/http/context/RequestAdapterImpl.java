@@ -6,6 +6,7 @@ import org.lpw.tephra.ctrl.context.RequestAdapter;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Validator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
@@ -23,21 +24,14 @@ public class RequestAdapterImpl implements RequestAdapter {
     protected Map<String, String> map;
     protected String content;
 
-    @SuppressWarnings({"unchecked"})
     public RequestAdapterImpl(HttpServletRequest request, String uri) {
         this.request = request;
         this.uri = uri;
-        content = getFromInputStream();
-        if (content.length() == 0)
-            map = new HashMap<>();
-        else
-            map = content.charAt(0) == '{' ? JSONObject.fromObject(content) : BeanFactory.getBean(Converter.class).toParameterMap(getFromInputStream());
-        request.getParameterMap().forEach((key, value) -> map.put(key, value[0]));
     }
 
     @Override
     public String get(String name) {
-        return map.get(name);
+        return getMap().get(name);
     }
 
     @Override
@@ -49,6 +43,16 @@ public class RequestAdapterImpl implements RequestAdapter {
 
     @Override
     public Map<String, String> getMap() {
+        if (map == null) {
+            if (content == null)
+                getFromInputStream();
+            if (content.length() == 0)
+                map = new HashMap<>();
+            else
+                map = content.charAt(0) == '{' ? JSONObject.fromObject(content) : BeanFactory.getBean(Converter.class).toParameterMap(getFromInputStream());
+            request.getParameterMap().forEach((key, value) -> map.put(key, value[0]));
+        }
+
         return map;
     }
 
@@ -56,6 +60,13 @@ public class RequestAdapterImpl implements RequestAdapter {
     public String getFromInputStream() {
         if (content != null)
             return content;
+
+        String contentType = request.getHeader("content-type");
+        if (!BeanFactory.getBean(Validator.class).isEmpty(contentType) && contentType.toLowerCase().contains("multipart/form-data")) {
+            content = "";
+
+            return content;
+        }
 
         try {
             ByteArrayOutputStream output = new ByteArrayOutputStream();
