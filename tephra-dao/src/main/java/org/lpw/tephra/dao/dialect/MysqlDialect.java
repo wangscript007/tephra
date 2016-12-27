@@ -14,7 +14,7 @@ public class MysqlDialect implements Dialect {
 
     @Override
     public String getDriver() {
-        return "com.mysql.cj.jdbc.Driver";
+        return "com.mysql.jdbc.Driver";
     }
 
     @Override

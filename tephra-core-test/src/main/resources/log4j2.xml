@@ -47,7 +47,7 @@
         <Root level="info">
             <AppenderRef ref="console"/>
         </Root>
-        <Logger name="tephra.util.logger" level="info">
+        <Logger name="tephra.util.logger" level="debug">
             <appender-ref ref="file.debug"/>
             <appender-ref ref="file.info"/>
             <appender-ref ref="file.warn"/>
