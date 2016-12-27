@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  * @author lpw
@@ -21,6 +23,8 @@ import javax.persistence.Table;
 public class MemoryModel extends ModelSupport {
     private int sort;
     private String name;
+    private Date date;
+    private Timestamp time;
 
     @Column(name = "c_sort")
     public int getSort() {
@@ -38,5 +42,23 @@ public class MemoryModel extends ModelSupport {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Column(name = "c_date")
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    @Column(name = "c_time")
+    public Timestamp getTime() {
+        return time;
+    }
+
+    public void setTime(Timestamp time) {
+        this.time = time;
     }
 }

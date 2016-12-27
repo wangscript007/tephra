@@ -1,4 +1,4 @@
-package org.lpw.tephra.dao.orm;
+package org.lpw.tephra.dao.orm.mybatis;
 
 import org.lpw.tephra.dao.model.ModelSupport;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -14,17 +14,14 @@ import java.sql.Timestamp;
 /**
  * @author lpw
  */
-@Component("tephra.dao.orm.model")
+@Component("tephra.dao.orm.mybatis.model")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Entity(name = "tephra.dao.orm")
-@Table(name = "t_tephra_test")
 public class TestModel extends ModelSupport {
     private int sort;
     private String name;
-    private Date date;
-    private Timestamp time;
+    private Date datecol;
+    private Timestamp timecol;
 
-    @Column(name = "c_sort")
     public int getSort() {
         return sort;
     }
@@ -33,7 +30,6 @@ public class TestModel extends ModelSupport {
         this.sort = sort;
     }
 
-    @Column(name = "c_name")
     public String getName() {
         return name;
     }
@@ -42,21 +38,19 @@ public class TestModel extends ModelSupport {
         this.name = name;
     }
 
-    @Column(name = "c_date")
-    public Date getDate() {
-        return date;
+    public Date getDatecol() {
+        return datecol;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDatecol(Date datecol) {
+        this.datecol = datecol;
     }
 
-    @Column(name = "c_time")
-    public Timestamp getTime() {
-        return time;
+    public Timestamp getTimecol() {
+        return timecol;
     }
 
-    public void setTime(Timestamp time) {
-        this.time = time;
+    public void setTimecol(Timestamp timecol) {
+        this.timecol = timecol;
     }
 }

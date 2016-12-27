@@ -4,7 +4,6 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-import org.lpw.tephra.dao.orm.TestModel;
 
 import java.util.List;
 
@@ -15,10 +14,10 @@ public interface TestMapper {
     @Select("select * from t_tephra_mybatis where id=#{id}")
     TestModel findById(String id);
 
-    @Insert("insert into t_tephra_mybatis values(#{id},#{sort},#{name})")
+    @Insert("insert into t_tephra_mybatis values(#{id},#{sort},#{name},#{datecol},#{timecol})")
     int insert(TestModel model);
 
-    @Update("update t_tephra_mybatis set name=#{name} where id=#{id}")
+    @Update("update t_tephra_mybatis set name=#{name},datecol=#{datecol},timecol=#{timecol} where id=#{id}")
     int update(TestModel model);
 
     @Delete("delete from t_tephra_mybatis where id=#{id}")
