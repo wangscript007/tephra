@@ -2,28 +2,30 @@ package org.lpw.tephra.crypto;
 
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import javax.inject.Inject;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lpw
  */
-public abstract class CipherSupport {
-    @Autowired
+public abstract class CipherSupport implements Crypto {
+    @Inject
     protected Validator validator;
-    @Autowired
+    @Inject
     protected Logger logger;
-    protected Map<String, SecretKey> secretKeys = new ConcurrentHashMap<>();
+    private Map<String, SecretKey> secretKeys = new ConcurrentHashMap<>();
 
+    @Override
     public byte[] encrypt(byte[] key, byte[] message) {
         return doFinal(key, message, Cipher.ENCRYPT_MODE);
     }
 
+    @Override
     public byte[] decrypt(byte[] key, byte[] message) {
         return doFinal(key, message, Cipher.DECRYPT_MODE);
     }
@@ -56,14 +58,8 @@ public abstract class CipherSupport {
         sb.append(getAlgorithm());
         for (byte by : key)
             sb.append(by);
-        String mapKey = sb.toString();
-        SecretKey secretKey = secretKeys.get(mapKey);
-        if (secretKey == null) {
-            secretKey = new SecretKeySpec(key, getAlgorithm());
-            secretKeys.put(mapKey, secretKey);
-        }
 
-        return secretKey;
+        return secretKeys.computeIfAbsent(sb.toString(), k -> new SecretKeySpec(key, getAlgorithm()));
     }
 
     /**

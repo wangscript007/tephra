@@ -3,24 +3,21 @@ package org.lpw.tephra.dao.orm.mybatis;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.dao.DaoUtil;
 import org.lpw.tephra.dao.Mode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.lpw.tephra.test.DaoTestSupport;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class SessionTest {
-    @Autowired
-    protected SessionFactory sessionFactory;
-    @Autowired
-    protected Session session;
+public class SessionTest extends DaoTestSupport {
+    @Inject
+    private SessionFactory sessionFactory;
+    @Inject
+    private Session session;
 
     @Test
     public void transactional() {

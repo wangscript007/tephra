@@ -2,21 +2,18 @@ package org.lpw.tephra.util;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.lpw.tephra.test.CoreTestSupport;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class TimeHashTest {
-    @Autowired
-    protected Thread thread;
-    @Autowired
-    protected TimeHash timeHash;
+public class TimeHashTest extends CoreTestSupport {
+    @Inject
+    private Thread thread;
+    @Inject
+    private TimeHash timeHash;
 
     @Test
     public void valid() {

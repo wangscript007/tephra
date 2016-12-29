@@ -9,10 +9,9 @@ import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Thread;
 import org.lpw.tephra.util.TimeUnit;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
-import java.util.HashSet;
+import javax.inject.Inject;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,16 +22,16 @@ import java.util.concurrent.Executors;
  * @author lpw
  */
 public abstract class SchedulerSupport<T> implements ContextRefreshedListener, ContextClosedListener {
-    @Autowired
+    @Inject
     protected Validator validator;
-    @Autowired
+    @Inject
     protected Thread thread;
-    @Autowired
+    @Inject
     protected Logger logger;
-    @Autowired(required = false)
-    protected Set<Failable> failables;
-    @Autowired(required = false)
-    protected Set<Closable> closables;
+    @Inject
+    protected Optional<Set<Failable>> failables;
+    @Inject
+    protected Optional<Set<Closable>> closables;
     protected Set<Integer> runningJobs;
     protected ExecutorService executorService;
 
@@ -94,8 +93,7 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
      * @param throwable 异常信息。
      */
     protected void exception(Throwable throwable) {
-        if (!validator.isEmpty(failables))
-            failables.forEach(failable -> failable.fail(throwable));
+        failables.ifPresent(set -> set.forEach(failable -> failable.fail(throwable)));
 
         logger.warn(throwable, "执行定时器任务时发生异常！");
     }
@@ -109,8 +107,7 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
         if (job != null)
             runningJobs.remove(job.hashCode());
 
-        if (!validator.isEmpty(closables))
-            closables.forEach(Closable::close);
+        closables.ifPresent(set -> set.forEach(Closable::close));
     }
 
     @Override

@@ -2,7 +2,6 @@ package org.lpw.tephra.ctrl.http.context;
 
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.Cookie;
@@ -17,13 +16,17 @@ import java.util.List;
  */
 @Controller("tephra.ctrl.http.cookie")
 public class CookieImpl implements org.lpw.tephra.ctrl.http.context.Cookie, CookieAware {
-    protected ThreadLocal<HttpServletRequest> request = new ThreadLocal<>();
-    protected ThreadLocal<HttpServletResponse> response = new ThreadLocal<>();
+    private Validator validator;
+    private Converter converter;
+    private ThreadLocal<HttpServletRequest> request;
+    private ThreadLocal<HttpServletResponse> response;
 
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
+    public CookieImpl(Validator validator, Converter converter) {
+        this.validator = validator;
+        this.converter = converter;
+        request = new ThreadLocal<>();
+        response = new ThreadLocal<>();
+    }
 
     @Override
     public void add(String name, String value, String path, int expiry) {

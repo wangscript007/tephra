@@ -2,12 +2,10 @@ package org.lpw.tephra.bean;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.lpw.tephra.test.CoreTestSupport;
 import org.lpw.tephra.util.Converter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,15 +14,13 @@ import java.util.Set;
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class ContainerTest {
+public class ContainerTest extends CoreTestSupport {
     private static List<Integer> contextRefreshedList = new ArrayList<>();
 
-    @Autowired
-    protected Container container;
-    @Autowired
-    protected Converter converter;
+    @Inject
+    private Container container;
+    @Inject
+    private Converter converter;
 
     @Test
     public void getBeanByClass() {

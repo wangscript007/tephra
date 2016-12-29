@@ -3,13 +3,12 @@ package org.lpw.tephra.cache.lr;
 import org.lpw.tephra.nio.Client;
 import org.lpw.tephra.nio.ClientListener;
 import org.lpw.tephra.nio.ClientManager;
-import org.lpw.tephra.util.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.Arrays;
 
 /**
@@ -18,22 +17,16 @@ import java.util.Arrays;
 @Component("tephra.cache.lr.channel")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ChannelImpl implements Channel, ClientListener {
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected ClientManager clientManager;
-    @Autowired
-    protected Remote remote;
+    @Inject
+    private ClientManager clientManager;
+    @Inject
+    private Remote remote;
     @Value("${tephra.cache.listen-port:0}")
-    protected int port;
-    protected Client client;
-    protected String ip;
-    protected State state;
-    protected String sessionId;
-
-    public ChannelImpl() {
-        state = State.Disconnect;
-    }
+    private int port;
+    private Client client;
+    private String ip;
+    private State state = State.Disconnect;
+    private String sessionId;
 
     @Override
     public void setIp(String ip) {

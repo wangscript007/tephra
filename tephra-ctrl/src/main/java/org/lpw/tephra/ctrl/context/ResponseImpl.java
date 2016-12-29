@@ -8,31 +8,32 @@ import org.lpw.tephra.ctrl.template.TemplateHelper;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.Optional;
 
 /**
  * @author lpw
  */
 @Controller("tephra.ctrl.context.response")
 public class ResponseImpl implements Response, ResponseAware {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected ExecutorHelper executorHelper;
-    @Autowired
-    protected Templates templates;
-    @Autowired
-    protected TemplateHelper templateHelper;
-    @Autowired(required = false)
-    protected Coder coder;
-    protected ThreadLocal<ResponseAdapter> adapter = new ThreadLocal<>();
-    protected ThreadLocal<String> contentType = new ThreadLocal<>();
+    @Inject
+    private Validator validator;
+    @Inject
+    private Logger logger;
+    @Inject
+    private ExecutorHelper executorHelper;
+    @Inject
+    private Templates templates;
+    @Inject
+    private TemplateHelper templateHelper;
+    @Inject
+    private Optional<Coder> coder;
+    private ThreadLocal<ResponseAdapter> adapter = new ThreadLocal<>();
+    private ThreadLocal<String> contentType = new ThreadLocal<>();
 
     @Override
     public void setContentType(String contentType) {
@@ -63,7 +64,7 @@ public class ResponseImpl implements Response, ResponseAware {
                 templateHelper.setTemplate(null);
             }
             adapter.get().setContentType(validator.isEmpty(contentType.get()) ? template.getContentType() : contentType.get());
-            if (coder == null) {
+            if (!coder.isPresent()) {
                 template.process(view, object, getOutputStream());
 
                 return;
@@ -72,7 +73,7 @@ public class ResponseImpl implements Response, ResponseAware {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             template.process(view, object, baos);
             baos.close();
-            getOutputStream().write(coder.encode(baos.toByteArray()));
+            getOutputStream().write(coder.get().encode(baos.toByteArray()));
         } catch (Exception e) {
             logger.warn(e, "返回输出结果时发生异常！");
         }

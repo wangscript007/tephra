@@ -14,10 +14,10 @@ import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,23 +29,23 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Repository("tephra.dao.orm.mybatis.session-factory")
 public class SessionFactoryImpl implements SessionFactory, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Json json;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected org.lpw.tephra.dao.jdbc.DataSource dataSource;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Generator generator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Json json;
+    @Inject
+    private Logger logger;
+    @Inject
+    private org.lpw.tephra.dao.jdbc.DataSource dataSource;
     @Value("${tephra.dao.orm.mybatis.mappers:}")
-    protected String mappers;
-    protected SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
-    protected Map<String, SqlSessionFactory> writeables = new ConcurrentHashMap<>();
-    protected Map<String, List<SqlSessionFactory>> readonlys = new ConcurrentHashMap<>();
+    private String mappers;
+    private SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
+    private Map<String, SqlSessionFactory> writeables = new ConcurrentHashMap<>();
+    private Map<String, List<SqlSessionFactory>> readonlys = new ConcurrentHashMap<>();
 
     @Override
     public SqlSessionFactory getWriteable(String dataSource) {
@@ -77,11 +77,11 @@ public class SessionFactoryImpl implements SessionFactory, ContextRefreshedListe
             logger.info("MyBatis环境[{}@{}]初始化完成。", key, converter.toString(mappers));
     }
 
-    protected SqlSessionFactory create(String key, Mode mode, DataSource dataSource, String[] mappers) {
+    private SqlSessionFactory create(String key, Mode mode, DataSource dataSource, String[] mappers) {
         Environment environment = new Environment(key + "-" + mode.ordinal(), new JdbcTransactionFactory(), dataSource);
         Configuration configuration = new Configuration(environment);
-        for (int i = 0; i < mappers.length; i++)
-            configuration.addMappers(mappers[i]);
+        for (String mapper : mappers)
+            configuration.addMappers(mapper);
 
         return builder.build(configuration);
     }

@@ -1,9 +1,9 @@
 package org.lpw.tephra.util;
 
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.net.URLDecoder;
@@ -30,18 +30,18 @@ public class ConverterImpl implements Converter {
     private static final String[] BIT_SIZE_FORMAT = {"0 B", "0.00 K", "0.00 M", "0.00 G", "0.00 T"};
     private static final String CHAR_SET = "utf-8";
 
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Message message;
-    @Autowired
-    protected Logger logger;
-    protected Map<String, DecimalFormat> decimalFormatMap = new ConcurrentHashMap<>();
-    protected Map<String, FastDateFormat> dateFormatMap = new ConcurrentHashMap<>();
-    protected Map<Locale, String> dateFormat = new ConcurrentHashMap<>();
-    protected Map<Locale, String> dateTimeFormat = new ConcurrentHashMap<>();
+    @Inject
+    private Context context;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Message message;
+    @Inject
+    private Logger logger;
+    private Map<String, DecimalFormat> decimalFormatMap = new ConcurrentHashMap<>();
+    private Map<String, FastDateFormat> dateFormatMap = new ConcurrentHashMap<>();
+    private Map<Locale, String> dateFormat = new ConcurrentHashMap<>();
+    private Map<Locale, String> dateTimeFormat = new ConcurrentHashMap<>();
 
     @SuppressWarnings({"unchecked"})
     @Override
@@ -82,13 +82,7 @@ public class ConverterImpl implements Converter {
 
     @Override
     public String toString(Number number, String format) {
-        DecimalFormat df = decimalFormatMap.get(format);
-        if (df == null) {
-            df = new DecimalFormat(format);
-            decimalFormatMap.put(format, df);
-        }
-
-        return df.format(number);
+        return decimalFormatMap.computeIfAbsent(format, DecimalFormat::new).format(number);
     }
 
     @Override
@@ -183,7 +177,7 @@ public class ConverterImpl implements Converter {
         return Math.round(toDouble(size.trim(), -1));
     }
 
-    protected double toDouble(String string, double failure) {
+    private double toDouble(String string, double failure) {
         try {
             return Double.parseDouble(string);
         } catch (Exception e) {
@@ -296,26 +290,16 @@ public class ConverterImpl implements Converter {
         return null;
     }
 
-    protected String getDateFormat() {
+    private String getDateFormat() {
         Locale locale = context.getLocale();
-        String format = dateFormat.get(locale);
-        if (format == null) {
-            format = message.get("tephra.format.date");
-            dateFormat.put(locale, format);
-        }
 
-        return format;
+        return dateFormat.computeIfAbsent(locale, l -> message.get("tephra.format.date"));
     }
 
-    protected String getDateTimeFormat() {
+    private String getDateTimeFormat() {
         Locale locale = context.getLocale();
-        String format = dateTimeFormat.get(locale);
-        if (format == null) {
-            format = message.get("tephra.format.date-time");
-            dateTimeFormat.put(locale, format);
-        }
 
-        return format;
+        return dateTimeFormat.computeIfAbsent(locale, l -> message.get("tephra.format.date-time"));
     }
 
     @Override
@@ -332,14 +316,8 @@ public class ConverterImpl implements Converter {
         }
     }
 
-    protected FastDateFormat getDateFormat(String format) {
-        FastDateFormat fdf = dateFormatMap.get(format);
-        if (fdf == null) {
-            fdf = FastDateFormat.getInstance(format);
-            dateFormatMap.put(format, fdf);
-        }
-
-        return fdf;
+    private FastDateFormat getDateFormat(String format) {
+        return dateFormatMap.computeIfAbsent(format, FastDateFormat::getInstance);
     }
 
     @Override
@@ -380,7 +358,7 @@ public class ConverterImpl implements Converter {
         return toFirstCase(string, 'a', 'z', 'A' - 'a');
     }
 
-    protected String toFirstCase(String string, char start, char end, int shift) {
+    private String toFirstCase(String string, char start, char end, int shift) {
         if (validator.isEmpty(string))
             return string;
 

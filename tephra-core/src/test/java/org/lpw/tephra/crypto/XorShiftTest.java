@@ -9,7 +9,7 @@ import javax.inject.Inject;
 /**
  * @author lpw
  */
-public class XorShiftCoreTest extends CoreTestSupport {
+public class XorShiftTest extends CoreTestSupport {
     @Inject
     private XorShift xorShift;
 

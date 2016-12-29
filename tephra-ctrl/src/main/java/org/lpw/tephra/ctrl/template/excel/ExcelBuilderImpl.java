@@ -7,11 +7,11 @@ import org.lpw.tephra.dao.model.ModelHelper;
 import org.lpw.tephra.poi.Excel;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import java.io.OutputStream;
 import java.util.Collection;
 
@@ -21,20 +21,20 @@ import java.util.Collection;
 @Controller("tephra.ctrl.template.excel.builder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ExcelBuilderImpl implements ExcelBuilder {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Excel excel;
-    @Autowired
-    protected ModelHelper modelHelper;
-    @Autowired
-    protected Response response;
-    protected String[] titles;
-    protected String[] names;
-    protected Collection<?> collection;
-    protected String name;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Excel excel;
+    @Inject
+    private ModelHelper modelHelper;
+    @Inject
+    private Response response;
+    private String[] titles;
+    private String[] names;
+    private Collection<?> collection;
+    private String name;
 
     public ExcelBuilder build(String[] titles, String[] names, Collection<?> collection) {
         this.titles = titles;

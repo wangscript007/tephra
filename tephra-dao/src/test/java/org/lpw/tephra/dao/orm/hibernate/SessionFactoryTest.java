@@ -4,9 +4,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lpw.tephra.dao.DaoUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
@@ -14,8 +15,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath*:**/spring.xml"})
 public class SessionFactoryTest {
-    @Autowired
-    protected SessionFactory sessionFactory;
+    @Inject
+    private SessionFactory sessionFactory;
 
     @Test
     public void config() {

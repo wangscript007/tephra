@@ -3,18 +3,19 @@ package org.lpw.tephra.dao.orm.hibernate;
 import org.junit.Assert;
 import org.lpw.tephra.dao.DaoUtil;
 import org.lpw.tephra.dao.Mode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
 @Repository("tephra.dao.orm.hibernate.transactional.impl")
 public class TransactionalImpl {
-    @Autowired
-    protected SessionFactory sessionFactory;
-    @Autowired
-    protected Session session;
+    @Inject
+    private SessionFactory sessionFactory;
+    @Inject
+    private Session session;
 
     @javax.transaction.Transactional
     public void get() {

@@ -10,12 +10,8 @@ import javax.inject.Inject;
  */
 @Component("tephra.crypto.xor-shift")
 public class XorShiftImpl implements XorShift {
-    private final Validator validator;
-
     @Inject
-    public XorShiftImpl(Validator validator) {
-        this.validator = validator;
-    }
+    private Validator validator;
 
     @Override
     public byte[] encrypt(byte[] key, byte[] message) {

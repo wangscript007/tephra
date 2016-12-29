@@ -5,10 +5,9 @@ import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.util.Message;
-import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -17,10 +16,8 @@ import java.io.OutputStream;
  */
 @Controller("tephra.ctrl.template.string")
 public class TemplateImpl extends TemplateSupport implements Template {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Message message;
+    @Inject
+    private Message message;
 
     @Override
     public String getType() {
@@ -44,7 +41,7 @@ public class TemplateImpl extends TemplateSupport implements Template {
         write(data, outputStream);
     }
 
-    protected void write(Object data, OutputStream outputStream) throws IOException {
+    private void write(Object data, OutputStream outputStream) throws IOException {
         outputStream.write(data.toString().getBytes("UTF-8"));
     }
 }

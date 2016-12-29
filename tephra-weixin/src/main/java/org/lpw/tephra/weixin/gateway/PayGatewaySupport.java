@@ -3,7 +3,6 @@ package org.lpw.tephra.weixin.gateway;
 import net.sf.json.JSONObject;
 import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.ctrl.context.Header;
-import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Http;
@@ -12,39 +11,38 @@ import org.lpw.tephra.util.Xml;
 import org.lpw.tephra.weixin.WeixinHelper;
 import org.lpw.tephra.weixin.WeixinListener;
 import org.lpw.tephra.weixin.WeixinService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author lpw
  */
 public abstract class PayGatewaySupport implements PayGateway {
-    @Autowired
+    @Inject
     protected Generator generator;
-    @Autowired
+    @Inject
     protected Converter converter;
-    @Autowired
+    @Inject
     protected Http http;
-    @Autowired
+    @Inject
     protected Xml xml;
-    @Autowired
+    @Inject
     protected Digest digest;
-    @Autowired
+    @Inject
     protected Logger logger;
-    @Autowired
+    @Inject
     protected Header header;
-    @Autowired
-    protected Request request;
-    @Autowired
+    @Inject
     protected WeixinHelper weixinHelper;
-    @Autowired(required = false)
-    protected WeixinListener weixinListener;
+    @Inject
+    protected Optional<WeixinListener> weixinListener;
     @Value("${tephra.ctrl.http.root:}")
     protected String root;
 
@@ -103,8 +101,7 @@ public abstract class PayGatewaySupport implements PayGateway {
             return;
         }
 
-        if (weixinListener != null)
-            weixinListener.pay(parameters.get("out_trade_no"), parameters.get("transaction_id"), parameters);
+        weixinListener.ifPresent(listener -> listener.pay(parameters.get("out_trade_no"), parameters.get("transaction_id"), parameters));
     }
 
     protected String sign(Map<String, String> map, String mchKey) {

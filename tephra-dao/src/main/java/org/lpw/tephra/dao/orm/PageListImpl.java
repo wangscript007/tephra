@@ -3,11 +3,11 @@ package org.lpw.tephra.dao.orm;
 import net.sf.json.JSONObject;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -16,15 +16,15 @@ import java.util.List;
 @Repository("tephra.dao.orm.page-list")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PageListImpl<T extends Model> implements PageList<T> {
-    @Autowired
-    protected ModelHelper modelHelper;
-    protected List<T> list;
-    protected int count;
-    protected int size;
-    protected int number;
-    protected int page;
-    protected int pageStart;
-    protected int pageEnd;
+    @Inject
+    private ModelHelper modelHelper;
+    private List<T> list;
+    private int count;
+    private int size;
+    private int number;
+    private int page;
+    private int pageStart;
+    private int pageEnd;
 
     @Override
     public void setPage(int count, int size, int number) {

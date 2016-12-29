@@ -309,22 +309,19 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.lpw.tephra.test.DaoTestSupport;
 import org.lpw.tephra.util.Generator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class MongoTest {
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Mongo mongo;
+public class MongoTest extends DaoTestSupport {
+    @Inject
+    private Generator generator;
+    @Inject
+    private Mongo mongo;
 
     @Test
     public void insert() {
@@ -409,7 +406,7 @@ public class MongoTest {
         Assert.assertTrue(mongo.find(null, "t_mongo", null).isEmpty());
     }
 
-    protected void create() {
+    private void create() {
         mongo.create(JSONObject.fromObject("{key:\"\",username:\"root\",password:\"root\",ips:[\"127.0.0.1:27017\"],schema:\"d_tephra_test\"}"));
     }
 }

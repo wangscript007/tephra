@@ -2,9 +2,9 @@ package org.lpw.tephra.storage;
 
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Io;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -17,10 +17,10 @@ import java.io.OutputStream;
  */
 @Component("tephra.storage.disk")
 public class DiskStorageImpl implements Storage {
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected Io io;
+    @Inject
+    private Context context;
+    @Inject
+    private Io io;
 
     @Override
     public String getType() {
@@ -76,7 +76,7 @@ public class DiskStorageImpl implements Storage {
         new File(getAbsolutePath(path, false)).delete();
     }
 
-    protected String getAbsolutePath(String path, boolean parent) {
+    private String getAbsolutePath(String path, boolean parent) {
         String absolutePath = context.getAbsolutePath(path);
         if (parent)
             new File(absolutePath.substring(0, absolutePath.lastIndexOf(File.separatorChar))).mkdirs();

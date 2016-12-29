@@ -31,6 +31,7 @@ public interface Hdfs extends Closable {
 
     /**
      * 获取文件最后修改时间。
+     *
      * @param path 路径。
      * @return 最后修改时间。
      */

@@ -8,33 +8,34 @@ import org.lpw.tephra.dao.model.ModelTables;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author lpw
  */
 @Controller("tephra.ctrl.context.request")
 public class RequestImpl implements Request, RequestAware {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected Sign sign;
-    @Autowired
-    protected ModelTables modelTables;
-    @Autowired(required = false)
-    protected Coder coder;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Sign sign;
+    @Inject
+    private ModelTables modelTables;
+    @Inject
+    private Optional<Coder> coder;
     @Value("${tephra.ctrl.content.request.sign:tephra-ctrl-sign}")
-    protected String signName;
-    protected ThreadLocal<RequestAdapter> adapter = new ThreadLocal<>();
+    private String signName;
+    private ThreadLocal<RequestAdapter> adapter = new ThreadLocal<>();
 
     @Override
     public String get(String name) {
@@ -72,7 +73,7 @@ public class RequestImpl implements Request, RequestAware {
     public Map<String, String> getMap() {
         Map<String, String> map = adapter.get().getMap();
 
-        return coder == null ? map : coder.decode(map);
+        return coder.isPresent() ? coder.get().decode(map) : map;
     }
 
     @Override
@@ -104,7 +105,7 @@ public class RequestImpl implements Request, RequestAware {
         return model;
     }
 
-    protected <T extends Model> void fillToModel(ModelTable modelTable, T model, String name, String value) throws NoSuchMethodException, SecurityException {
+    private <T extends Model> void fillToModel(ModelTable modelTable, T model, String name, String value) throws NoSuchMethodException, SecurityException {
         if ((name.endsWith("[id]") || name.endsWith(".id")) && name.indexOf('[') == name.lastIndexOf('[') && name.indexOf('.') == name.lastIndexOf('.')) {
             modelTable.set(model, name.substring(0, name.indexOf('[') + name.indexOf('.') + 1), value);
 

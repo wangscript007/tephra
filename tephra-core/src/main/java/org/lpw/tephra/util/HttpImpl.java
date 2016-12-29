@@ -24,10 +24,10 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.lpw.tephra.bean.ContextRefreshedListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -50,23 +50,23 @@ import java.util.Map;
 public class HttpImpl implements Http, ContextRefreshedListener {
     private static final String CHARSET = "UTF-8";
 
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Io io;
-    @Autowired
-    protected TimeHash timeHash;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Io io;
+    @Inject
+    private TimeHash timeHash;
+    @Inject
+    private Logger logger;
     @Value("${tephra.util.http.pool.max:256}")
-    protected int max;
+    private int max;
     @Value("${tephra.util.http.connect.time-out:5000}")
-    protected int connectTimeout;
+    private int connectTimeout;
     @Value("${tephra.util.http.read.time-out:20000}")
-    protected int readTimeout;
-    protected PoolingHttpClientConnectionManager manager;
+    private int readTimeout;
+    private PoolingHttpClientConnectionManager manager;
 
     @Override
     public String get(String url, Map<String, String> headers, Map<String, String> parameters, String charset) {
@@ -147,7 +147,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
         return postByEntity(url, headers, entity.build(), charset);
     }
 
-    protected String postByEntity(String url, Map<String, String> headers, HttpEntity entity, String charset) {
+    private String postByEntity(String url, Map<String, String> headers, HttpEntity entity, String charset) {
         if (validator.isEmpty(url))
             return null;
 
@@ -217,7 +217,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
         }
     }
 
-    protected Map<String, String> toMap(Header[] headers) {
+    private Map<String, String> toMap(Header[] headers) {
         Map<String, String> map = new HashMap<>();
         for (Header header : headers)
             map.put(header.getName(), header.getValue());
@@ -225,11 +225,11 @@ public class HttpImpl implements Http, ContextRefreshedListener {
         return map;
     }
 
-    protected RequestConfig getRequestConfig() {
+    private RequestConfig getRequestConfig() {
         return RequestConfig.custom().setConnectTimeout(connectTimeout).setSocketTimeout(readTimeout).build();
     }
 
-    protected String execute(HttpUriRequest request, Map<String, String> headers, String charset) throws IOException {
+    private String execute(HttpUriRequest request, Map<String, String> headers, String charset) throws IOException {
         CloseableHttpResponse response = execute(request, headers);
         String content = EntityUtils.toString(response.getEntity(), getCharset(charset));
         response.close();
@@ -237,7 +237,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
         return content;
     }
 
-    protected CloseableHttpResponse execute(HttpUriRequest request, Map<String, String> headers) throws IOException {
+    private CloseableHttpResponse execute(HttpUriRequest request, Map<String, String> headers) throws IOException {
         if (!validator.isEmpty(headers)) {
             headers.forEach((name, value) -> {
                 if (!name.toLowerCase().equals("content-length"))
@@ -249,7 +249,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
         return HttpClients.custom().setConnectionManager(manager).build().execute(request, HttpClientContext.create());
     }
 
-    protected String getCharset(String charset) {
+    private String getCharset(String charset) {
         return charset == null ? CHARSET : charset;
     }
 

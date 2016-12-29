@@ -4,7 +4,7 @@ package org.lpw.tephra.test.mock;
  * @author lpw
  */
 public class MockSessionImpl implements MockSession {
-    protected String id;
+    private String id;
 
     @Override
     public void setId(String id) {

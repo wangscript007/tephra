@@ -10,11 +10,11 @@ import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,24 +28,24 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Repository("tephra.dao.orm.hibernate.session-factory")
 public class SessionFactoryImpl implements org.lpw.tephra.dao.orm.hibernate.SessionFactory, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Json json;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected org.lpw.tephra.dao.jdbc.DataSource dataSource;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Generator generator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Json json;
+    @Inject
+    private Logger logger;
+    @Inject
+    private org.lpw.tephra.dao.jdbc.DataSource dataSource;
     @Value("${tephra.dao.orm.hibernate.show-sql:false}")
-    protected boolean showSql;
+    private boolean showSql;
     @Value("${tephra.dao.orm.hibernate.packages-to-scan:}")
-    protected String packagesToScan;
-    protected Map<String, SessionFactory> writeables = new ConcurrentHashMap<>();
-    protected Map<String, List<SessionFactory>> readonlys = new ConcurrentHashMap<>();
+    private String packagesToScan;
+    private Map<String, SessionFactory> writeables = new ConcurrentHashMap<>();
+    private Map<String, List<SessionFactory>> readonlys = new ConcurrentHashMap<>();
 
     @Override
     public SessionFactory getWriteable(String dataSource) {
@@ -67,12 +67,12 @@ public class SessionFactoryImpl implements org.lpw.tephra.dao.orm.hibernate.Sess
         create(dataSource.getDialects(), config);
     }
 
-    protected void create(Map<String, Dialect> dialects, JSONObject config) {
+    private void create(Map<String, Dialect> dialects, JSONObject config) {
         String key = config.getString("key");
         createSessionFactory(key, createProperties(dialects.get(key)), json.getAsStringArray(config, "values"));
     }
 
-    protected Properties createProperties(Dialect dialect) {
+    private Properties createProperties(Dialect dialect) {
         Properties properties = new Properties();
         properties.put("hibernate.dialect", dialect.getHibernateDialect());
         properties.put("hibernate.show_sql", showSql);
@@ -82,7 +82,7 @@ public class SessionFactoryImpl implements org.lpw.tephra.dao.orm.hibernate.Sess
         return properties;
     }
 
-    protected void createSessionFactory(String name, Properties properties, String[] packagesToScan) {
+    private void createSessionFactory(String name, Properties properties, String[] packagesToScan) {
         if (writeables.get(name) != null)
             return;
 
@@ -97,7 +97,7 @@ public class SessionFactoryImpl implements org.lpw.tephra.dao.orm.hibernate.Sess
             logger.info("Hibernate环境[{}@{}]初始化完成。", name, converter.toString(packagesToScan));
     }
 
-    protected SessionFactory createSessionFactory(Properties properties, DataSource dataSource, String[] packagesToScan) {
+    private SessionFactory createSessionFactory(Properties properties, DataSource dataSource, String[] packagesToScan) {
         if (dataSource == null)
             throw new NullPointerException("数据源不存在，无法初始化Hibernate环境！");
 

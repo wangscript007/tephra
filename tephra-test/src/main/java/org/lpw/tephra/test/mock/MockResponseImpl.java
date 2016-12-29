@@ -9,9 +9,9 @@ import java.io.OutputStream;
  * @author lpw
  */
 public class MockResponseImpl implements MockResponse {
-    protected String contentType;
-    protected OutputStream outputStream;
-    protected String url;
+    private String contentType;
+    private OutputStream outputStream;
+    private String url;
 
     @Override
     public String getContentType() {

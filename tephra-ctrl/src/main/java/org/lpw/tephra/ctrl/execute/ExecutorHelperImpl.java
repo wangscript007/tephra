@@ -8,12 +8,13 @@ import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -21,21 +22,21 @@ import java.util.Set;
  */
 @Controller("tephra.ctrl.execute.map")
 public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected Templates templates;
-    @Autowired
-    protected Request request;
-    @Autowired(required = false)
-    protected Set<ExecuteListener> listeners;
-    protected Map<String, Executor> map;
-    protected Map<String, String> codes;
-    protected ThreadLocal<Executor> executors = new ThreadLocal<>();
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Templates templates;
+    @Inject
+    private Request request;
+    @Inject
+    private Optional<Set<ExecuteListener>> listeners;
+    private Map<String, Executor> map;
+    private Map<String, String> codes;
+    private ThreadLocal<Executor> executors = new ThreadLocal<>();
 
     @Override
     public void set(String service) {
@@ -47,7 +48,7 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
                 return;
     }
 
-    protected boolean setByKey(String key) {
+    private boolean setByKey(String key) {
         Executor executor = map.get(key);
         if (executor != null) {
             executors.set(executor);
@@ -81,7 +82,7 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
         return code;
     }
 
-    protected int getCode(String prefix, int code) {
+    private int getCode(String prefix, int code) {
         int n = converter.toInt(prefix + converter.toString(code, "00"));
 
         return n == 0 ? -1 : n;
@@ -117,8 +118,7 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
                     map.put(key, executor);
                     codes.put(key, code);
                 }
-                if (!validator.isEmpty(listeners))
-                    listeners.forEach(listener -> listener.definition(classExecute, execute));
+                listeners.ifPresent(set -> set.forEach(listener -> listener.definition(classExecute, execute)));
             }
         }
 
@@ -135,7 +135,7 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
         }
     }
 
-    protected String getKey(Execute classExecute, Execute execute) {
+    private String getKey(Execute classExecute, Execute execute) {
         if (!validator.isEmpty(execute.key()))
             return execute.key();
 

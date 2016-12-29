@@ -5,14 +5,15 @@ import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.Table;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,13 +22,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Repository("tephra.model.tables")
 public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired(required = false)
-    protected Set<Model> models;
-    protected Map<Class<? extends Model>, ModelTable> map;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Optional<Set<Model>> models;
+    private Map<Class<? extends Model>, ModelTable> map;
 
     @Override
     public ModelTable get(Class<? extends Model> modelClass) {
@@ -54,12 +55,10 @@ public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
             return;
 
         map = new ConcurrentHashMap<>();
-        if (!validator.isEmpty(models))
-            for (Model model : models)
-                parse(model.getClass());
+        models.ifPresent(set -> set.forEach(model -> parse(model.getClass())));
     }
 
-    protected void parse(Class<? extends Model> modelClass) {
+    private void parse(Class<? extends Model> modelClass) {
         Table table = modelClass.getAnnotation(Table.class);
         if (table == null)
             return;

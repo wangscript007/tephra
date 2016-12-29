@@ -1,8 +1,9 @@
 package org.lpw.tephra.ctrl.context;
 
 import org.lpw.tephra.cache.Cache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
@@ -11,9 +12,9 @@ import org.springframework.stereotype.Controller;
 public class SessionImpl implements Session, SessionAware {
     private static final String CACHE = "tephra.ctrl.context.session:";
 
-    @Autowired
-    protected Cache cache;
-    protected ThreadLocal<SessionAdapter> adapter = new ThreadLocal<>();
+    @Inject
+    private Cache cache;
+    private ThreadLocal<SessionAdapter> adapter = new ThreadLocal<>();
 
     @Override
     public void set(String key, Object value) {
@@ -45,7 +46,7 @@ public class SessionImpl implements Session, SessionAware {
         cache.remove(getKey(id, key));
     }
 
-    protected String getKey(String id, String key) {
+    private String getKey(String id, String key) {
         return new StringBuilder().append(CACHE).append(id).append('-').append(key).toString();
     }
 

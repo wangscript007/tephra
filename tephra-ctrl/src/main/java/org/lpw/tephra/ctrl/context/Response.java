@@ -32,6 +32,7 @@ public interface Response {
 
     /**
      * 输出数据。
+     *
      * @param object 数据。
      */
     void write(Object object);

@@ -5,10 +5,10 @@ import net.sf.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.inject.Inject;
 import java.util.Map;
 
 /**
@@ -17,9 +17,9 @@ import java.util.Map;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath*:**/spring.xml"})
 public class XmlTest {
-    @Autowired
-    protected Xml xml;
-    protected String string = "<html lang=\"en\">\n" +
+    @Inject
+    private Xml xml;
+    private String string = "<html lang=\"en\">\n" +
             "<head>\n" +
             "    <meta charset=\"UTF-8\"/>\n" +
             "    <title>Scala XML</title>\n" +
@@ -43,7 +43,7 @@ public class XmlTest {
         toJson("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     }
 
-    protected void toJson(String prefix) {
+    private void toJson(String prefix) {
         JSONObject json = xml.toJson(prefix + string);
         Assert.assertNotNull(json);
         toJsonKeys(json, new String[]{"html"});
@@ -85,12 +85,12 @@ public class XmlTest {
         Assert.assertEquals("Sign In", button.getString("value"));
     }
 
-    protected void toJsonKeys(JSONObject json, String[] keys) {
+    private void toJsonKeys(JSONObject json, String[] keys) {
         Assert.assertEquals(keys.length, json.keySet().size());
         int count = 0;
         for (Object key : json.keySet())
-            for (int i = 0; i < keys.length; i++)
-                if (keys[i].equals(key))
+            for (String k : keys)
+                if (k.equals(key))
                     count++;
         Assert.assertEquals(keys.length, count);
     }
@@ -105,7 +105,7 @@ public class XmlTest {
         toMap("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     }
 
-    protected void toMapRoot(String prefix) {
+    private void toMapRoot(String prefix) {
         Map<String, String> map = xml.toMap(prefix + string, true);
         Assert.assertEquals("en", map.get("html.lang"));
         Assert.assertEquals("UTF-8", map.get("html.head.meta.charset"));
@@ -124,7 +124,7 @@ public class XmlTest {
         Assert.assertEquals(14, map.size());
     }
 
-    protected void toMap(String prefix) {
+    private void toMap(String prefix) {
         Map<String, String> map = xml.toMap(prefix + string, false);
         Assert.assertEquals("UTF-8", map.get("head.meta.charset"));
         Assert.assertEquals("Scala XML", map.get("head.title"));

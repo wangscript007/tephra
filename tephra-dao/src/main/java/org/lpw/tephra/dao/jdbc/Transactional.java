@@ -5,8 +5,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.lpw.tephra.dao.orm.hibernate.Session;
 import org.lpw.tephra.util.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
@@ -14,12 +15,12 @@ import org.springframework.stereotype.Repository;
 @Aspect
 @Repository("tephra.dao.jdbc.transactional")
 public class Transactional {
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected Connection connection;
-    @Autowired
-    protected Session session;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Connection connection;
+    @Inject
+    private Session session;
 
     @Around("execution(* *(..)) && @annotation(javax.transaction.Transactional)")
     public Object around(ProceedingJoinPoint point) throws Throwable {

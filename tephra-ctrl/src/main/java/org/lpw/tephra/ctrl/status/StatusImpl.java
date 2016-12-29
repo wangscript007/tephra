@@ -5,10 +5,10 @@ import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,14 +20,14 @@ import java.util.Set;
  */
 @Service("tephra.ctrl.status")
 public class StatusImpl implements Status, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Logger logger;
     @Value("${tephra.ctrl.status.uri:/tephra/ctrl/status}")
-    protected String uri;
-    protected boolean enable;
-    protected JSONObject version;
+    private String uri;
+    private boolean enable;
+    private JSONObject version;
 
     @Override
     public String getUri() {
@@ -65,7 +65,7 @@ public class StatusImpl implements Status, ContextRefreshedListener {
             logger.debug("设置版本信息：{}。", version);
     }
 
-    protected void version() {
+    private void version() {
         Set<String> set = new HashSet<>();
         for (String beanName : BeanFactory.getBeanNames()) {
             Object bean = BeanFactory.getBean(beanName);
@@ -95,7 +95,7 @@ public class StatusImpl implements Status, ContextRefreshedListener {
         setVersion(map);
     }
 
-    protected int indexOfNumber(String string) {
+    private int indexOfNumber(String string) {
         for (int i = 0, length = string.length(); i < length; i++) {
             char ch = string.charAt(i);
             if (ch >= '0' && ch <= '9')
@@ -105,7 +105,7 @@ public class StatusImpl implements Status, ContextRefreshedListener {
         return -1;
     }
 
-    protected void putToMap(Map<String, Set<String>> map, String name, String version) {
+    private void putToMap(Map<String, Set<String>> map, String name, String version) {
         StringBuilder sb = new StringBuilder();
         for (String string : name.split("-")) {
             sb.append('-').append(string);
@@ -117,16 +117,13 @@ public class StatusImpl implements Status, ContextRefreshedListener {
         }
     }
 
-    protected void setVersion(Map<String, Set<String>> map) {
+    private void setVersion(Map<String, Set<String>> map) {
         Set<String> set = new HashSet<>();
         map.forEach((key, value) -> {
-            if (value.size() > 1) {
+            if (value.size() > 1)
                 set.add(key);
-
-                return;
-            }
         });
-        set.forEach(key -> map.remove(key));
+        set.forEach(map::remove);
 
         Map<String, String> versions = new HashMap<>();
         map.forEach((key, value) -> versions.put(key, value.iterator().next()));
@@ -136,7 +133,7 @@ public class StatusImpl implements Status, ContextRefreshedListener {
             if (key.contains(k) && !key.equals(k) && value.equals(v))
                 set.add(key);
         }));
-        set.forEach(key -> versions.remove(key));
+        set.forEach(versions::remove);
 
         version = new JSONObject();
         versions.forEach((key, value) -> version.put(key.substring(1), value));

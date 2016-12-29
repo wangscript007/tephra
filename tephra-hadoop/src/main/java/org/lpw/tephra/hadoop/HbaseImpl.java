@@ -27,10 +27,10 @@ import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,23 +41,23 @@ import java.util.Map;
  */
 @Component("tephra.hadoop.hbase")
 public class HbaseImpl implements Hbase, Closable, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected ModelTables modelTables;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Generator generator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Logger logger;
+    @Inject
+    private ModelTables modelTables;
     @Value("${tephra.hadoop.zookeeper.quorum:}")
-    protected String zkQuorum;
+    private String zkQuorum;
     @Value("${tephra.hadoop.zookeeper.port:}")
-    protected String zkPort;
-    protected boolean disabled;
-    protected Configuration configuration;
-    protected ThreadLocal<Connection> connection = new ThreadLocal<>();
+    private String zkPort;
+    private boolean disabled;
+    private Configuration configuration;
+    private ThreadLocal<Connection> connection = new ThreadLocal<>();
 
     @Override
     public <T extends Model> T findById(Class<T> modelClass, String id) {
@@ -159,7 +159,7 @@ public class HbaseImpl implements Hbase, Closable, ContextRefreshedListener {
         return list;
     }
 
-    protected <T extends Model> void setToModel(ModelTable modelTable, T model, Result result) {
+    private <T extends Model> void setToModel(ModelTable modelTable, T model, Result result) {
         for (Cell cell : result.rawCells())
             modelTable.set(model, Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength()),
                     Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength()));
@@ -194,14 +194,14 @@ public class HbaseImpl implements Hbase, Closable, ContextRefreshedListener {
         return array;
     }
 
-    protected void setToJson(JSONObject object, String id, Result result) {
+    private void setToJson(JSONObject object, String id, Result result) {
         object.put("id", id);
         for (Cell cell : result.rawCells())
             object.put(Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength()),
                     Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength()));
     }
 
-    protected ResultScanner query(Table table, Filter filter) throws IOException {
+    private ResultScanner query(Table table, Filter filter) throws IOException {
         Scan scan = new Scan();
         if (filter != null)
             scan.setFilter(filter);
@@ -284,7 +284,7 @@ public class HbaseImpl implements Hbase, Closable, ContextRefreshedListener {
         }
     }
 
-    protected Table getTable(String tableName) throws IOException {
+    private Table getTable(String tableName) throws IOException {
         Connection connection = this.connection.get();
         if (connection == null) {
             connection = ConnectionFactory.createConnection(configuration);
@@ -294,11 +294,11 @@ public class HbaseImpl implements Hbase, Closable, ContextRefreshedListener {
         return connection.getTable(TableName.valueOf(tableName));
     }
 
-    protected void delete(Table table, String id) throws IOException {
+    private void delete(Table table, String id) throws IOException {
         table.delete(new Delete(Bytes.toBytes(id)));
     }
 
-    protected boolean isDisabled() {
+    private boolean isDisabled() {
         if (disabled)
             logger.warn(null, "未启用或初始化HBase[{}]！", zkQuorum);
 

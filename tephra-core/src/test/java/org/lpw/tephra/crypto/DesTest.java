@@ -9,7 +9,7 @@ import javax.inject.Inject;
 /**
  * @author lpw
  */
-public class DesCoreTest extends CoreTestSupport {
+public class DesTest extends CoreTestSupport {
     @Inject
     private Des des;
 

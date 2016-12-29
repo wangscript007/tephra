@@ -21,6 +21,7 @@ public class SqlTest extends DaoTestSupport {
 
     @Test
     public void crud() {
+        long time = System.currentTimeMillis();
         SqlTable table = sql.query("select * from t_tephra_test", null);
         Assert.assertNotNull(table);
         Assert.assertEquals(0, table.getRowCount());
@@ -28,11 +29,11 @@ public class SqlTest extends DaoTestSupport {
 
         for (int i = 0; i < 9; i++)
             sql.update("insert into t_tephra_test values(?,?,?,?,?);", new Object[]{"id" + i, i, "name" + i,
-                    new Date(System.currentTimeMillis() - i * TimeUnit.Day.getTime()), new Timestamp(System.currentTimeMillis() - i * TimeUnit.Hour.getTime())});
+                    new Date(time - i * TimeUnit.Day.getTime()), new Timestamp(time - i * TimeUnit.Hour.getTime())});
         table = sql.query("select * from t_tephra_test order by c_sort", null);
         Assert.assertEquals(9, table.getRowCount());
         Assert.assertEquals(5, table.getColumnCount());
-        check(table, 0, 0);
+        check(table, 0, 0, time);
 
         sql.update("update t_tephra_test set c_name=? where c_id=?;", new Object[]{"tephra", "id0"});
         table = sql.query("select * from t_tephra_test order by c_sort", null);
@@ -44,13 +45,13 @@ public class SqlTest extends DaoTestSupport {
         Assert.assertEquals("id0", table.get(0, "c_id"));
         Assert.assertEquals(0, converter.toInt(table.get(0, "c_sort")));
         Assert.assertEquals("tephra", table.get(0, "c_name"));
-        check(table, 1, 0);
+        check(table, 1, 0, time);
 
         sql.update("delete from t_tephra_test where c_id=?;", new Object[]{"id0"});
         table = sql.query("select * from t_tephra_test order by c_sort", null);
         Assert.assertEquals(8, table.getRowCount());
         Assert.assertEquals(5, table.getColumnCount());
-        check(table, 1, 1);
+        check(table, 1, 1, time);
 
         sql.update("delete from t_tephra_test;", new Object[0]);
         table = sql.query("select * from t_tephra_test order by c_sort", null);
@@ -60,7 +61,7 @@ public class SqlTest extends DaoTestSupport {
         sql.close();
     }
 
-    private void check(SqlTable table, int start, int off) {
+    private void check(SqlTable table, int start, int off, long time) {
         for (int i = start; i < 9 - off; i++) {
             Assert.assertEquals("id" + (i + off), table.get(i, 0));
             Assert.assertEquals(i + off, converter.toInt(table.get(i, 1)));
@@ -68,8 +69,8 @@ public class SqlTest extends DaoTestSupport {
             Assert.assertEquals("id" + (i + off), table.get(i, "c_id"));
             Assert.assertEquals(i + off, converter.toInt(table.get(i, "c_sort")));
             Assert.assertEquals("name" + (i + off), table.get(i, "c_name"));
-            Assert.assertEquals(converter.toString(new Date(System.currentTimeMillis() - (i + off) * TimeUnit.Day.getTime())), converter.toString(table.get(i, "c_date")));
-            Assert.assertEquals(converter.toString(new Timestamp(System.currentTimeMillis() - (i + off) * TimeUnit.Hour.getTime())), converter.toString(table.get(i, "c_time")));
+            Assert.assertEquals(converter.toString(new Date(time - (i + off) * TimeUnit.Day.getTime())), converter.toString(table.get(i, "c_date")));
+            Assert.assertEquals(converter.toString(new Timestamp(time - (i + off) * TimeUnit.Hour.getTime())), converter.toString(table.get(i, "c_time")));
         }
     }
 }

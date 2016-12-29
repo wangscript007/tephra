@@ -6,9 +6,9 @@ import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.util.Converter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,17 +17,17 @@ import java.util.Map;
  */
 @Controller("tephra.ctrl.validate.validators")
 public class ValidatorsImpl implements Validators {
-    @Autowired
-    protected org.lpw.tephra.util.Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Request request;
-    @Autowired
-    protected Templates templates;
-    @Autowired
-    protected FailureCode failureCode;
-    protected Map<Validate, ValidateWrapper> wrappers = new HashMap<>();
+    @Inject
+    private org.lpw.tephra.util.Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Request request;
+    @Inject
+    private Templates templates;
+    @Inject
+    private FailureCode failureCode;
+    private Map<Validate, ValidateWrapper> wrappers = new HashMap<>();
 
     @Override
     public Object validate(Validate[] validates, Template template) {
@@ -35,12 +35,7 @@ public class ValidatorsImpl implements Validators {
             return null;
 
         for (Validate validate : validates) {
-            ValidateWrapper wrapper = wrappers.get(validate);
-            if (wrapper == null) {
-                wrapper = BeanFactory.getBean(ValidateWrapper.class).setValidate(validate);
-                wrappers.put(validate, wrapper);
-            }
-
+            ValidateWrapper wrapper = wrappers.computeIfAbsent(validate, v -> BeanFactory.getBean(ValidateWrapper.class).setValidate(v));
             Object object = validate(wrapper, template);
             if (object != null)
                 return object;
@@ -63,7 +58,7 @@ public class ValidatorsImpl implements Validators {
         return null;
     }
 
-    protected Object validate(ValidateWrapper validate, Template template) {
+    private Object validate(ValidateWrapper validate, Template template) {
         Validator validator = BeanFactory.getBean(validate.getValidator(), Validator.class);
         if (validator == null)
             throw new NullPointerException("验证器[" + validate.getValidator() + "]不存在！");
@@ -86,11 +81,11 @@ public class ValidatorsImpl implements Validators {
                 converter.toString(validate.getParameters()), converter.toString(parameters));
     }
 
-    protected Template getTemplate(Template template) {
+    private Template getTemplate(Template template) {
         return template == null ? templates.get() : template;
     }
 
-    protected int getFailureCode(ValidateWrapper validate, Validator validator) {
+    private int getFailureCode(ValidateWrapper validate, Validator validator) {
         int failureCode = validate.getFailureCode();
         if (failureCode <= 0)
             failureCode = validator.getFailureCode(validate);

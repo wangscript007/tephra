@@ -2,11 +2,11 @@ package org.lpw.tephra.util;
 
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,13 +16,13 @@ import java.util.Set;
  */
 @Component("tephra.util.message")
 public class MessageImpl implements Message, ContextRefreshedListener {
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
-    protected ResourceBundleMessageSource messageSource;
+    @Inject
+    private Context context;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Logger logger;
+    private ResourceBundleMessageSource messageSource;
 
     @Override
     public String get(String key, Object... args) {

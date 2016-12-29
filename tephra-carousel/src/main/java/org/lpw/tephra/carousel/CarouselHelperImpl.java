@@ -15,12 +15,13 @@ import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.TimeUnit;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -34,34 +35,34 @@ import java.util.concurrent.Future;
 public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, ContextRefreshedListener, ContextClosedListener {
     private static final String CACHE_SERVICE = "tephra.carousel.helper.service:";
 
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Http http;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected Cache cache;
-    @Autowired
-    protected Status status;
-    @Autowired
-    protected Header header;
-    @Autowired
-    protected Session session;
-    @Autowired(required = false)
-    protected Set<CarouselRegister> registers;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Http http;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Cache cache;
+    @Inject
+    private Status status;
+    @Inject
+    private Header header;
+    @Inject
+    private Session session;
+    @Inject
+    private Optional<Set<CarouselRegister>> registers;
     @Value("${tephra.carousel.url:}")
-    protected String carouselUrl;
+    private String carouselUrl;
     @Value("${tephra.carousel.service.url:}")
-    protected String serviceUrl;
+    private String serviceUrl;
     @Value("${tephra.carousel.service.all:false}")
-    protected boolean serviceAll;
-    protected boolean emptyCarouselUrl;
-    protected boolean emptyServiceUrl;
-    protected Map<String, String> services = new ConcurrentHashMap<>();
-    protected ExecutorService executorService;
+    private boolean serviceAll;
+    private boolean emptyCarouselUrl;
+    private boolean emptyServiceUrl;
+    private Map<String, String> services = new ConcurrentHashMap<>();
+    private ExecutorService executorService;
 
     @Override
     public boolean config(String name, String description, ActionBuilder actionBuilder) {
@@ -158,14 +159,14 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
         return cacheService(cacheable, cacheKey, http.post(carouselUrl + "/discovery/execute", header, parameter));
     }
 
-    protected String cacheService(boolean cacheable, String cacheKey, String result) {
+    private String cacheService(boolean cacheable, String cacheKey, String result) {
         if (cacheable)
             cache.put(cacheKey, result, false);
 
         return result;
     }
 
-    protected boolean code0(String string) {
+    private boolean code0(String string) {
         if (validator.isEmpty(string))
             return false;
 
@@ -196,8 +197,7 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     public void onContextRefreshed() {
         emptyCarouselUrl = validator.isEmpty(carouselUrl);
         emptyServiceUrl = validator.isEmpty(serviceUrl);
-        if (!validator.isEmpty(registers))
-            registers.forEach(register -> services.putAll(register.getKeyService()));
+        registers.ifPresent(set -> set.forEach(register -> services.putAll(register.getKeyService())));
         services.forEach(this::register);
         if (executorService == null)
             executorService = Executors.newCachedThreadPool();

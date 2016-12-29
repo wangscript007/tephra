@@ -3,8 +3,8 @@ package org.lpw.tephra.nio;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import org.lpw.tephra.util.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,11 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author lpw
  */
 public abstract class Handler extends ChannelHandlerAdapter {
-    @Autowired
+    @Inject
     protected Logger logger;
-    @Autowired
+    @Inject
     protected NioHelper nioHelper;
-    protected Map<String, ByteArrayOutputStream> outputStreamMap = new ConcurrentHashMap<>();
+    private Map<String, ByteArrayOutputStream> outputStreamMap = new ConcurrentHashMap<>();
 
     @Override
     public void channelRead(ChannelHandlerContext context, Object message) throws Exception {

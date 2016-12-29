@@ -5,9 +5,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.scheduler.MinuteJob;
 import org.lpw.tephra.util.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -18,9 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component("tephra.nio.helper")
 public class NioHelperImpl implements NioHelper, ContextClosedListener, MinuteJob {
-    @Autowired
-    protected Logger logger;
-    protected Map<String, ChannelHandlerContext> map = new ConcurrentHashMap<>();
+    @Inject
+    private Logger logger;
+    private Map<String, ChannelHandlerContext> map = new ConcurrentHashMap<>();
 
     @Override
     public String put(ChannelHandlerContext context) {

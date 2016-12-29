@@ -9,13 +9,12 @@ import org.lpw.tephra.ctrl.context.LocalSessionAdapter;
 import org.lpw.tephra.ctrl.context.RequestAware;
 import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.ctrl.context.ResponseAware;
-import org.lpw.tephra.ctrl.context.Session;
 import org.lpw.tephra.ctrl.context.SessionAware;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.Map;
 
 /**
@@ -24,25 +23,23 @@ import java.util.Map;
 @Component("tephra.carousel.local-service")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class LocalServiceImpl implements LocalService {
-    @Autowired
-    protected HeaderAware headerAware;
-    @Autowired
-    protected RequestAware requestAware;
-    @Autowired
-    protected SessionAware sessionAware;
-    @Autowired
-    protected ResponseAware responseAware;
-    @Autowired
-    protected Session session;
-    @Autowired
-    protected Dispatcher dispatcher;
-    @Autowired
-    protected Response response;
-    protected String uri;
-    protected String ip;
-    protected String sessionId;
-    protected Map<String, String> header;
-    protected Map<String, String> parameter;
+    @Inject
+    private HeaderAware headerAware;
+    @Inject
+    private RequestAware requestAware;
+    @Inject
+    private SessionAware sessionAware;
+    @Inject
+    private ResponseAware responseAware;
+    @Inject
+    private Dispatcher dispatcher;
+    @Inject
+    private Response response;
+    private String uri;
+    private String ip;
+    private String sessionId;
+    private Map<String, String> header;
+    private Map<String, String> parameter;
 
     @Override
     public LocalService build(String uri, String ip, String sessionId, Map<String, String> header, Map<String, String> parameter) {

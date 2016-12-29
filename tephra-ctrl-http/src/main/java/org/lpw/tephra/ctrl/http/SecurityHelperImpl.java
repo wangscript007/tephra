@@ -1,11 +1,10 @@
 package org.lpw.tephra.ctrl.http;
 
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Pattern;
 
@@ -16,16 +15,14 @@ import java.util.regex.Pattern;
 public class SecurityHelperImpl implements SecurityHelper {
     private static final Pattern SCRIPT = Pattern.compile("<\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT].*>");
 
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Logger logger;
     @Value("${tephra.ctrl.http.security.jsp.enable:false}")
-    protected boolean enable;
+    private boolean enable;
     @Value("${tephra.ctrl.http.security.xss:true}")
-    protected boolean xss;
+    private boolean xss;
     @Value("${tephra.ctrl.http.security.xss.ignore:}")
-    protected String ignore;
+    private String ignore;
 
     @Override
     public boolean isEnable(HttpServletRequest request) {
@@ -54,7 +51,7 @@ public class SecurityHelperImpl implements SecurityHelper {
         return true;
     }
 
-    protected boolean suffix(String uri) {
+    private boolean suffix(String uri) {
         int indexOf = uri.lastIndexOf('.');
         if (indexOf == -1)
             return false;

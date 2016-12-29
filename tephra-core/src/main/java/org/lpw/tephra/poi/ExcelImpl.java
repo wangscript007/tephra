@@ -8,9 +8,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -19,10 +19,10 @@ import java.io.OutputStream;
  */
 @Component("tephra.poi.excel")
 public class ExcelImpl implements Excel {
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Logger logger;
 
     @Override
     public void write(String[] titles, String[] names, JSONArray array, OutputStream outputStream) {

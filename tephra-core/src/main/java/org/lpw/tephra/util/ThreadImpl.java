@@ -1,21 +1,22 @@
 package org.lpw.tephra.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
 @Component("tephra.util.thread")
 public class ThreadImpl implements Thread {
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Generator generator;
+    @Inject
+    private Logger logger;
 
     @Override
     public void sleep(int time, TimeUnit unit) {
-        sleep(1L * time * unit.getTime());
+        sleep(time * unit.getTime());
     }
 
     @Override
@@ -23,7 +24,7 @@ public class ThreadImpl implements Thread {
         sleep(generator.random(min * unit.getTime(), max * unit.getTime()));
     }
 
-    protected void sleep(long time) {
+    private void sleep(long time) {
         try {
             java.lang.Thread.sleep(time);
         } catch (InterruptedException e) {

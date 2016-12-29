@@ -15,9 +15,9 @@ package org.lpw.hellotephra;
  
 import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.execute.Execute;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
  
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
  
@@ -26,8 +26,8 @@ import java.util.Map;
  */
 @Controller("hellotephra.ctrl")
 public class HelloCtrl {
-    @Autowired
-    protected Request request;
+    @Inject
+    private Request request;
  
     @Execute(name = "/hello")
     public Object hello() {
@@ -57,7 +57,7 @@ import org.junit.Test;
 import org.lpw.tephra.test.TephraTestSupport;
 import org.lpw.tephra.test.mock.MockHelper;
 import org.lpw.tephra.util.Context;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Inject;
  
 import java.io.File;
 import java.io.IOException;
@@ -68,10 +68,10 @@ import static org.junit.Assert.assertEquals;
  * @author lpw
  */
 public class HelloCtrlTest extends TephraTestSupport {
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected MockHelper mockHelper;
+    @Inject
+    private Context context;
+    @Inject
+    private MockHelper mockHelper;
  
     @Test
     public void hello() {

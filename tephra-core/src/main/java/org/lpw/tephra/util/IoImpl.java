@@ -1,8 +1,8 @@
 package org.lpw.tephra.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,10 +20,10 @@ import java.io.Writer;
 public class IoImpl implements Io {
     private static final int BUFFER_SIZE = 1024;
 
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected Validator validator;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Validator validator;
 
     @Override
     public byte[] read(String path) {

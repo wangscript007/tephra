@@ -14,10 +14,10 @@ import org.lpw.tephra.dao.model.ModelTables;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,22 +28,22 @@ import java.util.Map;
  */
 @Repository("tephra.dao.mongo")
 public class MongoImpl implements Mongo, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected ModelTables modelTables;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Generator generator;
+    @Inject
+    private Logger logger;
+    @Inject
+    private ModelTables modelTables;
     @Value("${tephra.dao.database.max-active:5}")
-    protected int maxActive;
+    private int maxActive;
     @Value("${tephra.dao.database.max-wait:5000}")
-    protected int maxWait;
+    private int maxWait;
     @Value("${tephra.dao.mongo.config:}")
-    protected String config;
-    protected Map<String, String> schemas;
-    protected Map<String, List<MongoClient>> mongos;
+    private String config;
+    private Map<String, String> schemas;
+    private Map<String, List<MongoClient>> mongos;
 
     @Override
     public MongoDatabase getDatabase() {
@@ -237,12 +237,12 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
         return array;
     }
 
-    protected String getCollectionName(Class<? extends Model> modelClass) {
+    private String getCollectionName(Class<? extends Model> modelClass) {
         return modelTables.get(modelClass).getTableName();
     }
 
     @SuppressWarnings({"unchecked"})
-    protected Document toDocument(JSONObject object) {
+    private Document toDocument(JSONObject object) {
         return object == null ? new Document() : new Document(object);
     }
 

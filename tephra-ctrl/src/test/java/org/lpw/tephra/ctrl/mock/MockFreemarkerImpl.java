@@ -1,4 +1,4 @@
-package org.lpw.tephra.test.mock;
+package org.lpw.tephra.ctrl.mock;
 
 import org.lpw.tephra.ctrl.template.TemplateSupport;
 

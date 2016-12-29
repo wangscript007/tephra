@@ -10,10 +10,10 @@ import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,32 +27,32 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Repository("tephra.dao.jdbc.data-source")
 public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected DialectFactory dialectFactory;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Generator generator;
+    @Inject
+    private Logger logger;
+    @Inject
+    private DialectFactory dialectFactory;
     @Value("${tephra.dao.database.initial-size:0}")
-    protected int initialSize;
+    private int initialSize;
     @Value("${tephra.dao.database.max-active:5}")
-    protected int maxActive;
+    private int maxActive;
     @Value("${tephra.dao.database.max-wait:5000}")
-    protected int maxWait;
+    private int maxWait;
     @Value("${tephra.dao.database.test-interval:600000}")
-    protected int testInterval;
+    private int testInterval;
     @Value("${tephra.dao.database.remove-abandoned-timeout:300}")
-    protected int removeAbandonedTimeout;
+    private int removeAbandonedTimeout;
     @Value("${tephra.dao.database.config:}")
-    protected String config;
-    protected Map<String, Dialect> dialects = new HashMap<>();
-    protected Map<String, DataSource> writeables = new ConcurrentHashMap<>();
-    protected Map<String, List<DataSource>> readonlys = new ConcurrentHashMap<>();
-    protected Map<String, Boolean> readonly = new ConcurrentHashMap<>();
+    private String config;
+    private Map<String, Dialect> dialects = new HashMap<>();
+    private Map<String, DataSource> writeables = new ConcurrentHashMap<>();
+    private Map<String, List<DataSource>> readonlys = new ConcurrentHashMap<>();
+    private Map<String, Boolean> readonly = new ConcurrentHashMap<>();
 
     @Override
     public DataSource getWriteable(String name) {
@@ -105,7 +105,7 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
             logger.info("成功创建数据库[{}]连接池。", config);
     }
 
-    protected void createDataSource(String name, Dialect dialect, String username, String password, JSONArray ips, String schema) {
+    private void createDataSource(String name, Dialect dialect, String username, String password, JSONArray ips, String schema) {
         if (writeables.get(name) != null)
             return;
 

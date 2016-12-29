@@ -1,5 +1,5 @@
 # BeanFactory
-BeanFactory用于获取由Spring容器管理的Bean，BeanFactory提供静态调用方法，因此在非Spring容器管理的Bean中也能通过BeanFactory获取到Spring容器中的Bean；而对于由Spring容器管理的Bean，则建议通过Autowired注解依赖注入。
+BeanFactory用于获取由Spring容器管理的Bean，BeanFactory提供静态调用方法，因此在非Spring容器管理的Bean中也能通过BeanFactory获取到Spring容器中的Bean；而对于由Spring容器管理的Bean，则建议通过Inject注解依赖注入。
 ```java
 package org.lpw.tephra.bean;
 

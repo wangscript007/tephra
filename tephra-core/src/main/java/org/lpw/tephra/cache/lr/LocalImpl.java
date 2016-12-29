@@ -4,10 +4,10 @@ import org.lpw.tephra.scheduler.MinuteJob;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -21,17 +21,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component("tephra.cache.lr.local")
 public class LocalImpl implements Local, MinuteJob {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Logger logger;
     @Value("${tephra.cache.alive-time:30}")
-    protected long aliveTime;
+    private long aliveTime;
     @Value("${tephra.cache.max-memory:1g}")
-    protected String maxMemory;
-    protected Map<String, Element> map = new ConcurrentHashMap<>();
+    private String maxMemory;
+    private Map<String, Element> map = new ConcurrentHashMap<>();
 
     @Override
     public void put(Element element) {
@@ -95,7 +95,7 @@ public class LocalImpl implements Local, MinuteJob {
                     converter.toBitSize(Runtime.getRuntime().totalMemory()));
     }
 
-    protected void clearByAliveTime(List<Element> elements, Set<String> obsoletes) {
+    private void clearByAliveTime(List<Element> elements, Set<String> obsoletes) {
         if (aliveTime < 1)
             return;
 
@@ -109,7 +109,7 @@ public class LocalImpl implements Local, MinuteJob {
         }
     }
 
-    protected void clearByMaxMemory(List<Element> elements, Set<String> obsoletes) {
+    private void clearByMaxMemory(List<Element> elements, Set<String> obsoletes) {
         if (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() < converter.toBitSize(maxMemory) * 3 / 4)
             return;
 

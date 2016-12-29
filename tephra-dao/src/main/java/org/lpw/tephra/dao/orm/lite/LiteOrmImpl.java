@@ -1,7 +1,6 @@
 package org.lpw.tephra.dao.orm.lite;
 
 import org.lpw.tephra.bean.BeanFactory;
-import org.lpw.tephra.dao.dialect.Dialect;
 import org.lpw.tephra.dao.jdbc.Connection;
 import org.lpw.tephra.dao.jdbc.DataSource;
 import org.lpw.tephra.dao.jdbc.Sql;
@@ -14,34 +13,31 @@ import org.lpw.tephra.dao.orm.OrmSupport;
 import org.lpw.tephra.dao.orm.PageList;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author lpw
  */
 @Repository("tephra.dao.orm.lite")
 public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected ModelTables modelTables;
-    @Autowired
-    protected ModelHelper modelHelper;
-    @Autowired
-    protected DataSource dataSource;
-    @Autowired
-    protected Connection connection;
-    @Autowired
-    protected Sql sql;
-    @Autowired
-    protected Map<String, Dialect> dialects;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Generator generator;
+    @Inject
+    private ModelTables modelTables;
+    @Inject
+    private ModelHelper modelHelper;
+    @Inject
+    private DataSource dataSource;
+    @Inject
+    private Connection connection;
+    @Inject
+    private Sql sql;
 
     @Override
     public <T extends Model> T findById(String dataSource, Class<T> modelClass, String id, boolean lock) {
@@ -61,7 +57,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends Model> T queryOne(LiteQuery query, Object[] args) {
+    private <T extends Model> T queryOne(LiteQuery query, Object[] args) {
         List<T> list = (List<T>) query(query, args, false).getList();
 
         return validator.isEmpty(list) ? null : list.get(0);
@@ -73,7 +69,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends Model> PageList<T> query(LiteQuery query, Object[] args, boolean countable) {
+    private <T extends Model> PageList<T> query(LiteQuery query, Object[] args, boolean countable) {
         PageList<T> models = BeanFactory.getBean(PageList.class);
         if (query.getSize() > 0)
             models.setPage(countable ? count(query, args) : query.getSize() * query.getPage(), query.getSize(), query.getPage());
@@ -100,7 +96,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
         return models;
     }
 
-    protected String getQuerySql(LiteQuery query, ModelTable modelTable, int size, int page) {
+    private String getQuerySql(LiteQuery query, ModelTable modelTable, int size, int page) {
         StringBuilder querySql = new StringBuilder().append("SELECT ").append(validator.isEmpty(query.getSelect()) ? "*" : query.getSelect());
         querySql.append(" FROM ").append(getFrom(query, modelTable));
         if (!validator.isEmpty(query.getWhere()))
@@ -118,7 +114,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
         return querySql.toString();
     }
 
-    protected String getFrom(LiteQuery query, ModelTable modelTable) {
+    private String getFrom(LiteQuery query, ModelTable modelTable) {
         if (!validator.isEmpty(query.getFrom()))
             return query.getFrom();
 
@@ -180,7 +176,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
      * @param modelTable Model-Table映射关系表。
      * @return 影响记录数。
      */
-    protected <T extends Model> int insert(String dataSource, T model, ModelTable modelTable) {
+    private <T extends Model> int insert(String dataSource, T model, ModelTable modelTable) {
         StringBuilder insertSql = new StringBuilder().append("INSERT INTO ").append(modelTable.getTableName()).append('(');
         List<Object> args = new ArrayList<>();
         if (model.getId() == null && modelTable.isUuid())
@@ -220,7 +216,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
      * @param modelTable Model-Table映射关系表。
      * @return 影响记录数。
      */
-    protected <T extends Model> int update(String dataSource, T model, ModelTable modelTable) {
+    private <T extends Model> int update(String dataSource, T model, ModelTable modelTable) {
         StringBuilder updateSql = new StringBuilder().append("UPDATE ").append(modelTable.getTableName()).append(" SET ");
         List<Object> args = new ArrayList<>();
         for (String columnName : modelTable.getColumnNames()) {
@@ -253,7 +249,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
         return n > 0;
     }
 
-    protected int update(String dataSource, ModelTable modelTable, StringBuilder updateSql, Object[] args) {
+    private int update(String dataSource, ModelTable modelTable, StringBuilder updateSql, Object[] args) {
         String sql = updateSql.toString();
         int n = this.sql.update(dataSource, sql, args);
         if (!validator.isEmpty(modelTable.getMemoryName()))
@@ -293,7 +289,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     public void resetMemory(String dataSource, Class<? extends Model> modelClass, boolean count) {
         ModelTable modelTable = modelTables.get(modelClass);
         if (modelClass == null) {
-            logger.warn(null, "ModelTable[{}]不存在！", modelClass);
+            logger.warn(null, "ModelClass不存在！");
 
             return;
         }
@@ -318,7 +314,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
             logger.debug("内存表[{}]重置完成。", modelClass);
     }
 
-    protected int count(String dataSource, String table) {
+    private int count(String dataSource, String table) {
         return converter.toInt(sql.query(dataSource, "SELECT COUNT(*) FROM " + table, null).get(0, 0));
     }
 

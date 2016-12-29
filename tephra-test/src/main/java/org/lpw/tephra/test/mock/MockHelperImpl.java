@@ -8,10 +8,10 @@ import org.lpw.tephra.ctrl.context.HeaderAware;
 import org.lpw.tephra.ctrl.context.RequestAware;
 import org.lpw.tephra.ctrl.context.ResponseAware;
 import org.lpw.tephra.ctrl.context.SessionAware;
-import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Generator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
@@ -19,25 +19,23 @@ import org.springframework.stereotype.Controller;
 @Aspect
 @Controller("tephra.test.mock.helper")
 public class MockHelperImpl implements MockHelper {
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected HeaderAware headerAware;
-    @Autowired
-    protected SessionAware sessionAware;
-    @Autowired
-    protected RequestAware requestAware;
-    @Autowired
-    protected ResponseAware responseAware;
-    @Autowired
-    protected Dispatcher dispatcher;
-    protected ThreadLocal<MockHeader> header = new ThreadLocal<>();
-    protected ThreadLocal<MockSession> session = new ThreadLocal<>();
-    protected ThreadLocal<MockRequest> request = new ThreadLocal<>();
-    protected ThreadLocal<MockResponse> response = new ThreadLocal<>();
-    protected ThreadLocal<MockFreemarker> freemarker = new ThreadLocal<>();
+    @Inject
+    private Generator generator;
+    @Inject
+    private HeaderAware headerAware;
+    @Inject
+    private SessionAware sessionAware;
+    @Inject
+    private RequestAware requestAware;
+    @Inject
+    private ResponseAware responseAware;
+    @Inject
+    private Dispatcher dispatcher;
+    private ThreadLocal<MockHeader> header = new ThreadLocal<>();
+    private ThreadLocal<MockSession> session = new ThreadLocal<>();
+    private ThreadLocal<MockRequest> request = new ThreadLocal<>();
+    private ThreadLocal<MockResponse> response = new ThreadLocal<>();
+    private ThreadLocal<MockFreemarker> freemarker = new ThreadLocal<>();
 
     @Override
     public MockHeader getHeader() {

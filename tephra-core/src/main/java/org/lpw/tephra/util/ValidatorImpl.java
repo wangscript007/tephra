@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class ValidatorImpl implements Validator {
     private static final String EMAIL = "^(?:\\w+\\.?-?)*\\w+@(?:\\w+\\.?-?)*\\w+$";
 
-    protected Map<String, Pattern> patterns = new ConcurrentHashMap<>();
+    private Map<String, Pattern> patterns = new ConcurrentHashMap<>();
 
     @Override
     public boolean isEmpty(Object object) {
@@ -39,25 +39,16 @@ public class ValidatorImpl implements Validator {
 
     @Override
     public boolean isEmail(String email) {
-        return isEmpty(email) ? false : isMatchRegex(EMAIL, email);
+        return isMatchRegex(EMAIL, email);
     }
 
     @Override
     public boolean isMatchRegex(String regex, String string) {
-        if (regex == null || string == null)
-            return false;
-
-        return getPattern(regex).matcher(string).matches();
+        return regex != null && string != null && getPattern(regex).matcher(string).matches();
     }
 
-    protected Pattern getPattern(String regex) {
-        Pattern pattern = patterns.get(regex);
-        if (pattern == null) {
-            pattern = Pattern.compile(regex);
-            patterns.put(regex, pattern);
-        }
-
-        return pattern;
+    private Pattern getPattern(String regex) {
+        return patterns.computeIfAbsent(regex, Pattern::compile);
     }
 
     @Override

@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author lpw
  */
-public class SignCoreTest extends CoreTestSupport {
+public class SignTest extends CoreTestSupport {
     @Inject
     private Converter converter;
     @Inject

@@ -5,10 +5,10 @@ import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.scheduler.SecondsJob;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,17 +18,17 @@ import java.util.Map;
  */
 @Component("tephra.storages")
 public class StoragesImpl implements Storages, ContextRefreshedListener, SecondsJob {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Logger logger;
     @Value("${tephra.storage.default:disk}")
-    protected String type;
-    protected Map<String, Storage> storages;
-    protected Map<String, String> types;
-    protected Map<String, String> pathes;
-    protected Map<String, StorageListener> listeners;
-    protected Map<String, Long> times;
+    private String type;
+    private Map<String, Storage> storages;
+    private Map<String, String> types;
+    private Map<String, String> pathes;
+    private Map<String, StorageListener> listeners;
+    private Map<String, Long> times;
 
     @Override
     public Storage get() {

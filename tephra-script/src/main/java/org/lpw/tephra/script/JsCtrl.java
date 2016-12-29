@@ -6,9 +6,9 @@ import org.lpw.tephra.ctrl.execute.Execute;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.ctrl.validate.Validate;
 import org.lpw.tephra.ctrl.validate.Validators;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,12 +20,12 @@ import java.util.Map;
 public class JsCtrl {
     private static final String METHOD = "method";
 
-    @Autowired
-    protected Request request;
-    @Autowired
-    protected Response response;
-    @Autowired
-    protected Engine engine;
+    @Inject
+    private Request request;
+    @Inject
+    private Response response;
+    @Inject
+    private Engine engine;
 
     @Execute(name = "js", validates = {
             @Validate(validator = Validators.NOT_EMPTY, parameter = METHOD, failureCode = 1),

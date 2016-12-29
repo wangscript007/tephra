@@ -14,16 +14,17 @@ import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.lpw.tephra.util.Xml;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,33 +36,33 @@ import java.util.concurrent.Executors;
 public class WeixinServiceImpl implements WeixinService, ContextRefreshedListener, ContextClosedListener {
     private static final String CACHE_NICKNAME = "tephra.weixin.service.nickname:";
 
-    @Autowired
-    protected Digest digest;
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Http http;
-    @Autowired
-    protected Cache cache;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected Xml xml;
-    @Autowired
-    protected Set<Atomicable> atomicables;
-    @Autowired
-    protected SessionAware sessionAware;
-    @Autowired
-    protected Session session;
-    @Autowired
-    protected WeixinHelper weixinHelper;
-    @Autowired(required = false)
-    protected WeixinListener weixinListener;
+    @Inject
+    private Digest digest;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Http http;
+    @Inject
+    private Cache cache;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Xml xml;
+    @Inject
+    private Set<Atomicable> atomicables;
+    @Inject
+    private SessionAware sessionAware;
+    @Inject
+    private Session session;
+    @Inject
+    private WeixinHelper weixinHelper;
+    @Inject
+    private Optional<WeixinListener> weixinListener;
     @Value("${tephra.weixin.mp.thread:5}")
-    protected int thread;
-    protected ExecutorService executorService;
+    private int thread;
+    private ExecutorService executorService;
 
     @Override
     public boolean echo(String appId, String signature, String timestamp, String nonce) {
@@ -112,50 +113,51 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
         if (logger.isDebugEnable())
             logger.debug("收到微信消息\n{}", xml);
 
-        if (weixinListener != null) {
-            executorService.submit(() -> {
-                Map<String, String> map = this.xml.toMap(xml, false);
+        weixinListener.ifPresent(listener -> executorService.submit(() -> {
+            Map<String, String> map = this.xml.toMap(xml, false);
 //                String mpId = map.get("ToUserName");
-                String userOpenId = map.get("FromUserName");
-                Timestamp time = new Timestamp(converter.toLong(map.get("CreateTime")) * 1000);
-                String type = map.get("MsgType");
-                String messageId = map.get("MsgId");
-                xml(map, appId, userOpenId, time, type, messageId);
-                atomicables.forEach(Atomicable::close);
-            });
-        }
+            String userOpenId = map.get("FromUserName");
+            Timestamp time = new Timestamp(converter.toLong(map.get("CreateTime")) * 1000);
+            String type = map.get("MsgType");
+            String messageId = map.get("MsgId");
+            xml(map, appId, userOpenId, time, type, messageId);
+            atomicables.forEach(Atomicable::close);
+        }));
 
         return "";
     }
 
-    protected void xml(Map<String, String> map, String appId, String userOpenId, Timestamp time, String type, String messageId) {
+    private void xml(Map<String, String> map, String appId, String userOpenId, Timestamp time, String type, String messageId) {
+        if (!weixinListener.isPresent())
+            return;
+
         if ("text".equals(type)) {
-            weixinListener.text(appId, userOpenId, messageId, map.get("Content"), time);
+            weixinListener.get().text(appId, userOpenId, messageId, map.get("Content"), time);
 
             return;
         }
 
         if ("image".equals(type)) {
-            weixinListener.image(appId, userOpenId, messageId, weixinHelper.download(appId, map.get("MediaId"), time, true), time);
+            weixinListener.get().image(appId, userOpenId, messageId, weixinHelper.download(appId, map.get("MediaId"), time, true), time);
 
             return;
         }
 
         if ("voice".equals(type)) {
-            weixinListener.voice(appId, userOpenId, messageId, map.get("format"), weixinHelper.download(appId, map.get("MediaId"), time, true), time);
+            weixinListener.get().voice(appId, userOpenId, messageId, map.get("format"), weixinHelper.download(appId, map.get("MediaId"), time, true), time);
 
             return;
         }
 
         if ("video".equals(type) || "shortvideo".equals(type)) {
-            weixinListener.video(appId, userOpenId, messageId, weixinHelper.download(appId, map.get("MediaId"), time, false),
+            weixinListener.get().video(appId, userOpenId, messageId, weixinHelper.download(appId, map.get("MediaId"), time, false),
                     weixinHelper.download(appId, map.get("ThumbMediaId"), time, true), time);
 
             return;
         }
 
         if ("location".equals(type)) {
-            weixinListener.location(appId, userOpenId, messageId, converter.toDouble(map.get("Location_X")), converter.toDouble(map.get("Location_Y")),
+            weixinListener.get().location(appId, userOpenId, messageId, converter.toDouble(map.get("Location_X")), converter.toDouble(map.get("Location_Y")),
                     converter.toInt(map.get("Scale")), map.get("Label"), time);
 
             return;
@@ -168,31 +170,31 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
             if ("subscribe".equals(event)) {
                 if (!validator.isEmpty(key))
                     key = key.substring(8);
-                weixinListener.subscribe(appId, userOpenId, key, ticket, time);
+                weixinListener.get().subscribe(appId, userOpenId, key, ticket, time);
 
                 return;
             }
 
             if ("SCAN".equals(event)) {
-                weixinListener.scan(appId, userOpenId, key, ticket, time);
+                weixinListener.get().scan(appId, userOpenId, key, ticket, time);
 
                 return;
             }
 
             if ("CLICK".equals(event)) {
-                weixinListener.click(appId, userOpenId, key, time);
+                weixinListener.get().click(appId, userOpenId, key, time);
 
                 return;
             }
 
             if ("VIEW".equals(event)) {
-                weixinListener.redirect(appId, userOpenId, key, time);
+                weixinListener.get().redirect(appId, userOpenId, key, time);
 
                 return;
             }
 
             if ("unsubscribe".equals(event)) {
-                weixinListener.unsubscribe(appId, userOpenId, time);
+                weixinListener.get().unsubscribe(appId, userOpenId, time);
 
                 return;
             }

@@ -3,10 +3,10 @@ package org.lpw.tephra.ctrl;
 import org.lpw.tephra.cache.Cache;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,22 +18,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CounterImpl implements Counter {
     private static final String CACHE_DELAY = "tephra.ctrl.counter.delay:";
 
-    @Autowired
-    protected Cache cache;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected TrustfulIp trustfulIp;
+    @Inject
+    private Cache cache;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Logger logger;
+    @Inject
+    private TrustfulIp trustfulIp;
     @Value("${tephra.ctrl.counter.max:512}")
-    protected int max;
+    private int max;
     @Value("${tephra.ctrl.counter.ip-max:5}")
-    protected int ipMax;
+    private int ipMax;
     @Value("${tephra.ctrl.counter.ip-delay:5000}")
-    protected int delay;
-    protected AtomicInteger counter = new AtomicInteger();
-    protected Map<String, Integer> ipMap = new HashMap<>();
+    private int delay;
+    private AtomicInteger counter = new AtomicInteger();
+    private Map<String, Integer> ipMap = new HashMap<>();
 
     @Override
     public boolean increase(String ip) {

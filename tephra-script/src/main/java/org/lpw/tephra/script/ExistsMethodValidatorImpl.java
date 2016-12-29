@@ -2,8 +2,9 @@ package org.lpw.tephra.script;
 
 import org.lpw.tephra.ctrl.validate.ValidateWrapper;
 import org.lpw.tephra.ctrl.validate.ValidatorSupport;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
@@ -12,8 +13,8 @@ import org.springframework.stereotype.Controller;
 public class ExistsMethodValidatorImpl extends ValidatorSupport {
     private static final String DEFAULT_FAILURE_MESSAGE_KEY = "tephra.script.method.not-exists";
 
-    @Autowired
-    protected Engine engine;
+    @Inject
+    private Engine engine;
 
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {

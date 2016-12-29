@@ -3,9 +3,9 @@ package org.lpw.tephra.dao.orm.mybatis;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.lpw.tephra.dao.Mode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
@@ -14,8 +14,8 @@ import java.util.Map;
  */
 @Repository("tephra.dao.orm.mybatis.orm")
 public class MybatisOrmImpl implements MybatisOrm {
-    @Autowired
-    protected Session session;
+    @Inject
+    private Session session;
 
     @Override
     public <T> T getMapper(String dataSource, Mode mode, Class<T> mapperClass) {
@@ -42,11 +42,11 @@ public class MybatisOrmImpl implements MybatisOrm {
         getRead(builder).select(builder.getStatement(), builder.getParameter(), getRowBounds(builder), builder.getResultHandler());
     }
 
-    protected SqlSession getRead(MybatisBuilder builder) {
+    private SqlSession getRead(MybatisBuilder builder) {
         return session.get(builder.getDataSource(), Mode.Read);
     }
 
-    protected RowBounds getRowBounds(MybatisBuilder builder) {
+    private RowBounds getRowBounds(MybatisBuilder builder) {
         return builder.getRowBounds() == null ? RowBounds.DEFAULT : builder.getRowBounds();
     }
 
@@ -65,7 +65,7 @@ public class MybatisOrmImpl implements MybatisOrm {
         return getWrite(builder).delete(builder.getStatement(), builder.getParameter());
     }
 
-    protected SqlSession getWrite(MybatisBuilder builder) {
+    private SqlSession getWrite(MybatisBuilder builder) {
         return session.get(builder.getDataSource(), Mode.Write);
     }
 

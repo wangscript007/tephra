@@ -2,18 +2,19 @@ package org.lpw.tephra.util;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
 @Component("tephra.util.json")
 public class JsonImpl implements Json {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Xml xml;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Xml xml;
 
     @Override
     public void addAsArray(JSONObject json, String key, Object object) {

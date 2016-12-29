@@ -3,7 +3,6 @@ package org.lpw.tephra.script;
 import org.lpw.tephra.storage.StorageListener;
 import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Context;
-import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
@@ -38,8 +37,6 @@ public class EngineImpl implements Engine, StorageListener {
     private Io io;
     @Inject
     private Validator validator;
-    @Inject
-    private Converter converter;
     @Inject
     private Logger logger;
     @Value("${tephra.script.path:/WEB-INF/script}")

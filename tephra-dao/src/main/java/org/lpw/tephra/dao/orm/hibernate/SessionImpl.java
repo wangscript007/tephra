@@ -7,9 +7,9 @@ import org.lpw.tephra.dao.Mode;
 import org.lpw.tephra.dao.jdbc.DataSource;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,16 +18,16 @@ import java.util.Map;
  */
 @Repository("tephra.dao.orm.hibernate.session")
 public class SessionImpl extends ConnectionSupport<Session> implements org.lpw.tephra.dao.orm.hibernate.Session {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected DataSource dataSource;
-    @Autowired
-    protected org.lpw.tephra.dao.orm.hibernate.SessionFactory sessionFactory;
-    protected ThreadLocal<Map<String, Session>> sessions = new ThreadLocal<>();
-    protected ThreadLocal<Boolean> transactional = new ThreadLocal<>();
+    @Inject
+    private Validator validator;
+    @Inject
+    private Logger logger;
+    @Inject
+    private DataSource dataSource;
+    @Inject
+    private org.lpw.tephra.dao.orm.hibernate.SessionFactory sessionFactory;
+    private ThreadLocal<Map<String, Session>> sessions = new ThreadLocal<>();
+    private ThreadLocal<Boolean> transactional = new ThreadLocal<>();
 
     @Override
     public void beginTransaction() {

@@ -7,8 +7,8 @@ import org.lpw.tephra.dao.Mode;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,13 +17,13 @@ import java.sql.SQLException;
  * @author lpw
  */
 public abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
-    @Autowired
+    @Inject
     protected Validator validator;
-    @Autowired
+    @Inject
     protected Converter converter;
-    @Autowired
+    @Inject
     protected Logger logger;
-    @Autowired
+    @Inject
     protected Connection connection;
 
     protected SqlTable query(ResultSet rs) throws SQLException {

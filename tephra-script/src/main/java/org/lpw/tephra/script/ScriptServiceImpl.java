@@ -1,8 +1,9 @@
 package org.lpw.tephra.script;
 
 import net.sf.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
@@ -10,10 +11,11 @@ import org.springframework.stereotype.Service;
 @Service("tephra.script.service")
 public class ScriptServiceImpl implements ScriptService {
     private static final String METHOD = "tephra.validate";
-    @Autowired
-    protected Engine engine;
-    @Autowired
-    protected Arguments arguments;
+
+    @Inject
+    private Engine engine;
+    @Inject
+    private Arguments arguments;
 
     @Override
     public JSONObject validate(String[] names, String parameter) {

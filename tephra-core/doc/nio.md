@@ -105,7 +105,7 @@ public interface ClientListener extends Listener {
 ```
 2、获取一个Client实例：
 ```java
-@Autowired
+@Inject
 protected ClientManager clientManager;
  
 Client client = clientManager.get();

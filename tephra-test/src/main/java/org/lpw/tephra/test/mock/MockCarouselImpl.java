@@ -14,8 +14,8 @@ import java.util.Map;
 @Aspect
 @Component("tephra.test.mock.carousel")
 public class MockCarouselImpl implements MockCarousel {
-    protected Map<String, MockCarouselService> services;
-    protected Map<String, String> results;
+    private Map<String, MockCarouselService> services;
+    private Map<String, String> results;
 
     @Override
     public void reset() {

@@ -4,9 +4,9 @@ import org.lpw.tephra.dao.ConnectionSupport;
 import org.lpw.tephra.dao.Mode;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,14 +18,14 @@ import java.util.Map;
  */
 @Repository("tephra.dao.jdbc.connection")
 public class ConnectionImpl extends ConnectionSupport<Connection> implements org.lpw.tephra.dao.jdbc.Connection {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected org.lpw.tephra.dao.jdbc.DataSource dataSource;
-    protected ThreadLocal<Map<String, Connection>> connections = new ThreadLocal<>();
-    protected ThreadLocal<Boolean> transactional = new ThreadLocal<>();
+    @Inject
+    private Validator validator;
+    @Inject
+    private Logger logger;
+    @Inject
+    private org.lpw.tephra.dao.jdbc.DataSource dataSource;
+    private ThreadLocal<Map<String, Connection>> connections = new ThreadLocal<>();
+    private ThreadLocal<Boolean> transactional = new ThreadLocal<>();
 
     @Override
     public void beginTransaction() {

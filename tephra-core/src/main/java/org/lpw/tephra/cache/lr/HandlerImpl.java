@@ -1,21 +1,19 @@
 package org.lpw.tephra.cache.lr;
 
 import org.lpw.tephra.cache.Handler;
-import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
 @Component("tephra.cache.lr.handler")
 public class HandlerImpl implements Handler {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Local local;
-    @Autowired
-    protected Remote remote;
+    @Inject
+    private Local local;
+    @Inject
+    private Remote remote;
 
     @Override
     public String getName() {

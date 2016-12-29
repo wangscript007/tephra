@@ -4,11 +4,11 @@ import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,25 +26,25 @@ import java.util.Set;
 @Repository("tephra.model.table")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ModelTableImpl implements ModelTable {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
-    protected Class<? extends Model> modelClass;
-    protected String tableName;
-    protected String memoryName;
-    protected String idColumnName;
-    protected boolean uuid;
-    protected Map<String, Method> getMethods = new HashMap<>();
-    protected Map<String, Method> jsonableMethods = new HashMap<>();
-    protected Map<String, Jsonable> jsonables = new HashMap<>();
-    protected Map<String, ManyToOne> manyToOnes = new HashMap<>();
-    protected Map<String, Method> setMethods = new HashMap<>();
-    protected Map<String, Class<?>> types = new HashMap<>();
-    protected Map<String, String> lowerCases = new HashMap<>();
-    protected Map<String, String> columns = new HashMap<>();
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Logger logger;
+    private Class<? extends Model> modelClass;
+    private String tableName;
+    private String memoryName;
+    private String idColumnName;
+    private boolean uuid;
+    private Map<String, Method> getMethods = new HashMap<>();
+    private Map<String, Method> jsonableMethods = new HashMap<>();
+    private Map<String, Jsonable> jsonables = new HashMap<>();
+    private Map<String, ManyToOne> manyToOnes = new HashMap<>();
+    private Map<String, Method> setMethods = new HashMap<>();
+    private Map<String, Class<?>> types = new HashMap<>();
+    private Map<String, String> lowerCases = new HashMap<>();
+    private Map<String, String> columns = new HashMap<>();
 
     @Override
     public Class<? extends Model> getModelClass() {
@@ -132,7 +132,7 @@ public class ModelTableImpl implements ModelTable {
         addLowerCase(propertyName);
     }
 
-    protected void addLowerCase(String name) {
+    private void addLowerCase(String name) {
         lowerCases.put(name.substring(0, 1).toLowerCase() + name.substring(1), name);
     }
 
@@ -232,7 +232,7 @@ public class ModelTableImpl implements ModelTable {
         }
     }
 
-    protected String getKey(int i, String name) {
+    private String getKey(int i, String name) {
         if (i == 1)
             return lowerCases.get(name);
 
@@ -242,7 +242,7 @@ public class ModelTableImpl implements ModelTable {
         return name;
     }
 
-    protected Object format(String format, Object value) {
+    private Object format(String format, Object value) {
         if (validator.isEmpty(format))
             return value;
 
@@ -266,7 +266,7 @@ public class ModelTableImpl implements ModelTable {
         return value;
     }
 
-    public Object convert(Class<?> type, Object value) {
+    private Object convert(Class<?> type, Object value) {
         if (value == null || type.isInstance(value))
             return value;
 

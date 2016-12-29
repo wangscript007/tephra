@@ -43,26 +43,23 @@ package org.lpw.tephra.dao.jdbc;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.lpw.tephra.dao.DaoUtil;
 import org.lpw.tephra.dao.dialect.Dialect;
+import org.lpw.tephra.test.DaoTestSupport;
 import org.lpw.tephra.util.Generator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class DataSourceTest {
-    @Autowired protected Generator generator;
-    @Autowired
-    protected DataSource dataSource;
+public class DataSourceTest extends DaoTestSupport {
+    @Inject
+    private Generator generator;
+    @Inject
+    private DataSource dataSource;
 
     @Test
     public void config() {
@@ -77,7 +74,7 @@ public class DataSourceTest {
 
     @Test
     public void create() {
-        String name=generator.chars(8);
+        String name = generator.chars(8);
         Assert.assertNull(dataSource.getWriteable(name));
 
         DaoUtil.createDataSource(name);

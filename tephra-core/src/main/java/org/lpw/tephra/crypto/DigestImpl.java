@@ -16,12 +16,8 @@ public class DigestImpl implements Digest {
     private static final String MD5 = "MD5";
     private static final String SHA1 = "SHA1";
 
-    private final Logger logger;
-
     @Inject
-    public DigestImpl(Logger logger) {
-        this.logger = logger;
-    }
+    private Logger logger;
 
     @Override
     public String md5(String text) {

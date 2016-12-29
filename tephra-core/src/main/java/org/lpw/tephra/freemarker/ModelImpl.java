@@ -3,10 +3,11 @@ package org.lpw.tephra.freemarker;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Message;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
@@ -14,13 +15,13 @@ import org.springframework.stereotype.Controller;
 @Controller("tephra.freemarker.model")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ModelImpl implements Model {
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Message message;
-    @Autowired
-    protected DateTime dateTime;
-    protected Object data;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Message message;
+    @Inject
+    private DateTime dateTime;
+    private Object data;
 
     @Override
     public Converter getConverter() {

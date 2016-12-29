@@ -3,8 +3,8 @@ package org.lpw.tephra.dao.orm;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import java.util.Collection;
 
 /**
@@ -13,9 +13,9 @@ import java.util.Collection;
  * @author lpw
  */
 public abstract class OrmSupport<Q extends Query> implements Orm<Q> {
-    @Autowired
+    @Inject
     protected Validator validator;
-    @Autowired
+    @Inject
     protected Logger logger;
 
     @Override

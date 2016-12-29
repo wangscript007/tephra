@@ -33,18 +33,19 @@ package org.lpw.spark.scrum.last;
 import org.lpw.tephra.ctrl.Interceptor;
 import org.lpw.tephra.ctrl.Invocation;
 import org.lpw.tephra.ctrl.context.Request;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
  
+import javax.inject.Inject;
+
 /**
  * @author lpw
  */
 @Controller("spark.last.interceptor")
 public class LastInterceptorImpl implements Interceptor {
-    @Autowired
-    protected Request request;
-    @Autowired
-    protected LastService lastService;
+    @Inject
+    private Request request;
+    @Inject
+    private LastService lastService;
  
     @Override
     public int getSort() {

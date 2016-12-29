@@ -1,8 +1,8 @@
 package org.lpw.tephra.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,10 +14,10 @@ import java.io.ObjectOutputStream;
  */
 @Component("tephra.util.serializer")
 public class SerializerImpl implements Serializer {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Logger logger;
 
     @Override
     public byte[] serialize(Object object) {

@@ -4,8 +4,9 @@ import net.sf.json.JSONObject;
 import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.util.Message;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.inject.Inject;
 
 /**
  * 模板支持类。
@@ -13,9 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
  * @author lpw
  */
 public abstract class TemplateSupport implements Template {
-    @Autowired
+    @Inject
     protected Validator validator;
-    @Autowired
+    @Inject
     protected Message message;
     @Value("${tephra.ctrl.dispatcher.not-permit:9997}")
     protected int notPermit;

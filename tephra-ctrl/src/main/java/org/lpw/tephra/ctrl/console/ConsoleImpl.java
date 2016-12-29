@@ -8,14 +8,13 @@ import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,22 +23,22 @@ import java.util.Set;
  */
 @Service("tephra.ctrl.console")
 public class ConsoleImpl implements Console, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected Header header;
-    @Autowired
-    protected Request request;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Header header;
+    @Inject
+    private Request request;
     @Value("${tephra.ctrl.console.uri:/tephra/ctrl/console}")
-    protected String uri;
+    private String uri;
     @Value("${tephra.ctrl.console.allow-ips:}")
-    protected String allowIps;
-    protected boolean enable;
-    protected Set<String> allowIpSet;
+    private String allowIps;
+    private boolean enable;
+    private Set<String> allowIpSet;
 
     @Override
     public boolean isConsole(String uri) {
@@ -80,20 +79,14 @@ public class ConsoleImpl implements Console, ContextRefreshedListener {
         }
     }
 
-    protected boolean isAllowIp() {
-        if (allowIpSet == null) {
-            allowIpSet = new HashSet<>();
-            for (String ip : converter.toArray(allowIps, ","))
-                allowIpSet.add(ip);
-        }
-
-        if (allowIpSet.isEmpty())
-            return false;
+    private boolean isAllowIp() {
+        if (allowIpSet == null)
+            allowIpSet = converter.toSet(converter.toArray(allowIps, ","));
 
         return allowIpSet.contains("*") || allowIpSet.contains(header.getIp());
     }
 
-    protected void parseArgs(List<Class<?>> classes, List<Object> args) {
+    private void parseArgs(List<Class<?>> classes, List<Object> args) {
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
             String arg = request.get("arg" + i);
             if (validator.isEmpty(arg))
@@ -144,7 +137,7 @@ public class ConsoleImpl implements Console, ContextRefreshedListener {
         }
     }
 
-    protected JSONObject field(Object bean, String fieldName, List<Object> args) throws Exception {
+    private JSONObject field(Object bean, String fieldName, List<Object> args) throws Exception {
         Field field = bean.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         if (args.isEmpty())
@@ -155,14 +148,14 @@ public class ConsoleImpl implements Console, ContextRefreshedListener {
         return json(0, null);
     }
 
-    protected JSONObject method(Object bean, String methodName, List<Class<?>> classes, List<Object> args) throws Exception {
+    private JSONObject method(Object bean, String methodName, List<Class<?>> classes, List<Object> args) throws Exception {
         Method method = bean.getClass().getDeclaredMethod(methodName, classes.toArray(new Class<?>[0]));
         method.setAccessible(true);
 
         return json(0, method.invoke(bean, args.toArray()));
     }
 
-    protected JSONObject json(int code, Object result) {
+    private JSONObject json(int code, Object result) {
         JSONObject json = new JSONObject();
         json.accumulate("code", code);
         if (result != null)

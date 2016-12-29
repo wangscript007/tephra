@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 /**
  * @author lpw
  */
-public class DigestCoreTest extends CoreTestSupport {
+public class DigestTest extends CoreTestSupport {
     @Inject
     private Digest digest;
 

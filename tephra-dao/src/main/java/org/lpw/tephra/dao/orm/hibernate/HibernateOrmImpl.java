@@ -8,9 +8,9 @@ import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.orm.OrmSupport;
 import org.lpw.tephra.dao.orm.PageList;
 import org.lpw.tephra.util.Converter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -21,10 +21,10 @@ import java.util.Iterator;
 public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements HibernateOrm {
     private static final String[] ARG = {"?", ":arg", "arg"};
 
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Session session;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Session session;
 
     @Override
     public <T extends Model> T findById(String dataSource, Class<T> modelClass, String id, boolean lock) {
@@ -66,7 +66,7 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         return createQuery(query.getDataSource(), Mode.Read, getQueryHql(query), args, query.isLocked(), query.getSize(), query.getPage()).iterate();
     }
 
-    protected StringBuilder getQueryHql(HibernateQuery query) {
+    private StringBuilder getQueryHql(HibernateQuery query) {
         StringBuilder hql = from(new StringBuilder().append("FROM "), query);
         if (!validator.isEmpty(query.getWhere()))
             hql.append(" WHERE ").append(query.getWhere());
@@ -151,11 +151,11 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         return delete(new HibernateQuery(modelClass).dataSource(dataSource).where("id=?"), new Object[]{id});
     }
 
-    protected StringBuilder from(StringBuilder hql, HibernateQuery query) {
+    private StringBuilder from(StringBuilder hql, HibernateQuery query) {
         return hql.append(query.getModelClass().getName());
     }
 
-    protected Query createQuery(String dataSource, Mode mode, StringBuilder hql, Object[] args, boolean lock, int size, int page) {
+    private Query createQuery(String dataSource, Mode mode, StringBuilder hql, Object[] args, boolean lock, int size, int page) {
         if (logger.isDebugEnable())
             logger.debug("hql:{};args:{}", hql, converter.toString(args));
 
@@ -184,7 +184,7 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         return query;
     }
 
-    protected String replaceArgs(StringBuilder hql) {
+    private String replaceArgs(StringBuilder hql) {
         for (int i = 0, position; (position = hql.indexOf(ARG[0])) > -1; i++)
             hql.replace(position, position + 1, ARG[1] + i);
 

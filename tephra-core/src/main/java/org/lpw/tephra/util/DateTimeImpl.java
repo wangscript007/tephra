@@ -1,8 +1,8 @@
 package org.lpw.tephra.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,8 +12,8 @@ import java.util.Date;
  */
 @Component("tephra.util.date-time")
 public class DateTimeImpl implements DateTime {
-    @Autowired
-    protected Converter converter;
+    @Inject
+    private Converter converter;
 
     @Override
     public Timestamp now() {
@@ -60,7 +60,7 @@ public class DateTimeImpl implements DateTime {
         return toTimestamp(converter.toDate(string, pattern));
     }
 
-    protected Timestamp toTimestamp(Date date) {
+    private Timestamp toTimestamp(Date date) {
         return date == null ? null : new Timestamp(date.getTime());
     }
 

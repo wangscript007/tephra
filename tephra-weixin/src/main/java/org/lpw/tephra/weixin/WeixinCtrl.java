@@ -7,8 +7,9 @@ import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.util.Validator;
 import org.lpw.tephra.util.Xml;
 import org.lpw.tephra.weixin.gateway.PayGateway;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
@@ -16,18 +17,18 @@ import org.springframework.stereotype.Controller;
 @Controller("tephra.weixin.ctrl")
 @Execute(name = WeixinService.URI)
 public class WeixinCtrl {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Xml xml;
-    @Autowired
-    protected Request request;
-    @Autowired
-    protected Forward forward;
-    @Autowired
-    protected WeixinHelper weixinHelper;
-    @Autowired
-    protected WeixinService weixinService;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Xml xml;
+    @Inject
+    private Request request;
+    @Inject
+    private Forward forward;
+    @Inject
+    private WeixinHelper weixinHelper;
+    @Inject
+    private WeixinService weixinService;
 
     @Execute(name = "wx.+", type = Templates.STRING)
     public Object service() {
@@ -53,7 +54,7 @@ public class WeixinCtrl {
         return callback(PayGateway.JSAPI);
     }
 
-    protected String callback(String type) {
+    private String callback(String type) {
         weixinHelper.getPayGateway(type).callback(xml.toMap(request.getFromInputStream(), false));
 
         return "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";

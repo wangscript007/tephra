@@ -3,27 +3,28 @@ package org.lpw.tephra.cache.lr;
 import org.lpw.tephra.nio.NioHelper;
 import org.lpw.tephra.nio.ServerListener;
 import org.lpw.tephra.util.Serializer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
 @Component("tephra.cache.lr.listener")
 public class ListenerImpl implements ServerListener {
-    @Autowired
-    protected Serializer serializer;
-    @Autowired
-    protected NioHelper nioHelper;
-    @Autowired
-    protected Local local;
-    @Autowired
-    protected Remote remote;
+    @Inject
+    private Serializer serializer;
+    @Inject
+    private NioHelper nioHelper;
+    @Inject
+    private Local local;
+    @Inject
+    private Remote remote;
     @Value("${tephra.cache.listen-port:0}")
-    protected int port;
+    private int port;
     @Value("${tephra.cache.listener.max-thread:5}")
-    protected int maxThread;
+    private int maxThread;
 
     @Override
     public int getPort() {

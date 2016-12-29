@@ -6,7 +6,6 @@ import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
@@ -20,14 +19,17 @@ import java.util.Set;
  */
 @Repository("tephra.model.helper")
 public class ModelHelperImpl implements ModelHelper {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected ModelTables modelTables;
+    private Validator validator;
+    private Converter converter;
+    private Logger logger;
+    private ModelTables modelTables;
+
+    public ModelHelperImpl(Validator validator, Converter converter, Logger logger, ModelTables modelTables) {
+        this.validator = validator;
+        this.converter = converter;
+        this.logger = logger;
+        this.modelTables = modelTables;
+    }
 
     @Override
     public Object get(Model model, String name) {
@@ -73,7 +75,7 @@ public class ModelHelperImpl implements ModelHelper {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends Model> Object getJson(ModelTable modelTable, String name, Object value, Jsonable jsonable) {
+    private <T extends Model> Object getJson(ModelTable modelTable, String name, Object value, Jsonable jsonable) {
         if (value == null)
             return null;
 
@@ -116,7 +118,7 @@ public class ModelHelperImpl implements ModelHelper {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends Model> Class<T> getModelClass(Class<T> modelClass) {
+    private <T extends Model> Class<T> getModelClass(Class<T> modelClass) {
         if (modelClass.getName().endsWith("Model"))
             return modelClass;
 

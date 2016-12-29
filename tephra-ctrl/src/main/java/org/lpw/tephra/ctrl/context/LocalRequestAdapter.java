@@ -7,9 +7,9 @@ import java.util.Map;
  *
  * @author lpw
  */
-public class LocalRequestAdapter implements RequestAdapter{
+public class LocalRequestAdapter implements RequestAdapter {
     protected String uri;
-    protected Map<String,String> map;
+    protected Map<String, String> map;
 
     public LocalRequestAdapter(String uri, Map<String, String> map) {
         this.uri = uri;

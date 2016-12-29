@@ -3,10 +3,10 @@ package org.lpw.tephra.cache;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.Set;
 
 /**
@@ -14,15 +14,15 @@ import java.util.Set;
  */
 @Component("tephra.cache")
 public class CacheImpl implements Cache, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected Set<Handler> handlers;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Set<Handler> handlers;
     @Value("${tephra.cache.name:}")
-    protected String name;
-    protected Handler handler;
+    private String name;
+    private Handler handler;
 
     @Override
     public void put(String key, Object value, boolean resident) {

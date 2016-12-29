@@ -3,16 +3,17 @@ package org.lpw.tephra.dao.jdbc;
 import org.junit.Assert;
 import org.lpw.tephra.dao.DaoUtil;
 import org.lpw.tephra.dao.Mode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
 @Repository("tephra.dao.jdbc.transactional.impl")
 public class TransactionalImpl {
-    @Autowired
-    protected Connection connection;
+    @Inject
+    private Connection connection;
 
     @javax.transaction.Transactional
     public void get() {

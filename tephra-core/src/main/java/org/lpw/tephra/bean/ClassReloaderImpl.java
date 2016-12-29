@@ -8,7 +8,6 @@ import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -37,27 +37,27 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component("tephra.bean.class-reloader")
 public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationContextAware {
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected Io io;
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected Container container;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Context context;
+    @Inject
+    private Io io;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Generator generator;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Container container;
     @Value("${tephra.bean.reload.class-path:}")
-    protected String classPath;
-    protected List<ClassLoader> loaders;
-    protected Set<String> names;
-    protected Map<Class<?>, List<Autowire>> autowires;
-    protected ApplicationContext applicationContext;
-    protected long lastModified = 0L;
+    private String classPath;
+    private List<ClassLoader> loaders;
+    private Set<String> names;
+    private Map<Class<?>, List<Autowire>> autowires;
+    private ApplicationContext applicationContext;
+    private long lastModified = 0L;
 
     @Override
     public boolean isReloadEnable(String name) {
@@ -98,7 +98,7 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
         loaders.add(loader);
     }
 
-    protected Set<String> names() {
+    private Set<String> names() {
         Set<String> set = new HashSet<>();
         File file = new File(context.getAbsolutePath(classPath + "/name"));
         if (file.lastModified() <= lastModified)
@@ -119,9 +119,9 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
         return set;
     }
 
-    protected void autowire(Class<?> beanClass, String beanName, Object bean) {
+    private void autowire(Class<?> beanClass, String beanName, Object bean) {
         for (Field field : beanClass.getDeclaredFields()) {
-            if (field.getAnnotation(Autowired.class) == null)
+            if (field.getAnnotation(Inject.class) == null)
                 continue;
 
             try {
@@ -147,7 +147,7 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
         }
     }
 
-    protected boolean isCollection(Class<?> clazz) {
+    private boolean isCollection(Class<?> clazz) {
         try {
             return clazz.equals(clazz.asSubclass(Collection.class));
         } catch (Exception e) {
@@ -155,7 +155,7 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
         }
     }
 
-    protected void load(ClassLoader loader, String name) {
+    private void load(ClassLoader loader, String name) {
         try {
             DefaultListableBeanFactory lbf = (DefaultListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
             BeanDefinition bd = BeanDefinitionReaderUtils.createBeanDefinition(null, name, loader);
@@ -175,7 +175,7 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
         }
     }
 
-    protected String getBeanName(Class<?> clazz) {
+    private String getBeanName(Class<?> clazz) {
         Component component = clazz.getAnnotation(Component.class);
         if (component != null)
             return component.value();
@@ -196,7 +196,7 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
     }
 
     @SuppressWarnings("unchecked")
-    protected void autowired(Object bean, Object oldBean) throws IllegalArgumentException, IllegalAccessException {
+    private void autowired(Object bean, Object oldBean) throws IllegalArgumentException, IllegalAccessException {
         for (Class<?> key : autowires.keySet()) {
             if (!key.isInstance(bean))
                 continue;

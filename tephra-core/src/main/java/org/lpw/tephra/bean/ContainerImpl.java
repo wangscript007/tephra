@@ -4,7 +4,6 @@ import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
@@ -13,12 +12,14 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -26,17 +27,17 @@ import java.util.Set;
  */
 @Component("tephra.bean.container")
 public class ContainerImpl implements Container, ApplicationListener<ApplicationEvent>, ApplicationContextAware {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Logger logger;
-    @Autowired(required = false)
-    protected List<ContextRefreshedListener> refreshedListeners;
-    @Autowired(required = false)
-    protected List<ContextClosedListener> closedListeners;
-    protected ApplicationContext applicationContext;
-    protected Map<String, String> map = new HashMap<>();
-    protected Set<String> set = new HashSet<>();
+    @Inject
+    private Validator validator;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Optional<List<ContextRefreshedListener>> refreshedListeners;
+    @Inject
+    private Optional<List<ContextClosedListener>> closedListeners;
+    private ApplicationContext applicationContext;
+    private Map<String, String> map = new HashMap<>();
+    private Set<String> set = new HashSet<>();
 
     @Override
     public <T> T getBean(Class<T> clazz) {
@@ -64,7 +65,7 @@ public class ContainerImpl implements Container, ApplicationListener<Application
         }
     }
 
-    protected String getBeanName(String beanName) {
+    private String getBeanName(String beanName) {
         String dynamicBeanName = map.get(beanName);
 
         return dynamicBeanName == null ? beanName : dynamicBeanName;
@@ -106,40 +107,40 @@ public class ContainerImpl implements Container, ApplicationListener<Application
             onContextClosed();
     }
 
-    protected void onContextRefreshed() {
+    private void onContextRefreshed() {
         if (logger.isDebugEnable())
             logger.debug("开始执行Bean环境初始化完成后续工作。");
 
-        if (validator.isEmpty(refreshedListeners)) {
+        if (!refreshedListeners.isPresent()) {
             if (logger.isInfoEnable())
                 logger.info("无需执行Bean环境初始化完成后续工作。");
 
             return;
         }
 
-        Collections.sort(refreshedListeners, (a, b) -> a.getContextRefreshedSort() - b.getContextRefreshedSort());
-        refreshedListeners.forEach(listener -> listener.onContextRefreshed());
+        refreshedListeners.get().sort(Comparator.comparingInt(ContextRefreshedListener::getContextRefreshedSort));
+        refreshedListeners.get().forEach(ContextRefreshedListener::onContextRefreshed);
 
         if (logger.isInfoEnable())
-            logger.info("执行[{}]个Bean环境初始化完成后续工作。", refreshedListeners.size());
+            logger.info("执行[{}]个Bean环境初始化完成后续工作。", refreshedListeners.get().size());
     }
 
-    protected void onContextClosed() {
+    private void onContextClosed() {
         if (logger.isDebugEnable())
             logger.debug("开始执行Bean环境关闭后续工作。");
 
-        if (validator.isEmpty(closedListeners)) {
+        if (!closedListeners.isPresent()) {
             if (logger.isInfoEnable())
                 logger.info("无需执行Bean环境关闭后续工作。");
 
             return;
         }
 
-        Collections.sort(closedListeners, (a, b) -> a.getContextClosedSort() - b.getContextClosedSort());
-        closedListeners.forEach(listener -> listener.onContextClosed());
+        closedListeners.get().sort(Comparator.comparingInt(ContextClosedListener::getContextClosedSort));
+        closedListeners.get().forEach(ContextClosedListener::onContextClosed);
 
         if (logger.isInfoEnable())
-            logger.info("执行[{}]个Bean环境关闭后续工作。", closedListeners.size());
+            logger.info("执行[{}]个Bean环境关闭后续工作。", closedListeners.get().size());
     }
 
     @Override

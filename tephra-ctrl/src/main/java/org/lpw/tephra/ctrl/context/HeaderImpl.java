@@ -2,10 +2,10 @@ package org.lpw.tephra.ctrl.context;
 
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import java.util.Map;
 
 /**
@@ -13,13 +13,13 @@ import java.util.Map;
  */
 @Controller("tephra.ctrl.context.header")
 public class HeaderImpl implements Header, HeaderAware {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
     @Value("${tephra.ctrl.context.header.real-ip:}")
-    protected String realIp;
-    protected ThreadLocal<HeaderAdapter> adapter = new ThreadLocal<>();
+    private String realIp;
+    private ThreadLocal<HeaderAdapter> adapter = new ThreadLocal<>();
 
     @Override
     public String get(String name) {

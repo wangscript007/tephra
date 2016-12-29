@@ -2,15 +2,14 @@ package org.lpw.tephra.ctrl;
 
 import org.lpw.tephra.storage.StorageListener;
 import org.lpw.tephra.storage.Storages;
-import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,20 +18,18 @@ import java.util.Set;
  */
 @Controller("tephra.ctrl.trustful-ip")
 public class TrustfulIpImpl implements TrustfulIp, StorageListener {
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Io io;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Io io;
+    @Inject
+    private Logger logger;
     @Value("${tephra.ctrl.trustful-ip:/WEB-INF/trustful-ip}")
-    protected String trustfulIp;
-    protected Set<String> ips = new HashSet<>();
-    protected Set<String> patterns = new HashSet<>();
+    private String trustfulIp;
+    private Set<String> ips = new HashSet<>();
+    private Set<String> patterns = new HashSet<>();
 
     @Override
     public boolean contains(String ip) {

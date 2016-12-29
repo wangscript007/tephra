@@ -13,10 +13,10 @@ import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.lpw.tephra.weixin.gateway.PayGateway;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,26 +32,26 @@ import java.util.Map;
  */
 @Service("tephra.weixin.helper")
 public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshedListener {
-    @Autowired
-    protected Http http;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Io io;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Http http;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Generator generator;
+    @Inject
+    private Context context;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Io io;
+    @Inject
+    private Logger logger;
     @Value("${tephra.ctrl.http.root:}")
-    protected String root;
+    private String root;
     @Value("${tephra.weixin.mp.config:}")
-    protected String config;
-    protected Map<String, WeixinConfig> configs;
-    protected Map<String, PayGateway> gateways;
+    private String config;
+    private Map<String, WeixinConfig> configs;
+    private Map<String, PayGateway> gateways;
 
     @Override
     public String createQrCode(String appId, int id, int expire, String sceneStr) {
@@ -217,7 +217,7 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
         BeanFactory.getBeans(PayGateway.class).forEach(gateway -> gateways.put(gateway.getType(), gateway));
     }
 
-    protected void refreshToken() {
+    private void refreshToken() {
         if (validator.isEmpty(configs))
             return;
 

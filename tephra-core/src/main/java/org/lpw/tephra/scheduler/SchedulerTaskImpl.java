@@ -4,9 +4,10 @@ import org.lpw.tephra.atomic.Closable;
 import org.lpw.tephra.atomic.Failable;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TimerTask;
 
@@ -15,15 +16,15 @@ import java.util.TimerTask;
  */
 @Component("tephra.scheduler.task")
 public class SchedulerTaskImpl extends TimerTask implements SchedulerTask {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Logger logger;
-    @Autowired(required = false)
-    protected Set<Failable> failables;
-    @Autowired(required = false)
-    protected Set<Closable> closables;
-    protected SchedulerJob job;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Logger logger;
+    @Inject
+    protected Optional<Set<Failable>> failables;
+    @Inject
+    protected Optional<Set<Closable>> closables;
+    private SchedulerJob job;
 
     @Override
     public TimerTask setJob(SchedulerJob job) {
@@ -43,13 +44,11 @@ public class SchedulerTaskImpl extends TimerTask implements SchedulerTask {
             if (logger.isDebugEnable())
                 logger.debug("定时任务[{}]执行完成。", job.getSchedulerName());
         } catch (Throwable e) {
-            if (!validator.isEmpty(failables))
-                failables.forEach(failable -> failable.fail(e));
+            failables.ifPresent(set -> set.forEach(failable -> failable.fail(e)));
 
             logger.warn(e, "执行定时任务[{}]时发生异常！", job.getSchedulerName());
         }
 
-        if (!validator.isEmpty(closables))
-            closables.forEach(Closable::close);
+        closables.ifPresent(set -> set.forEach(Closable::close));
     }
 }

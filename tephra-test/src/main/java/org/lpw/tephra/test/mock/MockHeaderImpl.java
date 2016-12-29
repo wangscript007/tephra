@@ -6,8 +6,8 @@ import java.util.Map;
  * @author lpw
  */
 public class MockHeaderImpl implements MockHeader {
-    protected String ip;
-    protected Map<String, String> map;
+    private String ip;
+    private Map<String, String> map;
 
     @Override
     public void setIp(String ip) {

@@ -23,18 +23,19 @@ package org.lpw.spark.user;
  
 import org.lpw.tephra.ctrl.Permit;
 import org.lpw.tephra.ctrl.context.Request;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
  
+import javax.inject.Inject;
+
 /**
  * @author lpw
  */
 @Controller("spark.user.permit")
 public class PermitImpl implements Permit {
-    @Autowired
-    protected Request request;
-    @Autowired
-    protected UserService userService;
+    @Inject
+    private Request request;
+    @Inject
+    private UserService userService;
  
     @Override
     public boolean allow() {

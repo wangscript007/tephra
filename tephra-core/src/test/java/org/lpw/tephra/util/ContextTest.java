@@ -3,16 +3,14 @@ package org.lpw.tephra.util;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.File;
+import javax.inject.Inject;
 import java.lang.Thread;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author lpw
@@ -20,8 +18,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath*:**/spring.xml"})
 public class ContextTest {
-    @Autowired
-    protected Context context;
+    @Inject
+    private Context context;
 
     @Test
     public void local() {

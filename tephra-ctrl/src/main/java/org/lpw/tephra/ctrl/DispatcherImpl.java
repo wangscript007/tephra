@@ -14,14 +14,14 @@ import org.lpw.tephra.ctrl.validate.Validators;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -29,38 +29,39 @@ import java.util.Set;
  */
 @Controller("tephra.ctrl.dispatcher")
 public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
-    @Autowired(required = false)
-    protected Set<Failable> failables;
-    @Autowired(required = false)
-    protected Set<Closable> closables;
-    @Autowired
-    protected Header header;
-    @Autowired
-    protected Request request;
-    @Autowired
-    protected Response response;
-    @Autowired
-    protected Counter counter;
-    @Autowired
-    protected Status status;
-    @Autowired
-    protected Console console;
-    @Autowired
-    protected Validators validators;
-    @Autowired(required = false)
-    protected List<Interceptor> interceptors;
-    @Autowired
-    protected ExecutorHelper executorHelper;
-    @Autowired(required = false)
-    protected Permit permit;
-    protected ThreadLocal<Long> time = new ThreadLocal<>();
-    protected ThreadLocal<Map<String, Object>> parameters = new ThreadLocal<>();
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Set<Failable> failables;
+    @Inject
+    private Set<Closable> closables;
+    @Inject
+    private Header header;
+    @Inject
+    private Request request;
+    @Inject
+    private Response response;
+    @Inject
+    private Counter counter;
+    @Inject
+    private Status status;
+    @Inject
+    private Console console;
+    @Inject
+    private Validators validators;
+    @Inject
+    private Optional<List<Interceptor>> interceptorsOptional;
+    @Inject
+    private ExecutorHelper executorHelper;
+    @Inject
+    private Optional<Permit> permit;
+    private ThreadLocal<Long> time = new ThreadLocal<>();
+    private ThreadLocal<Map<String, Object>> parameters = new ThreadLocal<>();
+    private List<Interceptor> interceptors;
 
     @Override
     public void execute() {
@@ -98,7 +99,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
             logger.debug("处理请求[{}]完成，耗时[{}]毫秒。", uri, System.currentTimeMillis() - time.get());
     }
 
-    protected void execute(boolean statusService, boolean consoleService) {
+    private void execute(boolean statusService, boolean consoleService) {
         Object object;
         if (statusService)
             object = status.execute(counter.get());
@@ -119,10 +120,9 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         return exe();
     }
 
-    protected Object exe() {
-        if (permit != null && !permit.allow()) {
+    private Object exe() {
+        if (permit.isPresent() && !permit.get().allow())
             return Failure.NotPermit;
-        }
 
         try {
             return new ExecuteInvocation(interceptors, validators, executorHelper.get()).invoke();
@@ -168,8 +168,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
 
     @Override
     public void onContextRefreshed() {
-        if (interceptors == null)
-            interceptors = new ArrayList<>();
-        Collections.sort(interceptors, Comparator.comparingInt(Interceptor::getSort));
+        interceptors = interceptorsOptional.isPresent() ? interceptorsOptional.get() : new ArrayList<>();
+        interceptors.sort(Comparator.comparingInt(Interceptor::getSort));
     }
 }

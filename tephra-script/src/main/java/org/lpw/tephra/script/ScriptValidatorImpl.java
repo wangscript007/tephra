@@ -3,17 +3,18 @@ package org.lpw.tephra.script;
 import net.sf.json.JSONObject;
 import org.lpw.tephra.ctrl.validate.ValidateWrapper;
 import org.lpw.tephra.ctrl.validate.ValidatorSupport;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
 @Controller(ScriptValidator.NAME)
 public class ScriptValidatorImpl extends ValidatorSupport {
-    @Autowired
-    protected ScriptService scriptService;
-    protected ThreadLocal<JSONObject> json = new ThreadLocal<>();
+    @Inject
+    private ScriptService scriptService;
+    private ThreadLocal<JSONObject> json = new ThreadLocal<>();
 
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
@@ -41,7 +42,7 @@ public class ScriptValidatorImpl extends ValidatorSupport {
         return json.getString("failure");
     }
 
-    protected int getCode() {
+    private int getCode() {
         JSONObject json = this.json.get();
 
         return json == null ? 0 : json.getInt("code");

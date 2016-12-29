@@ -91,16 +91,17 @@ public interface WsListener {
 ```java
 package org.lpw.tephra.ctrl.http.ws;
  
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
  
 /**
  * @author lpw
  */
 @Service("tephra.ctrl.http.ws.listener")
 public class WsListenerImpl implements WsListener {
-    @Autowired
-    protected WsHelper wsHelper;
+    @Inject
+    private WsHelper wsHelper;
  
     @Override
     public void open(String session) {

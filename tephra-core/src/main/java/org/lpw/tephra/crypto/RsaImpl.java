@@ -4,11 +4,11 @@ import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
+import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -29,17 +29,17 @@ import java.util.Base64;
  */
 @Component("tephra.crypto.rsa")
 public class RsaImpl implements Rsa {
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Io io;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Context context;
+    @Inject
+    private Generator generator;
+    @Inject
+    private Io io;
+    @Inject
+    private Logger logger;
     @Value("${tephra.crypto.rsa.path:/WEB-INF/rsa}")
-    protected String path;
-    protected String absolutePath;
+    private String path;
+    private String absolutePath;
 
     @Override
     public synchronized void generate(OutputStream publicKeyDer, OutputStream publicKeyX509, OutputStream privateKey) {
@@ -59,14 +59,14 @@ public class RsaImpl implements Rsa {
         }
     }
 
-    protected void readDer(String input, OutputStream outputStream) throws IOException {
+    private void readDer(String input, OutputStream outputStream) throws IOException {
         InputStream inputStream = new FileInputStream(input);
         io.copy(inputStream, outputStream);
         inputStream.close();
         outputStream.close();
     }
 
-    protected void readPem(String input, OutputStream outputStream) throws IOException {
+    private void readPem(String input, OutputStream outputStream) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(input));
         StringBuilder sb = new StringBuilder();
         for (String line; (line = reader.readLine()) != null; )
@@ -93,7 +93,7 @@ public class RsaImpl implements Rsa {
         return doFinal(Cipher.DECRYPT_MODE, type, key, message);
     }
 
-    protected Key getKey(KeyType type, byte[] key) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    private Key getKey(KeyType type, byte[] key) throws NoSuchAlgorithmException, InvalidKeySpecException {
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         if (type == KeyType.Private)
             return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(key));
@@ -101,7 +101,7 @@ public class RsaImpl implements Rsa {
         return keyFactory.generatePublic(new X509EncodedKeySpec(key));
     }
 
-    protected byte[] doFinal(int mode, KeyType type, byte[] key, byte[] message) {
+    private byte[] doFinal(int mode, KeyType type, byte[] key, byte[] message) {
         try {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(mode, getKey(type, key));

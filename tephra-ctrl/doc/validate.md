@@ -188,9 +188,8 @@ package org.lpw.spark.user;
  
 import org.lpw.tephra.ctrl.validate.ValidateWrapper;
 import org.lpw.tephra.ctrl.validate.ValidatorSupport;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
- 
+
 /**
  * @author lpw
  */

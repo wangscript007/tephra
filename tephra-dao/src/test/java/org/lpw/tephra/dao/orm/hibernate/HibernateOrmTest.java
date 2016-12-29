@@ -25,6 +25,7 @@ public class HibernateOrmTest extends DaoTestSupport {
 
     @Test
     public void crud() {
+        long time = System.currentTimeMillis();
         PageList<TestModel> pl = hibernateOrm.query(new HibernateQuery(TestModel.class), null);
         Assert.assertNotNull(pl);
         Assert.assertEquals(0, pl.getCount());
@@ -34,8 +35,8 @@ public class HibernateOrmTest extends DaoTestSupport {
         TestModel model1 = new TestModel();
         model1.setSort(1);
         model1.setName("HibernateOrm");
-        model1.setDate(new Date(System.currentTimeMillis() - TimeUnit.Day.getTime()));
-        model1.setTime(new Timestamp(System.currentTimeMillis() - TimeUnit.Hour.getTime()));
+        model1.setDate(new Date(time - TimeUnit.Day.getTime()));
+        model1.setTime(new Timestamp(time - TimeUnit.Hour.getTime()));
         hibernateOrm.save(model1);
         hibernateOrm.close();
         Assert.assertNotNull(model1.getId());
@@ -46,22 +47,22 @@ public class HibernateOrmTest extends DaoTestSupport {
         Assert.assertEquals(model1.getId(), model2.getId());
         Assert.assertEquals(1, model2.getSort());
         Assert.assertEquals("HibernateOrm", model2.getName());
-        Assert.assertEquals(converter.toString(new Date(System.currentTimeMillis() - TimeUnit.Day.getTime())), converter.toString(model2.getDate()));
-        Assert.assertEquals(converter.toString(new Timestamp(System.currentTimeMillis() - TimeUnit.Hour.getTime())), converter.toString(model2.getTime()));
+        Assert.assertEquals(converter.toString(new Date(time - TimeUnit.Day.getTime())), converter.toString(model2.getDate()));
+        Assert.assertEquals(converter.toString(new Timestamp(time - TimeUnit.Hour.getTime())), converter.toString(model2.getTime()));
         hibernateOrm.close();
 
         TestModel model3 = new TestModel();
         model3.setId(model1.getId());
         model3.setName("new name");
-        model3.setDate(new Date(System.currentTimeMillis() - 3 * TimeUnit.Day.getTime()));
-        model3.setTime(new Timestamp(System.currentTimeMillis() - 3 * TimeUnit.Hour.getTime()));
+        model3.setDate(new Date(time - 3 * TimeUnit.Day.getTime()));
+        model3.setTime(new Timestamp(time - 3 * TimeUnit.Hour.getTime()));
         hibernateOrm.save(model3);
         TestModel model4 = hibernateOrm.findById(TestModel.class, model1.getId());
         Assert.assertEquals(model1.getId(), model4.getId());
         Assert.assertEquals(0, model4.getSort());
         Assert.assertEquals("new name", model4.getName());
-        Assert.assertEquals(converter.toString(new Date(System.currentTimeMillis() - 3 * TimeUnit.Day.getTime())), converter.toString(model4.getDate()));
-        Assert.assertEquals(converter.toString(new Timestamp(System.currentTimeMillis() - 3 * TimeUnit.Hour.getTime())), converter.toString(model4.getTime()));
+        Assert.assertEquals(converter.toString(new Date(time - 3 * TimeUnit.Day.getTime())), converter.toString(model4.getDate()));
+        Assert.assertEquals(converter.toString(new Timestamp(time - 3 * TimeUnit.Hour.getTime())), converter.toString(model4.getTime()));
         hibernateOrm.close();
 
         hibernateOrm.delete(model1);
@@ -79,8 +80,8 @@ public class HibernateOrmTest extends DaoTestSupport {
             TestModel model = new TestModel();
             model.setSort(i);
             model.setName("name" + i);
-            model.setDate(new Date(System.currentTimeMillis() - i * TimeUnit.Day.getTime()));
-            model.setTime(new Timestamp(System.currentTimeMillis() - i * TimeUnit.Hour.getTime()));
+            model.setDate(new Date(time - i * TimeUnit.Day.getTime()));
+            model.setTime(new Timestamp(time - i * TimeUnit.Hour.getTime()));
             hibernateOrm.save(model);
             list.add(model.hashCode());
         }
@@ -93,8 +94,8 @@ public class HibernateOrmTest extends DaoTestSupport {
             Assert.assertEquals(36, model.getId().length());
             Assert.assertEquals(i, model.getSort());
             Assert.assertEquals("name" + i, model.getName());
-            Assert.assertEquals(converter.toString(new Date(System.currentTimeMillis() - i * TimeUnit.Day.getTime())), converter.toString(model.getDate()));
-            Assert.assertEquals(converter.toString(new Timestamp(System.currentTimeMillis() - i * TimeUnit.Hour.getTime())), converter.toString(model.getTime()));
+            Assert.assertEquals(converter.toString(new Date(time - i * TimeUnit.Day.getTime())), converter.toString(model.getDate()));
+            Assert.assertEquals(converter.toString(new Timestamp(time - i * TimeUnit.Hour.getTime())), converter.toString(model.getTime()));
             Assert.assertEquals(converter.toInt(list.get(i)), model.hashCode());
         }
 

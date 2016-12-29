@@ -10,10 +10,10 @@ import org.lpw.tephra.storage.Storage;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,17 +26,17 @@ import java.util.List;
  */
 @Component("tephra.hadoop.hdfs")
 public class HdfsImpl implements Hdfs, Storage, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Io io;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Io io;
+    @Inject
+    private Logger logger;
     @Value("${tephra.hadoop.hdfs.url:}")
-    protected String url;
-    protected boolean disabled;
-    protected Configuration configuration;
-    protected ThreadLocal<FileSystem> fileSystem = new ThreadLocal<>();
+    private String url;
+    private boolean disabled;
+    private Configuration configuration;
+    private ThreadLocal<FileSystem> fileSystem = new ThreadLocal<>();
 
     @Override
     public String getType() {
@@ -212,14 +212,14 @@ public class HdfsImpl implements Hdfs, Storage, ContextRefreshedListener {
         return getFileSystem().create(new Path(path), true);
     }
 
-    protected boolean isDisabled() {
+    private boolean isDisabled() {
         if (disabled)
             logger.warn(null, "HDFS环境[{}]初始化失败！", url);
 
         return disabled;
     }
 
-    protected FileSystem getFileSystem() throws IOException {
+    private FileSystem getFileSystem() throws IOException {
         FileSystem fileSystem = this.fileSystem.get();
         if (fileSystem == null) {
             this.fileSystem.set(fileSystem = FileSystem.get(configuration));

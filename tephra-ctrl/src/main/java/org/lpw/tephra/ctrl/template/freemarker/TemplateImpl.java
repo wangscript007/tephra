@@ -2,15 +2,13 @@ package org.lpw.tephra.ctrl.template.freemarker;
 
 import net.sf.json.JSONObject;
 import org.lpw.tephra.ctrl.Failure;
-import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.freemarker.Freemarker;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -19,10 +17,8 @@ import java.io.OutputStream;
  */
 @Controller("tephra.ctrl.template.freemarker")
 public class TemplateImpl extends TemplateSupport implements Template {
-    @Autowired
-    protected Freemarker freemarker;
-    @Autowired
-    protected Request request;
+    @Inject
+    private Freemarker freemarker;
 
     @Override
     public String getType() {
@@ -48,7 +44,7 @@ public class TemplateImpl extends TemplateSupport implements Template {
         freemarker.process(name, data, output);
     }
 
-    protected boolean failure(JSONObject object, OutputStream outputStream) throws IOException {
+    private boolean failure(JSONObject object, OutputStream outputStream) throws IOException {
         if (object.has("code") && object.getInt("code") > 0) {
             outputStream.write(object.toString().getBytes());
 

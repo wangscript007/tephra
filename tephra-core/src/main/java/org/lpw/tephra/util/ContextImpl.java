@@ -1,9 +1,9 @@
 package org.lpw.tephra.util;
 
 import org.lpw.tephra.bean.ContextRefreshedListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.util.Locale;
 import java.util.Map;
@@ -14,13 +14,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component("tephra.util.context")
 public class ContextImpl implements Context, ContextRefreshedListener {
-    @Autowired
-    protected Thread thread;
-    @Autowired
-    protected Logger logger;
-    protected String root;
-    protected Map<String, String> map = new ConcurrentHashMap<>();
-    protected ThreadLocal<Locale> locale = new ThreadLocal<>();
+    @Inject
+    private Thread thread;
+    @Inject
+    private Logger logger;
+    private String root;
+    private Map<String, String> map = new ConcurrentHashMap<>();
+    private ThreadLocal<Locale> locale = new ThreadLocal<>();
 
     @Override
     public String getAbsolutePath(String path) {

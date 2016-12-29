@@ -25,9 +25,9 @@ package org.lpw.hellotephra;
  
 import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.execute.Execute;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
- 
+
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
  
@@ -36,8 +36,8 @@ import java.util.Map;
  */
 @Controller("hellotephra.ctrl")
 public class HelloCtrl {
-    @Autowired
-    protected Request request;
+    @Inject
+    private Request request;
  
     @Execute(name = "/hello")
     public Object hello() {

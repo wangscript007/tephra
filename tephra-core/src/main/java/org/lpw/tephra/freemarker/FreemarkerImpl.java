@@ -7,10 +7,10 @@ import freemarker.template.TemplateException;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -23,15 +23,15 @@ import java.io.Writer;
  */
 @Component("tephra.freemarker")
 public class FreemarkerImpl implements Freemarker {
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected Logger logger;
+    @Inject
+    private Context context;
+    @Inject
+    private Logger logger;
     @Value("${tephra.freemarker.root:/WEB-INF/ftl}")
-    protected String root;
+    private String root;
     @Value("${tephra.freemarker.suffix:.ftl}")
-    protected String suffix;
-    protected Configuration configuration;
+    private String suffix;
+    private Configuration configuration;
 
     @Override
     public String process(String name, Object data) {
@@ -57,7 +57,7 @@ public class FreemarkerImpl implements Freemarker {
         }
     }
 
-    protected synchronized Configuration getConfiguration() throws IOException {
+    private synchronized Configuration getConfiguration() throws IOException {
         if (configuration == null) {
             configuration = new Configuration(Configuration.VERSION_2_3_25);
             configuration.setDirectoryForTemplateLoading(new File(context.getAbsolutePath(root)));

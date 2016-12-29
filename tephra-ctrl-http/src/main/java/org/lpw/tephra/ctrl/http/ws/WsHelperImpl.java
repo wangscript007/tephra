@@ -8,13 +8,14 @@ import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.ctrl.http.IgnoreUri;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import javax.websocket.Session;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -24,27 +25,27 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Service("tephra.ctrl.http.ws.helper")
 public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListener, ContextClosedListener {
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Digest digest;
-    @Autowired
-    protected Logger logger;
-    @Autowired(required = false)
-    protected Set<Failable> failables;
-    @Autowired(required = false)
-    protected Set<Closable> closables;
-    @Autowired(required = false)
-    protected WsListener listener;
+    @Inject
+    private Generator generator;
+    @Inject
+    private Digest digest;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Set<Failable> failables;
+    @Inject
+    private Set<Closable> closables;
+    @Inject
+    protected Optional<WsListener> listener;
     @Value("${tephra.ctrl.http.web-socket.max:64}")
-    protected int max;
-    protected AtomicLong counter;
-    protected Map<String, Session> sessions;
-    protected String key;
+    private int max;
+    private AtomicLong counter;
+    private Map<String, Session> sessions;
+    private String key;
 
     @Override
     public void open(Session session) {
-        if (listener == null || counter.incrementAndGet() > max) {
+        if (!listener.isPresent() || counter.incrementAndGet() > max) {
             logger.warn(null, listener == null ? "未提供WsListener实现，无法开启WebSocket监听。" : "超过最大可连接数，拒绝新连接。");
             try {
                 session.close();
@@ -55,47 +56,45 @@ public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListen
             return;
         }
 
-        System.out.println("##count:" + counter.get());
-
         String key = getKey(session);
         sessions.put(key, session);
-        listener.open(key);
+        listener.get().open(key);
         closables.forEach(Closable::close);
     }
 
     @Override
     public void message(Session session, String message) {
-        if (listener == null)
+        if (!listener.isPresent())
             return;
 
-        listener.message(getKey(session), message);
+        listener.get().message(getKey(session), message);
         closables.forEach(Closable::close);
     }
 
     @Override
     public void error(Session session, Throwable throwable) {
-        if (listener == null)
+        if (!listener.isPresent())
             return;
 
         String key = getKey(session);
-        listener.error(key, throwable);
+        listener.get().error(key, throwable);
         logger.warn(throwable, "WebSocket执行异常！");
         failables.forEach(failable -> failable.fail(throwable));
     }
 
     @Override
     public void close(Session session) {
-        if (listener == null)
+        if (!listener.isPresent())
             return;
 
         String key = getKey(session);
-        listener.close(key);
+        listener.get().close(key);
         sessions.remove(key);
         closables.forEach(Closable::close);
         counter.decrementAndGet();
     }
 
-    protected String getKey(Session session) {
+    private String getKey(Session session) {
         return digest.md5(key + session.getId());
     }
 
@@ -122,7 +121,7 @@ public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListen
         sessions.values().forEach(session -> send(session, message));
     }
 
-    protected void send(Session session, String message) {
+    private void send(Session session, String message) {
         try {
             session.getBasicRemote().sendText(message);
         } catch (IOException e) {

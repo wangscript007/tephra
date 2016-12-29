@@ -5,22 +5,23 @@ import net.sf.json.JSONObject;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
 @Service("tephra.weixin.sender")
 public class WeixinSenderImpl implements WeixinSender {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Http http;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected WeixinHelper weixinHelper;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Http http;
+    @Inject
+    private Logger logger;
+    @Inject
+    private WeixinHelper weixinHelper;
 
     @Override
     public boolean sendText(String mpId, String receiver, String text) {
@@ -43,7 +44,7 @@ public class WeixinSenderImpl implements WeixinSender {
         return send(mpId, receiver, "voice", uri);
     }
 
-    protected boolean send(String mpId, String receiver, String type, String uri) {
+    private boolean send(String mpId, String receiver, String type, String uri) {
         if (validator.isEmpty(receiver) || validator.isEmpty(uri))
             return false;
 
@@ -95,7 +96,7 @@ public class WeixinSenderImpl implements WeixinSender {
         return send(mpId, receiver, "news", object);
     }
 
-    protected boolean send(String mpId, String receiver, String type, JSONObject object) {
+    private boolean send(String mpId, String receiver, String type, JSONObject object) {
         JSONObject json = new JSONObject();
         json.put("touser", receiver);
         json.put("msgtype", type);

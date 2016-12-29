@@ -1,9 +1,9 @@
 package org.lpw.tephra.util
 
 import java.util
+import javax.inject.Inject
 
 import net.sf.json.JSONObject
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import scala.xml.{Node, XML}
@@ -13,7 +13,7 @@ import scala.xml.{Node, XML}
   */
 @Component("tephra.util.xml")
 class XmlImpl extends Xml {
-    @Autowired protected val validator: Validator = null
+    @Inject private val validator: Validator = null
 
     override def toJson(xml: String): JSONObject = {
         if (validator.isEmpty(xml))
@@ -33,7 +33,7 @@ class XmlImpl extends Xml {
     protected def toJson(json: JSONObject, node: Node): Unit = {
         val name: String = node.label
         val obj: JSONObject = new JSONObject
-        node.attributes.foreach(attribute => obj.accumulate(attribute.key, attribute.get(attribute.key) mkString))
+        node.attributes.foreach(attribute => obj.accumulate(attribute.key, attribute.get(attribute.key).mkString))
         var hasChild: Boolean = false
         node.child.filter(node => node.label != "#PCDATA").foreach(child => {
             hasChild = true
@@ -65,10 +65,10 @@ class XmlImpl extends Xml {
         map
     }
 
-    protected def toMap(map: util.Map[String, String], node: Node, prefix: String): Unit = {
+    private def toMap(map: util.Map[String, String], node: Node, prefix: String): Unit = {
         val name: String = node.label
         val pre: String = prefix + name + "."
-        node.attributes.foreach(attribute => map.put(pre + attribute.key, attribute.get(attribute.key) mkString))
+        node.attributes.foreach(attribute => map.put(pre + attribute.key, attribute.get(attribute.key).mkString))
         var hasChild: Boolean = false
         node.child.filter(node => node.label != "#PCDATA").foreach(child => {
             hasChild = true

@@ -18,16 +18,17 @@ import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.TimeHash;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -38,46 +39,45 @@ public class ServiceHelperImpl implements ServiceHelper {
     private static final String ROOT = "/";
     private static final String SESSION_ID = "tephra-session-id";
 
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected TimeHash timeHash;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected HeaderAware headerAware;
-    @Autowired
-    protected SessionAware sessionAware;
-    @Autowired
-    protected RequestAware requestAware;
-    @Autowired
-    protected ResponseAware responseAware;
-    @Autowired
-    protected Dispatcher dispatcher;
-    @Autowired
-    protected Status status;
-    @Autowired(required = false)
-    protected IgnoreTimeHash ignoreTimeHash;
-    @Autowired
-    protected CookieAware cookieAware;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Context context;
+    @Inject
+    private TimeHash timeHash;
+    @Inject
+    private Logger logger;
+    @Inject
+    private HeaderAware headerAware;
+    @Inject
+    private SessionAware sessionAware;
+    @Inject
+    private RequestAware requestAware;
+    @Inject
+    private ResponseAware responseAware;
+    @Inject
+    private Dispatcher dispatcher;
+    @Inject
+    private Status status;
+    @Inject
+    private Optional<IgnoreTimeHash> ignoreTimeHash;
+    @Inject
+    private CookieAware cookieAware;
     @Value("${tephra.ctrl.http.ignor.root:false}")
-    protected boolean ignorRoot;
+    private boolean ignorRoot;
     @Value("${tephra.ctrl.http.ignor.prefixes:/upload/}")
-    protected String ignorPrefixes;
+    private String ignorPrefixes;
     @Value("${tephra.ctrl.http.ignor.names:}")
-    protected String ignorNames;
+    private String ignorNames;
     @Value("${tephra.ctrl.http.ignor.suffixes:.ico,.js,.css,.html}")
-    protected String ignorSuffixes;
-    protected int contextPath;
-    protected String servletContextPath;
-    protected String[] prefixes;
-    protected String[] names;
-    protected String[] suffixes;
-    protected Set<String> ignoreUris;
+    private String ignorSuffixes;
+    private int contextPath;
+    private String servletContextPath;
+    private String[] prefixes;
+    private String[] suffixes;
+    private Set<String> ignoreUris;
 
     @Override
     public void setPath(String real, String context) {
@@ -86,7 +86,6 @@ public class ServiceHelperImpl implements ServiceHelper {
         if (logger.isInfoEnable())
             logger.info("部署项目路径[{}]。", context);
         prefixes = converter.toArray(ignorPrefixes, ",");
-        names = converter.toArray(ignorNames, ",");
         suffixes = converter.toArray(ignorSuffixes, ",");
 
         ignoreUris = new HashSet<>();
@@ -117,7 +116,7 @@ public class ServiceHelperImpl implements ServiceHelper {
         }
 
         OutputStream outputStream = setContext(request, response, uri);
-        if (timeHash.isEnable() && !timeHash.valid(request.getIntHeader("time-hash")) && !status.isStatus(uri) && (ignoreTimeHash == null || !ignoreTimeHash.ignore())) {
+        if (timeHash.isEnable() && !timeHash.valid(request.getIntHeader("time-hash")) && !status.isStatus(uri) && (!ignoreTimeHash.isPresent() || !ignoreTimeHash.get().ignore())) {
             if (logger.isDebugEnable())
                 logger.debug("请求[{}]TimeHash[{}]验证不通过。", uri, request.getIntHeader("time-hash"));
 
@@ -131,7 +130,7 @@ public class ServiceHelperImpl implements ServiceHelper {
         return true;
     }
 
-    protected boolean ignor(String uri) {
+    private boolean ignor(String uri) {
         if (ignorRoot && uri.equals(ROOT))
             return true;
 
@@ -173,7 +172,7 @@ public class ServiceHelperImpl implements ServiceHelper {
         return outputStream;
     }
 
-    protected String getSessionId(HttpServletRequest request) {
+    private String getSessionId(HttpServletRequest request) {
         String sessionId = request.getHeader("tephra-session-id");
         if (!validator.isEmpty(sessionId))
             return sessionId;

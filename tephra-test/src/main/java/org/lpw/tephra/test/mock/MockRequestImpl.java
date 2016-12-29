@@ -7,14 +7,14 @@ import java.util.Map;
  * @author lpw
  */
 public class MockRequestImpl implements MockRequest {
-    protected String method;
-    protected String url;
-    protected String uri;
-    protected String serverName;
-    protected int serverPort;
-    protected String contextPath;
-    protected Map<String, String> parameters;
-    protected String content;
+    private String method;
+    private String url;
+    private String uri;
+    private String serverName;
+    private int serverPort;
+    private String contextPath;
+    private Map<String, String> parameters;
+    private String content;
 
     @Override
     public void setServerName(String serverName) {

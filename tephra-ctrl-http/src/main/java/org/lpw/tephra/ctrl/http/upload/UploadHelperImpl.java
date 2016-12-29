@@ -14,11 +14,11 @@ import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
@@ -35,26 +35,26 @@ import java.util.Set;
  */
 @Service("tephra.ctrl.http.upload-helper")
 public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefreshedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected Storages storages;
-    @Autowired(required = false)
-    protected Set<Closable> closables;
-    @Autowired
-    protected ServiceHelper serviceHelper;
-    @Autowired
-    protected JsonConfigs jsonConfigs;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Generator generator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Storages storages;
+    @Inject
+    private Set<Closable> closables;
+    @Inject
+    private ServiceHelper serviceHelper;
+    @Inject
+    private JsonConfigs jsonConfigs;
     @Value("${tephra.ctrl.http.upload.max-size:1m}")
-    protected String maxSize;
-    protected ServletFileUpload upload;
-    protected Map<String, UploadListener> listeners;
+    private String maxSize;
+    private ServletFileUpload upload;
+    private Map<String, UploadListener> listeners;
 
     @Override
     public void upload(HttpServletRequest request, HttpServletResponse response) {
@@ -107,7 +107,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
         }
     }
 
-    protected ServletFileUpload getUpload(HttpServletRequest request) {
+    private ServletFileUpload getUpload(HttpServletRequest request) {
         if (upload == null) {
             DiskFileItemFactory factory = new DiskFileItemFactory();
             factory.setRepository((File) request.getServletContext().getAttribute("javax.servlet.context.tempdir"));
@@ -118,7 +118,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
         return upload;
     }
 
-    protected UploadListener getListener(String key) {
+    private UploadListener getListener(String key) {
         if (listeners.containsKey(key))
             return listeners.get(key);
 
@@ -133,7 +133,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
         return listener;
     }
 
-    protected String getPath(UploadListener listener, FileItem item) {
+    private String getPath(UploadListener listener, FileItem item) {
         StringBuilder path = new StringBuilder(ROOT).append(item.getContentType()).append('/')
                 .append(listener.getPath(item.getFieldName(), item.getContentType(), item.getName())).append('/')
                 .append(converter.toString(new Date(), "yyyyMMdd")).append('/').append(generator.random(32))
@@ -142,7 +142,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
         return path.toString().replaceAll("[/]+", "/");
     }
 
-    protected boolean image(FileItem item, int[] size, Storage storage, String path) {
+    private boolean image(FileItem item, int[] size, Storage storage, String path) {
         try {
             Image image = ImageIO.read(item.getInputStream());
             int width = image.getWidth(null);

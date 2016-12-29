@@ -5,10 +5,10 @@ import net.sf.json.JSONObject;
 import org.lpw.tephra.scheduler.MinuteJob;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Io;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,13 +18,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service("tephra.ctrl.http.upload.json-configs")
 public class JsonConfigsImpl implements JsonConfigs, MinuteJob {
-    @Autowired
-    protected Context context;
-    @Autowired
-    protected Io io;
+    @Inject
+    private Context context;
+    @Inject
+    private Io io;
     @Value("${tephra.ctrl.http.upload.json-configs:/WEB-INF/upload}")
-    protected String configs;
-    protected Map<String, JsonConfig> map;
+    private String configs;
+    private Map<String, JsonConfig> map;
 
     @Override
     public JsonConfig get(String key) {
@@ -34,7 +34,7 @@ public class JsonConfigsImpl implements JsonConfigs, MinuteJob {
         return map.get(key);
     }
 
-    protected synchronized void init() {
+    private synchronized void init() {
         if (map != null)
             return;
 

@@ -4,21 +4,22 @@ import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.execute.ExecutorHelper;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Message;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
 public abstract class ValidatorSupport implements Validator {
-    @Autowired
+    @Inject
     protected org.lpw.tephra.util.Validator validator;
-    @Autowired
+    @Inject
     protected Converter converter;
-    @Autowired
+    @Inject
     protected Message message;
-    @Autowired
+    @Inject
     protected Request request;
-    @Autowired
+    @Inject
     protected ExecutorHelper executorHelper;
 
     @Override

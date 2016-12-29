@@ -7,8 +7,9 @@ import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.execute.Execute;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.util.Message;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
  
 /**
  * @author lpw
@@ -16,14 +17,14 @@ import org.springframework.stereotype.Controller;
 @Controller("carousel.config.ctrl")
 @Execute(name = "/carousel/config/")
 public class ConfigCtrl {
-    @Autowired
-    protected Message message;
-    @Autowired
-    protected Request request;
-    @Autowired
-    protected Templates templates;
-    @Autowired
-    protected ConfigService configService;
+    @Inject
+    private Message message;
+    @Inject
+    private Request request;
+    @Inject
+    private Templates templates;
+    @Inject
+    private ConfigService configService;
  
     @Execute(name = "update")
     public Object update() {
@@ -50,9 +51,9 @@ import org.lpw.tephra.ctrl.validate.Validators;
 import org.lpw.tephra.util.Message;
 import org.lpw.tephra.workbench.Suffix;
 import org.lpw.tephra.workbench.ui.UiHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
  
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
  
@@ -61,12 +62,12 @@ import java.util.Map;
  */
 @Controller("tephra.workbench.front" + Suffix.CTRL)
 public class FrontCtrl {
-    @Autowired
-    protected Message message;
-    @Autowired
-    protected Request request;
-    @Autowired
-    protected UiHelper uiHelper;
+    @Inject
+    private Message message;
+    @Inject
+    private Request request;
+    @Inject
+    private UiHelper uiHelper;
  
     @Execute(name = "/", type = Templates.FREEMARKER, template = "/tephra/workbench/front/index")
     public Object index() {

@@ -6,13 +6,12 @@ import org.lpw.tephra.nio.NioHelper;
 import org.lpw.tephra.scheduler.MinuteJob;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
-import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Serializer;
 import org.lpw.tephra.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -23,25 +22,23 @@ import java.util.concurrent.Executors;
  */
 @Component("tephra.cache.lr.remote")
 public class RemoteImpl implements Remote, MinuteJob, ContextClosedListener {
-    @Autowired
-    protected Validator validator;
-    @Autowired
-    protected Converter converter;
-    @Autowired
-    protected Generator generator;
-    @Autowired
-    protected Serializer serializer;
-    @Autowired
-    protected Logger logger;
-    @Autowired
-    protected NioHelper nioHelper;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Generator generator;
+    @Inject
+    private Serializer serializer;
+    @Inject
+    private NioHelper nioHelper;
     @Value("${tephra.cache.remote.ips:}")
-    protected String ips;
+    private String ips;
     @Value("${tephra.cache.remote.max-thread:5}")
-    protected int maxThread;
-    protected String id;
-    protected Set<Channel> channels;
-    protected ExecutorService executorService;
+    private int maxThread;
+    private String id;
+    private Set<Channel> channels;
+    private ExecutorService executorService;
 
     @Override
     public String getId() {
@@ -61,7 +58,7 @@ public class RemoteImpl implements Remote, MinuteJob, ContextClosedListener {
         write(key);
     }
 
-    protected void write(Object object) {
+    private void write(Object object) {
         if (validator.isEmpty(channels))
             return;
 
@@ -103,7 +100,7 @@ public class RemoteImpl implements Remote, MinuteJob, ContextClosedListener {
             executorService = Executors.newFixedThreadPool(maxThread);
 
         channels.stream().filter((channel) -> channel.getState() == Channel.State.Disconnect)
-                .forEach((channel) -> executorService.execute(() -> channel.connect()));
+                .forEach((channel) -> executorService.execute(channel::connect));
     }
 
     @Override

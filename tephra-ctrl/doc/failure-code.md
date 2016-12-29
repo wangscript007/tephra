@@ -25,30 +25,29 @@ public class FailureCodeCtrl {
 测试与使用：
 ```java
 package org.lpw.tephra.ctrl;
- 
+
 import net.sf.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.lpw.tephra.ctrl.mock.MockHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
- 
+import org.lpw.tephra.test.DaoTestSupport;
+
+import javax.inject.Inject;
+
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class FailureCodeTest {
-    @Autowired
-    protected MockHelper mockHelper;
-    @Autowired
-    protected FailureCode failureCode;
- 
+public class FailureCodeTest extends DaoTestSupport {
+    @Inject
+    private MockHelper mockHelper;
+    @Inject
+    private FailureCode failureCode;
+
     @Test
     public void get() {
-        JSONObject json = JSONObject.fromObject(mockHelper.mock("/tephra/ctrl/failure-code/execute").getOutputStream().toString());
+        mockHelper.reset();
+        mockHelper.mock("/tephra/ctrl/failure-code/execute");
+        JSONObject json = mockHelper.getResponse().asJson();
         Assert.assertEquals(100101, json.getInt("code"));
         for (int i = 0; i < 10; i++)
             Assert.assertEquals(100100 + i, failureCode.get(i));
