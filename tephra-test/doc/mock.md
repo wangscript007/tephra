@@ -55,7 +55,7 @@ package org.lpw.hellotephra;
  
 import org.junit.Test;
 import org.lpw.tephra.test.TephraTestSupport;
-import org.lpw.tephra.test.mock.MockHelper;
+import org.lpw.tephra.test.MockHelper;
 import org.lpw.tephra.util.Context;
 import org.springframework.beans.factory.annotation.Inject;
  

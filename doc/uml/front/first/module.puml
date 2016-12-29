@@ -2,7 +2,10 @@
 
 package Tephra {
 [core-test] <-- [dao-test]
-[dao-test] <-- [test]
+[dao-test] <-- [ctrl-test]
+[ctrl-test] <-- [test]
+[ctrl-test] <-- [carousel-test]
+[ctrl-test] <-- [weixin-test]
 
 [core] <-- [dao]
 [dao] <-- [ctrl]

@@ -18,11 +18,11 @@ import java.util.Map;
  * @author lpw
  */
 public class RequestAdapterImpl implements RequestAdapter {
-    protected HttpServletRequest request;
-    protected String url;
-    protected String uri;
-    protected Map<String, String> map;
-    protected String content;
+    private HttpServletRequest request;
+    private String url;
+    private String uri;
+    private Map<String, String> map;
+    private String content;
 
     public RequestAdapterImpl(HttpServletRequest request, String uri) {
         this.request = request;

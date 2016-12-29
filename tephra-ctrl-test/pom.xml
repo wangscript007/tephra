@@ -7,11 +7,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tephra-test</artifactId>
+    <artifactId>tephra-ctrl-test</artifactId>
     <packaging>jar</packaging>
 
-    <name>tephra-test</name>
+    <name>tephra-ctrl-test</name>
     <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -21,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>org.lpw.tephra</groupId>
-            <artifactId>tephra-ctrl-test</artifactId>
+            <artifactId>tephra-dao-test</artifactId>
             <version>1.0.0-RELEASE</version>
         </dependency>
     </dependencies>

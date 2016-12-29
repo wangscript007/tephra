@@ -18,7 +18,10 @@
         <module>tephra-web</module>
         <module>tephra-core-test</module>
         <module>tephra-dao-test</module>
+        <module>tephra-ctrl-test</module>
         <module>tephra-test</module>
+        <module>tephra-carousel-test</module>
+        <module>tephra-weixin-test</module>
     </modules>
     <packaging>pom</packaging>
 

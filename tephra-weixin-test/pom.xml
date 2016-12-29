@@ -7,16 +7,20 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tephra-test</artifactId>
+    <artifactId>tephra-weixin-test</artifactId>
     <packaging>jar</packaging>
 
-    <name>tephra-test</name>
+    <name>tephra-weixin-test</name>
     <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.lpw.tephra</groupId>
-            <artifactId>tephra-ctrl</artifactId>
+            <artifactId>tephra-weixin</artifactId>
             <version>1.0.0-RELEASE</version>
         </dependency>
         <dependency>
