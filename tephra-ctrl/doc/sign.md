@@ -45,9 +45,11 @@ public interface Request {
     })
 ```
 4、签名算法：
+
 1. 将所有参数（包含sign-time，但不包含sign）按名称升序排列；
 1. 将参数名与参数值用等号“=”连接；
 1. 所有参数以“&”符号连接；
 1. 将连接后的参数加上“&”+密钥；
 1. 对数据进行MD5消息摘要计算，得出sign值。
+
 如参数为：username=tephra，password=hello，captcha=123456，当前时间戳为：1483067727747（精确到毫秒），密钥为：secret key，则消息签名值为：MD5(captcha=123456&password=hello&sign-time=1483067727747&username=tephra&secret key)。
