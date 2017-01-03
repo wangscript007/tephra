@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lpw.tephra.dao.DaoUtil;
+import org.lpw.tephra.test.DaoTestSupport;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -12,9 +13,7 @@ import javax.inject.Inject;
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class SessionFactoryTest {
+public class SessionFactoryTest extends DaoTestSupport {
     @Inject
     private SessionFactory sessionFactory;
 

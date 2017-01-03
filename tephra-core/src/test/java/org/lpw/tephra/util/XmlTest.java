@@ -5,6 +5,7 @@ import net.sf.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.lpw.tephra.test.CoreTestSupport;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -14,9 +15,7 @@ import java.util.Map;
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class XmlTest {
+public class XmlTest extends CoreTestSupport {
     @Inject
     private Xml xml;
     private String string = "<html lang=\"en\">\n" +

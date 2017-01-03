@@ -3,6 +3,7 @@ package org.lpw.tephra.util;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.lpw.tephra.test.CoreTestSupport;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -15,9 +16,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author lpw
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:**/spring.xml"})
-public class ContextTest {
+public class ContextTest extends CoreTestSupport {
     @Inject
     private Context context;
 
