@@ -55,7 +55,7 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
     private String classPath;
     private List<ClassLoader> loaders;
     private Set<String> names;
-    private Map<Class<?>, List<Autowire>> autowires;
+    private Map<Class<?>, List<Injecter>> injecters;
     private ApplicationContext applicationContext;
     private long lastModified = 0L;
 
@@ -86,8 +86,8 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
             loaders.add(applicationContext.getClassLoader());
         }
 
-        if (autowires == null) {
-            autowires = new ConcurrentHashMap<>();
+        if (injecters == null) {
+            injecters = new ConcurrentHashMap<>();
 
             for (String name : container.getBeanNames())
                 autowire(container.getBeanClass(name), name, null);
@@ -136,11 +136,11 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
                         continue;
                 }
 
-                List<Autowire> list = autowires.get(key);
+                List<Injecter> list = injecters.get(key);
                 if (list == null)
                     list = new ArrayList<>();
-                list.add(new Autowire(bean == null ? container.getBean(beanName) : bean, field, collection));
-                autowires.put(key, list);
+                list.add(new Injecter(bean == null ? container.getBean(beanName) : bean, field, collection));
+                injecters.put(key, list);
             } catch (Exception e) {
                 logger.warn(e, "解析[{}]属性[{}]依赖时发生异常！", beanClass, field.getName());
             }
@@ -197,20 +197,20 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
 
     @SuppressWarnings("unchecked")
     private void autowired(Object bean, Object oldBean) throws IllegalArgumentException, IllegalAccessException {
-        for (Class<?> key : autowires.keySet()) {
+        for (Class<?> key : injecters.keySet()) {
             if (!key.isInstance(bean))
                 continue;
 
-            for (Autowire autowire : autowires.get(key)) {
+            for (Injecter injecter : injecters.get(key)) {
                 Object value = bean;
-                if (autowire.isCollection()) {
-                    Collection<Object> collection = (Collection<Object>) autowire.getField().get(autowire.getBean());
+                if (injecter.isCollection()) {
+                    Collection<Object> collection = (Collection<Object>) injecter.getField().get(injecter.getBean());
                     if (oldBean != null)
                         collection.remove(oldBean);
                     collection.add(bean);
                     value = collection;
                 }
-                autowire.getField().set(autowire.getBean(), value);
+                injecter.getField().set(injecter.getBean(), value);
             }
         }
     }

@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 /**
  * @author lpw
  */
-@Component("tephra.bean.context-refresh-listener.1")
+@Component("tephra.bean.context-refresh-listener.2")
 public class ContextRefreshListener2 implements ContextRefreshedListener {
     @Override
     public int getContextRefreshedSort() {
-        return 1;
+        return 2;
     }
 
     @Override

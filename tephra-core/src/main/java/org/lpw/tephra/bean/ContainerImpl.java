@@ -49,6 +49,9 @@ public class ContainerImpl implements Container, ApplicationListener<Application
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getBean(String beanName) {
+        if (validator.isEmpty(beanName))
+            return null;
+
         try {
             return (T) applicationContext.getBean(getBeanName(beanName));
         } catch (NoSuchBeanDefinitionException e) {
@@ -58,6 +61,9 @@ public class ContainerImpl implements Container, ApplicationListener<Application
 
     @Override
     public <T> T getBean(String beanName, Class<T> clazz) {
+        if (validator.isEmpty(beanName))
+            return null;
+
         try {
             return applicationContext.getBean(getBeanName(beanName), clazz);
         } catch (NoSuchBeanDefinitionException e) {
@@ -82,7 +88,14 @@ public class ContainerImpl implements Container, ApplicationListener<Application
     @SuppressWarnings("unchecked")
     @Override
     public <T> Class<T> getBeanClass(String beanName) {
-        return (Class<T>) applicationContext.getType(beanName);
+        if (validator.isEmpty(beanName))
+            return null;
+
+        try {
+            return (Class<T>) applicationContext.getType(getBeanName(beanName));
+        } catch (NoSuchBeanDefinitionException e) {
+            return null;
+        }
     }
 
     @Override
