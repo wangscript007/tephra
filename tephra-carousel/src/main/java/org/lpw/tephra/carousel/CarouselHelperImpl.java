@@ -55,7 +55,7 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     private Optional<Set<CarouselRegister>> registers;
     @Value("${tephra.carousel.url:}")
     private String carouselUrl;
-    @Value("${tephra.carousel.service.url:}")
+    @Value("${tephra.ctrl.service-root:}")
     private String serviceUrl;
     @Value("${tephra.carousel.service.all:false}")
     private boolean serviceAll;

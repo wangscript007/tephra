@@ -204,6 +204,11 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
     }
 
     @Override
+    public String prepay(String type, String mpId, String orderNo, String body, int amount) {
+        return weixinHelper.getPayGateway(type).prepay(mpId, session.getId(), orderNo, body, amount);
+    }
+
+    @Override
     public String pay(Map<String, String> parameters) {
         return null;
     }

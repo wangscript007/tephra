@@ -46,7 +46,7 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
     private Io io;
     @Inject
     private Logger logger;
-    @Value("${tephra.ctrl.http.root:}")
+    @Value("${tephra.ctrl.service-root:}")
     private String root;
     @Value("${tephra.weixin.mp.config:}")
     private String config;

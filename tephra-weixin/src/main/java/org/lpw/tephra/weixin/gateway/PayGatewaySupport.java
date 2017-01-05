@@ -43,7 +43,7 @@ public abstract class PayGatewaySupport implements PayGateway {
     protected WeixinHelper weixinHelper;
     @Inject
     protected Optional<WeixinListener> weixinListener;
-    @Value("${tephra.ctrl.http.root:}")
+    @Value("${tephra.ctrl.service-root:}")
     protected String root;
 
     @Override

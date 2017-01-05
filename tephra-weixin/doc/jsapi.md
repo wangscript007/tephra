@@ -1,4 +1,7 @@
 # 使用JSAPI发起支付请求
+
+## 使用PayGateway
+
 需要在微信公众号里发起支付请求时，可以通过WeixinHelper获取支付网关：
 ```java
 PayGateway gateway = weixinHelper.getPayGateway(PayGateway.JSAPI);
@@ -48,4 +51,27 @@ public interface PayGateway {
     void callback(Map<String, String> parameters);
 }
 ```
-支付完成后会回调给WeixinListener实现。
+> 支付完成后会回调给WeixinListener实现。
+
+## 使用API服务
+
+请求/tephra/weixin/prepay接口，参数描述如下：
+- type 充值类型，[JSAPI]。
+- mpId 微信公众号AppID。
+- orderNo 订单号。
+- body 订单内容。
+- amount 金额，单位：分。
+
+如果创建成功，则返回发起微信支付所需的参数。
+
+> 支付完成后会回调给WeixinListener实现。
+
+## 设置回调URL根
+```properties
+## 设置服务URL根路径。如：
+## * http://localhost
+## * https://localhost
+## * http://localhost:8080
+#tephra.ctrl.service-root = 
+```
+> 微信支付完成后，将通知（回调）${tephra.ctrl.service-root}/tephra/weixin/jsapi。

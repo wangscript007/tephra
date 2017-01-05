@@ -12,6 +12,10 @@ public interface WeixinService {
      * 微信URI地址。
      */
     String URI = "/tephra/weixin/";
+    /**
+     * 支付网关是否存在验证器Bean名称。
+     */
+    String VALIDATOR_EXISTS_PAY_GATEWAY = "tephra.weixin.validator.pay-gateway.exists";
 
     /**
      * 验证echo信息是否正确。
@@ -41,6 +45,18 @@ public interface WeixinService {
      * @return 处理结果。
      */
     String xml(String appId, String xml);
+
+    /**
+     * 预充值。
+     *
+     * @param type    充值类型。
+     * @param mpId    微信公众号AppID。
+     * @param orderNo 订单号。
+     * @param body    订单内容。
+     * @param amount  金额，单位：分。
+     * @return 支付参数；如果发起失败则返回null。
+     */
+    String prepay(String type, String mpId, String orderNo, String body, int amount);
 
     /**
      * 处理充值回调。
