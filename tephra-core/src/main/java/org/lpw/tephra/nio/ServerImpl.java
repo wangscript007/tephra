@@ -25,6 +25,9 @@ public class ServerImpl extends Handler implements Server {
         if (listener == null || listener.getPort() < 1)
             return;
 
+        if (logger.isDebugEnable())
+            logger.debug("启动监听服务[{}]。", listener.getPort());
+
         this.listener = listener;
         group = new NioEventLoopGroup(listener.getMaxThread());
         ServerBootstrap bootstrap = new ServerBootstrap().group(group).channel(NioServerSocketChannel.class);

@@ -132,7 +132,19 @@ public class ContainerImpl implements Container, ApplicationListener<Application
         }
 
         refreshedListeners.get().sort(Comparator.comparingInt(ContextRefreshedListener::getContextRefreshedSort));
-        refreshedListeners.get().forEach(ContextRefreshedListener::onContextRefreshed);
+        refreshedListeners.get().forEach(listener -> {
+            if (logger.isDebugEnable())
+                logger.debug("开始执行Bean[{}:{}]环境初始化。", listener.getContextRefreshedSort(), listener);
+
+            try {
+                listener.onContextRefreshed();
+            } catch (Throwable e) {
+                logger.warn(e, "执行Bean[{}:{}]环境初始化时发生异常！", listener.getContextRefreshedSort(), listener);
+            }
+
+            if (logger.isInfoEnable())
+                logger.info("完成Bean[{}:{}]环境初始化。", listener.getContextRefreshedSort(), listener);
+        });
 
         if (logger.isInfoEnable())
             logger.info("执行[{}]个Bean环境初始化完成后续工作。", refreshedListeners.get().size());
@@ -150,7 +162,19 @@ public class ContainerImpl implements Container, ApplicationListener<Application
         }
 
         closedListeners.get().sort(Comparator.comparingInt(ContextClosedListener::getContextClosedSort));
-        closedListeners.get().forEach(ContextClosedListener::onContextClosed);
+        closedListeners.get().forEach(listener -> {
+            if (logger.isDebugEnable())
+                logger.debug("开始执行Bean[{}:{}]环境关闭。", listener.getContextClosedSort(), listener);
+
+            try {
+                listener.onContextClosed();
+            } catch (Throwable e) {
+                logger.warn(e, "执行Bean[{}:{}]环境关闭时发生异常！", listener.getContextClosedSort(), listener);
+            }
+
+            if (logger.isInfoEnable())
+                logger.info("完成Bean[{}:{}]环境关闭。", listener.getContextClosedSort(), listener);
+        });
 
         if (logger.isInfoEnable())
             logger.info("执行[{}]个Bean环境关闭后续工作。", closedListeners.get().size());

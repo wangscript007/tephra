@@ -114,7 +114,6 @@ public class ContainerTest extends CoreTestSupport {
             Assert.assertEquals(i + 1, converter.toInt(contextRefreshedList.get(i)));
 
         for (int i = 0; i < 2; i++) {
-            logger.isInfoEnable();
             ((ContainerImpl) container).onApplicationEvent(new ContextRefreshedEvent(getApplicationContext()));
             Assert.assertEquals(4 + i * 2, contextRefreshedList.size());
             for (int j = 0; j < contextRefreshedList.size(); j++)
