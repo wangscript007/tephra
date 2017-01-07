@@ -197,6 +197,12 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
 
     @Override
     public WeixinConfig getConfig(String appId) {
+        if (!configs.containsKey(appId)) {
+            logger.warn(null, "无法获得微信[AppId:{}]配置！", appId);
+
+            return null;
+        }
+
         return configs.get(appId);
     }
 
