@@ -1,6 +1,7 @@
 package org.lpw.tephra.bean;
 
-import org.lpw.tephra.scheduler.MinuteJob;
+import org.lpw.tephra.storage.StorageListener;
+import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
@@ -20,23 +21,20 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lpw
  */
 @Component("tephra.bean.class-reloader")
-public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationContextAware {
+public class ClassReloaderImpl implements ClassReloader, StorageListener, ApplicationContextAware {
     @Inject
     private Converter converter;
     @Inject
@@ -54,10 +52,9 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
     @Value("${tephra.bean.reload.class-path:}")
     private String classPath;
     private List<ClassLoader> loaders;
-    private Set<String> names;
+    private List<String> names;
     private Map<Class<?>, List<Injecter>> injecters;
     private ApplicationContext applicationContext;
-    private long lastModified = 0L;
 
     @Override
     public boolean isReloadEnable(String name) {
@@ -70,12 +67,18 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
     }
 
     @Override
-    public void executeMinuteJob() {
-        if (validator.isEmpty(classPath))
-            return;
+    public String getStorageType() {
+        return Storages.TYPE_DISK;
+    }
 
-        names = names();
-        if (names.isEmpty())
+    @Override
+    public String[] getScanPathes() {
+        return validator.isEmpty(classPath) ? null : new String[]{classPath + "/name"};
+    }
+
+    @Override
+    public void onStorageChanged(String path, String absolutePath) {
+        if ((names = names(absolutePath)) == null)
             return;
 
         if (logger.isInfoEnable())
@@ -90,7 +93,7 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
             injecters = new ConcurrentHashMap<>();
 
             for (String name : container.getBeanNames())
-                autowire(container.getBeanClass(name), name, null);
+                inject(container.getBeanClass(name), name, null);
         }
 
         ClassLoader loader = new DynamicClassLoader(loaders.get(loaders.size() - 1));
@@ -98,34 +101,28 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
         loaders.add(loader);
     }
 
-    private Set<String> names() {
-        Set<String> set = new HashSet<>();
-        File file = new File(context.getAbsolutePath(classPath + "/name"));
-        if (file.lastModified() <= lastModified)
-            return set;
-
-        lastModified = file.lastModified();
-        String path = file.getAbsolutePath();
-        String names = new String(io.read(path)).trim();
+    private List<String> names(String absolutePath) {
+        String names = new String(io.read(absolutePath)).trim();
         if (validator.isEmpty(names))
-            return set;
+            return null;
 
+        List<String> list = new ArrayList<>();
         for (String name : converter.toArray(names, "\n"))
             if (name.trim().length() > 0)
-                set.add(name.trim());
+                list.add(name.trim());
 
-        io.write(path, new byte[0]);
+        io.write(absolutePath, new byte[0]);
 
-        return set;
+        return list;
     }
 
-    private void autowire(Class<?> beanClass, String beanName, Object bean) {
-        for (Field field : beanClass.getDeclaredFields()) {
+    private void inject(Class<?> beanClass, String beanName, Object bean) {
+        for (Field field : beanClass.getFields()) {
+            field.setAccessible(true);
             if (field.getAnnotation(Inject.class) == null)
                 continue;
 
             try {
-                field.setAccessible(true);
                 Class<?> key = field.getType();
                 boolean collection = isCollection(key);
                 if (collection) {
@@ -168,8 +165,8 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
                 oldBean = container.getBean(beanName);
                 container.mapBeanName(beanName, dynamicBeanName);
             }
-            autowire(bean.getClass(), null, bean);
-            autowired(bean, oldBean);
+            inject(bean.getClass(), null, bean);
+            inject(bean, oldBean);
         } catch (Exception e) {
             logger.warn(e, "重新载入[{}]时发生异常！", name);
         }
@@ -196,7 +193,7 @@ public class ClassReloaderImpl implements ClassReloader, MinuteJob, ApplicationC
     }
 
     @SuppressWarnings("unchecked")
-    private void autowired(Object bean, Object oldBean) throws IllegalArgumentException, IllegalAccessException {
+    private void inject(Object bean, Object oldBean) throws IllegalArgumentException, IllegalAccessException {
         for (Class<?> key : injecters.keySet()) {
             if (!key.isInstance(bean))
                 continue;

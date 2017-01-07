@@ -49,7 +49,6 @@ public class StoragesImpl implements Storages, ContextRefreshedListener, Seconds
     public void onContextRefreshed() {
         storages = new HashMap<>();
         BeanFactory.getBeans(Storage.class).forEach(storage -> storages.put(storage.getType(), storage));
-
         Collection<StorageListener> listeners = BeanFactory.getBeans(StorageListener.class);
         if (validator.isEmpty(listeners))
             return;
