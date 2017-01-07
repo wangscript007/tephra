@@ -7,6 +7,8 @@ WeiXin模块主要提供微信相关操作的封装，简化微信开发；支�
 
 [使用WeixinHelper开发微信功能](doc/helper.md)
 
-[使用JSAPI发起支付请求](doc/jsapi.md)
+[获取JSAPI配置签名](doc/jsapi-sign.md)
+
+[使用JSAPI发起支付请求](doc/jsapi-pay.md)
 
 [配置参数](src/main/resources/weixin.tephra.config)

@@ -5,6 +5,7 @@ import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.execute.Execute;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.ctrl.validate.Validate;
+import org.lpw.tephra.ctrl.validate.Validators;
 import org.lpw.tephra.util.Message;
 import org.lpw.tephra.util.Validator;
 import org.lpw.tephra.util.Xml;
@@ -17,7 +18,7 @@ import javax.inject.Inject;
  * @author lpw
  */
 @Controller("tephra.weixin.ctrl")
-@Execute(name = WeixinService.URI, code = "13")
+@Execute(name = WeixinService.URI, key = "tephra.weixin", code = "13")
 public class WeixinCtrl {
     @Inject
     private Validator validator;
@@ -56,16 +57,32 @@ public class WeixinCtrl {
     }
 
     /**
+     * 获取JS SDK签名。
+     * appId 微信公众号AppID。
+     * url 请求URL地址。
+     *
+     * @return {timestamp:"",nonceStr:"",signature:""}。
+     */
+    @Execute(name = "jsapi-sign", validates = {
+            @Validate(validator = Validators.NOT_EMPTY, parameter = "appId", failureCode = 1),
+            @Validate(validator = Validators.NOT_EMPTY, parameter = "url", failureCode = 2)
+    })
+    public Object jsapiSign() {
+        return weixinHelper.getJsApiSign(request.get("appId"), request.get("url"));
+    }
+
+    /**
      * 生成预支付参数。
      * type    充值类型，[JSAPI]。
      * mpId    微信公众号AppID。
      * orderNo 订单号。
      * body    订单内容。
      * amount  金额，单位：分。
+     *
      * @return 预支付参数。
      */
     @Execute(name = "prepay", validates = {
-            @Validate(validator = WeixinService.VALIDATOR_EXISTS_PAY_GATEWAY, parameter = "type", failureCode = 1)
+            @Validate(validator = WeixinService.VALIDATOR_EXISTS_PAY_GATEWAY, parameter = "type", failureCode = 11)
     })
     public Object prepay() {
         String string = weixinService.prepay(request.get("type"), request.get("appId"), request.get("orderNo"), request.get("body"), request.getAsInt("amount"));

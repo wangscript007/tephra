@@ -42,6 +42,15 @@ public interface WeixinHelper {
     JSONObject getUserInfo(String appId, String openId);
 
     /**
+     * 获取JS SDK签名。
+     *
+     * @param appId 微信公众号AppID。
+     * @param url   请求URL地址。
+     * @return 签名。
+     */
+    JSONObject getJsApiSign(String appId, String url);
+
+    /**
      * 上传媒体文件到微信临时素材区。
      *
      * @param appId 微信公众号AppID。

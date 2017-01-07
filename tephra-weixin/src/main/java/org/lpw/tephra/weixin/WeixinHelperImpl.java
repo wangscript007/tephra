@@ -4,6 +4,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.scheduler.HourJob;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
@@ -32,6 +33,8 @@ import java.util.Map;
  */
 @Service("tephra.weixin.helper")
 public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshedListener {
+    @Inject
+    private Digest digest;
     @Inject
     private Http http;
     @Inject
@@ -97,6 +100,18 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
         map.put("lang", "zh_CN");
 
         return JSONObject.fromObject(http.get("https://api.weixin.qq.com/sns/userinfo", null, map));
+    }
+
+    @Override
+    public JSONObject getJsApiSign(String appId, String url) {
+        JSONObject object = new JSONObject();
+        object.put("nonceStr", generator.random(32));
+        object.put("timestamp", System.currentTimeMillis() / 1000);
+        object.put("url", url);
+        object.put("signature", digest.sha1("jsapi_ticket=" + getJsapiTicket(appId)
+                + "&noncestr=" + object.getString("nonceStr") + "&timestamp=" + object.getLong("timestamp") + "&url=" + url));
+
+        return object;
     }
 
     @Override
