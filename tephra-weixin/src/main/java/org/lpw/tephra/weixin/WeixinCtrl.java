@@ -74,7 +74,7 @@ public class WeixinCtrl {
     /**
      * 生成预支付参数。
      * type    充值类型，[JSAPI]。
-     * mpId    微信公众号AppID。
+     * appId    微信公众号AppID。
      * orderNo 订单号。
      * body    订单内容。
      * amount  金额，单位：分。

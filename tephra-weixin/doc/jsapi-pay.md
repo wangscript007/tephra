@@ -57,7 +57,7 @@ public interface PayGateway {
 
 请求/tephra/weixin/prepay接口，参数描述如下：
 - type 充值类型，[JSAPI]。
-- mpId 微信公众号AppID。
+- appId 微信公众号AppID。
 - orderNo 订单号。
 - body 订单内容。
 - amount 金额，单位：分。
