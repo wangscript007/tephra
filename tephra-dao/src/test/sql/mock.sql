@@ -1,4 +1,3 @@
-
 DROP TABLE IF EXISTS t_tephra_test;
 CREATE TABLE t_tephra_test (
   c_id CHAR(36) NOT NULL COMMENT '主键',

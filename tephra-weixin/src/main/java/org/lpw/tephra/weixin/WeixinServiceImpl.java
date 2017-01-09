@@ -93,7 +93,10 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
             return;
 
         String openId = json.getString("openid");
-        sessionAware.set(new LocalSessionAdapter(openId));
+        if(logger.isDebugEnable())
+            logger.debug("微信用户OpenID：{}。",openId);
+        if (!openId.equals(session.getId()))
+            sessionAware.set(new LocalSessionAdapter(openId));
         if (!json.has("access_token") || getNickname(openId) != null)
             return;
 

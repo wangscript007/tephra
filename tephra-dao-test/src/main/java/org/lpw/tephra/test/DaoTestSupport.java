@@ -51,6 +51,7 @@ public class DaoTestSupport extends CoreTestSupport {
             }
         }
         reader.close();
+        close();
     }
 
     private void update(String sql) throws Exception {

@@ -47,12 +47,12 @@ public class SessionImpl implements Session, SessionAware {
     }
 
     private String getKey(String id, String key) {
-        return new StringBuilder().append(CACHE).append(id).append('-').append(key).toString();
+        return CACHE + id + key;
     }
 
     @Override
     public String getId() {
-        return adapter.get().getId();
+        return adapter.get() == null ? null : adapter.get().getId();
     }
 
     @Override
