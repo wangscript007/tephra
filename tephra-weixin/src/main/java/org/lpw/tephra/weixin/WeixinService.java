@@ -34,8 +34,9 @@ public interface WeixinService {
      *
      * @param appId 微信公众号AppID。
      * @param code  认证码。
+     * @return 用户OpenID。
      */
-    void redirect(String appId, String code);
+    String redirect(String appId, String code);
 
     /**
      * 处理接收到的XML数据。

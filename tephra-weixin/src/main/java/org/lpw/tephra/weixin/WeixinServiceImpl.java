@@ -82,7 +82,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
     }
 
     @Override
-    public void redirect(String appId, String code) {
+    public String redirect(String appId, String code) {
         Map<String, String> map = new HashMap<>();
         map.put("appid", appId);
         map.put("secret", weixinHelper.getConfig(appId).getSecret());
@@ -90,25 +90,25 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
         map.put("grant_type", "authorization_code");
         JSONObject json = JSONObject.fromObject(http.get("https://api.weixin.qq.com/sns/oauth2/access_token", null, map));
         if (!json.has("openid"))
-            return;
+            return null;
 
         String openId = json.getString("openid");
-        if(logger.isDebugEnable())
-            logger.debug("微信用户OpenID：{}。",openId);
+        if (logger.isDebugEnable())
+            logger.debug("微信用户OpenID：{}。", openId);
         if (!openId.equals(session.getId()))
             sessionAware.set(new LocalSessionAdapter(openId));
         if (!json.has("access_token") || getNickname(openId) != null)
-            return;
+            return openId;
 
         map.clear();
         map.put("access_token", json.getString("access_token"));
         map.put("openid", openId);
         map.put("lang", "zh_CN");
         json = JSONObject.fromObject(http.get("https://api.weixin.qq.com/sns/userinfo", null, map));
-        if (!json.has("nickname"))
-            return;
+        if (json.has("nickname"))
+            cache.put(CACHE_NICKNAME + openId, json.getString("nickname"), false);
 
-        cache.put(CACHE_NICKNAME + openId, json.getString("nickname"), false);
+        return openId;
     }
 
     @Override

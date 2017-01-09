@@ -47,7 +47,10 @@ public class WeixinCtrl {
 
         String redirect = request.get("redirect");
         if (!validator.isEmpty(redirect)) {
-            weixinService.redirect(appId, request.get("code"));
+            String openId = weixinService.redirect(appId, request.get("code"));
+            if (request.getAsBoolean("getOpenId"))
+                return openId;
+
             forward.redirectTo(redirect);
 
             return null;
