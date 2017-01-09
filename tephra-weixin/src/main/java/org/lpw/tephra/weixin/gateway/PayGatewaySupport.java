@@ -47,10 +47,10 @@ public abstract class PayGatewaySupport implements PayGateway {
     protected String root;
 
     @Override
-    public String prepay(String mpId, String openId, String orderNo, String body, int amount) {
+    public String prepay(String appId, String openId, String orderNo, String body, int amount) {
         Map<String, String> map = new HashMap<>();
-        map.put("appid", mpId);
-        map.put("mch_id", weixinHelper.getConfig(mpId).getMchId());
+        map.put("appid", appId);
+        map.put("mch_id", weixinHelper.getConfig(appId).getMchId());
         map.put("nonce_str", generator.random(32));
         map.put("body", body);
         map.put("out_trade_no", orderNo);
@@ -59,7 +59,7 @@ public abstract class PayGatewaySupport implements PayGateway {
         map.put("notify_url", root + WeixinService.URI + getType().toLowerCase());
         map.put("trade_type", getType());
         unifiedorder(map, openId);
-        map.put("sign", sign(map, weixinHelper.getConfig(mpId).getMchKey()));
+        map.put("sign", sign(map, weixinHelper.getConfig(appId).getMchKey()));
 
         StringBuilder xml = new StringBuilder("<xml>");
         map.forEach((key, value) -> xml.append('<').append(key).append("><![CDATA[").append(value).append("]]></").append(key).append('>'));
@@ -71,7 +71,7 @@ public abstract class PayGatewaySupport implements PayGateway {
             return null;
         }
 
-        String prepay = prepay(mpId, converter.toString(System.currentTimeMillis() / 1000, "0"), map.get("nonce_str"), map.get("prepay_id")).toString();
+        String prepay = prepay(appId, converter.toString(System.currentTimeMillis() / 1000, "0"), map.get("nonce_str"), map.get("prepay_id")).toString();
         if (logger.isDebugEnable())
             logger.debug("返回预支付参数[{}]。", prepay);
 

@@ -33,14 +33,14 @@ public interface PayGateway {
     /**
      * 发起预支付请求。
      *
-     * @param mpId    微信公众号AppID。
+     * @param appId    微信公众号AppID。
      * @param openId  微信用户OpenID。
      * @param orderNo 订单号。
      * @param body    订单内容。
      * @param amount  金额，单位：分。
      * @return 支付参数；如果发起失败则返回null。
      */
-    String prepay(String mpId, String openId, String orderNo, String body, int amount);
+    String prepay(String appId, String openId, String orderNo, String body, int amount);
 
     /**
      * 支付回调。
