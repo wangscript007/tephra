@@ -8,8 +8,7 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="${pattern}"/>
             <Filters>
-                <RegexFilter regex=".*org.lpw.tephra.scheduler.SecondsSchedulerImpl.*" onMatch="DENY"
-                             onMismatch="ACCEPT"/>
+                <RegexFilter regex=".*org.lpw.tephra.scheduler.SecondsSchedulerImpl.*" onMatch="DENY" onMismatch="ACCEPT"/>
             </Filters>
         </Console>
         <RollingFile name="file.debug" fileName="logs/tephra.debug.log" filePattern="logs/tephra.debug.%i.log.gz">
@@ -48,7 +47,7 @@
         <Root level="info">
             <AppenderRef ref="console"/>
         </Root>
-        <Logger name="tephra.util.logger" level="info">
+        <Logger name="tephra.util.logger" level="debug">
             <appender-ref ref="file.debug"/>
             <appender-ref ref="file.info"/>
             <appender-ref ref="file.warn"/>
