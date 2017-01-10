@@ -47,16 +47,25 @@ public class WeixinCtrl {
 
         String redirect = request.get("redirect");
         if (!validator.isEmpty(redirect)) {
-            String openId = weixinService.redirect(appId, request.get("code"));
-            if (request.getAsBoolean("getOpenId"))
-                return openId;
-
+            weixinService.redirect(appId, request.get("code"));
             forward.redirectTo(redirect);
 
             return null;
         }
 
         return weixinService.xml(appId, request.getFromInputStream());
+    }
+
+    /**
+     * 获取转发Open ID。
+     * appId 微信App ID。
+     * code 微信认证码。
+     *
+     * @return 用户Open ID。
+     */
+    @Execute(name = "redirect")
+    public Object redirect() {
+        return weixinService.redirect(request.get("appId"), request.get("code"));
     }
 
     /**
