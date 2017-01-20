@@ -16,6 +16,14 @@ public interface MockHeader extends HeaderAdapter {
     void setIp(String ip);
 
     /**
+     * 添加头信息。
+     *
+     * @param name  名称。
+     * @param value 值。
+     */
+    void addHeader(String name, String value);
+
+    /**
      * 设置请求头集。
      *
      * @param map 请求头集。

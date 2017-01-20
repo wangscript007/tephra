@@ -1,5 +1,6 @@
 package org.lpw.tephra.test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -15,22 +16,30 @@ public class MockHeaderImpl implements MockHeader {
     }
 
     @Override
+    public void addHeader(String name, String value) {
+        getMap().put(name, value);
+    }
+
+    @Override
     public void setMap(Map<String, String> map) {
         this.map = map;
     }
 
     @Override
     public String get(String name) {
-        return map == null ? null : map.get(name);
+        return getMap().get(name);
     }
 
     @Override
     public String getIp() {
-        return ip;
+        return ip == null ? "127.0.0.1" : ip;
     }
 
     @Override
     public Map<String, String> getMap() {
+        if (map == null)
+            map = new HashMap<>();
+
         return map;
     }
 }

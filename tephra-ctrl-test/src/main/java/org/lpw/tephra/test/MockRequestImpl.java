@@ -63,7 +63,7 @@ public class MockRequestImpl implements MockRequest {
 
     @Override
     public String get(String name) {
-        return parameters == null ? null : parameters.get(name);
+        return getMap().get(name);
     }
 
     @Override

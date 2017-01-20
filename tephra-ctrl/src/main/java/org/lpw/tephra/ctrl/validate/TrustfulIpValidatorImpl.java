@@ -22,6 +22,11 @@ public class TrustfulIpValidatorImpl extends ValidatorSupport {
     }
 
     @Override
+    public int getFailureCode(ValidateWrapper validate) {
+        return 9996;
+    }
+
+    @Override
     protected String getDefaultFailureMessageKey() {
         return Validators.PREFIX + "distrust-ip";
     }

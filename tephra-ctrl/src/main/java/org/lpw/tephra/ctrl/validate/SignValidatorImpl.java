@@ -25,7 +25,7 @@ public class SignValidatorImpl extends ValidatorSupport {
 
     @Override
     public int getFailureCode(ValidateWrapper validate) {
-        return validate.getFailureCode() > 0 ? validate.getFailureCode() : 91;
+        return 9995;
     }
 
     @Override
