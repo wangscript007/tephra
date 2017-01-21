@@ -114,4 +114,11 @@ public class WeixinCtrl {
 
         return "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
     }
+
+    @Execute(name = "token", validates = {
+            @Validate(validator = Validators.TRUSTFUL_IP)
+    })
+    public Object token() {
+        return weixinHelper.getToken(request.get("appId"));
+    }
 }

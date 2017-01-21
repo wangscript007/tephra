@@ -29,7 +29,7 @@ public class HeaderAdapterImpl implements HeaderAdapter {
 
     @Override
     public Map<String, String> getMap() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         for (Enumeration<String> names = request.getHeaderNames(); names.hasMoreElements(); ) {
             String name = names.nextElement();
             map.put(name, request.getHeader(name));
