@@ -13,9 +13,10 @@ public interface Channel {
     /**
      * 设置远程缓存服务端IP地址。
      *
-     * @param ip 远程缓存服务端IP地址。
+     * @param ip   远程缓存服务端IP地址。
+     * @param port 设置远程缓存服务端口号。
      */
-    void setIp(String ip);
+    void set(String ip, int port);
 
     /**
      * 建立连接。

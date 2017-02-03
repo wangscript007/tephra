@@ -1,5 +1,6 @@
 package org.lpw.tephra.cache;
 
+import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
@@ -7,7 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author lpw
@@ -18,34 +20,51 @@ public class CacheImpl implements Cache, ContextRefreshedListener {
     private Validator validator;
     @Inject
     private Logger logger;
-    @Inject
-    private Set<Handler> handlers;
     @Value("${tephra.cache.name:}")
     private String name;
-    private Handler handler;
+    private Map<String, Handler> handlers;
 
     @Override
     public void put(String key, Object value, boolean resident) {
+        put(null, key, value, resident);
+    }
+
+    @Override
+    public void put(String type, String key, Object value, boolean resident) {
         if (validator.isEmpty(key) || value == null)
             return;
 
-        handler.put(key, value, resident);
+        getHandler(type).put(key, value, resident);
     }
 
     @Override
     public <T> T get(String key) {
+        return get(null, key);
+    }
+
+    @Override
+    public <T> T get(String type, String key) {
         if (validator.isEmpty(key))
             return null;
 
-        return handler.get(key);
+        return getHandler(null).get(key);
     }
 
     @Override
     public <T> T remove(String key) {
+        return remove(null, key);
+    }
+
+    @Override
+    public <T> T remove(String type, String key) {
         if (validator.isEmpty(key))
             return null;
 
-        return handler.remove(key);
+        return getHandler(null).remove(key);
+    }
+
+    private Handler getHandler(String name) {
+        return handlers.get(validator.isEmpty(name) ? this.name : name);
     }
 
     @Override
@@ -55,18 +74,10 @@ public class CacheImpl implements Cache, ContextRefreshedListener {
 
     @Override
     public void onContextRefreshed() {
-        if (logger.isDebugEnable())
-            logger.debug("使用[{}]缓存处理器。", name);
+        handlers = new HashMap<>();
+        BeanFactory.getBeans(Handler.class).forEach(handler -> handlers.put(handler.getName(), handler));
 
-        for (Handler handler : handlers) {
-            if (handler.getName().equals(name)) {
-                this.handler = handler;
-
-                break;
-            }
-        }
-
-        if (handler == null)
-            logger.warn(null, "无法获得缓存处理器[{}]。", name);
+        if (logger.isInfoEnable())
+            logger.info("初始化[{}]个缓存处理器[{}]。", handlers.size(), name);
     }
 }

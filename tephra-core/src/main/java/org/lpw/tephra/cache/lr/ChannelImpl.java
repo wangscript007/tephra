@@ -3,7 +3,6 @@ package org.lpw.tephra.cache.lr;
 import org.lpw.tephra.nio.Client;
 import org.lpw.tephra.nio.ClientListener;
 import org.lpw.tephra.nio.ClientManager;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,16 +20,17 @@ public class ChannelImpl implements Channel, ClientListener {
     private ClientManager clientManager;
     @Inject
     private Remote remote;
-    @Value("${tephra.cache.listen-port:0}")
-    private int port;
     private Client client;
     private String ip;
-    private State state = State.Disconnect;
+    private int port;
+    private State state;
     private String sessionId;
 
     @Override
-    public void setIp(String ip) {
+    public void set(String ip, int port) {
         this.ip = ip;
+        this.port = port;
+        state = State.Disconnect;
     }
 
     @Override
@@ -40,7 +40,6 @@ public class ChannelImpl implements Channel, ClientListener {
 
         if (client == null)
             client = clientManager.get();
-        state = State.Disconnect;
         client.connect(this, ip, port);
     }
 

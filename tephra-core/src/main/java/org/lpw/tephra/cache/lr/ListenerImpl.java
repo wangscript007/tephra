@@ -21,10 +21,10 @@ public class ListenerImpl implements ServerListener {
     private Local local;
     @Inject
     private Remote remote;
-    @Value("${tephra.cache.listen-port:0}")
+    @Value("${tephra.cache.remote.port:0}")
     private int port;
-    @Value("${tephra.cache.listener.max-thread:5}")
-    private int maxThread;
+    @Value("${tephra.cache.remote.thread:5}")
+    private int thread;
 
     @Override
     public int getPort() {
@@ -33,7 +33,7 @@ public class ListenerImpl implements ServerListener {
 
     @Override
     public int getMaxThread() {
-        return maxThread;
+        return thread;
     }
 
     @Override

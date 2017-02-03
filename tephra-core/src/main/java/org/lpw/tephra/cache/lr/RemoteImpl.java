@@ -2,18 +2,24 @@ package org.lpw.tephra.cache.lr;
 
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextClosedListener;
+import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.nio.NioHelper;
 import org.lpw.tephra.scheduler.MinuteJob;
+import org.lpw.tephra.storage.StorageListener;
+import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
+import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Serializer;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,7 +27,7 @@ import java.util.concurrent.Executors;
  * @author lpw
  */
 @Component("tephra.cache.lr.remote")
-public class RemoteImpl implements Remote, MinuteJob, ContextClosedListener {
+public class RemoteImpl implements Remote, MinuteJob, StorageListener, ContextRefreshedListener, ContextClosedListener {
     @Inject
     private Validator validator;
     @Inject
@@ -31,13 +37,17 @@ public class RemoteImpl implements Remote, MinuteJob, ContextClosedListener {
     @Inject
     private Serializer serializer;
     @Inject
+    private Logger logger;
+    @Inject
     private NioHelper nioHelper;
-    @Value("${tephra.cache.remote.ips:}")
+    @Value("${tephra.cache.remote.port:0}")
+    private int port;
+    @Value("${tephra.cache.remote.thread:5}")
+    private int thread;
+    @Value("${tephra.cache.remote.ips:/WEB-INF/remote-cache}")
     private String ips;
-    @Value("${tephra.cache.remote.max-thread:5}")
-    private int maxThread;
     private String id;
-    private Set<Channel> channels;
+    private Map<String, Channel> channels;
     private ExecutorService executorService;
 
     @Override
@@ -62,45 +72,75 @@ public class RemoteImpl implements Remote, MinuteJob, ContextClosedListener {
         if (validator.isEmpty(channels))
             return;
 
-        channels.stream().filter((channel) -> channel.getState() == Channel.State.Connected)
+        channels.values().stream().filter((channel) -> channel.getState() == Channel.State.Connected)
                 .forEach((channel) -> executorService.execute(() -> nioHelper.send(channel.getSessionId(), serializer.serialize(object))));
     }
 
     @Override
     public void executeMinuteJob() {
-        if (validator.isEmpty(ips))
+        if (validator.isEmpty(channels))
             return;
 
-        if (channels == null) {
-            int indexOf = ips.lastIndexOf('.') + 1;
-            String prefix = ips.substring(0, indexOf);
-            String suffix = ips.substring(indexOf);
-            int[] range = new int[2];
-            indexOf = suffix.indexOf('-');
-            if (indexOf == -1) {
-                range[0] = converter.toInt(suffix);
-                range[1] = range[0];
-            } else {
-                range[0] = converter.toInt(suffix.substring(0, indexOf));
-                range[1] = converter.toInt(suffix.substring(indexOf + 1));
-            }
-
-            channels = new HashSet<>();
-            for (int i = range[0]; i <= range[1]; i++) {
-                Channel channel = BeanFactory.getBean(Channel.class);
-                channel.setIp(prefix + i);
-                channels.add(channel);
-            }
-        }
-
-        if (channels.isEmpty())
-            return;
-
-        if (executorService == null)
-            executorService = Executors.newFixedThreadPool(maxThread);
-
-        channels.stream().filter((channel) -> channel.getState() == Channel.State.Disconnect)
+        channels.values().stream().filter((channel) -> channel.getState() == Channel.State.Disconnect)
                 .forEach((channel) -> executorService.execute(channel::connect));
+    }
+
+    @Override
+    public String getStorageType() {
+        return Storages.TYPE_DISK;
+    }
+
+    @Override
+    public String[] getScanPathes() {
+        return new String[]{ips};
+    }
+
+    @Override
+    public void onStorageChanged(String path, String absolutePath) {
+        try {
+            Map<String, Channel> map = new HashMap<>();
+            BufferedReader reader = new BufferedReader(new FileReader(absolutePath));
+            for (String line; (line = reader.readLine()) != null; ) {
+                line = line.trim();
+                if (line.length() == 0 || line.indexOf('#') == 0)
+                    continue;
+
+                int indexOf = line.indexOf(':');
+                String ip = indexOf == -1 ? line : line.substring(0, indexOf);
+                int port = indexOf == -1 ? this.port : converter.toInt(line.substring(indexOf + 1));
+                if (port < 1)
+                    continue;
+
+                String key = ip + ":" + port;
+                if (channels.get(key) != null) {
+                    map.put(key, channels.get(key));
+
+                    continue;
+                }
+
+                Channel channel = BeanFactory.getBean(Channel.class);
+                channel.set(ip, port);
+                map.put(key, channel);
+            }
+            reader.close();
+            channels = map;
+
+            if (logger.isInfoEnable())
+                logger.info("设置远程缓存地址[{}]。", converter.toString(channels.keySet()));
+        } catch (Exception e) {
+            logger.warn(e, "解析远程缓存配置[{}:{}]时发生异常！", path, absolutePath);
+        }
+    }
+
+    @Override
+    public int getContextRefreshedSort() {
+        return 5;
+    }
+
+    @Override
+    public void onContextRefreshed() {
+        if (executorService == null)
+            executorService = Executors.newFixedThreadPool(thread);
     }
 
     @Override
