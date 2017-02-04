@@ -7,6 +7,15 @@ package org.lpw.tephra.cache;
  */
 public interface Cache {
     /**
+     * 默认类型。
+     */
+    String TYPE_DEFAULT = null;
+    /**
+     * Redis缓存。
+     */
+    String TYPE_REDIS = "redis";
+
+    /**
      * 保存缓存对象。
      *
      * @param key      引用key；如果为空则不缓存。
