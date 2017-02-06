@@ -13,11 +13,14 @@ import scala.util.Random
 class GeneratorImpl extends Generator {
     override def random(length: Int): String = {
         val string: StringBuilder = new StringBuilder
-        val max: Int = 'z' - '0' + 1
+        val a = 'a' - 10
         while (string.length < length) {
-            val n: Int = Math.abs(Random.nextInt) % max + '0'
-            if (n <= '9' || n >= 'a')
-                string += n.toChar
+            var n: Int = Math.abs(Random.nextInt) % 36
+            if (n < 10)
+                n += '0'
+            else
+                n += a
+            string += n.toChar
         }
 
         string.toString

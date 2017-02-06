@@ -52,7 +52,7 @@ public class GeneratorTest extends CoreTestSupport {
         randomString(set, 'a', 'z');
     }
 
-    protected void randomString(Set<Character> set, char start, char end) {
+    private void randomString(Set<Character> set, char start, char end) {
         for (char ch = start; ch < end; ch++)
             Assert.assertTrue(set.contains(ch));
     }
