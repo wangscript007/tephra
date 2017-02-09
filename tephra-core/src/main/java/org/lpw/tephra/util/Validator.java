@@ -19,9 +19,17 @@ public interface Validator {
      * 验证Email地址是否合法。
      *
      * @param email 要进行验证的Email地址。
-     * @return 如果为合法Email地址则返回true；否则返回false。
+     * @return 如果为合法的Email地址则返回true；否则返回false。
      */
     boolean isEmail(String email);
+
+    /**
+     * 验证手机号是否合法。
+     *
+     * @param mobile 要进行验证的手机号。
+     * @return 如果为合法的手机号则返回true；否则返回false。
+     */
+    boolean isMobile(String mobile);
 
     /**
      * 验证字符串是否符合指定正则表达式所定义的规则。

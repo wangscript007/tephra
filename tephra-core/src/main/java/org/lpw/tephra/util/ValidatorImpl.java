@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 @Component("tephra.util.validator")
 public class ValidatorImpl implements Validator {
     private static final String EMAIL = "^(?:\\w+\\.?-?)*\\w+@(?:\\w+\\.?-?)*\\w+$";
+    private static final String MOBILE = "^1\\d{10}$";
 
     private Map<String, Pattern> patterns = new ConcurrentHashMap<>();
 
@@ -40,6 +41,11 @@ public class ValidatorImpl implements Validator {
     @Override
     public boolean isEmail(String email) {
         return isMatchRegex(EMAIL, email);
+    }
+
+    @Override
+    public boolean isMobile(String mobile) {
+        return isMatchRegex(MOBILE, mobile);
     }
 
     @Override

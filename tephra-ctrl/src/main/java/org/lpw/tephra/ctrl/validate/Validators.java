@@ -34,6 +34,11 @@ public interface Validators {
     String EMAIL = PREFIX + "email";
 
     /**
+     * 手机号格式验证器Bean名称。如果要验证的手机号格式合法则返回true；否则返回false。
+     */
+    String MOBILE = PREFIX + "mobile";
+
+    /**
      * 相同验证器Bean名称。如果要验证的两个参数值相同则返回true；否则返回false。
      */
     String EQUALS = PREFIX + "equals";
