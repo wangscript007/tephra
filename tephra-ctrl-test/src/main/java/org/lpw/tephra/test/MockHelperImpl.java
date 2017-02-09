@@ -96,6 +96,11 @@ public class MockHelperImpl implements MockHelper {
         request.remove();
         response.remove();
         freemarker.remove();
+
+        headerAware.set(getHeader());
+        sessionAware.set(getSession());
+        requestAware.set(getRequest());
+        responseAware.set(getResponse());
     }
 
     @Override
@@ -105,11 +110,7 @@ public class MockHelperImpl implements MockHelper {
 
     @Override
     public void mock(String uri, boolean freemarker) {
-        headerAware.set(getHeader());
-        sessionAware.set(getSession());
         getRequest().setUri(uri);
-        requestAware.set(getRequest());
-        responseAware.set(getResponse());
         if (freemarker)
             this.freemarker.set(new MockFreemarkerImpl());
         dispatcher.execute();

@@ -10,10 +10,11 @@ public class EqualsValidatorImpl extends ValidatorSupport {
     private static final String DEFAULT_FAILURE_MESSAGE_KEY = Validators.PREFIX + "not-equals";
 
     @Override
-    public boolean validate(ValidateWrapper validate, String parameter) {
-        String[] names = converter.toArray(validate.getParameter(), ",");
+    public boolean validate(ValidateWrapper validate, String[] parameters) {
+        if (parameters[0] == null)
+            return parameters[1] == null;
 
-        return request.get(names[0]).equals(request.get(names[1]));
+        return parameters[0].equals(parameters[1]);
     }
 
     @Override
