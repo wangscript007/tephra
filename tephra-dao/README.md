@@ -38,4 +38,6 @@ Dao模块提供对数据持久化的支持，包含SQL、Hibernate、及一个�
 
 [使用MongoDB持久化数据](doc/mongo.md)
 
+[Emoji支持](doc/emoji.md)
+
 [配置参数](src/main/resources/dao.tephra.config)
