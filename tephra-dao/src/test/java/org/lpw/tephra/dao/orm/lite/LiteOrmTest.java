@@ -53,14 +53,14 @@ public class LiteOrmTest extends DaoTestSupport {
 
         TestModel model3 = new TestModel();
         model3.setId(model1.getId());
-        model3.setName("new name");
+        model3.setName("名称");
         model3.setDate(new Date(time - 3 * TimeUnit.Day.getTime()));
         model3.setTime(new Timestamp(time - 3 * TimeUnit.Hour.getTime()));
         liteOrm.save(model3);
         TestModel model4 = liteOrm.findById(TestModel.class, model1.getId());
         Assert.assertEquals(model1.getId(), model4.getId());
         Assert.assertEquals(0, model4.getSort());
-        Assert.assertEquals("new name", model4.getName());
+        Assert.assertEquals("名称", model4.getName());
         Assert.assertEquals(converter.toString(new Date(time - 3 * TimeUnit.Day.getTime())), converter.toString(model4.getDate()));
         Assert.assertEquals(converter.toString(new Timestamp(time - 3 * TimeUnit.Hour.getTime())), converter.toString(model4.getTime()));
 

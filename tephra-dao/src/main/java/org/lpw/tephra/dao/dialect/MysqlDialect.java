@@ -19,7 +19,7 @@ public class MysqlDialect implements Dialect {
 
     @Override
     public String getUrl(String ip, String schema) {
-        return "jdbc:mysql://" + ip + "/" + schema + "?useUnicode=true&autoReconnect=true";
+        return "jdbc:mysql://" + ip + "/" + schema + "?useUnicode=true&characterEncoding=utf8&autoReconnect=true";
     }
 
     @Override
