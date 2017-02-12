@@ -1,6 +1,7 @@
 package org.lpw.tephra.ctrl.socket;
 
 import org.lpw.tephra.nio.ServerListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -8,14 +9,19 @@ import org.springframework.stereotype.Controller;
  */
 @Controller("tephra.ctrl.socket.server-listener")
 public class ServerListenerImpl implements ServerListener {
+    @Value("${tephra.ctrl.socket.port:0}")
+    private int port;
+    @Value("${tephra.ctrl.socket.max-thread:64}")
+    private int maxThread;
+
     @Override
     public int getPort() {
-        return 0;
+        return port;
     }
 
     @Override
     public int getMaxThread() {
-        return 0;
+        return maxThread;
     }
 
     @Override
@@ -24,6 +30,11 @@ public class ServerListenerImpl implements ServerListener {
 
     @Override
     public void receive(String sessionId, byte[] message) {
+        int size = 0;
+        for (int i = 0; i < 4; i++)
+            size = (size << 8) + (message[i] & 0xff);
+        if (message.length != size + 4)
+            return;
     }
 
     @Override
