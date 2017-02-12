@@ -23,7 +23,7 @@ public interface PayGateway {
     /**
      * 发起预支付请求。
      *
-     * @param appId    微信公众号AppID。
+     * @param appId   微信公众号AppID。
      * @param openId  微信用户OpenID。
      * @param orderNo 订单号。
      * @param body    订单内容。

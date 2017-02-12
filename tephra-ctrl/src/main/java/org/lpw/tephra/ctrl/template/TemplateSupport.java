@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl.template;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.util.Message;
 import org.lpw.tephra.util.Validator;

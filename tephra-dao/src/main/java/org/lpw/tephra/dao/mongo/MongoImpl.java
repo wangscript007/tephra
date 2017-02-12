@@ -1,12 +1,13 @@
 package org.lpw.tephra.dao.mongo;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.bson.Document;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.dao.model.Model;
@@ -206,7 +207,7 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
 
         Document document = mc.find(toDocument(where)).first();
 
-        return document == null || document.isEmpty() ? new JSONObject() : JSONObject.fromObject(document);
+        return document == null || document.isEmpty() ? new JSONObject() : JSON.parseObject(document.toJson());
     }
 
     @Override
@@ -232,7 +233,7 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
 
         JSONArray array = new JSONArray();
         for (Document document : mc.find(toDocument(where)))
-            array.add(JSONObject.fromObject(document));
+            array.add(JSON.parseObject(document.toJson()));
 
         return array;
     }
@@ -241,7 +242,6 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
         return modelTables.get(modelClass).getTableName();
     }
 
-    @SuppressWarnings({"unchecked"})
     private Document toDocument(JSONObject object) {
         return object == null ? new Document() : new Document(object);
     }
@@ -285,7 +285,7 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
 
         schemas = new HashMap<>();
         mongos = new HashMap<>();
-        JSONArray array = JSONArray.fromObject(config);
+        JSONArray array = JSON.parseArray(config);
         if (array != null && array.size() > 0)
             for (int i = 0; i < array.size(); i++)
                 create(array.getJSONObject(i));

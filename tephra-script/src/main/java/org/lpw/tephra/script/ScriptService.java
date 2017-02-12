@@ -1,6 +1,6 @@
 package org.lpw.tephra.script;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * @author lpw

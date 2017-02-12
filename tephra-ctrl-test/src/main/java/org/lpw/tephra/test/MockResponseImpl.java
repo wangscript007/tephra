@@ -1,6 +1,7 @@
 package org.lpw.tephra.test;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -51,6 +52,6 @@ public class MockResponseImpl implements MockResponse {
 
     @Override
     public JSONObject asJson() {
-        return JSONObject.fromObject(getOutputStream().toString());
+        return JSON.parseObject(getOutputStream().toString());
     }
 }

@@ -1,6 +1,6 @@
 package org.lpw.tephra.script;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.validate.ValidateWrapper;
 import org.lpw.tephra.ctrl.validate.ValidatorSupport;
 import org.springframework.stereotype.Controller;
@@ -45,7 +45,7 @@ public class ScriptValidatorImpl extends ValidatorSupport {
     private int getCode() {
         JSONObject json = this.json.get();
 
-        return json == null ? 0 : json.getInt("code");
+        return json == null ? 0 : json.getIntValue("code");
     }
 
     @Override

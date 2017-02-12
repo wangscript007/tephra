@@ -1,7 +1,7 @@
 package org.lpw.tephra.dao.jdbc;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.dao.Mode;
 import org.lpw.tephra.util.Converter;

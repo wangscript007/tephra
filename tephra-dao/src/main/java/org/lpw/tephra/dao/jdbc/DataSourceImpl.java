@@ -1,7 +1,8 @@
 package org.lpw.tephra.dao.jdbc;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.dao.dialect.Dialect;
@@ -89,7 +90,7 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
         if (validator.isEmpty(config))
             return;
 
-        JSONArray array = JSONArray.fromObject(config);
+        JSONArray array = JSON.parseArray(config);
         for (int i = 0; i < array.size(); i++)
             create(array.getJSONObject(i));
     }

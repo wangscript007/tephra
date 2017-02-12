@@ -1,6 +1,7 @@
 package org.lpw.tephra.ctrl.template.excel;
 
-import net.sf.json.JSONArray;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelHelper;
@@ -62,13 +63,12 @@ public class ExcelBuilderImpl implements ExcelBuilder {
                 if (object instanceof Model)
                     array.add(modelHelper.toJson((Model) object));
                 else
-                    array.add(JSONArray.fromObject(object));
+                    array.add(JSON.parseObject(object.toString()));
             });
         }
 
         if (!validator.isEmpty(name))
-            response.setHeader("Content-Disposition",
-                    "attachment; filename*=UTF-8''" + converter.encodeUrl(name, null) + ".xls");
+            response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + converter.encodeUrl(name, null) + ".xls");
 
         excel.write(titles, names, array, outputStream);
     }

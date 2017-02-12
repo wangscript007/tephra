@@ -1,7 +1,8 @@
 package org.lpw.tephra.ctrl.http.upload;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.scheduler.MinuteJob;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Io;
@@ -54,12 +55,12 @@ public class JsonConfigsImpl implements JsonConfigs, MinuteJob {
                 continue;
 
             config = new JsonConfigImpl();
-            JSONObject json = JSONObject.fromObject(new String(io.read(file.getPath())));
+            JSONObject json = JSON.parseObject(new String(io.read(file.getPath())));
             JSONObject path = json.getJSONObject("path");
             for (Object contentType : path.keySet())
                 config.addPath(contentType.toString(), path.getString(contentType.toString()));
             JSONArray imageSize = json.getJSONArray("image-size");
-            config.setImageSize(imageSize.getInt(0), imageSize.getInt(1));
+            config.setImageSize(imageSize.getIntValue(0), imageSize.getIntValue(1));
             config.setLastModify(file.lastModified());
             map.put(key, config);
         }

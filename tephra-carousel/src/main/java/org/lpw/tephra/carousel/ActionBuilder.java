@@ -1,8 +1,9 @@
 package org.lpw.tephra.carousel;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Validator;
 
 import java.util.Map;
@@ -13,11 +14,13 @@ import java.util.Map;
  * @author lpw
  */
 public class ActionBuilder {
-    protected Validator validator;
-    protected JSONArray array;
+    private Validator validator;
+    private Json json;
+    private JSONArray array;
 
     public ActionBuilder() {
         validator = BeanFactory.getBean(Validator.class);
+        json = BeanFactory.getBean(Json.class);
         array = new JSONArray();
     }
 
@@ -29,7 +32,7 @@ public class ActionBuilder {
      * @return 当前ActionBuilder实例。
      */
     public ActionBuilder add(String name, String handler) {
-        return add(name, handler);
+        return add(name, handler, null);
     }
 
     /**
@@ -48,7 +51,8 @@ public class ActionBuilder {
         object.put("name", name);
         object.put("handler", handler);
         if (!validator.isEmpty(parameter))
-            object.put("parameter", JSONObject.fromObject(parameter));
+            object.put("parameter", parameter);
+        array.add(object);
 
         return this;
     }

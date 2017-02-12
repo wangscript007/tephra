@@ -1,7 +1,7 @@
 package org.lpw.tephra.dao.model;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
@@ -148,7 +148,7 @@ public class ModelHelperImpl implements ModelHelper {
 
         ModelTable modelTable = modelTables.get(modelClass);
         T model = BeanFactory.getBean(modelClass);
-        if (json.has("id"))
+        if (json.containsKey("id"))
             model.setId(json.getString("id"));
         for (Object key : json.keySet())
             modelTable.set(model, (String) key, json.get(key));

@@ -1,7 +1,7 @@
 package org.lpw.tephra.hadoop;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.dao.model.Model;
 
 import java.util.List;

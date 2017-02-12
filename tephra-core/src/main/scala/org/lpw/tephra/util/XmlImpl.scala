@@ -3,7 +3,7 @@ package org.lpw.tephra.util
 import java.util
 import javax.inject.Inject
 
-import net.sf.json.JSONObject
+import com.alibaba.fastjson.JSONObject
 import org.springframework.stereotype.Component
 
 import scala.xml.{Node, XML}
@@ -14,6 +14,7 @@ import scala.xml.{Node, XML}
 @Component("tephra.util.xml")
 class XmlImpl extends Xml {
     @Inject private val validator: Validator = null
+    @Inject private val json: Json = null
 
     override def toJson(xml: String): JSONObject = {
         if (validator.isEmpty(xml))
@@ -24,16 +25,16 @@ class XmlImpl extends Xml {
         json
     }
 
-    protected def ignoreXml(xml: String): String = {
+    private def ignoreXml(xml: String): String = {
         if (xml.startsWith("<?xml"))
             return xml.substring(xml.indexOf('>') + 1)
         xml
     }
 
-    protected def toJson(json: JSONObject, node: Node): Unit = {
+    private def toJson(json: JSONObject, node: Node): Unit = {
         val name: String = node.label
         val obj: JSONObject = new JSONObject
-        node.attributes.foreach(attribute => obj.accumulate(attribute.key, attribute.get(attribute.key).mkString))
+        node.attributes.foreach(attribute => this.json.add(obj, attribute.key, attribute.get(attribute.key).mkString))
         var hasChild: Boolean = false
         node.child.filter(node => node.label != "#PCDATA").foreach(child => {
             hasChild = true
@@ -41,12 +42,12 @@ class XmlImpl extends Xml {
         })
         if (!hasChild && !validator.isEmpty(node.text)) {
             if (obj.isEmpty)
-                json.accumulate(name, node.text)
+                this.json.add(json, name, node.text)
             else
-                obj.accumulate("value", node.text)
+                this.json.add(obj, "value", node.text)
         }
         if (!obj.isEmpty)
-            json.accumulate(name, obj)
+            this.json.add(json, name, obj)
     }
 
     override def toMap(xml: String, root: Boolean): util.Map[String, String] = {

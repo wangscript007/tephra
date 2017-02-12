@@ -1,6 +1,7 @@
 package org.lpw.tephra.carousel;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
@@ -171,7 +172,7 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
             return false;
 
         try {
-            return JSONObject.fromObject(string).getInt("code") == 0;
+            return JSON.parseObject(string).getIntValue("code") == 0;
         } catch (Throwable e) {
             logger.warn(e, "解析JSON数据时发生异常！", string);
 

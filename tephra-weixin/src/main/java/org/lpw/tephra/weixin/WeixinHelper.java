@@ -1,6 +1,6 @@
 package org.lpw.tephra.weixin;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.weixin.gateway.PayGateway;
 
 import java.sql.Timestamp;

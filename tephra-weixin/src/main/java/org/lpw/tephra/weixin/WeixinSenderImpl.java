@@ -1,7 +1,8 @@
 package org.lpw.tephra.weixin;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
@@ -101,11 +102,11 @@ public class WeixinSenderImpl implements WeixinSender {
         json.put("touser", receiver);
         json.put("msgtype", type);
         json.put(type, object);
-        JSONObject result = JSONObject.fromObject(http.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + weixinHelper.getToken(mpId), null, json.toString()));
+        JSONObject result = JSON.parseObject(http.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + weixinHelper.getToken(mpId), null, json.toString()));
 
         if (logger.isDebugEnable())
             logger.debug("发送[{}]消息[{}]到微信服务器[{}]。", type, json, result);
 
-        return result.getInt("errcode") == 0;
+        return result.getIntValue("errcode") == 0;
     }
 }

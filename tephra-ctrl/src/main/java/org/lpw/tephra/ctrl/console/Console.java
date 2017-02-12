@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl.console;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * 控制台。

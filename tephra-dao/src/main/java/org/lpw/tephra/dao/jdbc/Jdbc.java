@@ -1,6 +1,6 @@
 package org.lpw.tephra.dao.jdbc;
 
-import net.sf.json.JSONArray;
+import com.alibaba.fastjson.JSONArray;
 import org.lpw.tephra.atomic.Atomicable;
 
 /**

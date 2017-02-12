@@ -1,6 +1,6 @@
 package org.lpw.tephra.dao.orm;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.dao.model.Model;
 
 import java.util.List;

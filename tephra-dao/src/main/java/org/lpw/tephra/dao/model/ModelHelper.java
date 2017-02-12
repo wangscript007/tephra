@@ -1,7 +1,7 @@
 package org.lpw.tephra.dao.model;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import java.util.Collection;
 import java.util.Set;

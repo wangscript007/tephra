@@ -1,9 +1,9 @@
 package org.lpw.tephra.dao.mongo;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.bson.Document;
 import org.lpw.tephra.dao.model.Model;
 

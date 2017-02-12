@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl.http.context;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSON;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.ctrl.context.RequestAdapter;
 import org.lpw.tephra.util.Converter;
@@ -48,8 +48,13 @@ public class RequestAdapterImpl implements RequestAdapter {
                 getFromInputStream();
             if (content.length() == 0)
                 map = new HashMap<>();
-            else
-                map = content.charAt(0) == '{' ? JSONObject.fromObject(content) : BeanFactory.getBean(Converter.class).toParameterMap(getFromInputStream());
+            else {
+                if (content.charAt(0) == '{') {
+                    map = new HashMap<>();
+                    JSON.parseObject(content).forEach((key, value) -> map.put(key, value.toString()));
+                } else
+                    map = BeanFactory.getBean(Converter.class).toParameterMap(getFromInputStream());
+            }
             request.getParameterMap().forEach((key, value) -> map.put(key, value[0]));
         }
 

@@ -1,6 +1,6 @@
 package org.lpw.tephra.dao;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.dao.jdbc.DataSource;
 

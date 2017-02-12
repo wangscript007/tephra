@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl.template.freemarker;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
@@ -45,7 +45,7 @@ public class TemplateImpl extends TemplateSupport implements Template {
     }
 
     private boolean failure(JSONObject object, OutputStream outputStream) throws IOException {
-        if (object.has("code") && object.getInt("code") > 0) {
+        if (object.containsKey("code") && object.getIntValue("code") > 0) {
             outputStream.write(object.toString().getBytes());
 
             return true;

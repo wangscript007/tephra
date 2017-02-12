@@ -1,6 +1,6 @@
 package org.lpw.tephra.weixin.gateway;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.ctrl.context.Header;
 import org.lpw.tephra.util.Converter;

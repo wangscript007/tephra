@@ -1,6 +1,7 @@
 package org.lpw.tephra.ctrl.console;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.ctrl.context.Header;
@@ -130,9 +131,7 @@ public class ConsoleImpl implements Console, ContextRefreshedListener {
 
             if (type.equals("json")) {
                 classes.add(JSONObject.class);
-                args.add(JSONObject.fromObject(value));
-
-                continue;
+                args.add(JSON.parseObject(value));
             }
         }
     }
@@ -157,9 +156,9 @@ public class ConsoleImpl implements Console, ContextRefreshedListener {
 
     private JSONObject json(int code, Object result) {
         JSONObject json = new JSONObject();
-        json.accumulate("code", code);
+        json.put("code", code);
         if (result != null)
-            json.accumulate("result", result);
+            json.put("result", result);
 
         return json;
     }

@@ -1,6 +1,6 @@
 package org.lpw.tephra.dao;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * DAO连接工厂。

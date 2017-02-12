@@ -1,7 +1,8 @@
 package org.lpw.tephra.weixin;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.crypto.Digest;
@@ -76,11 +77,11 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
         info.put("scene", scene);
         object.put("action_info", info);
 
-        JSONObject result = JSONObject.fromObject(http.post("https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + getToken(appId), null, object.toString()));
+        JSONObject result = JSON.parseObject(http.post("https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + getToken(appId), null, object.toString()));
         if (logger.isDebugEnable())
             logger.debug("创建微信二维码[{}]。", result);
 
-        return result.has("ticket") ? ("https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + converter.encodeUrl(result.getString("ticket"), null)) : null;
+        return result.containsKey("ticket") ? ("https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + converter.encodeUrl(result.getString("ticket"), null)) : null;
     }
 
     @Override
@@ -99,7 +100,7 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
         map.put("openid", openId);
         map.put("lang", "zh_CN");
 
-        return JSONObject.fromObject(http.get("https://api.weixin.qq.com/sns/userinfo", null, map));
+        return JSON.parseObject(http.get("https://api.weixin.qq.com/sns/userinfo", null, map));
     }
 
     @Override
@@ -125,8 +126,8 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
 
         Map<String, File> map = new HashMap<>();
         map.put("media", file);
-        JSONObject result = JSONObject.fromObject(http.upload("https://api.weixin.qq.com/cgi-bin/media/upload?access_token=" + getToken(appId) + "&type=" + type, null, null, map));
-        if (result.has("errcode")) {
+        JSONObject result = JSON.parseObject(http.upload("https://api.weixin.qq.com/cgi-bin/media/upload?access_token=" + getToken(appId) + "&type=" + type, null, null, map));
+        if (result.containsKey("errcode")) {
             logger.warn(null, "上传媒体文件[{}]到微信临时素材区失败[{}]！", uri, result);
 
             return null;
@@ -217,16 +218,16 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
             return;
 
         configs = new HashMap<>();
-        JSONArray array = JSONArray.fromObject(config);
+        JSONArray array = JSON.parseArray(config);
         for (int i = 0; i < array.size(); i++) {
             JSONObject object = array.getJSONObject(i);
             WeixinConfig config = new WeixinConfig();
             config.setAppId(object.getString("appId"));
             config.setSecret(object.getString("secret"));
             config.setToken(object.getString("token"));
-            if (object.has("mchId"))
+            if (object.containsKey("mchId"))
                 config.setMchId(object.getString("mchId"));
-            if (object.has("mchKey"))
+            if (object.containsKey("mchKey"))
                 config.setMchKey(object.getString("mchKey"));
             configs.put(config.getAppId(), config);
         }
@@ -243,16 +244,16 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
             return;
 
         configs.values().forEach(config -> {
-            JSONObject object = JSONObject.fromObject(http.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + config.getAppId() + "&secret=" + config.getSecret(), null, ""));
-            if (object != null && object.has("access_token")) {
+            JSONObject object = JSON.parseObject(http.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + config.getAppId() + "&secret=" + config.getSecret(), null, ""));
+            if (object != null && object.containsKey("access_token")) {
                 config.setCurrentToken(object.getString("access_token"));
                 if (logger.isInfoEnable())
                     logger.info("获取微信公众号Token[{}:{}]。", config.getAppId(), config.getCurrentToken());
             } else
                 logger.warn(null, "获取微信公众号Token[{}]失败！", object);
 
-            object = JSONObject.fromObject(http.get("https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=" + config.getCurrentToken(), null, ""));
-            if (object != null && object.has("ticket")) {
+            object = JSON.parseObject(http.get("https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=" + config.getCurrentToken(), null, ""));
+            if (object != null && object.containsKey("ticket")) {
                 config.setJsapiTicket(object.getString("ticket"));
                 if (logger.isInfoEnable())
                     logger.info("获取微信公众号JSAPI Ticket[{}:{}]。", config.getAppId(), config.getCurrentToken());

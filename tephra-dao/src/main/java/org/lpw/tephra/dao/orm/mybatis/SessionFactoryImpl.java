@@ -1,7 +1,8 @@
 package org.lpw.tephra.dao.orm.mybatis;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -96,7 +97,7 @@ public class SessionFactoryImpl implements SessionFactory, ContextRefreshedListe
         if (validator.isEmpty(mappers))
             return;
 
-        JSONArray array = JSONArray.fromObject(mappers);
+        JSONArray array = JSON.parseArray(mappers);
         for (int i = 0; i < array.size(); i++)
             create(array.getJSONObject(i));
     }

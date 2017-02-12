@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl.status;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * 服务状态。

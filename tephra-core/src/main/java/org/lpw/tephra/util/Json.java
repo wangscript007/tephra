@@ -1,11 +1,20 @@
 package org.lpw.tephra.util;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * @author lpw
  */
 public interface Json {
+    /**
+     * 添加数据。如果key已存在则自动添加为数组。
+     *
+     * @param json   JSON对象。
+     * @param key    key值。
+     * @param object 数据。
+     */
+    void add(JSONObject json, String key, Object object);
+
     /**
      * 添加为数组。
      *
@@ -31,14 +40,4 @@ public interface Json {
      * @return JSON对象；如果转化失败则返回null。
      */
     JSONObject fromXml(String xml);
-
-    /**
-     * 获取JSON属性值。
-     *
-     * @param json JSON对象。
-     * @param key  属性名称，点号表示上下级关系。
-     * @param <T>  属性值类型。
-     * @return 属性值。
-     */
-    <T> T get(JSONObject json, String key);
 }

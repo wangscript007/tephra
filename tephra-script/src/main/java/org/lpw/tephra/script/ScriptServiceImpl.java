@@ -1,6 +1,7 @@
 package org.lpw.tephra.script;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -22,6 +23,6 @@ public class ScriptServiceImpl implements ScriptService {
         arguments.set("parameter", parameter);
         arguments.set("names", names);
 
-        return JSONObject.fromObject(engine.execute(METHOD));
+        return JSON.parseObject(engine.execute(METHOD).toString());
     }
 }

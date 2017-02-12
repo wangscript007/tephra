@@ -1,8 +1,11 @@
 package org.lpw.tephra.weixin.gateway;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
+import org.lpw.tephra.util.Json;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -10,6 +13,9 @@ import java.util.Map;
  */
 @Service("tephra.weixin.gateway.jsapi")
 public class JsapiPayGatewayImpl extends PayGatewaySupport {
+    @Inject
+    private Json json;
+
     @Override
     public String getType() {
         return JSAPI;
@@ -21,7 +27,6 @@ public class JsapiPayGatewayImpl extends PayGatewaySupport {
         map.put("openid", openId);
     }
 
-    @SuppressWarnings({"unchecked"})
     @Override
     protected JSONObject prepay(String mpId, String timestamp, String nonce, String prepay) {
         JSONObject json = new JSONObject();
@@ -30,7 +35,9 @@ public class JsapiPayGatewayImpl extends PayGatewaySupport {
         json.put("nonceStr", nonce);
         json.put("package", "prepay_id=" + prepay);
         json.put("signType", "MD5");
-        json.put("paySign", sign(json, weixinHelper.getConfig(mpId).getMchKey()));
+        Map<String, String> map = new HashMap<>();
+        json.forEach((key, value) -> map.put(key, value.toString()));
+        json.put("paySign", sign(map, weixinHelper.getConfig(mpId).getMchKey()));
 
         return json;
     }

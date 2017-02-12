@@ -1,6 +1,6 @@
 package org.lpw.tephra.test;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.context.ResponseAdapter;
 
 /**

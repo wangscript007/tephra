@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl.status;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Logger;

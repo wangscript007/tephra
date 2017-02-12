@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl.template.json;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
@@ -59,7 +59,7 @@ public class TemplateImpl extends TemplateSupport implements Template {
     }
 
     private Object pack(Object object) {
-        if (object instanceof JSONObject && ((JSONObject) object).has("code"))
+        if (object instanceof JSONObject && ((JSONObject) object).containsKey("code"))
             return object;
 
         JSONObject json = new JSONObject();

@@ -1,7 +1,8 @@
 package org.lpw.tephra.dao.mongo;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.lpw.tephra.test.DaoTestSupport;
@@ -27,13 +28,14 @@ public class MongoTest extends DaoTestSupport {
         JSONObject object1 = new JSONObject();
         object1.put("id", generator.uuid());
         object1.put("name", "hello");
-        Assert.assertTrue(mongo.find(null, "t_mongo", JSONObject.fromObject("{\"id\":\"" + object1.getString("id") + "\"}")).isEmpty());
+        Assert.assertTrue(mongo.find(null, "t_mongo", JSON.parseObject("{\"id\":\"" + object1.getString("id") + "\"}")).isEmpty());
         mongo.insert(null, "t_mongo", object1);
-        JSONObject object2 = mongo.findOne(null, "t_mongo", JSONObject.fromObject("{\"id\":\"" + object1.getString("id") + "\"}"));
+        JSONObject object2 = mongo.findOne(null, "t_mongo", JSON.parseObject("{\"id\":\"" + object1.getString("id") + "\"}"));
         Assert.assertEquals(object1.getString("name"), object2.getString("name"));
 
         JSONArray array1 = new JSONArray();
         array1.add(object1);
+        object2.remove("_id");
         object2.put("id", generator.uuid());
         object2.put("name", "name 2");
         array1.add(object2);
@@ -65,16 +67,16 @@ public class MongoTest extends DaoTestSupport {
         object2.put("id", generator.uuid());
         object2.put("name", "name");
         mongo.insert(null, "t_mongo", object2);
-        mongo.update(null, "t_mongo", JSONObject.fromObject("{\"name\":\"new name\"}"), JSONObject.fromObject("{\"id\":\"" + object1.getString("id") + "\"}"));
-        JSONObject object3 = mongo.findOne(null, "t_mongo", JSONObject.fromObject("{\"id\":\"" + object1.getString("id") + "\"}"));
+        mongo.update(null, "t_mongo", JSON.parseObject("{\"name\":\"new name\"}"), JSON.parseObject("{\"id\":\"" + object1.getString("id") + "\"}"));
+        JSONObject object3 = mongo.findOne(null, "t_mongo", JSON.parseObject("{\"id\":\"" + object1.getString("id") + "\"}"));
         Assert.assertEquals("new name", object3.getString("name"));
-        JSONObject object4 = mongo.findOne(null, "t_mongo", JSONObject.fromObject("{\"id\":\"" + object2.getString("id") + "\"}"));
+        JSONObject object4 = mongo.findOne(null, "t_mongo", JSON.parseObject("{\"id\":\"" + object2.getString("id") + "\"}"));
         Assert.assertEquals(object2.getString("name"), object4.getString("name"));
 
-        mongo.update(null, "t_mongo", JSONObject.fromObject("{\"name\":\"hello mongo\"}"), null);
-        JSONObject object5 = mongo.findOne(null, "t_mongo", JSONObject.fromObject("{\"id\":\"" + object1.getString("id") + "\"}"));
+        mongo.update(null, "t_mongo", JSON.parseObject("{\"name\":\"hello mongo\"}"), null);
+        JSONObject object5 = mongo.findOne(null, "t_mongo", JSON.parseObject("{\"id\":\"" + object1.getString("id") + "\"}"));
         Assert.assertEquals("hello mongo", object5.getString("name"));
-        JSONObject object6 = mongo.findOne(null, "t_mongo", JSONObject.fromObject("{\"id\":\"" + object2.getString("id") + "\"}"));
+        JSONObject object6 = mongo.findOne(null, "t_mongo", JSON.parseObject("{\"id\":\"" + object2.getString("id") + "\"}"));
         Assert.assertEquals("hello mongo", object6.getString("name"));
     }
 
@@ -92,9 +94,9 @@ public class MongoTest extends DaoTestSupport {
         object2.put("id", generator.uuid());
         object2.put("name", "name");
         mongo.insert(null, "t_mongo", object2);
-        mongo.delete(null, "t_mongo", JSONObject.fromObject("{\"id\":\"" + object1.getString("id") + "\"}"));
-        Assert.assertTrue(mongo.find(null, "t_mongo", JSONObject.fromObject("{\"id\":\"" + object1.getString("id") + "\"}")).isEmpty());
-        JSONObject object3 = mongo.findOne(null, "t_mongo", JSONObject.fromObject("{\"id\":\"" + object2.getString("id") + "\"}"));
+        mongo.delete(null, "t_mongo", JSON.parseObject("{\"id\":\"" + object1.getString("id") + "\"}"));
+        Assert.assertTrue(mongo.find(null, "t_mongo", JSON.parseObject("{\"id\":\"" + object1.getString("id") + "\"}")).isEmpty());
+        JSONObject object3 = mongo.findOne(null, "t_mongo", JSON.parseObject("{\"id\":\"" + object2.getString("id") + "\"}"));
         Assert.assertEquals(object2.getString("name"), object3.getString("name"));
         mongo.insert(null, "t_mongo", object1);
         mongo.delete(null, "t_mongo", null);
@@ -102,6 +104,6 @@ public class MongoTest extends DaoTestSupport {
     }
 
     private void create() {
-        mongo.create(JSONObject.fromObject("{key:\"\",username:\"root\",password:\"root\",ips:[\"127.0.0.1:27017\"],schema:\"d_tephra_test\"}"));
+        mongo.create(JSON.parseObject("{key:\"\",username:\"root\",password:\"root\",ips:[\"127.0.0.1:27017\"],schema:\"d_tephra_test\"}"));
     }
 }
