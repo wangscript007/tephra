@@ -1,5 +1,6 @@
 package org.lpw.tephra.ctrl.context;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -32,8 +33,10 @@ public interface ResponseAdapter {
 
     /**
      * 发送数据。
+     *
+     * @throws IOException 未处理IO读写异常。
      */
-    void send();
+    void send() throws IOException;
 
     /**
      * 跳转到指定URL地址。

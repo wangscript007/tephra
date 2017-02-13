@@ -1,6 +1,7 @@
 package org.lpw.tephra.ctrl.context;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -29,7 +30,7 @@ public class LocalResponseAdapter implements ResponseAdapter {
     }
 
     @Override
-    public void send() {
+    public void send() throws IOException {
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -42,7 +43,7 @@ public class MockResponseImpl implements MockResponse {
     }
 
     @Override
-    public void send() {
+    public void send() throws IOException {
     }
 
     @Override

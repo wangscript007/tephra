@@ -38,7 +38,7 @@ public class ResponseAdapterImpl implements ResponseAdapter {
     }
 
     @Override
-    public void send() {
+    public void send() throws IOException {
     }
 
     @Override
