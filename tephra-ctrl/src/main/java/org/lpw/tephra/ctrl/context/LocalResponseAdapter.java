@@ -29,6 +29,10 @@ public class LocalResponseAdapter implements ResponseAdapter {
     }
 
     @Override
+    public void send() {
+    }
+
+    @Override
     public void redirectTo(String url) {
     }
 

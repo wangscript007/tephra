@@ -66,6 +66,7 @@ public class ResponseImpl implements Response, ResponseAware {
             adapter.get().setContentType(validator.isEmpty(contentType.get()) ? template.getContentType() : contentType.get());
             if (!coder.isPresent()) {
                 template.process(view, object, getOutputStream());
+                adapter.get().send();
 
                 return;
             }
@@ -74,6 +75,7 @@ public class ResponseImpl implements Response, ResponseAware {
             template.process(view, object, baos);
             baos.close();
             getOutputStream().write(coder.get().encode(baos.toByteArray()));
+            adapter.get().send();
         } catch (Exception e) {
             logger.warn(e, "返回输出结果时发生异常！");
         }

@@ -42,6 +42,10 @@ public class MockResponseImpl implements MockResponse {
     }
 
     @Override
+    public void send() {
+    }
+
+    @Override
     public void redirectTo(String url) {
         this.url = url;
     }

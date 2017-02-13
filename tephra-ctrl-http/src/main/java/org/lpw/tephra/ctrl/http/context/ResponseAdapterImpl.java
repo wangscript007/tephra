@@ -38,6 +38,10 @@ public class ResponseAdapterImpl implements ResponseAdapter {
     }
 
     @Override
+    public void send() {
+    }
+
+    @Override
     public void redirectTo(String url) {
         try {
             response.sendRedirect(url.indexOf('/') == 0 ? (servletContextPath + url) : url);

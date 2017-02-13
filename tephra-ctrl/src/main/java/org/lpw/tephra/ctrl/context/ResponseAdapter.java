@@ -31,6 +31,11 @@ public interface ResponseAdapter {
     OutputStream getOutputStream();
 
     /**
+     * 发送数据。
+     */
+    void send();
+
+    /**
      * 跳转到指定URL地址。
      *
      * @param url 目标URL地址。
