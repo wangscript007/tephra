@@ -91,7 +91,7 @@ public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
                 modelTable.addGetMethod(propertyName, method);
                 Column column = method.getAnnotation(Column.class);
                 if (column != null)
-                    modelTable.addColumn(column.name(), propertyName);
+                    modelTable.addColumn(propertyName, column);
 
                 continue;
             }

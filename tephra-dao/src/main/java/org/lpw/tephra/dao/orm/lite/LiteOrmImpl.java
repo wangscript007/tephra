@@ -188,6 +188,9 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
             columnCount++;
         }
         for (String columnName : modelTable.getColumnNames()) {
+            if(modelTable.isNative(columnName))
+                continue;
+
             if (columnCount > 0)
                 insertSql.append(',');
             insertSql.append(columnName);
@@ -220,6 +223,9 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
         StringBuilder updateSql = new StringBuilder().append("UPDATE ").append(modelTable.getTableName()).append(" SET ");
         List<Object> args = new ArrayList<>();
         for (String columnName : modelTable.getColumnNames()) {
+            if(modelTable.isNative(columnName))
+                continue;
+
             if (!args.isEmpty())
                 updateSql.append(',');
             updateSql.append(columnName).append("=?");

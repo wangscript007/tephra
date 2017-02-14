@@ -1,5 +1,6 @@
 package org.lpw.tephra.dao.model;
 
+import javax.persistence.Column;
 import java.lang.reflect.Method;
 import java.util.Set;
 
@@ -98,10 +99,10 @@ public interface ModelTable {
     /**
      * 添加字段映射关系。
      *
-     * @param columnName   字段名。
      * @param propertyName 属性名。
+     * @param column       字段定义。
      */
-    void addColumn(String columnName, String propertyName);
+    void addColumn(String propertyName, Column column);
 
     /**
      * 获取属性值。
@@ -151,6 +152,14 @@ public interface ModelTable {
      * @return Jsonable配置对象；如果不存在则返回null。
      */
     Jsonable getJsonable(String name);
+
+    /**
+     * 是否为Native注解的属性。
+     *
+     * @param name 名称。
+     * @return 如果是则返回true；否则返回false。
+     */
+    boolean isNative(String name);
 
     /**
      * 获取属性类型。

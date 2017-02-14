@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
+import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -17,6 +18,7 @@ import java.lang.reflect.Method;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,13 +40,13 @@ public class ModelTableImpl implements ModelTable {
     private String idColumnName;
     private boolean uuid;
     private Map<String, Method> getMethods = new HashMap<>();
-    private Map<String, Method> jsonableMethods = new HashMap<>();
     private Map<String, Jsonable> jsonables = new HashMap<>();
     private Map<String, ManyToOne> manyToOnes = new HashMap<>();
     private Map<String, Method> setMethods = new HashMap<>();
     private Map<String, Class<?>> types = new HashMap<>();
     private Map<String, String> lowerCases = new HashMap<>();
     private Map<String, String> columns = new HashMap<>();
+    private Set<String> natives=new HashSet<>();
 
     @Override
     public Class<? extends Model> getModelClass() {
@@ -100,10 +102,8 @@ public class ModelTableImpl implements ModelTable {
     public void addGetMethod(String name, Method method) {
         getMethods.put(name, method);
         Jsonable jsonable = method.getAnnotation(Jsonable.class);
-        if (jsonable != null) {
-            jsonableMethods.put(name, method);
+        if (jsonable != null)
             jsonables.put(name, jsonable);
-        }
         ManyToOne manyToOne = method.getAnnotation(ManyToOne.class);
         if (manyToOne != null)
             manyToOnes.put(name, manyToOne);
@@ -127,13 +127,19 @@ public class ModelTableImpl implements ModelTable {
     }
 
     @Override
-    public void addColumn(String columnName, String propertyName) {
-        columns.put(columnName.toLowerCase(), propertyName);
+    public void addColumn(String propertyName, Column column) {
+        columns.put(column.name().toLowerCase(), propertyName);
         addLowerCase(propertyName);
+        if(!column.updatable())
+            natives.add(column.name());
     }
 
     private void addLowerCase(String name) {
-        lowerCases.put(name.substring(0, 1).toLowerCase() + name.substring(1), name);
+        lowerCases.put(getLowerCase(name), name);
+    }
+
+    private String getLowerCase(String name){
+        return name.substring(0, 1).toLowerCase() + name.substring(1);
     }
 
     @Override
@@ -325,6 +331,11 @@ public class ModelTableImpl implements ModelTable {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean isNative(String name) {
+        return natives.contains(name);
     }
 
     @Override
