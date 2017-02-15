@@ -8,6 +8,7 @@ import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
@@ -19,17 +20,14 @@ import java.util.Set;
  */
 @Repository("tephra.model.helper")
 public class ModelHelperImpl implements ModelHelper {
+    @Inject
     private Validator validator;
+    @Inject
     private Converter converter;
+    @Inject
     private Logger logger;
+    @Inject
     private ModelTables modelTables;
-
-    public ModelHelperImpl(Validator validator, Converter converter, Logger logger, ModelTables modelTables) {
-        this.validator = validator;
-        this.converter = converter;
-        this.logger = logger;
-        this.modelTables = modelTables;
-    }
 
     @Override
     public Object get(Model model, String name) {
