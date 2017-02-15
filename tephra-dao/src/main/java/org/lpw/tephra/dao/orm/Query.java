@@ -53,7 +53,7 @@ public interface Query {
     /**
      * 是否加锁。
      *
-     * @return 如果已加锁则返回true；否则返回false。
+     * @return 如果已加锁则返回true；否则返回false（默认）。
      */
     boolean isLocked();
 
