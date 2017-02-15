@@ -11,7 +11,7 @@
                 <RegexFilter regex=".*org.lpw.tephra.scheduler.SecondsSchedulerImpl.*" onMatch="DENY" onMismatch="ACCEPT"/>
             </Filters>
         </Console>
-        <RollingFile name="file.debug" fileName="logs/tephra.debug.log" filePattern="logs/tephra.debug.%i.log.gz">
+        <RollingFile name="file.debug" fileName="logs/tephra.debug.log" filePattern="logs/tephra.debug-%i.log.gz">
             <PatternLayout pattern="${pattern}"/>
             <SizeBasedTriggeringPolicy size="${size}"/>
             <Filters>
@@ -19,7 +19,7 @@
                 <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </RollingFile>
-        <RollingFile name="file.info" fileName="logs/tephra.info.log" filePattern="logs/tephra.info.%i.log.gz">
+        <RollingFile name="file.info" fileName="logs/tephra.info.log" filePattern="logs/tephra.info-%i.log.gz">
             <PatternLayout pattern="${pattern}"/>
             <SizeBasedTriggeringPolicy size="${size}"/>
             <Filters>
@@ -27,7 +27,7 @@
                 <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </RollingFile>
-        <RollingFile name="file.warn" fileName="logs/tephra.warn.log" filePattern="logs/tephra.warn.%i.log.gz">
+        <RollingFile name="file.warn" fileName="logs/tephra.warn.log" filePattern="logs/tephra.warn-%i.log.gz">
             <PatternLayout pattern="${pattern}"/>
             <SizeBasedTriggeringPolicy size="${size}"/>
             <Filters>
@@ -35,7 +35,7 @@
                 <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </RollingFile>
-        <RollingFile name="file.error" fileName="logs/tephra.error.log" filePattern="logs/tephra.error.%i.log.gz">
+        <RollingFile name="file.error" fileName="logs/tephra.error.log" filePattern="logs/tephra.error-%i.log.gz">
             <PatternLayout pattern="${pattern}"/>
             <SizeBasedTriggeringPolicy size="${size}"/>
             <Filters>

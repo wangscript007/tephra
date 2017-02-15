@@ -61,6 +61,9 @@ public interface Dialect {
      * @return LIKE参数值。
      */
     default String getLike(String like, boolean prefix, boolean suffix) {
+        if (like == null)
+            return prefix || suffix ? "%" : "";
+
         StringBuilder sb = new StringBuilder();
         if (prefix)
             sb.append('%');
