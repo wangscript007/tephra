@@ -9,6 +9,7 @@ import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,25 +24,21 @@ public class SignImpl implements Sign, StorageListener {
     private static final String SIGN = "sign";
     private static final String SIGN_TIME = "sign-time";
 
-    private final Converter converter;
-    private final Validator validator;
-    private final Io io;
-    private final Logger logger;
-    private final Digest digest;
+    @Inject
+    private Converter converter;
+    @Inject
+    private Validator validator;
+    @Inject
+    private Io io;
+    @Inject
+    private Logger logger;
+    @Inject
+    private Digest digest;
     @Value("${tephra.crypto.sign.path:/WEB-INF/sign}")
     private String path;
     @Value("${tephra.crypto.sign.time:10000}")
     private long time;
-    private final Map<String, String> map;
-
-    public SignImpl(Converter converter, Validator validator, Io io, Logger logger, Digest digest) {
-        this.converter = converter;
-        this.validator = validator;
-        this.io = io;
-        this.logger = logger;
-        this.digest = digest;
-        map = new HashMap<>();
-    }
+    private Map<String, String> map = new HashMap<>();
 
     @Override
     public void put(Map<String, String> map, String name) {
