@@ -37,4 +37,11 @@ public interface NioHelper {
      * @param message   信息。
      */
     void send(String sessionId, byte[] message);
+
+    /**
+     * 关闭连接。
+     *
+     * @param sessionId Session ID值。
+     */
+    void close(String sessionId);
 }

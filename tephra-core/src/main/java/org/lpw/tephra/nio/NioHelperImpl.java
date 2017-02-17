@@ -59,6 +59,15 @@ public class NioHelperImpl implements NioHelper, ContextClosedListener, MinuteJo
     }
 
     @Override
+    public void close(String sessionId) {
+        ChannelHandlerContext context = map.remove(sessionId);
+        if (context == null)
+            return;
+
+        context.close();
+    }
+
+    @Override
     public int getContextClosedSort() {
         return 6;
     }
