@@ -25,51 +25,56 @@ public class WeixinSenderImpl implements WeixinSender {
     private WeixinHelper weixinHelper;
 
     @Override
-    public boolean sendText(String mpId, String receiver, String text) {
+    public boolean sendText(String appId, String receiver, String text) {
         if (validator.isEmpty(receiver) || validator.isEmpty(text))
             return false;
 
         JSONObject object = new JSONObject();
         object.put("content", text);
 
-        return send(mpId, receiver, "text", object);
+        return send(appId, receiver, "text", object);
     }
 
     @Override
-    public boolean sendImage(String mpId, String receiver, String uri) {
-        return send(mpId, receiver, "image", uri);
+    public boolean sendLink(String appId, String receiver, String uri, String text) {
+        return sendText(appId, receiver, "<a href='" + weixinHelper.getRedirectUrl(appId, uri) + "'>" + text + "</a>");
     }
 
     @Override
-    public boolean sendVoice(String mpId, String receiver, String uri) {
-        return send(mpId, receiver, "voice", uri);
+    public boolean sendImage(String appId, String receiver, String uri) {
+        return send(appId, receiver, "image", uri);
     }
 
-    private boolean send(String mpId, String receiver, String type, String uri) {
+    @Override
+    public boolean sendVoice(String appId, String receiver, String uri) {
+        return send(appId, receiver, "voice", uri);
+    }
+
+    private boolean send(String appId, String receiver, String type, String uri) {
         if (validator.isEmpty(receiver) || validator.isEmpty(uri))
             return false;
 
 
-        String mediaId = weixinHelper.upload(mpId, type, uri);
+        String mediaId = weixinHelper.upload(appId, type, uri);
         if (validator.isEmpty(mediaId))
             return false;
 
         JSONObject object = new JSONObject();
         object.put("media_id", mediaId);
 
-        return send(mpId, receiver, type, object);
+        return send(appId, receiver, type, object);
     }
 
     @Override
-    public boolean sendVideo(String mpId, String receiver, String uri, String thumbnail, String title, String description) {
+    public boolean sendVideo(String appId, String receiver, String uri, String thumbnail, String title, String description) {
         if (validator.isEmpty(receiver) || validator.isEmpty(uri) || validator.isEmpty(thumbnail))
             return false;
 
-        String thumbnailMediaId = weixinHelper.upload(mpId, "thumb", thumbnail);
+        String thumbnailMediaId = weixinHelper.upload(appId, "thumb", thumbnail);
         if (validator.isEmpty(thumbnailMediaId))
             return false;
 
-        String videoMediaId = weixinHelper.upload(mpId, "video", uri);
+        String videoMediaId = weixinHelper.upload(appId, "video", uri);
         if (validator.isEmpty(videoMediaId))
             return false;
 
@@ -79,11 +84,11 @@ public class WeixinSenderImpl implements WeixinSender {
         object.put("title", title);
         object.put("description", description);
 
-        return send(mpId, receiver, "video", object);
+        return send(appId, receiver, "video", object);
     }
 
     @Override
-    public boolean sendNews(String mpId, String receiver, NewsBuilder builder) {
+    public boolean sendNews(String appId, String receiver, NewsBuilder builder) {
         if (validator.isEmpty(receiver))
             return false;
 
@@ -94,15 +99,15 @@ public class WeixinSenderImpl implements WeixinSender {
         JSONObject object = new JSONObject();
         object.put("articles", array);
 
-        return send(mpId, receiver, "news", object);
+        return send(appId, receiver, "news", object);
     }
 
-    private boolean send(String mpId, String receiver, String type, JSONObject object) {
+    private boolean send(String appId, String receiver, String type, JSONObject object) {
         JSONObject json = new JSONObject();
         json.put("touser", receiver);
         json.put("msgtype", type);
         json.put(type, object);
-        JSONObject result = JSON.parseObject(http.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + weixinHelper.getToken(mpId), null, json.toString()));
+        JSONObject result = JSON.parseObject(http.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + weixinHelper.getToken(appId), null, json.toString()));
 
         if (logger.isDebugEnable())
             logger.debug("发送[{}]消息[{}]到微信服务器[{}]。", type, json, result);

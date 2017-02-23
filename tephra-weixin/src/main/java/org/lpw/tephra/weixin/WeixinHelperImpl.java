@@ -55,6 +55,7 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
     @Value("${tephra.weixin.mp.config:}")
     private String config;
     private Map<String, WeixinConfig> configs;
+    private String[] appIds;
     private Map<String, PayGateway> gateways;
 
     @Override
@@ -208,6 +209,11 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
     }
 
     @Override
+    public String getAppId(int index) {
+        return index < 0 || index >= appIds.length ? null : appIds[index];
+    }
+
+    @Override
     public int getContextRefreshedSort() {
         return 31;
     }
@@ -219,6 +225,7 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
 
         configs = new HashMap<>();
         JSONArray array = JSON.parseArray(config);
+        appIds = new String[array.size()];
         for (int i = 0; i < array.size(); i++) {
             JSONObject object = array.getJSONObject(i);
             WeixinConfig config = new WeixinConfig();
@@ -230,6 +237,7 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
             if (object.containsKey("mchKey"))
                 config.setMchKey(object.getString("mchKey"));
             configs.put(config.getAppId(), config);
+            appIds[i] = config.getAppId();
         }
         refreshToken();
         if (logger.isDebugEnable())

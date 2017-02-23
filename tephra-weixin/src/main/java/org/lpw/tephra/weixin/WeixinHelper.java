@@ -102,4 +102,12 @@ public interface WeixinHelper {
      * @return 微信公众号配置。
      */
     WeixinConfig getConfig(String appId);
+
+    /**
+     * 获取指定序号配置的APP ID。
+     *
+     * @param index 序号。
+     * @return 指定序号配置的APP ID；如果不存在则返回null。
+     */
+    String getAppId(int index);
 }
