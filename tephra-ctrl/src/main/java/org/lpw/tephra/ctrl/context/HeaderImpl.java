@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,7 +24,7 @@ public class HeaderImpl implements Header, HeaderAware {
 
     @Override
     public String get(String name) {
-        return adapter.get().get(name);
+        return getMap().get(name);
     }
 
     @Override
@@ -38,12 +39,19 @@ public class HeaderImpl implements Header, HeaderAware {
 
     @Override
     public String getIp() {
-        return validator.isEmpty(realIp) ? adapter.get().getIp() : get(realIp);
+        if (!validator.isEmpty(realIp))
+            return get(realIp);
+
+        HeaderAdapter adapter = this.adapter.get();
+
+        return adapter == null ? null : adapter.getIp();
     }
 
     @Override
     public Map<String, String> getMap() {
-        return adapter.get().getMap();
+        HeaderAdapter adapter = this.adapter.get();
+
+        return adapter == null ? new HashMap<>() : adapter.getMap();
     }
 
     @Override

@@ -10,9 +10,11 @@ import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -144,7 +146,23 @@ public class ModelHelperImpl implements ModelHelper {
         if (json == null || modelClass == null)
             return null;
 
+        return fromJson(json, modelTables.get(modelClass), modelClass);
+    }
+
+    @Override
+    public <T extends Model> List<T> fromJson(JSONArray array, Class<T> modelClass) {
+        if (array == null || modelClass == null)
+            return null;
+
+        List<T> list = new ArrayList<>();
         ModelTable modelTable = modelTables.get(modelClass);
+        for (int i = 0, size = array.size(); i < size; i++)
+            list.add(fromJson(array.getJSONObject(i), modelTable, modelClass));
+
+        return list;
+    }
+
+    private <T extends Model> T fromJson(JSONObject json, ModelTable modelTable, Class<T> modelClass) {
         T model = BeanFactory.getBean(modelClass);
         if (json.containsKey("id"))
             model.setId(json.getString("id"));

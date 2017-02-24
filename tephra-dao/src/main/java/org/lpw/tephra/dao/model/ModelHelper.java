@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -77,9 +78,20 @@ public interface ModelHelper {
      *
      * @param json       JSON对象。
      * @param modelClass Model类。
+     * @param <T>        Model类型。
      * @return Model对象；如果转化失败则返回null。
      */
     <T extends Model> T fromJson(JSONObject json, Class<T> modelClass);
+
+    /**
+     * 将JSON数组转化为Model对象集。
+     *
+     * @param array      JSON数组。
+     * @param modelClass Model类。
+     * @param <T>        Model类型。
+     * @return Model对象集；如果转化失败则返回null。
+     */
+    <T extends Model> List<T> fromJson(JSONArray array, Class<T> modelClass);
 
     /**
      * 复制Model属性。
