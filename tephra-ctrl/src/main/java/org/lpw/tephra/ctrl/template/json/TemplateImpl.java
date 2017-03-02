@@ -1,5 +1,6 @@
 package org.lpw.tephra.ctrl.template.json;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.ctrl.template.Template;
@@ -8,6 +9,7 @@ import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelHelper;
 import org.lpw.tephra.dao.orm.PageList;
+import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Message;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,8 @@ public class TemplateImpl extends TemplateSupport implements Template {
     private Validator validator;
     @Inject
     private Message message;
+    @Inject
+    private Logger logger;
     @Inject
     private ModelHelper modelHelper;
 
@@ -50,12 +54,25 @@ public class TemplateImpl extends TemplateSupport implements Template {
             data = modelHelper.toJson((Model) data);
         else if (data instanceof PageList)
             data = ((PageList<? extends Model>) data).toJson();
+        else if (data instanceof String)
+            data = json((String) data);
 
         write(pack(data), outputStream);
     }
 
-    private void write(Object data, OutputStream outputStream) throws IOException {
-        outputStream.write(data.toString().getBytes("UTF-8"));
+    private Object json(String string) {
+        try {
+            char ch = string.charAt(0);
+            if (ch == '{')
+                return JSON.parseObject(string);
+
+            if (ch == '[')
+                return JSON.parseArray(string);
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "转化字符串[{}]为JSON数据时发生异常！", string);
+        }
+
+        return string;
     }
 
     private Object pack(Object object) {
@@ -67,5 +84,9 @@ public class TemplateImpl extends TemplateSupport implements Template {
         json.put("data", object);
 
         return json;
+    }
+
+    private void write(Object data, OutputStream outputStream) throws IOException {
+        outputStream.write(data.toString().getBytes("UTF-8"));
     }
 }
