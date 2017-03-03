@@ -61,6 +61,9 @@ public class TemplateImpl extends TemplateSupport implements Template {
     }
 
     private Object json(String string) {
+        if (string.length() == 0)
+            return string;
+
         try {
             char ch = string.charAt(0);
             if (ch == '{')
