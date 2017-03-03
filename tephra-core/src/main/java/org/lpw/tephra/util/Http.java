@@ -161,4 +161,11 @@ public interface Http {
      * @return HTTP请求返回头部信息集。
      */
     Map<String, String> download(String url, Map<String, String> headers, String parameters, String dest);
+
+    /**
+     * 获取最近一次请求返回状态码。
+     *
+     * @return 最近一次请求返回状态码；如果获取失败则返回0。
+     */
+    int getStatusCode();
 }

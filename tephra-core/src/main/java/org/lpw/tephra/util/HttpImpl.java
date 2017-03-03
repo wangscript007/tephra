@@ -67,6 +67,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     @Value("${tephra.util.http.read.time-out:20000}")
     private int readTimeout;
     private PoolingHttpClientConnectionManager manager;
+    private ThreadLocal<Integer> statusCode = new ThreadLocal<>();
 
     @Override
     public String get(String url, Map<String, String> headers, Map<String, String> parameters, String charset) {
@@ -231,6 +232,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
 
     private String execute(HttpUriRequest request, Map<String, String> headers, String charset) throws IOException {
         CloseableHttpResponse response = execute(request, headers);
+        statusCode.set(response.getStatusLine().getStatusCode());
         String content = EntityUtils.toString(response.getEntity(), getCharset(charset));
         response.close();
 
@@ -251,6 +253,13 @@ public class HttpImpl implements Http, ContextRefreshedListener {
 
     private String getCharset(String charset) {
         return charset == null ? CHARSET : charset;
+    }
+
+    @Override
+    public int getStatusCode() {
+        Integer code = statusCode.get();
+
+        return code == null ? 0 : code;
     }
 
     @Override
