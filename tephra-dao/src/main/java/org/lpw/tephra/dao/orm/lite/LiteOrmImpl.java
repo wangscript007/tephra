@@ -71,7 +71,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     @SuppressWarnings("unchecked")
     private <T extends Model> PageList<T> query(LiteQuery query, Object[] args, boolean countable) {
         PageList<T> models = BeanFactory.getBean(PageList.class);
-        if (query.getSize() > 0)
+        if (query.getSize() > 0 && query.getSize() > 0)
             models.setPage(countable ? count(query, args) : query.getSize() * query.getPage(), query.getSize(), query.getPage());
         models.setList(new ArrayList<>());
 
@@ -109,7 +109,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
             connection.beginTransaction();
             querySql.append(" FOR UPDATE");
         } else if (size > 0)
-            dataSource.getDialects().get(query.getDataSource()).appendPagination(querySql, size, page);
+            dataSource.getDialects().get(query.getDataSource()).appendPagination(querySql, size, page < 1 ? 1 : page);
 
         return querySql.toString();
     }
@@ -188,7 +188,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
             columnCount++;
         }
         for (String columnName : modelTable.getColumnNames()) {
-            if(modelTable.isNative(columnName))
+            if (modelTable.isNative(columnName))
                 continue;
 
             if (columnCount > 0)
@@ -223,7 +223,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
         StringBuilder updateSql = new StringBuilder().append("UPDATE ").append(modelTable.getTableName()).append(" SET ");
         List<Object> args = new ArrayList<>();
         for (String columnName : modelTable.getColumnNames()) {
-            if(modelTable.isNative(columnName))
+            if (modelTable.isNative(columnName))
                 continue;
 
             if (!args.isEmpty())
