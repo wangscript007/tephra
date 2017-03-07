@@ -1,5 +1,6 @@
 package org.lpw.tephra.util;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -40,4 +41,20 @@ public interface Json {
      * @return JSON对象；如果转化失败则返回null。
      */
     JSONObject fromXml(String xml);
+
+    /**
+     * 转化为JSON对象。
+     *
+     * @param object 要转化的对象。
+     * @return JSON对象；转化失败则返回null。
+     */
+    JSONObject toObject(Object object);
+
+    /**
+     * 转化为JSON数组。
+     *
+     * @param object 要转化的对象。
+     * @return JSON数组；转化失败则返回null。
+     */
+    JSONArray toArray(Object object);
 }

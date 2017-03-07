@@ -1,5 +1,6 @@
 package org.lpw.tephra.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,8 @@ public class JsonImpl implements Json {
     private Validator validator;
     @Inject
     private Xml xml;
+    @Inject
+    private Logger logger;
 
     @Override
     public void add(JSONObject json, String key, Object object) {
@@ -27,7 +30,7 @@ public class JsonImpl implements Json {
             return;
         }
 
-        JSONArray array = toArray(json.get(key));
+        JSONArray array = asArray(json.get(key));
         array.add(object);
         json.put(key, array);
     }
@@ -38,12 +41,12 @@ public class JsonImpl implements Json {
             return;
 
         Object obj = json.get(key);
-        JSONArray array = obj == null ? new JSONArray() : toArray(obj);
+        JSONArray array = obj == null ? new JSONArray() : asArray(obj);
         array.add(object);
         json.put(key, array);
     }
 
-    private JSONArray toArray(Object object) {
+    private JSONArray asArray(Object object) {
         if (object instanceof JSONArray)
             return (JSONArray) object;
 
@@ -69,5 +72,39 @@ public class JsonImpl implements Json {
     @Override
     public JSONObject fromXml(String xml) {
         return this.xml.toJson(xml);
+    }
+
+    @Override
+    public JSONObject toObject(Object object) {
+        if (object == null)
+            return null;
+
+        if (object instanceof JSONObject)
+            return (JSONObject) object;
+
+        try {
+            return JSON.parseObject(object.toString());
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "转化对象[{}]为JSON对象时发生异常！", object);
+
+            return null;
+        }
+    }
+
+    @Override
+    public JSONArray toArray(Object object) {
+        if (object == null)
+            return null;
+
+        if (object instanceof JSONArray)
+            return (JSONArray) object;
+
+        try {
+            return JSON.parseArray(object.toString());
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "转化对象[{}]为JSON数组时发生异常！", object);
+
+            return null;
+        }
     }
 }

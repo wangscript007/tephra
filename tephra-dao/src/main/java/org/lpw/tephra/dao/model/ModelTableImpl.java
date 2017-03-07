@@ -1,7 +1,10 @@
 package org.lpw.tephra.dao.model;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -33,6 +36,8 @@ public class ModelTableImpl implements ModelTable {
     @Inject
     private Converter converter;
     @Inject
+    private Json json;
+    @Inject
     private Logger logger;
     private Class<? extends Model> modelClass;
     private String tableName;
@@ -46,7 +51,7 @@ public class ModelTableImpl implements ModelTable {
     private Map<String, Class<?>> types = new HashMap<>();
     private Map<String, String> lowerCases = new HashMap<>();
     private Map<String, String> columns = new HashMap<>();
-    private Set<String> natives=new HashSet<>();
+    private Set<String> natives = new HashSet<>();
 
     @Override
     public Class<? extends Model> getModelClass() {
@@ -130,7 +135,7 @@ public class ModelTableImpl implements ModelTable {
     public void addColumn(String propertyName, Column column) {
         columns.put(column.name().toLowerCase(), propertyName);
         addLowerCase(propertyName);
-        if(!column.updatable())
+        if (!column.updatable())
             natives.add(column.name());
     }
 
@@ -138,7 +143,7 @@ public class ModelTableImpl implements ModelTable {
         lowerCases.put(getLowerCase(name), name);
     }
 
-    private String getLowerCase(String name){
+    private String getLowerCase(String name) {
         return name.substring(0, 1).toLowerCase() + name.substring(1);
     }
 
@@ -304,6 +309,12 @@ public class ModelTableImpl implements ModelTable {
 
             return new Timestamp(date.getTime());
         }
+
+        if (JSONObject.class.equals(type))
+            return json.toObject(value);
+
+        if (JSONArray.class.equals(type))
+            return json.toArray(value);
 
         return null;
     }

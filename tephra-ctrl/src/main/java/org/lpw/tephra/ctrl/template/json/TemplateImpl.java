@@ -1,6 +1,5 @@
 package org.lpw.tephra.ctrl.template.json;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.ctrl.template.Template;
@@ -9,6 +8,7 @@ import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelHelper;
 import org.lpw.tephra.dao.orm.PageList;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Message;
 import org.lpw.tephra.util.Validator;
@@ -27,6 +27,8 @@ public class TemplateImpl extends TemplateSupport implements Template {
     private Validator validator;
     @Inject
     private Message message;
+    @Inject
+    private Json json;
     @Inject
     private Logger logger;
     @Inject
@@ -64,16 +66,12 @@ public class TemplateImpl extends TemplateSupport implements Template {
         if (string.length() == 0)
             return string;
 
-        try {
-            char ch = string.charAt(0);
-            if (ch == '{')
-                return JSON.parseObject(string);
+        char ch = string.charAt(0);
+        if (ch == '{')
+            return json.toObject(string);
 
-            if (ch == '[')
-                return JSON.parseArray(string);
-        } catch (Throwable throwable) {
-            logger.warn(throwable, "转化字符串[{}]为JSON数据时发生异常！", string);
-        }
+        if (ch == '[')
+            return json.toArray(string);
 
         return string;
     }
