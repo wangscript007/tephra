@@ -62,7 +62,7 @@ public interface Json {
      * 将JSON数据转化为JSON字符串。
      *
      * @param object JSON数据。
-     * @return JSON字符串；如果转化失败则返回空字符串。
+     * @return JSON字符串。
      */
     String toString(Object object);
 }
