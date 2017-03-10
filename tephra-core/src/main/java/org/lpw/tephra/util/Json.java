@@ -65,4 +65,12 @@ public interface Json {
      * @return JSON字符串。
      */
     String toString(Object object);
+
+    /**
+     * 将JSON数据转化为JSON字节流。
+     *
+     * @param object JSON数据。
+     * @return JSON字节流。
+     */
+    byte[] toBytes(Object object);
 }

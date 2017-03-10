@@ -1,8 +1,6 @@
 package org.lpw.tephra.ctrl.template.json;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
@@ -90,6 +88,6 @@ public class TemplateImpl extends TemplateSupport implements Template {
     }
 
     private void write(Object data, OutputStream outputStream) throws IOException {
-        outputStream.write(JSON.toJSONBytes(data, SerializerFeature.DisableCircularReferenceDetect));
+        outputStream.write(json.toBytes(data));
     }
 }

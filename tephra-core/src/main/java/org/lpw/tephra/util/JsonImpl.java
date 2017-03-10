@@ -113,4 +113,9 @@ public class JsonImpl implements Json {
     public String toString(Object object) {
         return JSON.toJSONString(object, SerializerFeature.DisableCircularReferenceDetect);
     }
+
+    @Override
+    public byte[] toBytes(Object object) {
+        return JSON.toJSONBytes(object, SerializerFeature.DisableCircularReferenceDetect);
+    }
 }
