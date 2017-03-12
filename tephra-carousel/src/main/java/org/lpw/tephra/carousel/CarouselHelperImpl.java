@@ -127,12 +127,16 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
 
     @Override
     public String service(String key, Map<String, String> header, Map<String, String> parameter, int cacheTime) {
+        if (logger.isDebugEnable())
+            logger.debug("开始获取Carousel服务[key={};header={};parameter={};cacheTime={}]。", key, header, parameter, cacheTime);
         String cacheKey = null;
         boolean cacheable = cacheTime > 0;
         if (cacheable) {
             cacheKey = CACHE_SERVICE + key + converter.toString(header) + converter.toString(parameter)
                     + (System.currentTimeMillis() / cacheTime / TimeUnit.Minute.getTime());
             String string = cache.get(cacheKey);
+            if (logger.isDebugEnable())
+                logger.debug("使用缓存[{}]的Carousel数据[{}]。", cacheKey, string);
             if (string != null)
                 return string;
         }
@@ -161,6 +165,8 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     }
 
     private String cacheService(boolean cacheable, String cacheKey, String result) {
+        if (logger.isDebugEnable())
+            logger.debug("缓存[{}:{}]Carousel请求数据[{}]。", cacheable, cacheKey, result);
         if (cacheable)
             cache.put(cacheKey, result, false);
 
