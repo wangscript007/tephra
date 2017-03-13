@@ -33,6 +33,22 @@ public interface DateTime {
     Date getEnd(Date date);
 
     /**
+     * 获取日期（时间）字符串当天的开始时间，即当天的00:00:00.000。
+     *
+     * @param string 日期（时间）字符串。
+     * @return 开始时间；如果获取失败则返回null。
+     */
+    Timestamp getStart(String string);
+
+    /**
+     * 获取日期（时间）字符串当天的结束时间，即当天的23:59:59.999。
+     *
+     * @param string 日期（时间）字符串。
+     * @return 结束时间；如果获取失败则返回null。
+     */
+    Timestamp getEnd(String string);
+
+    /**
      * 将日期时间字符串转化为时间戳。
      *
      * @param string 字符串。

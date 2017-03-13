@@ -51,6 +51,16 @@ public class DateTimeImpl implements DateTime {
     }
 
     @Override
+    public Timestamp getStart(String string) {
+        return toTimestamp(getStart(converter.toDate(string)));
+    }
+
+    @Override
+    public Timestamp getEnd(String string) {
+        return toTimestamp(getEnd(converter.toDate(string)));
+    }
+
+    @Override
     public Timestamp toTime(String string) {
         return toTimestamp(converter.toDate(string));
     }
