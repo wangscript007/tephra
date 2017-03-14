@@ -66,11 +66,36 @@ public interface DateTime {
     Timestamp toTime(String string, String pattern);
 
     /**
-     * 比较两个日期时间值的大小。
+     * 按指定格式将日期值格式化为字符串。
      *
-     * @param x 日期时间值参数。
-     * @param y 日期时间值参数。
-     * @return 如果相等则返回0；如果x>y则返回正数；如果x<y则返回负数。
+     * @param date   要进行格式化的日期值。
+     * @param format 目标格式。
+     * @return 格式化后的日期值字符串。
      */
-    int compare(Object x, Object y);
+    String toString(Date date, String format);
+
+    /**
+     * 将日期值格式化为字符串。
+     *
+     * @param date   要进行格式化的日期值。
+     * @return 格式化后的日期值字符串。
+     */
+    String toString(Date date);
+
+    /**
+     * 使用默认格式将日期对象转化为日期值。
+     *
+     * @param date 日期对象。
+     * @return 日期值。如果格式不匹配则返回null。
+     */
+    Date toDate(Object date);
+
+    /**
+     * 将日期字符串按指定格式转化为日期值。
+     *
+     * @param date   日期字符串。
+     * @param format 字符串格式。
+     * @return 日期值。如果格式不匹配则返回null。
+     */
+    Date toDate(String date, String format);
 }

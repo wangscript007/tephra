@@ -31,17 +31,12 @@ public class ConverterImpl implements Converter {
     private static final String CHAR_SET = "utf-8";
 
     @Inject
-    private Context context;
-    @Inject
     private Validator validator;
     @Inject
-    private Message message;
+    private DateTime dateTime;
     @Inject
     private Logger logger;
     private Map<String, DecimalFormat> decimalFormatMap = new ConcurrentHashMap<>();
-    private Map<String, FastDateFormat> dateFormatMap = new ConcurrentHashMap<>();
-    private Map<Locale, String> dateFormat = new ConcurrentHashMap<>();
-    private Map<Locale, String> dateTimeFormat = new ConcurrentHashMap<>();
 
     @SuppressWarnings({"unchecked"})
     @Override
@@ -71,11 +66,8 @@ public class ConverterImpl implements Converter {
             return sb.substring(1);
         }
 
-        if (object instanceof java.sql.Date)
-            return toString((java.sql.Date) object, getDateFormat());
-
-        if (object instanceof Timestamp)
-            return toString((Timestamp) object, getDateTimeFormat());
+        if (object instanceof Date)
+            return dateTime.toString((Date) object);
 
         return object.toString();
     }
@@ -265,59 +257,6 @@ public class ConverterImpl implements Converter {
 
             return false;
         }
-    }
-
-    @Override
-    public String toString(Date date, String format) {
-        return date == null ? "" : getDateFormat(format).format(date);
-    }
-
-    @Override
-    public Date toDate(Object date) {
-        if (validator.isEmpty(date))
-            return null;
-
-        if (date instanceof Date)
-            return (Date) date;
-
-        if (date instanceof String) {
-            String dateFormat = getDateFormat();
-            String string = (String) date;
-
-            return toDate(string, string.length() == dateFormat.length() ? dateFormat : getDateTimeFormat());
-        }
-
-        return null;
-    }
-
-    private String getDateFormat() {
-        Locale locale = context.getLocale();
-
-        return dateFormat.computeIfAbsent(locale, l -> message.get("tephra.format.date"));
-    }
-
-    private String getDateTimeFormat() {
-        Locale locale = context.getLocale();
-
-        return dateTimeFormat.computeIfAbsent(locale, l -> message.get("tephra.format.date-time"));
-    }
-
-    @Override
-    public Date toDate(String date, String format) {
-        if (validator.isEmpty(date) || validator.isEmpty(format) || date.length() != format.length())
-            return null;
-
-        try {
-            return getDateFormat(format).parse(date);
-        } catch (ParseException e) {
-            logger.warn(e, "使用格式[{}]将字符串[{}]转化为日期值时发生异常！", format, date);
-
-            return null;
-        }
-    }
-
-    private FastDateFormat getDateFormat(String format) {
-        return dateFormatMap.computeIfAbsent(format, FastDateFormat::getInstance);
     }
 
     @Override

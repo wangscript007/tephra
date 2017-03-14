@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
@@ -35,6 +36,8 @@ public class ModelTableImpl implements ModelTable {
     private Validator validator;
     @Inject
     private Converter converter;
+    @Inject
+    private DateTime dateTime;
     @Inject
     private Json json;
     @Inject
@@ -297,7 +300,7 @@ public class ModelTableImpl implements ModelTable {
             return converter.toDouble(value);
 
         if (java.util.Date.class.equals(type) || Date.class.equals(type) || Timestamp.class.equals(type)) {
-            java.util.Date date = converter.toDate(value);
+            java.util.Date date = dateTime.toDate(value);
             if (date == null)
                 return null;
 

@@ -6,6 +6,7 @@ import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelTable;
 import org.lpw.tephra.dao.model.ModelTables;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,8 @@ public class RequestImpl implements Request, RequestAware {
     private Validator validator;
     @Inject
     private Converter converter;
+    @Inject
+    private DateTime dateTime;
     @Inject
     private Logger logger;
     @Inject
@@ -59,7 +62,7 @@ public class RequestImpl implements Request, RequestAware {
 
     @Override
     public Date getAsDate(String name) {
-        return converter.toDate(get(name));
+        return dateTime.toDate(get(name));
     }
 
     @Override

@@ -11,6 +11,7 @@ import org.lpw.tephra.ctrl.http.ServiceHelper;
 import org.lpw.tephra.storage.Storage;
 import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
@@ -41,6 +42,8 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     private Generator generator;
     @Inject
     private Converter converter;
+    @Inject
+    private DateTime dateTime;
     @Inject
     private Logger logger;
     @Inject
@@ -136,7 +139,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     private String getPath(UploadListener listener, FileItem item) {
         StringBuilder path = new StringBuilder(ROOT).append(item.getContentType()).append('/')
                 .append(listener.getPath(item.getFieldName(), item.getContentType(), item.getName())).append('/')
-                .append(converter.toString(new Date(), "yyyyMMdd")).append('/').append(generator.random(32))
+                .append(dateTime.toString(new Date(), "yyyyMMdd")).append('/').append(generator.random(32))
                 .append(item.getName().substring(item.getName().lastIndexOf('.')));
 
         return path.toString().replaceAll("[/]+", "/");

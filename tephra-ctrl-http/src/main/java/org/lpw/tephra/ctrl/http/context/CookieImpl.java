@@ -1,6 +1,7 @@
 package org.lpw.tephra.ctrl.http.context;
 
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Controller;
 
@@ -18,12 +19,14 @@ import java.util.List;
 public class CookieImpl implements org.lpw.tephra.ctrl.http.context.Cookie, CookieAware {
     private Validator validator;
     private Converter converter;
+    private DateTime dateTime;
     private ThreadLocal<HttpServletRequest> request;
     private ThreadLocal<HttpServletResponse> response;
 
-    public CookieImpl(Validator validator, Converter converter) {
+    public CookieImpl(Validator validator, Converter converter, DateTime dateTime) {
         this.validator = validator;
         this.converter = converter;
+        this.dateTime = dateTime;
         request = new ThreadLocal<>();
         response = new ThreadLocal<>();
     }
@@ -72,7 +75,7 @@ public class CookieImpl implements org.lpw.tephra.ctrl.http.context.Cookie, Cook
 
     @Override
     public Date getAsDate(String name) {
-        return converter.toDate(get(name));
+        return dateTime.toDate(get(name));
     }
 
     @Override

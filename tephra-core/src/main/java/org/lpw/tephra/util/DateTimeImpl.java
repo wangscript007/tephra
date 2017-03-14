@@ -1,11 +1,16 @@
 package org.lpw.tephra.util;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lpw
@@ -13,7 +18,16 @@ import java.util.Date;
 @Component("tephra.util.date-time")
 public class DateTimeImpl implements DateTime {
     @Inject
-    private Converter converter;
+    private Validator validator;
+    @Inject
+    private Message message;
+    @Inject
+    private Context context;
+    @Inject
+    private Logger logger;
+    private Map<String, FastDateFormat> dateFormatMap = new ConcurrentHashMap<>();
+    private Map<Locale, String> dateFormat = new ConcurrentHashMap<>();
+    private Map<Locale, String> dateTimeFormat = new ConcurrentHashMap<>();
 
     @Override
     public Timestamp now() {
@@ -52,22 +66,22 @@ public class DateTimeImpl implements DateTime {
 
     @Override
     public Timestamp getStart(String string) {
-        return toTimestamp(getStart(converter.toDate(string)));
+        return toTimestamp(getStart(toDate(string)));
     }
 
     @Override
     public Timestamp getEnd(String string) {
-        return toTimestamp(getEnd(converter.toDate(string)));
+        return toTimestamp(getEnd(toDate(string)));
     }
 
     @Override
     public Timestamp toTime(String string) {
-        return toTimestamp(converter.toDate(string));
+        return toTimestamp(toDate(string));
     }
 
     @Override
     public Timestamp toTime(String string, String pattern) {
-        return toTimestamp(converter.toDate(string, pattern));
+        return toTimestamp(toDate(string, pattern));
     }
 
     private Timestamp toTimestamp(Date date) {
@@ -75,16 +89,60 @@ public class DateTimeImpl implements DateTime {
     }
 
     @Override
-    public int compare(Object x, Object y) {
-        if (x == null && y == null)
-            return 0;
+    public String toString(Date date, String format) {
+        return date == null ? "" : getDateFormat(format).format(date);
+    }
 
-        if (x == null)
-            return -1;
+    @Override
+    public String toString(Date date) {
+        return toString(date, date instanceof Timestamp ? getDateTimeFormat() : getDateFormat());
+    }
 
-        if (y == null)
-            return 1;
+    @Override
+    public Date toDate(Object date) {
+        if (validator.isEmpty(date))
+            return null;
 
-        return converter.toString(x).compareTo(converter.toString(y));
+        if (date instanceof Date)
+            return (Date) date;
+
+        if (date instanceof String) {
+            String dateFormat = getDateFormat();
+            String string = (String) date;
+
+            return toDate(string, string.length() == dateFormat.length() ? dateFormat : getDateTimeFormat());
+        }
+
+        return null;
+    }
+
+    private String getDateFormat() {
+        Locale locale = context.getLocale();
+
+        return dateFormat.computeIfAbsent(locale, l -> message.get("tephra.format.date"));
+    }
+
+    private String getDateTimeFormat() {
+        Locale locale = context.getLocale();
+
+        return dateTimeFormat.computeIfAbsent(locale, l -> message.get("tephra.format.date-time"));
+    }
+
+    @Override
+    public Date toDate(String date, String format) {
+        if (validator.isEmpty(date) || validator.isEmpty(format) || date.length() != format.length())
+            return null;
+
+        try {
+            return getDateFormat(format).parse(date);
+        } catch (ParseException e) {
+            logger.warn(e, "使用格式[{}]将字符串[{}]转化为日期值时发生异常！", format, date);
+
+            return null;
+        }
+    }
+
+    private FastDateFormat getDateFormat(String format) {
+        return dateFormatMap.computeIfAbsent(format, FastDateFormat::getInstance);
     }
 }

@@ -1,21 +1,25 @@
 package org.lpw.tephra.ctrl.validate;
 
+import org.lpw.tephra.util.DateTime;
 import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
 
 /**
  * @author lpw
  */
 @Controller(Validators.DATE_TIME)
 public class DateValidatorImpl extends ValidatorSupport {
-    private static final String DEFAULT_FAILURE_MESSAGE_KEY = Validators.PREFIX + "date-time.illegal";
+    @Inject
+    private DateTime dateTime;
 
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
-        return converter.toDate(parameter) != null;
+        return dateTime.toDate(parameter) != null;
     }
 
     @Override
     protected String getDefaultFailureMessageKey() {
-        return DEFAULT_FAILURE_MESSAGE_KEY;
+        return Validators.PREFIX + "date-time.illegal";
     }
 }

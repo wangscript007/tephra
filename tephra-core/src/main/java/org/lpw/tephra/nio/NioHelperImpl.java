@@ -24,14 +24,15 @@ public class NioHelperImpl implements NioHelper, ContextClosedListener, MinuteJo
 
     @Override
     public String put(ChannelHandlerContext context) {
-        map.put(context.name(), context);
+        String sessionId = getSessionId(context);
+        map.put(sessionId, context);
 
-        return context.name();
+        return sessionId;
     }
 
     @Override
     public String getSessionId(ChannelHandlerContext context) {
-        return context.name();
+        return context.channel().id().asLongText();
     }
 
     @Override

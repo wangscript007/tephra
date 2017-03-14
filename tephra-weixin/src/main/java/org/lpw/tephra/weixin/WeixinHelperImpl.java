@@ -9,6 +9,7 @@ import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.scheduler.HourJob;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Io;
@@ -40,6 +41,8 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
     private Http http;
     @Inject
     private Converter converter;
+    @Inject
+    private DateTime dateTime;
     @Inject
     private Generator generator;
     @Inject
@@ -148,7 +151,7 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
         }
 
         String disposition = map.get("Content-disposition");
-        String uri = new StringBuilder().append("/upload/").append(map.get("Content-Type")).append("/weixin/").append(converter.toString(time, "yyyyMMdd"))
+        String uri = new StringBuilder().append("/upload/").append(map.get("Content-Type")).append("/weixin/").append(dateTime.toString(time, "yyyyMMdd"))
                 .append('/').append(temp.getName()).append(disposition.substring(disposition.lastIndexOf('.'), disposition.length() - 1)).toString();
 
         try {
