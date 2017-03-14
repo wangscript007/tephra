@@ -77,8 +77,14 @@ public interface WeixinService {
     /**
      * 获取当前微信用户昵称。
      *
-     * @param openId 微信用户OpenID。
      * @return 当前微信用户昵称；如果不存在则返回null。
      */
-    String getNickname(String openId);
+    String getNickname();
+
+    /**
+     * 获取当前微信用户头像URL地址。
+     *
+     * @return 当前微信用户头像URL地址；如果不存在则返回null。
+     */
+    String getPortrait();
 }

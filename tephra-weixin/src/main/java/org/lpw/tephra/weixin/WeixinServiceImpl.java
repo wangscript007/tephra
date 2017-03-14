@@ -36,6 +36,7 @@ import java.util.concurrent.Executors;
 @Service("tephra.weixin.service")
 public class WeixinServiceImpl implements WeixinService, ContextRefreshedListener, ContextClosedListener {
     private static final String CACHE_NICKNAME = "tephra.weixin.service.nickname:";
+    private static final String CACHE_PORTRAIT = "tephra.weixin.service.portrait:";
 
     @Inject
     private Digest digest;
@@ -98,7 +99,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
             logger.debug("微信用户OpenID：{}。", openId);
         if (!openId.equals(session.getId()))
             sessionAware.set(new LocalSessionAdapter(openId));
-        if (!json.containsKey("access_token") || getNickname(openId) != null)
+        if (!json.containsKey("access_token") || getNickname() != null)
             return openId;
 
         map.clear();
@@ -108,6 +109,8 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
         json = JSON.parseObject(http.get("https://api.weixin.qq.com/sns/userinfo", null, map));
         if (json.containsKey("nickname"))
             cache.put(CACHE_NICKNAME + openId, json.getString("nickname"), false);
+        if (json.containsKey("headimgurl"))
+            cache.put(CACHE_PORTRAIT + openId, json.getString("headimgurl"), false);
 
         return openId;
     }
@@ -119,7 +122,6 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
 
         weixinListener.ifPresent(listener -> executorService.submit(() -> {
             Map<String, String> map = this.xml.toMap(xml, false);
-//                String mpId = map.get("ToUserName");
             String userOpenId = map.get("FromUserName");
             Timestamp time = new Timestamp(converter.toLong(map.get("CreateTime")) * 1000);
             String type = map.get("MsgType");
@@ -135,33 +137,34 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
         if (!weixinListener.isPresent())
             return;
 
+        WeixinListener weixinListener = this.weixinListener.get();
         if ("text".equals(type)) {
-            weixinListener.get().text(appId, userOpenId, messageId, map.get("Content"), time);
+            weixinListener.text(appId, userOpenId, messageId, map.get("Content"), time);
 
             return;
         }
 
         if ("image".equals(type)) {
-            weixinListener.get().image(appId, userOpenId, messageId, weixinHelper.download(appId, map.get("MediaId"), time, true), time);
+            weixinListener.image(appId, userOpenId, messageId, weixinHelper.download(appId, map.get("MediaId"), time, true), time);
 
             return;
         }
 
         if ("voice".equals(type)) {
-            weixinListener.get().voice(appId, userOpenId, messageId, map.get("format"), weixinHelper.download(appId, map.get("MediaId"), time, true), time);
+            weixinListener.voice(appId, userOpenId, messageId, map.get("format"), weixinHelper.download(appId, map.get("MediaId"), time, true), time);
 
             return;
         }
 
         if ("video".equals(type) || "shortvideo".equals(type)) {
-            weixinListener.get().video(appId, userOpenId, messageId, weixinHelper.download(appId, map.get("MediaId"), time, false),
+            weixinListener.video(appId, userOpenId, messageId, weixinHelper.download(appId, map.get("MediaId"), time, false),
                     weixinHelper.download(appId, map.get("ThumbMediaId"), time, true), time);
 
             return;
         }
 
         if ("location".equals(type)) {
-            weixinListener.get().location(appId, userOpenId, messageId, converter.toDouble(map.get("Location_X")), converter.toDouble(map.get("Location_Y")),
+            weixinListener.location(appId, userOpenId, messageId, converter.toDouble(map.get("Location_X")), converter.toDouble(map.get("Location_Y")),
                     converter.toInt(map.get("Scale")), map.get("Label"), time);
 
             return;
@@ -174,31 +177,31 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
             if ("subscribe".equals(event)) {
                 if (!validator.isEmpty(key))
                     key = key.substring(8);
-                weixinListener.get().subscribe(appId, userOpenId, key, ticket, time);
+                weixinListener.subscribe(appId, userOpenId, key, ticket, time);
 
                 return;
             }
 
             if ("SCAN".equals(event)) {
-                weixinListener.get().scan(appId, userOpenId, key, ticket, time);
+                weixinListener.scan(appId, userOpenId, key, ticket, time);
 
                 return;
             }
 
             if ("CLICK".equals(event)) {
-                weixinListener.get().click(appId, userOpenId, key, time);
+                weixinListener.click(appId, userOpenId, key, time);
 
                 return;
             }
 
             if ("VIEW".equals(event)) {
-                weixinListener.get().redirect(appId, userOpenId, key, time);
+                weixinListener.redirect(appId, userOpenId, key, time);
 
                 return;
             }
 
             if ("unsubscribe".equals(event)) {
-                weixinListener.get().unsubscribe(appId, userOpenId, time);
+                weixinListener.unsubscribe(appId, userOpenId, time);
 
                 return;
             }
@@ -223,8 +226,13 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
     }
 
     @Override
-    public String getNickname(String openId) {
-        return cache.get(CACHE_NICKNAME + openId);
+    public String getNickname() {
+        return cache.get(CACHE_NICKNAME + getOpenId());
+    }
+
+    @Override
+    public String getPortrait() {
+        return cache.get(CACHE_PORTRAIT + getOpenId());
     }
 
     @Override
