@@ -2,6 +2,7 @@ package org.lpw.tephra.nio;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.lpw.tephra.util.Logger;
 
 import javax.inject.Inject;
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author lpw
  */
-public abstract class Handler extends ChannelHandlerAdapter {
+public abstract class Handler extends ChannelInboundHandlerAdapter {
     @Inject
     protected Logger logger;
     @Inject

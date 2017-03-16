@@ -3,12 +3,16 @@ package org.lpw.tephra.nio;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPromise;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.net.SocketAddress;
 
 /**
  * @author lpw
@@ -30,8 +34,10 @@ public class ServerImpl extends Handler implements Server {
 
         this.listener = listener;
         group = new NioEventLoopGroup(listener.getMaxThread());
-        ServerBootstrap bootstrap = new ServerBootstrap().group(group).channel(NioServerSocketChannel.class);
-        bootstrap.childHandler(this).bind(listener.getPort()).syncUninterruptibly();
+        new ServerBootstrap().group(group).channel(NioServerSocketChannel.class)
+                .option(ChannelOption.SO_BACKLOG, 2048).childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childHandler(this).bind(listener.getPort()).syncUninterruptibly();
 
         if (logger.isInfoEnable())
             logger.info("监听服务[{}]已启动。", listener.getPort());
