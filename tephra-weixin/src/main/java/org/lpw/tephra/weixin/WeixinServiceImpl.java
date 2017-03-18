@@ -7,9 +7,7 @@ import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.cache.Cache;
 import org.lpw.tephra.crypto.Digest;
-import org.lpw.tephra.ctrl.context.LocalSessionAdapter;
 import org.lpw.tephra.ctrl.context.Session;
-import org.lpw.tephra.ctrl.context.SessionAware;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
@@ -37,6 +35,7 @@ import java.util.concurrent.Executors;
 public class WeixinServiceImpl implements WeixinService, ContextRefreshedListener, ContextClosedListener {
     private static final String CACHE_NICKNAME = "tephra.weixin.service.nickname:";
     private static final String CACHE_PORTRAIT = "tephra.weixin.service.portrait:";
+    private static final String SESSION_OPEN_ID = "tephra.weixin.service.open-id";
 
     @Inject
     private Digest digest;
@@ -54,8 +53,6 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
     private Xml xml;
     @Inject
     private Set<Atomicable> atomicables;
-    @Inject
-    private SessionAware sessionAware;
     @Inject
     private Session session;
     @Inject
@@ -97,8 +94,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
         String openId = json.getString("openid");
         if (logger.isDebugEnable())
             logger.debug("微信用户OpenID：{}。", openId);
-        if (!openId.equals(session.getId()))
-            sessionAware.set(new LocalSessionAdapter(openId));
+        session.set(SESSION_OPEN_ID, openId);
         if (!json.containsKey("access_token") || getNickname() != null)
             return openId;
 
@@ -222,7 +218,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
 
     @Override
     public String getOpenId() {
-        return session.getId();
+        return session.get(SESSION_OPEN_ID);
     }
 
     @Override
