@@ -65,6 +65,9 @@ public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
 
         ModelTable modelTable = BeanFactory.getBean(ModelTable.class);
         modelTable.setModelClass(modelClass);
+        DataSource dataSource = modelClass.getAnnotation(DataSource.class);
+        if (dataSource != null)
+            modelTable.setDataSource(dataSource.key());
         modelTable.setTableName(table.name());
 
         Memory memory = modelClass.getAnnotation(Memory.class);
@@ -96,11 +99,8 @@ public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
                 continue;
             }
 
-            if (name.startsWith("set")) {
+            if (name.startsWith("set"))
                 modelTable.addSetMethod(propertyName, method);
-
-                continue;
-            }
         }
 
         map.put(modelClass, modelTable);

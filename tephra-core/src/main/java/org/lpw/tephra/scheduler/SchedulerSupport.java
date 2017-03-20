@@ -2,6 +2,7 @@ package org.lpw.tephra.scheduler;
 
 import io.netty.util.internal.ConcurrentSet;
 import org.lpw.tephra.atomic.Closable;
+import org.lpw.tephra.atomic.Closables;
 import org.lpw.tephra.atomic.Failable;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
@@ -31,7 +32,7 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
     @Inject
     protected Optional<Set<Failable>> failables;
     @Inject
-    protected Optional<Set<Closable>> closables;
+    protected Closables closables;
     protected Set<Integer> runningJobs;
     protected ExecutorService executorService;
 
@@ -106,8 +107,7 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
     protected void finish(T job) {
         if (job != null)
             runningJobs.remove(job.hashCode());
-
-        closables.ifPresent(set -> set.forEach(Closable::close));
+        closables.close();
     }
 
     @Override

@@ -8,7 +8,6 @@ import org.lpw.tephra.dao.jdbc.SqlTable;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelHelper;
 import org.lpw.tephra.dao.model.ModelTable;
-import org.lpw.tephra.dao.model.ModelTables;
 import org.lpw.tephra.dao.orm.OrmSupport;
 import org.lpw.tephra.dao.orm.PageList;
 import org.lpw.tephra.util.Converter;
@@ -28,8 +27,6 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     private Converter converter;
     @Inject
     private Generator generator;
-    @Inject
-    private ModelTables modelTables;
     @Inject
     private ModelHelper modelHelper;
     @Inject
@@ -77,7 +74,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
 
         ModelTable modelTable = modelTables.get(query.getModelClass());
         String querySql = getQuerySql(query, modelTable, models.getSize(), models.getNumber());
-        SqlTable sqlTable = sql.query(query.getDataSource(), querySql, args);
+        SqlTable sqlTable = sql.query(getDataSource(null, query, modelTable, null), querySql, args);
         if (sqlTable.getRowCount() == 0)
             return models;
 
@@ -109,7 +106,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
             connection.beginTransaction();
             querySql.append(" FOR UPDATE");
         } else if (size > 0)
-            dataSource.getDialects().get(query.getDataSource()).appendPagination(querySql, size, page < 1 ? 1 : page);
+            dataSource.getDialects().get(getDataSource(null, query, modelTable, null)).appendPagination(querySql, size, page < 1 ? 1 : page);
 
         return querySql.toString();
     }
@@ -127,13 +124,14 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     @Override
     public int count(LiteQuery query, Object[] args) {
         StringBuilder querySql = new StringBuilder().append("SELECT COUNT(*)");
-        querySql.append(" FROM ").append(validator.isEmpty(query.getFrom()) ? modelTables.get(query.getModelClass()).getTableName() : query.getFrom());
+        ModelTable modelTable = modelTables.get(query.getModelClass());
+        querySql.append(" FROM ").append(validator.isEmpty(query.getFrom()) ? modelTable.getTableName() : query.getFrom());
         if (!validator.isEmpty(query.getWhere()))
             querySql.append(" WHERE ").append(query.getWhere());
         if (!validator.isEmpty(query.getGroup()))
             querySql.append(" GROUP BY ").append(query.getGroup());
 
-        SqlTable sqlTable = sql.query(query.getDataSource(), querySql.toString(), args);
+        SqlTable sqlTable = sql.query(getDataSource(null, query, modelTable, null), querySql.toString(), args);
         if (sqlTable.getRowCount() == 0)
             return 0;
 
@@ -257,7 +255,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
 
     private int update(String dataSource, ModelTable modelTable, StringBuilder updateSql, Object[] args) {
         String sql = updateSql.toString();
-        int n = this.sql.update(dataSource, sql, args);
+        int n = this.sql.update(dataSource = getDataSource(dataSource, null, modelTable, null), sql, args);
         if (!validator.isEmpty(modelTable.getMemoryName()))
             this.sql.update(dataSource, sql.replaceFirst(modelTable.getTableName(), modelTable.getMemoryName()), args);
 
@@ -306,22 +304,11 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
             return;
         }
 
-        if (count && count(dataSource, modelTable.getTableName()) == count(dataSource, modelTable.getMemoryName())) {
-            if (logger.isDebugEnable())
-                logger.debug("无需重置内存表[{}]。", modelClass);
-
-            return;
-        }
-
-        sql.update(dataSource, "DELETE FROM " + modelTable.getMemoryName(), new Object[0]);
+        sql.update(dataSource = getDataSource(dataSource, null, modelTable, null), "DELETE FROM " + modelTable.getMemoryName(), new Object[0]);
         sql.update(dataSource, "INSERT INTO " + modelTable.getMemoryName() + " SELECT * FROM " + modelTable.getTableName(), new Object[0]);
 
         if (logger.isDebugEnable())
             logger.debug("内存表[{}]重置完成。", modelClass);
-    }
-
-    private int count(String dataSource, String table) {
-        return converter.toInt(sql.query(dataSource, "SELECT COUNT(*) FROM " + table, null).get(0, 0));
     }
 
     @Override

@@ -1,6 +1,8 @@
 package org.lpw.tephra.dao.orm;
 
 import org.lpw.tephra.dao.model.Model;
+import org.lpw.tephra.dao.model.ModelTable;
+import org.lpw.tephra.dao.model.ModelTables;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 
@@ -17,6 +19,8 @@ public abstract class OrmSupport<Q extends Query> implements Orm<Q> {
     protected Validator validator;
     @Inject
     protected Logger logger;
+    @Inject
+    protected ModelTables modelTables;
 
     @Override
     public <T extends Model> T findById(Class<T> modelClass, String id) {
@@ -67,5 +71,25 @@ public abstract class OrmSupport<Q extends Query> implements Orm<Q> {
     @Override
     public <T extends Model> boolean deleteById(Class<T> modelClass, String id) {
         return deleteById("", modelClass, id);
+    }
+
+    protected <T extends Model, E extends Query> String getDataSource(String dataSource, E query, ModelTable modelTable, Class<T> modelClass) {
+        if (dataSource != null)
+            return dataSource;
+
+        if (query != null) {
+            if (query.getDataSource() != null)
+                return query.getDataSource();
+
+            if (modelTable == null)
+                modelTable = modelTables.get(query.getModelClass());
+        }
+
+        if (modelTable == null && modelClass != null)
+            modelTable = modelTables.get(modelClass);
+        if (modelTable != null && modelTable.getDataSource() != null)
+            return modelTable.getDataSource();
+
+        return "";
     }
 }

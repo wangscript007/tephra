@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl;
 
-import org.lpw.tephra.atomic.Closable;
+import org.lpw.tephra.atomic.Closables;
 import org.lpw.tephra.atomic.Failable;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.ctrl.console.Console;
@@ -17,7 +17,6 @@ import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
     @Inject
     private Set<Failable> failables;
     @Inject
-    private Set<Closable> closables;
+    private Closables closables;
     @Inject
     private Header header;
     @Inject
@@ -92,7 +91,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         }
 
         execute(statusService, consoleService);
-        closables.forEach(Closable::close);
+        closables.close();
         counter.decrease(ip);
 
         if (logger.isDebugEnable())
@@ -168,7 +167,9 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
 
     @Override
     public void onContextRefreshed() {
-        interceptors = interceptorsOptional.isPresent() ? interceptorsOptional.get() : new ArrayList<>();
-        interceptors.sort(Comparator.comparingInt(Interceptor::getSort));
+        interceptorsOptional.ifPresent(list -> {
+            interceptors = list;
+            interceptors.sort(Comparator.comparingInt(Interceptor::getSort));
+        });
     }
 }

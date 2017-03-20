@@ -43,6 +43,7 @@ public class ModelTableImpl implements ModelTable {
     @Inject
     private Logger logger;
     private Class<? extends Model> modelClass;
+    private String dataSource;
     private String tableName;
     private String memoryName;
     private String idColumnName;
@@ -64,6 +65,16 @@ public class ModelTableImpl implements ModelTable {
     @Override
     public void setModelClass(Class<? extends Model> modelClass) {
         this.modelClass = modelClass;
+    }
+
+    @Override
+    public String getDataSource() {
+        return dataSource;
+    }
+
+    @Override
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override

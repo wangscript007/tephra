@@ -115,7 +115,7 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
         map.put("key", key);
         map.put("service", serviceUrl + service);
         map.put("validate", serviceUrl + status.getUri());
-        map.put("validate", "^\\{\"code\":0,.*");
+        map.put("success", "^\\{\"code\":0,.*");
 
         return code0(http.post(carouselUrl + "/discovery/register", null, map));
     }

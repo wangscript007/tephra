@@ -25,6 +25,20 @@ public interface ModelTable {
     void setModelClass(Class<? extends Model> modelClass);
 
     /**
+     * 获取数据源配置。
+     *
+     * @return 数据源配置。
+     */
+    String getDataSource();
+
+    /**
+     * 设置数据源配置。
+     *
+     * @param dataSource 数据源配置。
+     */
+    void setDataSource(String dataSource);
+
+    /**
      * 获得表名称。
      *
      * @return 表名称。

@@ -34,17 +34,17 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         if (lock) {
             session.beginTransaction();
 
-            return session.get(dataSource, Mode.Write).get(modelClass, id, LockOptions.UPGRADE);
+            return session.get(getDataSource(dataSource, null, null, modelClass), Mode.Write).get(modelClass, id, LockOptions.UPGRADE);
         }
 
-        return session.get(dataSource, Mode.Read).get(modelClass, id);
+        return session.get(getDataSource(dataSource, null, null, modelClass), Mode.Read).get(modelClass, id);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T extends Model> T findOne(HibernateQuery query, Object[] args) {
         query.size(1).page(1);
-        Iterator<T> iterator = createQuery(query.getDataSource(), Mode.Read, getQueryHql(query), args, query.isLocked(), 1, 1).iterate();
+        Iterator<T> iterator = createQuery(getDataSource(null, query, null, null), Mode.Read, getQueryHql(query), args, query.isLocked(), 1, 1).iterate();
 
         return iterator.hasNext() ? iterator.next() : null;
     }
@@ -55,7 +55,7 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         PageList<T> models = BeanFactory.getBean(PageList.class);
         if (query.getSize() > 0)
             models.setPage(count(query, args), query.getSize(), query.getPage());
-        models.setList(createQuery(query.getDataSource(), Mode.Read, getQueryHql(query), args, query.isLocked(), models.getSize(), models.getNumber()).list());
+        models.setList(createQuery(getDataSource(null, query, null, null), Mode.Read, getQueryHql(query), args, query.isLocked(), models.getSize(), models.getNumber()).list());
 
         return models;
     }
@@ -63,7 +63,7 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
     @SuppressWarnings("unchecked")
     @Override
     public <T extends Model> Iterator<T> iterate(HibernateQuery query, Object[] args) {
-        return createQuery(query.getDataSource(), Mode.Read, getQueryHql(query), args, query.isLocked(), query.getSize(), query.getPage()).iterate();
+        return createQuery(getDataSource(null, query, null, null), Mode.Read, getQueryHql(query), args, query.isLocked(), query.getSize(), query.getPage()).iterate();
     }
 
     private StringBuilder getQueryHql(HibernateQuery query) {
@@ -86,7 +86,7 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         if (!validator.isEmpty(query.getGroup()))
             hql.append(" GROUP BY ").append(query.getGroup());
 
-        return converter.toInt(createQuery(query.getDataSource(), Mode.Read, hql, args, query.isLocked(), 0, 0).iterate().next());
+        return converter.toInt(createQuery(getDataSource(null, query, null, null), Mode.Read, hql, args, query.isLocked(), 0, 0).iterate().next());
     }
 
     @Override
@@ -99,7 +99,7 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
 
         if (validator.isEmpty(model.getId()))
             model.setId(null);
-        session.get(dataSource, Mode.Write).saveOrUpdate(model);
+        session.get(getDataSource(dataSource, null, null, model.getClass()), Mode.Write).saveOrUpdate(model);
 
         return true;
     }
@@ -112,7 +112,7 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
             return false;
         }
 
-        session.get(dataSource, Mode.Write).save(model);
+        session.get(getDataSource(dataSource, null, null, model.getClass()), Mode.Write).save(model);
 
         return true;
     }
@@ -123,14 +123,20 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         if (!validator.isEmpty(query.getWhere()))
             hql.append(" WHERE ").append(query.getWhere());
 
-        createQuery(query.getDataSource(), Mode.Write, hql, args, query.isLocked(), 0, 0).executeUpdate();
+        createQuery(getDataSource(null, query, null, null), Mode.Write, hql, args, query.isLocked(), 0, 0).executeUpdate();
 
         return true;
     }
 
     @Override
     public <T extends Model> boolean delete(String dataSource, T model) {
-        session.get(dataSource, Mode.Write).delete(model);
+        if (model == null) {
+            logger.warn(null, "要删除的Model为null。");
+
+            return false;
+        }
+
+        session.get(getDataSource(dataSource, null, null, model.getClass()), Mode.Write).delete(model);
 
         return true;
     }
@@ -141,7 +147,7 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         if (!validator.isEmpty(query.getWhere()))
             hql.append(" WHERE ").append(query.getWhere());
 
-        createQuery(query.getDataSource(), Mode.Write, hql, args, query.isLocked(), 0, 0).executeUpdate();
+        createQuery(getDataSource(null, query, null, null), Mode.Write, hql, args, query.isLocked(), 0, 0).executeUpdate();
 
         return true;
     }
