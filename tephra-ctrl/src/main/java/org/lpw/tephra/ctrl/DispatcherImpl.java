@@ -17,6 +17,7 @@ import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -167,8 +168,9 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
 
     @Override
     public void onContextRefreshed() {
+        interceptors = new ArrayList<>();
         interceptorsOptional.ifPresent(list -> {
-            interceptors = list;
+            interceptors.addAll(list);
             interceptors.sort(Comparator.comparingInt(Interceptor::getSort));
         });
     }

@@ -16,7 +16,7 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
     @Override
     public SqlTable query(String dataSource, String sql, Object[] args) {
         if (logger.isDebugEnable())
-            logger.debug("执行SQL[{}:{}]检索操作。", sql, converter.toString(args));
+            logger.debug("执行SQL[{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args));
 
         try {
             PreparedStatement pstmt = newPreparedStatement(dataSource, Mode.Read, sql);
@@ -26,7 +26,7 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
 
             return sqlTable;
         } catch (SQLException e) {
-            logger.warn(e, "执行SQL[{}:{}]检索时发生异常！", sql, converter.toString(args));
+            logger.warn(e, "执行SQL[{}:{}:{}]检索时发生异常！", dataSource, sql, converter.toString(args));
 
             throw new RuntimeException(e);
         }
@@ -35,7 +35,7 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
     @Override
     public JSONArray queryAsJson(String dataSource, String sql, Object[] args) {
         if (logger.isDebugEnable())
-            logger.debug("执行SQL[{}:{}]检索操作。", sql, converter.toString(args));
+            logger.debug("执行SQL[{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args));
 
         try {
             PreparedStatement pstmt = newPreparedStatement(dataSource, Mode.Read, sql);
@@ -45,7 +45,7 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
 
             return array;
         } catch (SQLException e) {
-            logger.warn(e, "执行SQL[{}:{}]检索时发生异常！", sql, converter.toString(args));
+            logger.warn(e, "执行SQL[{}:{}:{}]检索时发生异常！", dataSource, sql, converter.toString(args));
 
             throw new RuntimeException(e);
         }
@@ -59,7 +59,7 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
     @Override
     public int[] update(String dataSource, String sql, List<Object[]> args) {
         if (logger.isDebugEnable())
-            logger.debug("成功执行SQL[{}:{}]批量更新操作。", sql, converter.toString(args));
+            logger.debug("成功执行SQL[{}:{}:{}]批量更新操作。", dataSource, sql, converter.toString(args));
 
         if (validator.isEmpty(args))
             return new int[]{update(sql, new Object[0])};
@@ -78,7 +78,7 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
 
             return array;
         } catch (SQLException e) {
-            logger.warn(e, "执行SQL[{}:{}]更新时发生异常！", sql, converter.toString(args));
+            logger.warn(e, "执行SQL[{}:{}:{}]更新时发生异常！", dataSource, sql, converter.toString(args));
 
             throw new RuntimeException(e);
         }

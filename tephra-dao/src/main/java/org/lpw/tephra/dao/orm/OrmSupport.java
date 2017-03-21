@@ -24,7 +24,7 @@ public abstract class OrmSupport<Q extends Query> implements Orm<Q> {
 
     @Override
     public <T extends Model> T findById(Class<T> modelClass, String id) {
-        return findById("", modelClass, id, false);
+        return findById(null, modelClass, id, false);
     }
 
     @Override
@@ -34,17 +34,17 @@ public abstract class OrmSupport<Q extends Query> implements Orm<Q> {
 
     @Override
     public <T extends Model> T findById(Class<T> modelClass, String id, boolean lock) {
-        return findById("", modelClass, id, lock);
+        return findById(null, modelClass, id, lock);
     }
 
     @Override
     public <T extends Model> boolean save(T model) {
-        return save("", model);
+        return save(null, model);
     }
 
     @Override
     public <T extends Model> void save(Collection<T> models) {
-        save("", models);
+        save(null, models);
     }
 
     @Override
@@ -60,17 +60,17 @@ public abstract class OrmSupport<Q extends Query> implements Orm<Q> {
 
     @Override
     public <T extends Model> boolean insert(T model) {
-        return insert("", model);
+        return insert(null, model);
     }
 
     @Override
     public <T extends Model> boolean delete(T model) {
-        return delete("", model);
+        return delete(null, model);
     }
 
     @Override
     public <T extends Model> boolean deleteById(Class<T> modelClass, String id) {
-        return deleteById("", modelClass, id);
+        return deleteById(null, modelClass, id);
     }
 
     protected <T extends Model, E extends Query> String getDataSource(String dataSource, E query, ModelTable modelTable, Class<T> modelClass) {

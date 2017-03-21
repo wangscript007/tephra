@@ -23,7 +23,7 @@ public class QuerySupport implements Query {
 
     @Override
     public String getDataSource() {
-        return dataSource == null ? "" : dataSource;
+        return dataSource;
     }
 
     @Override

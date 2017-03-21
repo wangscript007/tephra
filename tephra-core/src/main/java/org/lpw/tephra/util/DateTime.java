@@ -10,6 +10,13 @@ import java.util.Date;
  */
 public interface DateTime {
     /**
+     * 获取当前日期。
+     *
+     * @return 当前日期。
+     */
+    java.sql.Date today();
+
+    /**
      * 获取当前时间。
      *
      * @return 当前时间。
@@ -77,7 +84,7 @@ public interface DateTime {
     /**
      * 将日期值格式化为字符串。
      *
-     * @param date   要进行格式化的日期值。
+     * @param date 要进行格式化的日期值。
      * @return 格式化后的日期值字符串。
      */
     String toString(Date date);

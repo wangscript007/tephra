@@ -30,6 +30,11 @@ public class DateTimeImpl implements DateTime {
     private Map<Locale, String> dateTimeFormat = new ConcurrentHashMap<>();
 
     @Override
+    public java.sql.Date today() {
+        return new java.sql.Date(System.currentTimeMillis());
+    }
+
+    @Override
     public Timestamp now() {
         return new Timestamp(System.currentTimeMillis());
     }
