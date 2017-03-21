@@ -12,7 +12,7 @@ import javax.persistence.MappedSuperclass;
  *
  * @author lpw
  */
-@MappedSuperclass()
+@MappedSuperclass
 public class ModelSupport implements Model {
     private static final String ID = "c_id";
     private static final String UUID = "uuid2";
