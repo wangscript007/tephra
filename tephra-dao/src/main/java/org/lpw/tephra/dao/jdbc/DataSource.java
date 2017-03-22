@@ -13,18 +13,18 @@ public interface DataSource extends ConnectionFactory<javax.sql.DataSource> {
     /**
      * 获取只读数据源集。
      *
-     * @param name 数据源引用名称。
+     * @param key 数据源引用名称。
      * @return 只读数据源集；如果不存在则返回null。
      */
-    List<javax.sql.DataSource> listReadonly(String name);
+    List<javax.sql.DataSource> listReadonly(String key);
 
     /**
      * 验证是否包含只读数据源。
      *
-     * @param name 数据源引用名称。
+     * @param key 数据源引用名称。
      * @return 如果包含只读数据源则返回true；否则返回false。
      */
-    boolean hasReadonly(String name);
+    boolean hasReadonly(String key);
 
     /**
      * 获取数据库方言。
@@ -40,4 +40,11 @@ public interface DataSource extends ConnectionFactory<javax.sql.DataSource> {
      * @return 方言实例。
      */
     Dialect getDialect(String key);
+
+    /**
+     * 获取默认数据源key值。
+     *
+     * @return 数据源key值。
+     */
+    String getDefaultKey();
 }

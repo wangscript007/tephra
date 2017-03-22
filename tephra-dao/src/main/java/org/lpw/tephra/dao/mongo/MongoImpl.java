@@ -43,6 +43,8 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     private int maxWait;
     @Value("${tephra.dao.mongo.config:}")
     private String config;
+    @Value("${tephra.dao.mongo.key:}")
+    private String key;
     private Map<String, String> schemas;
     private Map<String, List<MongoClient>> mongos;
 
@@ -54,11 +56,14 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     @Override
     public MongoDatabase getDatabase(String key) {
         if (key == null)
-            key = "";
+            key = this.key;
 
         String schema = schemas.get(key);
-        if (validator.isEmpty(schema))
+        if (validator.isEmpty(schema)) {
+            logger.warn(null, "MongoDB引用key[{}]不存在！", key);
+
             throw new NullPointerException("MongoDB引用key[" + key + "]不存在！");
+        }
 
         List<MongoClient> list = mongos.get(key);
 

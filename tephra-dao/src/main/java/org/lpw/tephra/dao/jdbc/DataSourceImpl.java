@@ -50,34 +50,55 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
     private int removeAbandonedTimeout;
     @Value("${tephra.dao.database.config:}")
     private String config;
+    @Value("${tephra.dao.data-source.key:}")
+    private String key;
     private Map<String, Dialect> dialects = new HashMap<>();
     private Map<String, DataSource> writeables = new ConcurrentHashMap<>();
     private Map<String, List<DataSource>> readonlys = new ConcurrentHashMap<>();
     private Map<String, Boolean> readonly = new ConcurrentHashMap<>();
 
     @Override
-    public DataSource getWriteable(String name) {
-        return writeables.get(name);
+    public DataSource getWriteable(String key) {
+        return writeables.get(getKey(key));
     }
 
     @Override
-    public DataSource getReadonly(String name) {
-        if (!hasReadonly(name))
-            return getWriteable(name);
+    public DataSource getReadonly(String key) {
+        if (!hasReadonly(key))
+            return getWriteable(key);
 
-        List<DataSource> list = readonlys.get(name);
+        List<DataSource> list = listReadonly(key);
 
         return list.get(generator.random(0, list.size() - 1));
     }
 
     @Override
-    public List<DataSource> listReadonly(String name) {
-        return readonlys.get(name);
+    public List<DataSource> listReadonly(String key) {
+        return readonlys.get(getKey(key));
     }
 
     @Override
-    public boolean hasReadonly(String name) {
-        return readonly.getOrDefault(name, false);
+    public boolean hasReadonly(String key) {
+        return readonly.getOrDefault(getKey(key), false);
+    }
+
+    @Override
+    public Map<String, Dialect> getDialects() {
+        return dialects;
+    }
+
+    @Override
+    public Dialect getDialect(String key) {
+        return dialects.get(getKey(key));
+    }
+
+    private String getKey(String key) {
+        return key == null ? this.key : key;
+    }
+
+    @Override
+    public String getDefaultKey() {
+        return key;
     }
 
     @Override
@@ -106,8 +127,8 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
             logger.info("成功创建数据库[{}]连接池。", config);
     }
 
-    private void createDataSource(String name, Dialect dialect, String username, String password, JSONArray ips, String schema) {
-        if (writeables.get(name) != null)
+    private void createDataSource(String key, Dialect dialect, String username, String password, JSONArray ips, String schema) {
+        if (key == null || writeables.get(key) != null)
             return;
 
         for (int i = 0; i < ips.size(); i++) {
@@ -132,28 +153,18 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
             dataSource.setLogAbandoned(true);
 
             if (i == 0)
-                writeables.put(name, dataSource);
+                writeables.put(key, dataSource);
             else {
-                List<DataSource> list = readonlys.get(name);
+                List<DataSource> list = readonlys.get(key);
                 if (list == null)
                     list = Collections.synchronizedList(new ArrayList<>());
                 list.add(dataSource);
-                readonlys.put(name, list);
-                readonly.put(name, true);
+                readonlys.put(key, list);
+                readonly.put(key, true);
             }
 
             if (logger.isInfoEnable())
-                logger.info("数据源[{}@{}]设置完成。", name, ips.getString(i));
+                logger.info("数据源[{}@{}]设置完成。", key, ips.getString(i));
         }
-    }
-
-    @Override
-    public Map<String, Dialect> getDialects() {
-        return dialects;
-    }
-
-    @Override
-    public Dialect getDialect(String key) {
-        return dialects.get(validator.isEmpty(key) ? "" : key);
     }
 }

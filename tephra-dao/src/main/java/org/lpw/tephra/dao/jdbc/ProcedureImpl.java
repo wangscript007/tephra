@@ -17,7 +17,7 @@ public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Pro
     @Override
     public SqlTable query(String dataSource, String sql, Object[] args) {
         if (logger.isDebugEnable())
-            logger.debug("执行SQL[{}:{}]检索操作。", sql, converter.toString(args));
+            logger.debug("执行SQL[{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args));
 
         try {
             CallableStatement pstmt = newPreparedStatement(dataSource, Mode.Read, sql);
@@ -30,7 +30,7 @@ public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Pro
 
             return sqlTable;
         } catch (SQLException e) {
-            logger.warn(e, "执行SQL[{}:{}]检索时发生异常！", sql, converter.toString(args));
+            logger.warn(e, "执行SQL[{}:{}:{}]检索时发生异常！", dataSource, sql, converter.toString(args));
 
             throw new RuntimeException(e);
         }
@@ -39,7 +39,7 @@ public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Pro
     @Override
     public JSONArray queryAsJson(String dataSource, String sql, Object[] args) {
         if (logger.isDebugEnable())
-            logger.debug("执行SQL[{}:{}]检索操作。", sql, converter.toString(args));
+            logger.debug("执行SQL[{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args));
 
         try {
             CallableStatement pstmt = newPreparedStatement(dataSource, Mode.Read, sql);
@@ -52,7 +52,7 @@ public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Pro
 
             return array;
         } catch (SQLException e) {
-            logger.warn(e, "执行SQL[{}:{}]检索时发生异常！", sql, converter.toString(args));
+            logger.warn(e, "执行SQL[{}:{}:{}]检索时发生异常！", dataSource, sql, converter.toString(args));
 
             throw new RuntimeException(e);
         }
@@ -60,14 +60,14 @@ public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Pro
 
     @Override
     public <T> T queryObject(String sql, Object[] args) {
-        return queryObject("", sql, args);
+        return queryObject(null, sql, args);
     }
 
     @SuppressWarnings({"unchecked"})
     @Override
     public <T> T queryObject(String dataSource, String sql, Object[] args) {
         if (logger.isDebugEnable())
-            logger.debug("执行SQL[{}:{}]检索操作。", sql, converter.toString(args));
+            logger.debug("执行SQL[{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args));
 
         try {
             CallableStatement pstmt = newPreparedStatement(dataSource, Mode.Read, sql);
@@ -80,7 +80,7 @@ public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Pro
 
             return object;
         } catch (SQLException e) {
-            logger.warn(e, "执行SQL[{}:{}]检索时发生异常！", sql, converter.toString(args));
+            logger.warn(e, "执行SQL[{}:{}:{}]检索时发生异常！", dataSource, sql, converter.toString(args));
 
             throw new RuntimeException(e);
         }

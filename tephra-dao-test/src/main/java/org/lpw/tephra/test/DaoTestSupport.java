@@ -1,7 +1,7 @@
 package org.lpw.tephra.test;
 
 import org.junit.Before;
-import org.lpw.tephra.atomic.Closable;
+import org.lpw.tephra.atomic.Closables;
 import org.lpw.tephra.util.Validator;
 
 import javax.annotation.Resource;
@@ -10,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Method;
-import java.util.Set;
 
 /**
  * @author lpw
@@ -21,7 +20,7 @@ public class DaoTestSupport extends CoreTestSupport {
     @Resource(name = "tephra.dao.jdbc.sql")
     private Object sql;
     @Inject
-    private Set<Closable> closables;
+    private Closables closables;
     private Method update;
 
     @Before
@@ -61,6 +60,6 @@ public class DaoTestSupport extends CoreTestSupport {
     }
 
     protected void close() {
-        closables.forEach(Closable::close);
+        closables.close();
     }
 }

@@ -53,7 +53,7 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
 
     @Override
     public int[] update(String sql, List<Object[]> args) {
-        return update("", sql, args);
+        return update(null, sql, args);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
 
     @Override
     public int backup(String from, String to, String where, Object[] args) {
-        return backup("", from, to, where, args);
+        return backup(null, from, to, where, args);
     }
 
     @Override

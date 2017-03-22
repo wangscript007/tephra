@@ -17,7 +17,7 @@ public interface Jdbc extends Atomicable {
      * @return 数据集。
      */
     default SqlTable query(String sql, Object[] args) {
-        return query("", sql, args);
+        return query(null, sql, args);
     }
 
     /**
@@ -38,7 +38,7 @@ public interface Jdbc extends Atomicable {
      * @return 数据集。
      */
     default JSONArray queryAsJson(String sql, Object[] args) {
-        return queryAsJson("", sql, args);
+        return queryAsJson(null, sql, args);
     }
 
     /**
@@ -59,7 +59,7 @@ public interface Jdbc extends Atomicable {
      * @return 影响记录数。
      */
     default int update(String sql, Object[] args) {
-        return update("", sql, args);
+        return update(null, sql, args);
     }
 
     /**

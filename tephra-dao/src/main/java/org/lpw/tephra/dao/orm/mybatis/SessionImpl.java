@@ -37,7 +37,7 @@ public class SessionImpl extends ConnectionSupport<SqlSession> implements Sessio
     @Override
     public SqlSession get(String dataSource, Mode mode) {
         if (dataSource == null)
-            dataSource = "";
+            dataSource = this.dataSource.getDefaultKey();
         if ((transactional.get() != null && transactional.get()) || !this.dataSource.hasReadonly(dataSource))
             mode = Mode.Write;
         Map<String, SqlSession> sessions = this.sessions.get();
@@ -53,8 +53,11 @@ public class SessionImpl extends ConnectionSupport<SqlSession> implements Sessio
             sessionFactory = this.sessionFactory.getReadonly(dataSource);
         if (sessionFactory == null)
             sessionFactory = this.sessionFactory.getWriteable(dataSource);
-        if (sessionFactory == null)
-            throw new NullPointerException("无法获得[" + mode + "]MyBatis环境！");
+        if (sessionFactory == null) {
+            logger.warn(null, "无法获得[{}:{}]MyBatis环境！", dataSource, mode);
+
+            throw new NullPointerException("无法获得[" + dataSource + ":" + mode + "]MyBatis环境！");
+        }
 
         session = sessionFactory.openSession(mode == Mode.Read);
         sessions.put(key, session);

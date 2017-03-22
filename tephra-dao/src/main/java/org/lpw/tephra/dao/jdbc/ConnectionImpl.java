@@ -35,7 +35,7 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
     @Override
     public Connection get(String dataSource, Mode mode) {
         if (dataSource == null)
-            dataSource = "";
+            dataSource = this.dataSource.getDefaultKey();
         if ((transactional.get() != null && transactional.get()) || !this.dataSource.hasReadonly(dataSource))
             mode = Mode.Write;
         Map<String, Connection> connections = this.connections.get();
