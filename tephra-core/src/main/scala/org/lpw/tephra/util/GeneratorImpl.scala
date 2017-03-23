@@ -53,6 +53,13 @@ class GeneratorImpl extends Generator {
         Math.abs(Random.nextInt) % (max - min + 1) + min
     }
 
+    override def random(min: Long, max: Long): Long = {
+        if (min >= max)
+            return (min + max) >> 1
+
+        Math.abs(Random.nextLong) % (max - min + 1) + min
+    }
+
     override def uuid(): String = {
         UUID.randomUUID.toString
     }

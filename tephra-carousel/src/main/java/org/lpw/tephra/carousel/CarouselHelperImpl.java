@@ -129,6 +129,23 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     public String service(String key, Map<String, String> header, Map<String, String> parameter, int cacheTime) {
         if (logger.isDebugEnable())
             logger.debug("开始获取Carousel服务[key={};header={};parameter={};cacheTime={}]。", key, header, parameter, cacheTime);
+
+        if (services.containsKey(key)) {
+            try {
+                Future<String> future = executorService.submit(BeanFactory.getBean(LocalService.class)
+                        .build(services.get(key), this.header.getIp(), session.getId(), header, parameter));
+
+                return future.get();
+            } catch (Exception e) {
+                logger.warn(e, "执行本地服务[{}:{}]时发生异常！", key, services.get(key));
+
+                return null;
+            }
+        }
+
+        if (emptyCarouselUrl)
+            return null;
+
         String cacheKey = null;
         boolean cacheable = cacheTime > 0;
         if (cacheable) {
@@ -140,22 +157,6 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
             if (string != null)
                 return string;
         }
-
-        if (services.containsKey(key)) {
-            try {
-                Future<String> future = executorService.submit(BeanFactory.getBean(LocalService.class)
-                        .build(services.get(key), this.header.getIp(), session.getId(), header, parameter));
-
-                return cacheService(cacheable, cacheKey, future.get());
-            } catch (Exception e) {
-                logger.warn(e, "执行本地服务[{}:{}]时发生异常！", key, services.get(key));
-
-                return null;
-            }
-        }
-
-        if (emptyCarouselUrl)
-            return null;
 
         if (header == null)
             header = new HashMap<>();

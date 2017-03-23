@@ -40,6 +40,15 @@ public interface Generator {
     int random(int min, int max);
 
     /**
+     * 生成一个随机整数。
+     *
+     * @param min 最小值。
+     * @param max 最大值。
+     * @return 随机整数。
+     */
+    long random(long min, long max);
+
+    /**
      * 生成一个UUID随机数。
      *
      * @return UUID随机数。

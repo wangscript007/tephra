@@ -9,27 +9,27 @@ public enum TimeUnit {
     /**
      * 毫秒。
      */
-    MilliSecond(1),
+    MilliSecond(1L),
     /**
      * 秒。
      */
-    Second(1000),
+    Second(1000L),
     /**
      * 分钟。
      */
-    Minute(60 * 1000),
+    Minute(60L * 1000),
     /**
      * 小时。
      */
-    Hour(60 * 60 * 1000),
+    Hour(60L * 60 * 1000),
     /**
      * 天。
      */
-    Day(24 * 60 * 60 * 1000);
+    Day(24L * 60 * 60 * 1000);
 
-    int time;
+    long time;
 
-    TimeUnit(int time) {
+    TimeUnit(long time) {
         this.time = time;
     }
 
@@ -38,7 +38,7 @@ public enum TimeUnit {
      *
      * @return 时间值。
      */
-    public int getTime() {
+    public long getTime() {
         return time;
     }
 }
