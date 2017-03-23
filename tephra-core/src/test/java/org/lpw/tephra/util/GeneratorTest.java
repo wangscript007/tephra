@@ -55,7 +55,7 @@ public class GeneratorTest extends CoreTestSupport {
     }
 
     @Test
-    public void randomRange() {
+    public void randomInt() {
         Assert.assertEquals(0, generator.random(0, 0));
         Assert.assertEquals(5, generator.random(5, 5));
         Assert.assertEquals(2, generator.random(5, 0));
@@ -67,6 +67,21 @@ public class GeneratorTest extends CoreTestSupport {
         Assert.assertEquals(10, set.size());
         for (int i = 0; i < 10; i++)
             Assert.assertTrue(set.contains(i));
+    }
+
+    @Test
+    public void randomLong() {
+        Assert.assertEquals(0L, generator.random(0L, 0L));
+        Assert.assertEquals(5L, generator.random(5L, 5L));
+        Assert.assertEquals(2L, generator.random(5L, 0L));
+        Assert.assertEquals(4L, generator.random(8L, 0L));
+
+        Set<Long> set = new HashSet<>();
+        for (int i = 0; i < 100; i++)
+            set.add(generator.random(0L, 9L));
+        Assert.assertEquals(10, set.size());
+        for (int i = 0; i < 10; i++)
+            Assert.assertTrue(set.contains((long) i));
     }
 
     @Test
