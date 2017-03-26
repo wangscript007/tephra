@@ -3,7 +3,7 @@ package org.lpw.tephra.ctrl.http.upload;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.lpw.tephra.atomic.Closable;
+import org.lpw.tephra.atomic.Closables;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.ctrl.http.IgnoreUri;
@@ -29,7 +29,6 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author lpw
@@ -49,7 +48,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     @Inject
     private Storages storages;
     @Inject
-    private Set<Closable> closables;
+    private Closables closables;
     @Inject
     private ServiceHelper serviceHelper;
     @Inject
@@ -83,20 +82,17 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
                 }
 
                 try {
-                    int[] size = listener.getImageSize(key);
-                    boolean image = item.getContentType().startsWith("image/") && size != null && size.length == 2 && (size[0] > 0 || size[1] > 0);
                     String path = getPath(listener, item);
-
-                    if (!image || !image(item, size, storage, path))
-                        storage.write(path, item.getInputStream());
-                    String result = listener.upload(key, item.getName(), converter.toBitSize(item.getSize()), path);
+                    storage.write(path, item.getInputStream());
+                    String thumbnail = thumbnail(item, listener.getImageSize(key), storage, path);
+                    String result = listener.upload(key, item.getName(), converter.toBitSize(item.getSize()), thumbnail == null ? path : (path + "," + thumbnail));
                     item.delete();
 
                     if (!validator.isEmpty(result))
                         outputStream.write(result.getBytes("UTF-8"));
 
                     if (logger.isDebugEnable())
-                        logger.debug("保存上传[{}:{}]的文件[{}:{}]。", item.getFieldName(), item.getName(), path, converter.toBitSize(item.getSize()));
+                        logger.debug("保存上传[{}:{}]的文件[{}:{}:{}]。", item.getFieldName(), item.getName(), path, thumbnail, converter.toBitSize(item.getSize()));
                 } catch (Exception e) {
                     logger.warn(e, "保存上传文件时发生异常！");
                 }
@@ -106,7 +102,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
         } catch (Throwable e) {
             logger.warn(e, "处理文件上传时发生异常！");
         } finally {
-            closables.forEach(Closable::close);
+            closables.close();
         }
     }
 
@@ -145,7 +141,10 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
         return path.toString().replaceAll("[/]+", "/");
     }
 
-    private boolean image(FileItem item, int[] size, Storage storage, String path) {
+    private String thumbnail(FileItem item, int[] size, Storage storage, String path) {
+        if (size == null || size.length != 2 || (size[0] <= 0 && size[1] <= 0))
+            return null;
+
         try {
             Image image = ImageIO.read(item.getInputStream());
             int width = image.getWidth(null);
@@ -158,22 +157,24 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
                 width = width * size[1] / height;
                 height = size[1];
             }
-            if (width == 0 || height < 0)
-                return false;
+            if (width <= 0 || height <= 0)
+                return null;
 
             BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics graphics = bufferedImage.getGraphics();
             graphics.drawImage(image, 0, 0, width, height, null);
             graphics.dispose();
-            OutputStream outputStream = storage.getOutputStream(path);
+            int indexOf = path.lastIndexOf('.');
+            String thumbnail = path.substring(0, indexOf) + ".thumbnail" + path.substring(indexOf);
+            OutputStream outputStream = storage.getOutputStream(thumbnail);
             ImageIO.write(bufferedImage, item.getContentType().substring(item.getContentType().indexOf('/') + 1), outputStream);
             outputStream.close();
 
-            return true;
+            return thumbnail;
         } catch (Exception e) {
             logger.warn(e, "生成压缩图片时发生异常！");
 
-            return false;
+            return null;
         }
     }
 

@@ -74,7 +74,7 @@ public interface UploadListener {
      * @param key  上传文件key。
      * @param name 文件名。
      * @param size 文件大小。
-     * @param uri  文件URI地址。
+     * @param uri  文件URI地址；如果生成了缩略图则URI将包含缩略图地址，以逗号分隔。
      * @return 输出结果。
      */
     String upload(String key, String name, String size, String uri);
