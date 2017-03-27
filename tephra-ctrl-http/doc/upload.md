@@ -93,24 +93,13 @@ public interface UploadListener {
 ```
 3、客户端上传文件。
 ```html
-<input id="fileupload" type="file" name="key" data-url="/tephra/ctrl-http/upload" multiple>
-<script type="text/javascript">
-    $(function () {
-        $("#fileupload").fileupload({
-            progress: function (e, data) {
-                $("input").attr("disabled", "disabled");
-                $(".fileinput-button").attr("disabled", "disabled");
-                var percent = Math.round(data.loaded / data.total * 100);
-                $(".progress .progress-bar").html(percent + "%");
-                $(".progress .progress-bar").width(percent + "%");
-            },
-            done: function (e, data) {
-                spark.workbench.load("/spark/scrum/folder/query");
-            }
-        });
-    });
-</script>
+<form action="/tephra/ctrl-http/upload" enctype="multipart/form-data">
+    <input type="file" name="${key}">
+    <button type="submit">提交</button>
+</form>
 ```
+> ${key}为上传处理器UploadListener.getKey的值。
+
 ## 对上传的文件进行分类存储
 上传文件默认保存为/upload/${content-type}/${date}/${file-name}，其中${content-type}为文件类型，如image/png，${date}为上传日期，格式为yyyyMMdd，${file-name}为随机生成的长度为32个字符的文件名＋文件后缀。
 
