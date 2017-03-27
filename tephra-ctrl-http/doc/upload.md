@@ -49,6 +49,18 @@ public interface UploadListener {
     }
 
     /**
+     * 获取文件保存后缀。
+     *
+     * @param key         上传文件key。
+     * @param contentType 文件类型。
+     * @param name        文件名。
+     * @return 文件后缀。
+     */
+    default String getSuffix(String key, String contentType, String name) {
+        return null;
+    }
+
+    /**
      * 获取图片大小。
      * 当上传文件为图片时，并且返回的图片大小（长、高）大于0时，自动将图片修改为长宽不超过设置值的图片，并进行压缩。
      *

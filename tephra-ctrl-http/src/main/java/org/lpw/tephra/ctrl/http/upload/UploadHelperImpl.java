@@ -26,7 +26,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.OutputStream;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -133,10 +132,12 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     }
 
     private String getPath(UploadListener listener, FileItem item) {
+        String name = item.getName();
         StringBuilder path = new StringBuilder(ROOT).append(item.getContentType()).append('/')
-                .append(listener.getPath(item.getFieldName(), item.getContentType(), item.getName())).append('/')
-                .append(dateTime.toString(new Date(), "yyyyMMdd")).append('/').append(generator.random(32))
-                .append(item.getName().substring(item.getName().lastIndexOf('.')));
+                .append(listener.getPath(item.getFieldName(), item.getContentType(), name)).append('/')
+                .append(dateTime.toString(dateTime.today(), "yyyyMMdd")).append('/').append(generator.random(32));
+        String suffix = listener.getSuffix(listener.getKey(), item.getContentType(), name);
+        path.append(validator.isEmpty(suffix) ? name.substring(name.lastIndexOf('.')) : suffix);
 
         return path.toString().replaceAll("[/]+", "/");
     }
