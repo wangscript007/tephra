@@ -67,8 +67,12 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
 
                 String key = item.getFieldName();
                 UploadListener listener = getListener(key);
-                if (listener == null || !listener.isUploadEnable(key, item.getContentType(), item.getName())) {
-                    logger.warn(null, "无法处理文件上传请求[key={}&content-type={}&name={}]！", key, item.getContentType(), item.getName());
+                if (listener == null)
+                    return;
+
+                String contentType = listener.getContentType(key, item.getContentType(), item.getName());
+                if (!listener.isUploadEnable(key, contentType, item.getName())) {
+                    logger.warn(null, "无法处理文件上传请求[key={}&content-type={}&name={}]！", key, contentType, item.getName());
 
                     return;
                 }
@@ -81,9 +85,9 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
                 }
 
                 try {
-                    String path = getPath(listener, item);
+                    String path = getPath(listener, item, contentType);
                     storage.write(path, item.getInputStream());
-                    String thumbnail = thumbnail(item, listener.getImageSize(key), storage, path);
+                    String thumbnail = thumbnail(item, listener.getImageSize(key), storage, contentType, path);
                     String result = listener.upload(key, item.getName(), converter.toBitSize(item.getSize()), thumbnail == null ? path : (path + "," + thumbnail));
                     item.delete();
 
@@ -131,18 +135,18 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
         return listener;
     }
 
-    private String getPath(UploadListener listener, FileItem item) {
+    private String getPath(UploadListener listener, FileItem item, String contentType) {
         String name = item.getName();
-        StringBuilder path = new StringBuilder(ROOT).append(item.getContentType()).append('/')
-                .append(listener.getPath(item.getFieldName(), item.getContentType(), name)).append('/')
+        StringBuilder path = new StringBuilder(ROOT).append(contentType).append('/')
+                .append(listener.getPath(item.getFieldName(), contentType, name)).append('/')
                 .append(dateTime.toString(dateTime.today(), "yyyyMMdd")).append('/').append(generator.random(32));
-        String suffix = listener.getSuffix(listener.getKey(), item.getContentType(), name);
+        String suffix = listener.getSuffix(listener.getKey(), contentType, name);
         path.append(validator.isEmpty(suffix) ? name.substring(name.lastIndexOf('.')) : suffix);
 
         return path.toString().replaceAll("[/]+", "/");
     }
 
-    private String thumbnail(FileItem item, int[] size, Storage storage, String path) {
+    private String thumbnail(FileItem item, int[] size, Storage storage, String contentType, String path) {
         if (size == null || size.length != 2 || (size[0] <= 0 && size[1] <= 0))
             return null;
 
@@ -168,7 +172,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
             int indexOf = path.lastIndexOf('.');
             String thumbnail = path.substring(0, indexOf) + ".thumbnail" + path.substring(indexOf);
             OutputStream outputStream = storage.getOutputStream(thumbnail);
-            ImageIO.write(bufferedImage, item.getContentType().substring(item.getContentType().indexOf('/') + 1), outputStream);
+            ImageIO.write(bufferedImage, contentType.substring(contentType.indexOf('/') + 1), outputStream);
             outputStream.close();
 
             return thumbnail;

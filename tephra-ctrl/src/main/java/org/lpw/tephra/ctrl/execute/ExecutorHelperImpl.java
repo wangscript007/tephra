@@ -40,6 +40,7 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
 
     @Override
     public void set(String service) {
+        executors.remove();
         if (setByKey(service))
             return;
 

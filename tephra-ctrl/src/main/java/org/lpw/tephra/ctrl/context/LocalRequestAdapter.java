@@ -1,5 +1,6 @@
 package org.lpw.tephra.ctrl.context;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,7 +14,7 @@ public class LocalRequestAdapter implements RequestAdapter {
 
     public LocalRequestAdapter(String uri, Map<String, String> map) {
         this.uri = uri;
-        this.map = map;
+        this.map = map == null ? new HashMap<>() : map;
     }
 
     @Override

@@ -163,7 +163,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
                 post.setEntity(entity);
             content = execute(post, headers, charset);
         } catch (Exception e) {
-            logger.warn(e, "使用HTTP访问{}[{}]时发生异常！", url, entity);
+            logger.warn(e, "使用POST访问{}[{}]时发生异常！", url, entity);
         }
 
         if (logger.isDebugEnable())

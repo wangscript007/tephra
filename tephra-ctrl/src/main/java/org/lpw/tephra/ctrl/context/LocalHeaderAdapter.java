@@ -1,5 +1,6 @@
 package org.lpw.tephra.ctrl.context;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,7 +14,7 @@ public class LocalHeaderAdapter implements HeaderAdapter {
 
     public LocalHeaderAdapter(String ip, Map<String, String> map) {
         this.ip = ip;
-        this.map = map;
+        this.map = map == null ? new HashMap<>() : map;
     }
 
     @Override

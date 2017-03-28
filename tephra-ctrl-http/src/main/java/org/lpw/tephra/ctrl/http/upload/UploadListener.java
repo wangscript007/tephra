@@ -12,6 +12,18 @@ public interface UploadListener {
     String getKey();
 
     /**
+     * 获取文件content-type属性。
+     *
+     * @param key         上传文件key。
+     * @param contentType 文件类型。
+     * @param name        文件名。
+     * @return 文件content-type属性。
+     */
+    default String getContentType(String key, String contentType, String name) {
+        return contentType;
+    }
+
+    /**
      * 验证是否允许上传。
      *
      * @param key         上传文件key。
@@ -20,6 +32,15 @@ public interface UploadListener {
      * @return 如果允许则返回true；否则返回false。
      */
     boolean isUploadEnable(String key, String contentType, String name);
+
+    /**
+     * 获取存储处理器。
+     *
+     * @return 存储处理器。
+     */
+    default String getStorage() {
+        return null;
+    }
 
     /**
      * 获取文件保存路径。
@@ -39,7 +60,7 @@ public interface UploadListener {
      * @param key         上传文件key。
      * @param contentType 文件类型。
      * @param name        文件名。
-     * @return 文件后缀。
+     * @return 文件后缀；null表示使用默认后缀。
      */
     default String getSuffix(String key, String contentType, String name) {
         return null;
@@ -53,15 +74,6 @@ public interface UploadListener {
      * @return 图片大小[长, 高]，如果返回空或0集则表示不需要调整图片。
      */
     default int[] getImageSize(String key) {
-        return null;
-    }
-
-    /**
-     * 获取存储处理器。
-     *
-     * @return 存储处理器。
-     */
-    default String getStorage() {
         return null;
     }
 

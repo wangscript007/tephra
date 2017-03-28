@@ -13,6 +13,7 @@ import org.lpw.tephra.ctrl.execute.ExecuteListener;
 import org.lpw.tephra.ctrl.status.Status;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Http;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.TimeUnit;
 import org.lpw.tephra.util.Validator;
@@ -46,6 +47,8 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     private Logger logger;
     @Inject
     private Cache cache;
+    @Inject
+    private Json json;
     @Inject
     private Status status;
     @Inject
@@ -132,11 +135,13 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
 
         if (services.containsKey(key)) {
             try {
+                if (logger.isDebugEnable())
+                    logger.debug("使用本地微服务[{}:{}]。", key, services.get(key));
                 Future<String> future = executorService.submit(BeanFactory.getBean(LocalService.class)
                         .build(services.get(key), this.header.getIp(), session.getId(), header, parameter));
 
                 return future.get();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.warn(e, "执行本地服务[{}:{}]时发生异常！", key, services.get(key));
 
                 return null;
@@ -168,6 +173,9 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     private String cacheService(boolean cacheable, String cacheKey, String result) {
         if (logger.isDebugEnable())
             logger.debug("缓存[{}:{}]Carousel请求数据[{}]。", cacheable, cacheKey, result);
+        JSONObject json = this.json.toObject(result);
+        if (json != null && json.containsKey("data"))
+            result = json.getString("data");
         if (cacheable)
             cache.put(cacheKey, result, false);
 

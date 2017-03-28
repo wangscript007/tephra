@@ -86,8 +86,7 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
         if (logger.isDebugEnable())
             logger.debug("回滚[{}]个数据库连接！", connections.size());
 
-        this.connections.remove();
-        transactional.remove();
+        remove();
     }
 
     @Override
@@ -113,7 +112,11 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
         if (logger.isDebugEnable())
             logger.debug("关闭[{}]个数据库连接！", connections.size());
 
-        this.connections.remove();
+        remove();
+    }
+
+    private void remove(){
+        connections.remove();
         transactional.remove();
     }
 }
