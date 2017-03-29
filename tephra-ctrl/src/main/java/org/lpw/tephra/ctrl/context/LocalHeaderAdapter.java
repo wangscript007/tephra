@@ -13,7 +13,7 @@ public class LocalHeaderAdapter implements HeaderAdapter {
     protected Map<String, String> map;
 
     public LocalHeaderAdapter(String ip, Map<String, String> map) {
-        this.ip = ip;
+        this.ip = ip == null ? "127.0.0.1" : ip;
         this.map = map == null ? new HashMap<>() : map;
     }
 
