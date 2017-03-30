@@ -13,6 +13,12 @@
     <name>tephra-dao</name>
     <url>http://maven.apache.org</url>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.mysql>5.1.40</version.mysql>
+        <version.tephra>1.0.0-RELEASE</version.tephra>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>javax.transaction</groupId>
@@ -22,7 +28,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.40</version>
+            <version>${version.mysql}</version>
         </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>
@@ -52,12 +58,12 @@
         <dependency>
             <groupId>org.lpw.tephra</groupId>
             <artifactId>tephra-core</artifactId>
-            <version>1.0.0-RELEASE</version>
+            <version>${version.tephra}</version>
         </dependency>
         <dependency>
             <groupId>org.lpw.tephra</groupId>
             <artifactId>tephra-dao-test</artifactId>
-            <version>1.0.0-RELEASE</version>
+            <version>${version.tephra}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

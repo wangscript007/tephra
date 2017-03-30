@@ -13,16 +13,21 @@
     <name>tephra-script</name>
     <url>http://maven.apache.org</url>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.tephra>1.0.0-RELEASE</version.tephra>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.lpw.tephra</groupId>
             <artifactId>tephra-ctrl</artifactId>
-            <version>1.0.0-RELEASE</version>
+            <version>${version.tephra}</version>
         </dependency>
         <dependency>
             <groupId>org.lpw.tephra</groupId>
             <artifactId>tephra-core-test</artifactId>
-            <version>1.0.0-RELEASE</version>
+            <version>${version.tephra}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -15,6 +15,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.netty>4.1.9.Final</version.netty>
+        <version.tephra>1.0.0-RELEASE</version.tephra>
     </properties>
 
     <dependencies>
@@ -26,7 +28,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.9.Final</version>
+            <version>${version.netty}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
@@ -104,7 +106,7 @@
         <dependency>
             <groupId>org.lpw.tephra</groupId>
             <artifactId>tephra-ctrl</artifactId>
-            <version>1.0.0-RELEASE</version>
+            <version>${version.tephra}</version>
         </dependency>
     </dependencies>
 </project>

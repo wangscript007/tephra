@@ -13,11 +13,19 @@
     <name>tephra-core</name>
     <url>http://maven.apache.org</url>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.scala-library>2.12.1</version.scala-library>
+        <version.commons-collections>3.2.2</version.commons-collections>
+        <version.netty>4.1.9.Final</version.netty>
+        <version.tephra>1.0.0-RELEASE</version.tephra>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>2.12.1</version>
+            <version>${version.scala-library}</version>
         </dependency>
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
@@ -52,7 +60,7 @@
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.2.2</version>
+            <version>${version.commons-collections}</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -82,7 +90,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.9.Final</version>
+            <version>${version.netty}</version>
         </dependency>
         <dependency>
             <groupId>org.freemarker</groupId>
@@ -117,7 +125,7 @@
         <dependency>
             <groupId>org.lpw.tephra</groupId>
             <artifactId>tephra-core-test</artifactId>
-            <version>1.0.0-RELEASE</version>
+            <version>${version.tephra}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

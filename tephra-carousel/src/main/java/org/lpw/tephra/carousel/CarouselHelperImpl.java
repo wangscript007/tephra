@@ -6,6 +6,7 @@ import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.cache.Cache;
+import org.lpw.tephra.crypto.Sign;
 import org.lpw.tephra.ctrl.context.Header;
 import org.lpw.tephra.ctrl.context.Session;
 import org.lpw.tephra.ctrl.execute.Execute;
@@ -37,6 +38,8 @@ import java.util.concurrent.Future;
 public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, ContextRefreshedListener, ContextClosedListener {
     private static final String CACHE_SERVICE = "tephra.carousel.helper.service:";
 
+    @Inject
+    private Sign sign;
     @Inject
     private Validator validator;
     @Inject
@@ -138,7 +141,7 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
                 if (logger.isDebugEnable())
                     logger.debug("使用本地微服务[{}:{}]。", key, services.get(key));
                 Future<String> future = executorService.submit(BeanFactory.getBean(LocalService.class)
-                        .build(services.get(key), this.header.getIp(), session.getId(), header, parameter));
+                        .build(services.get(key), null, session.getId(), header, parameter));
 
                 return future.get();
             } catch (Throwable e) {
@@ -193,6 +196,14 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
 
             return false;
         }
+    }
+
+    @Override
+    public void sign(String serviceKey, String signKey, Map<String, String> parameter) {
+        if (services.containsKey(serviceKey))
+            return;
+
+        sign.put(parameter, signKey);
     }
 
     @Override
