@@ -84,6 +84,12 @@ public class JsonImpl implements Json {
             return (JSONObject) object;
 
         try {
+            if (object instanceof String) {
+                String string = (String) object;
+
+                return validator.isEmpty(string) ? null : JSON.parseObject(string);
+            }
+
             return JSON.parseObject(object.toString());
         } catch (Throwable throwable) {
             logger.warn(throwable, "转化对象[{}]为JSON对象时发生异常！", object);
@@ -101,6 +107,12 @@ public class JsonImpl implements Json {
             return (JSONArray) object;
 
         try {
+            if (object instanceof String) {
+                String string = (String) object;
+
+                return validator.isEmpty(string) ? null : JSON.parseArray(string);
+            }
+
             return JSON.parseArray(object.toString());
         } catch (Throwable throwable) {
             logger.warn(throwable, "转化对象[{}]为JSON数组时发生异常！", object);
