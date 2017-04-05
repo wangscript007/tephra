@@ -5,15 +5,15 @@ import org.springframework.stereotype.Controller;
 /**
  * @author lpw
  */
-@Controller(Validators.EMAIL)
-public class EmailValidatorImpl extends ValidatorSupport {
+@Controller(Validators.LONGITUDE)
+public class LongitudeValidatorImpl extends ValidatorSupport {
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
-        return validator.isEmail(parameter);
+        return validator.isMatchRegex("^\\d{1,3}\\.\\d+$", parameter) && Math.abs(converter.toDouble(parameter) - 90) <= 90;
     }
 
     @Override
     protected String getDefaultFailureMessageKey() {
-        return Validators.PREFIX + "illegal-email";
+        return Validators.PREFIX + "illegal-latitude";
     }
 }

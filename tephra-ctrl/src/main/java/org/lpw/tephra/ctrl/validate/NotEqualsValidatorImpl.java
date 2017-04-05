@@ -7,8 +7,6 @@ import org.springframework.stereotype.Controller;
  */
 @Controller(Validators.NOT_EQUALS)
 public class NotEqualsValidatorImpl extends ValidatorSupport {
-    private static final String DEFAULT_FAILURE_MESSAGE_KEY = Validators.PREFIX + "equals";
-
     @Override
     public boolean validate(ValidateWrapper validate, String[] parameters) {
         if (parameters[0] == null)
@@ -19,6 +17,6 @@ public class NotEqualsValidatorImpl extends ValidatorSupport {
 
     @Override
     protected String getDefaultFailureMessageKey() {
-        return DEFAULT_FAILURE_MESSAGE_KEY;
+        return Validators.PREFIX + "equals";
     }
 }

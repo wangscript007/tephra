@@ -7,8 +7,6 @@ import org.springframework.stereotype.Controller;
  */
 @Controller(Validators.GREATER_THAN)
 public class GreaterThanValidatorImpl extends ValidatorSupport {
-    private static final String DEFAULT_FAILURE_MESSAGE_KEY = Validators.PREFIX + "not-greater-than";
-
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
         return converter.toInt(parameter) > validate.getNumber()[0];
@@ -23,6 +21,6 @@ public class GreaterThanValidatorImpl extends ValidatorSupport {
 
     @Override
     protected String getDefaultFailureMessageKey() {
-        return DEFAULT_FAILURE_MESSAGE_KEY;
+        return Validators.PREFIX + "not-greater-than";
     }
 }

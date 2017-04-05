@@ -7,8 +7,6 @@ import org.springframework.stereotype.Controller;
  */
 @Controller(Validators.BETWEEN)
 public class BetweenValidatorImpl extends ValidatorSupport {
-    private static final String DEFAULT_FAILURE_MESSAGE_KEY = Validators.PREFIX + "not-between";
-
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
         int n = converter.toInt(parameter);
@@ -25,6 +23,6 @@ public class BetweenValidatorImpl extends ValidatorSupport {
 
     @Override
     protected String getDefaultFailureMessageKey() {
-        return DEFAULT_FAILURE_MESSAGE_KEY;
+        return Validators.PREFIX + "not-between";
     }
 }

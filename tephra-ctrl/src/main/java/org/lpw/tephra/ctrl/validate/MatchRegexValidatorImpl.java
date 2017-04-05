@@ -7,8 +7,6 @@ import org.springframework.stereotype.Controller;
  */
 @Controller(Validators.MATCH_REGEX)
 public class MatchRegexValidatorImpl extends ValidatorSupport {
-    private static final String DEFAULT_FAILURE_MESSAGE_KEY = Validators.PREFIX + "not-match-regex";
-
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
         return validator.isMatchRegex(validate.getString()[0], parameter);
@@ -23,6 +21,6 @@ public class MatchRegexValidatorImpl extends ValidatorSupport {
 
     @Override
     protected String getDefaultFailureMessageKey() {
-        return DEFAULT_FAILURE_MESSAGE_KEY;
+        return Validators.PREFIX + "not-match-regex";
     }
 }

@@ -11,8 +11,6 @@ import javax.inject.Inject;
  */
 @Controller(Validators.SIGN)
 public class SignValidatorImpl extends ValidatorSupport {
-    private static final String DEFAULT_FAILURE_MESSAGE_KEY = Validators.PREFIX + "illegal-sign";
-
     @Inject
     private Header header;
     @Inject
@@ -30,6 +28,6 @@ public class SignValidatorImpl extends ValidatorSupport {
 
     @Override
     protected String getDefaultFailureMessageKey() {
-        return DEFAULT_FAILURE_MESSAGE_KEY;
+        return Validators.PREFIX + "illegal-sign";
     }
 }
