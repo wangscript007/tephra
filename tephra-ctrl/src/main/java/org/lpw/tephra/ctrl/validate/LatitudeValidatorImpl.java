@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 public class LatitudeValidatorImpl extends ValidatorSupport {
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
-        return validator.isMatchRegex("^-?\\d{1,2}\\.\\d+$", parameter) && Math.abs(converter.toDouble(parameter)) <= 90;
+        return validator.isMatchRegex("^-?\\d{1,2}\\.?\\d*$", parameter) && Math.abs(converter.toDouble(parameter)) <= 90;
     }
 
     @Override
