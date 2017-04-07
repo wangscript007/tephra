@@ -29,14 +29,13 @@ public interface WeixinService {
     boolean echo(String appId, String signature, String timestamp, String nonce);
 
     /**
-     * 获取重定向参数。
-     * 主要用于获取微信用户信息。
+     * 认证微信用户信息。
      *
      * @param appId 微信公众号AppID。
      * @param code  认证码。
-     * @return 用户OpenID。
+     * @return 用户OpenID；如果验证失败则返回null。
      */
-    String redirect(String appId, String code);
+    String auth(String appId, String code);
 
     /**
      * 处理接收到的XML数据。

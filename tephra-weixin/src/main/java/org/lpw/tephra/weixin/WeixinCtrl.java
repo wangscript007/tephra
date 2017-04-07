@@ -47,7 +47,7 @@ public class WeixinCtrl {
 
         String redirect = request.get("redirect");
         if (!validator.isEmpty(redirect)) {
-            weixinService.redirect(appId, request.get("code"));
+            weixinService.auth(appId, request.get("code"));
             forward.redirectTo(redirect);
 
             return null;
@@ -65,7 +65,7 @@ public class WeixinCtrl {
      */
     @Execute(name = "redirect")
     public Object redirect() {
-        return weixinService.redirect(request.get("appId"), request.get("code"));
+        return weixinService.auth(request.get("appId"), request.get("code"));
     }
 
     /**

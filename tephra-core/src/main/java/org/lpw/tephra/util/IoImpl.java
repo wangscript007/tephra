@@ -26,6 +26,22 @@ public class IoImpl implements Io {
     private Validator validator;
 
     @Override
+    public void mkdirs(File file) {
+        if (file == null)
+            return;
+
+        if (!file.mkdirs())
+            logger.warn(null, "创建目录（集）[{}]失败！", file.getAbsolutePath());
+        else if (logger.isDebugEnable())
+            logger.debug("成功创建目录（集）[{}]。", file.getAbsolutePath());
+    }
+
+    @Override
+    public void mkdirs(String path) {
+        mkdirs(new File(path));
+    }
+
+    @Override
     public byte[] read(String path) {
         if (validator.isEmpty(path) || !new File(path).exists())
             return null;
@@ -92,5 +108,39 @@ public class IoImpl implements Io {
         for (int i = 0, length = source.length(); i < length; i++)
             writer.append(source.charAt(i));
         writer.flush();
+    }
+
+    @Override
+    public void move(File source, File target) throws IOException {
+        OutputStream outputStream = new FileOutputStream(target);
+        InputStream inputStream = new FileInputStream(source);
+        copy(inputStream, outputStream);
+        inputStream.close();
+        outputStream.close();
+        delete(source);
+    }
+
+    @Override
+    public void move(String source, String target) throws IOException {
+        move(new File(source), new File(target));
+    }
+
+    @Override
+    public void delete(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null)
+                for (File f : files)
+                    delete(f);
+        }
+        if (!file.delete())
+            logger.warn(null, "删除文件/目录[{}]失败！", file.getAbsolutePath());
+        else if (logger.isDebugEnable())
+            logger.debug("成功删除文件/目录[{}]。", file.getAbsolutePath());
+    }
+
+    @Override
+    public void delete(String path) {
+        delete(new File(path));
     }
 }

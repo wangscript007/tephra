@@ -81,7 +81,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
     }
 
     @Override
-    public String redirect(String appId, String code) {
+    public String auth(String appId, String code) {
         Map<String, String> map = new HashMap<>();
         map.put("appid", appId);
         map.put("secret", weixinHelper.getConfig(appId).getSecret());

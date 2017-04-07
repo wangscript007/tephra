@@ -21,11 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
@@ -90,8 +86,12 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
 
     @Override
     public String getRedirectUrl(String appId, String uri) {
-        return new StringBuilder("https://open.weixin.qq.com/connect/oauth2/authorize?appid=").append(appId).append("&redirect_uri=")
-                .append(converter.encodeUrl(root + WeixinService.URI + appId + "?redirect=" + uri, null)).append("&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect").toString();
+        if (validator.isEmpty(appId))
+            appId = getAppId(0);
+
+        return "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appId + "&redirect_uri="
+                + converter.encodeUrl(root + WeixinService.URI + appId + "?redirect=" + uri, null)
+                + "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
     }
 
     @Override
@@ -142,27 +142,23 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
 
     @Override
     public String download(String appId, String mediaId, Timestamp time, boolean https) {
-        File temp = new File(context.getAbsolutePath("/upload/weixin/" + generator.random(32)));
-        Map<String, String> map = http.download((https ? "https" : "http") + "://api.weixin.qq.com/cgi-bin/media/get?access_token=" + getToken(appId) + "&media_id=" + mediaId, null, "", temp.getAbsolutePath());
+        String name = generator.random(32);
+        String temp = context.getAbsolutePath("/upload/weixin/" + name);
+        Map<String, String> map = http.download((https ? "https" : "http") + "://api.weixin.qq.com/cgi-bin/media/get?access_token=" + getToken(appId) + "&media_id=" + mediaId, null, "", temp);
         if (map == null) {
-            temp.delete();
+            io.delete(temp);
 
             return null;
         }
 
         String disposition = map.get("Content-disposition");
-        String uri = new StringBuilder().append("/upload/").append(map.get("Content-Type")).append("/weixin/").append(dateTime.toString(time, "yyyyMMdd"))
-                .append('/').append(temp.getName()).append(disposition.substring(disposition.lastIndexOf('.'), disposition.length() - 1)).toString();
+        String uri = "/upload/" + map.get("Content-Type") + "/weixin/" + dateTime.toString(time, "yyyyMMdd")
+                + "/" + name + disposition.substring(disposition.lastIndexOf('.'), disposition.length() - 1);
 
         try {
-            File file = new File(context.getAbsolutePath(uri));
-            file.getParentFile().mkdirs();
-            OutputStream output = new FileOutputStream(file);
-            InputStream input = new FileInputStream(temp);
-            io.copy(input, output);
-            input.close();
-            output.close();
-            temp.delete();
+            String path = context.getAbsolutePath(uri);
+            io.mkdirs(path.substring(0, path.lastIndexOf('/')));
+            io.move(temp, path);
         } catch (IOException e) {
             logger.warn(e, "移动文件时发生异常！");
         }
@@ -172,14 +168,14 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
 
     @Override
     public String getToken(String appId) {
-        WeixinConfig config = configs.get(appId);
+        WeixinConfig config = getConfig(appId);
 
         return config == null ? null : config.getCurrentToken();
     }
 
     @Override
     public String getJsapiTicket(String appId) {
-        WeixinConfig config = configs.get(appId);
+        WeixinConfig config = getConfig(appId);
 
         return config == null ? null : config.getJsapiTicket();
     }
@@ -202,6 +198,9 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
 
     @Override
     public WeixinConfig getConfig(String appId) {
+        if (validator.isEmpty(appId))
+            appId = getAppId(0);
+
         if (!configs.containsKey(appId)) {
             logger.warn(null, "无法获得微信[AppId:{}]配置！", appId);
 

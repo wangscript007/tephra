@@ -1,5 +1,6 @@
 package org.lpw.tephra.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,6 +11,20 @@ import java.io.OutputStream;
  * @author lpw
  */
 public interface Io {
+    /**
+     * 创建目录（集）。
+     *
+     * @param file 目录。
+     */
+    void mkdirs(File file);
+
+    /**
+     * 创建目录（集）。
+     *
+     * @param path 目录。
+     */
+    void mkdirs(String path);
+
     /**
      * 读取指定路径下的文件。
      *
@@ -51,4 +66,36 @@ public interface Io {
      * @throws IOException 未处理IO读写异常。
      */
     void write(OutputStream output, StringBuffer source) throws IOException;
+
+    /**
+     * 移动文件。
+     *
+     * @param source 源文件。
+     * @param target 目标文件。
+     * @throws IOException 未处理IO读写异常。
+     */
+    void move(File source, File target) throws IOException;
+
+    /**
+     * 移动文件。
+     *
+     * @param source 源文件。
+     * @param target 目标文件。
+     * @throws IOException 未处理IO读写异常。
+     */
+    void move(String source, String target) throws IOException;
+
+    /**
+     * 删除文件/目录（递归）。
+     *
+     * @param file 文件/目录。
+     */
+    void delete(File file);
+
+    /**
+     * 删除文件/目录（递归）。
+     *
+     * @param path 文件/目录。
+     */
+    void delete(String path);
 }
