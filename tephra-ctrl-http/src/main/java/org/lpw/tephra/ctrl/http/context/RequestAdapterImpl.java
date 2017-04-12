@@ -67,11 +67,8 @@ public class RequestAdapterImpl implements RequestAdapter {
             return content;
 
         String contentType = request.getHeader("content-type");
-        if (!BeanFactory.getBean(Validator.class).isEmpty(contentType) && contentType.toLowerCase().contains("multipart/form-data")) {
-            content = "";
-
-            return content;
-        }
+        if (!BeanFactory.getBean(Validator.class).isEmpty(contentType) && contentType.toLowerCase().contains("multipart/form-data"))
+            return content = "";
 
         try {
             ByteArrayOutputStream output = new ByteArrayOutputStream();
