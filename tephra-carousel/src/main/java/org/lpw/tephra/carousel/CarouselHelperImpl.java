@@ -211,8 +211,12 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
         if (!serviceAll)
             return;
 
-        for (String name : converter.toArray(methodExecute.name(), ","))
-            services.put(classExecute.key() + "." + name, classExecute.name() + name);
+        for (String name : converter.toArray(methodExecute.name(), ",")) {
+            if (classExecute == null)
+                services.put(name, name);
+            else
+                services.put(classExecute.key() + "." + name, classExecute.name() + name);
+        }
     }
 
     @Override
