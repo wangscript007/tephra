@@ -88,7 +88,7 @@ public class ConverterImpl implements Converter {
 
     @Override
     public String[] toArray(String string, String separator) {
-        if (validator.isEmpty(string))
+        if (string == null)
             return new String[0];
 
         if (separator == null || !string.contains(separator))
