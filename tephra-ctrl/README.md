@@ -30,6 +30,8 @@ Ctrl接口图：
 
 [请求参数验证](doc/validate.md)
 
+[IP白名单](doc/trustful-ip.md)
+
 [请求参数签名](doc/sign.md)
 
 [权限验证](doc/permit.md)

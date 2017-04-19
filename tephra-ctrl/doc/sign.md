@@ -44,6 +44,8 @@ public interface Request {
             @Validate(validator = Validators.SIGN)
     })
 ```
+> 如果请求方IP在服务端的[IP白名单](trustful-ip.md)中，则不验证签名直接认证通过。
+
 4、签名算法：
 
 1. 将所有参数（包含sign-time，但不包含sign）按名称升序排列；
