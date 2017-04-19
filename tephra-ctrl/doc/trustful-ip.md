@@ -16,3 +16,10 @@
 ## 文件保存后会被自动重新载入，无需重启服务。
 127.0.0.1
 ```
+
+3、在服务端，可通过Validators.TRUSTFUL_IP验证器进行验证：
+```java
+    @Execute(name = "query", validates = {
+            @Validate(validator = Validators.TRUSTFUL_IP)
+    })
+```
