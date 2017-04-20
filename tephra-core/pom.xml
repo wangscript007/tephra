@@ -14,11 +14,9 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.scala-library>2.12.1</version.scala-library>
         <version.commons-collections>3.2.2</version.commons-collections>
         <version.netty>4.1.9.Final</version.netty>
-        <version.tephra>1.0.0-RELEASE</version.tephra>
     </properties>
 
     <dependencies>
