@@ -73,6 +73,8 @@ public class ServiceHelperImpl implements ServiceHelper {
     private String ignorNames;
     @Value("${tephra.ctrl.http.ignor.suffixes:.ico,.js,.css,.html}")
     private String ignorSuffixes;
+    @Value("${tephra.ctrl.http.cross-domain:false}")
+    private boolean crossDomain;
     private int contextPath;
     private String servletContextPath;
     private String[] prefixes;
@@ -115,7 +117,8 @@ public class ServiceHelperImpl implements ServiceHelper {
             return false;
         }
 
-        response.addHeader("Access-Control-Allow-Origin", "*");
+        if (crossDomain)
+            response.addHeader("Access-Control-Allow-Origin", "*");
         OutputStream outputStream = setContext(request, response, uri);
         if (timeHash.isEnable() && !timeHash.valid(request.getIntHeader("time-hash")) && !status.isStatus(uri) && (!ignoreTimeHash.isPresent() || !ignoreTimeHash.get().ignore())) {
             if (logger.isDebugEnable())
