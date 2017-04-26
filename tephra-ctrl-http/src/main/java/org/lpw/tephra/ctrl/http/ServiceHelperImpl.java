@@ -115,6 +115,7 @@ public class ServiceHelperImpl implements ServiceHelper {
             return false;
         }
 
+        response.addHeader("Access-Control-Allow-Origin", "*");
         OutputStream outputStream = setContext(request, response, uri);
         if (timeHash.isEnable() && !timeHash.valid(request.getIntHeader("time-hash")) && !status.isStatus(uri) && (!ignoreTimeHash.isPresent() || !ignoreTimeHash.get().ignore())) {
             if (logger.isDebugEnable())
