@@ -1,10 +1,10 @@
 package org.lpw.tephra.ctrl.http.context;
 
-import com.alibaba.fastjson.JSON;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.ctrl.context.RequestAdapter;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 
@@ -51,7 +51,7 @@ public class RequestAdapterImpl implements RequestAdapter {
             else {
                 if (content.charAt(0) == '{') {
                     map = new HashMap<>();
-                    JSON.parseObject(content).forEach((key, value) -> map.put(key, value.toString()));
+                    BeanFactory.getBean(Json.class).toObject(content).forEach((key, value) -> map.put(key, value.toString()));
                 } else
                     map = BeanFactory.getBean(Converter.class).toParameterMap(getFromInputStream());
             }
