@@ -71,7 +71,7 @@ public class ServiceHelperImpl implements ServiceHelper {
     private String ignorPrefixes;
     @Value("${tephra.ctrl.http.ignor.names:}")
     private String ignorNames;
-    @Value("${tephra.ctrl.http.ignor.suffixes:.ico,.js,.css,.html}")
+    @Value("${tephra.ctrl.http.ignor.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png}")
     private String ignorSuffixes;
     @Value("${tephra.ctrl.http.cross-domain:false}")
     private boolean crossDomain;
