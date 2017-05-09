@@ -52,6 +52,14 @@ public interface Request {
     Date getAsDate(String name);
 
     /**
+     * 获得日期型请求参数值。
+     *
+     * @param name 参数名称。
+     * @return 日期型参数值。
+     */
+    java.sql.Date getAsSqlDate(String name);
+
+    /**
      * 获得字符串数组请求参数值。
      * 多个值间以逗号分隔。
      *

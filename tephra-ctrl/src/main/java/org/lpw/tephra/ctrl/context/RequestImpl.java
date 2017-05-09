@@ -66,6 +66,13 @@ public class RequestImpl implements Request, RequestAware {
     }
 
     @Override
+    public java.sql.Date getAsSqlDate(String name) {
+        Date date = getAsDate(name);
+
+        return date == null ? null : new java.sql.Date(date.getTime());
+    }
+
+    @Override
     public String[] getAsArray(String name) {
         String[] array = adapter.get().getAsArray(name);
 
