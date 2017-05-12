@@ -40,7 +40,7 @@ public class DateTimeImpl implements DateTime {
     }
 
     @Override
-    public Date getStart(Date date) {
+    public Timestamp getStart(Date date) {
         if (date == null)
             return null;
 
@@ -51,11 +51,11 @@ public class DateTimeImpl implements DateTime {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        return calendar.getTime();
+        return new Timestamp(calendar.getTime().getTime());
     }
 
     @Override
-    public Date getEnd(Date date) {
+    public Timestamp getEnd(Date date) {
         if (date == null)
             return null;
 
@@ -66,7 +66,7 @@ public class DateTimeImpl implements DateTime {
         calendar.set(Calendar.SECOND, 59);
         calendar.set(Calendar.MILLISECOND, 999);
 
-        return calendar.getTime();
+        return new Timestamp(calendar.getTime().getTime());
     }
 
     @Override

@@ -29,15 +29,15 @@ public interface DateTime {
      * @param date 目标日期。
      * @return 开始时间；如果获取失败则返回null。
      */
-    Date getStart(Date date);
+    Timestamp getStart(Date date);
 
     /**
-     * 获取指定日期当天的结束日期，即当天的23:59:59.999。
+     * 获取指定日期当天的结束时间，即当天的23:59:59.999。
      *
      * @param date 目标日期。
      * @return 结束时间；如果获取失败则返回null。
      */
-    Date getEnd(Date date);
+    Timestamp getEnd(Date date);
 
     /**
      * 获取日期（时间）字符串当天的开始时间，即当天的00:00:00.000。
