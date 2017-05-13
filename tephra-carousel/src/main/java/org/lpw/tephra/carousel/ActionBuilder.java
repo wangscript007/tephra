@@ -3,7 +3,6 @@ package org.lpw.tephra.carousel;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
-import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Validator;
 
 import java.util.Map;
@@ -15,12 +14,10 @@ import java.util.Map;
  */
 public class ActionBuilder {
     private Validator validator;
-    private Json json;
     private JSONArray array;
 
     public ActionBuilder() {
         validator = BeanFactory.getBean(Validator.class);
-        json = BeanFactory.getBean(Json.class);
         array = new JSONArray();
     }
 
