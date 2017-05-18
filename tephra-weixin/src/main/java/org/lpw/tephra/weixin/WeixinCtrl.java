@@ -121,4 +121,11 @@ public class WeixinCtrl {
     public Object token() {
         return weixinHelper.getToken(request.get("appId"));
     }
+
+    @Execute(name = "ticket", validates = {
+            @Validate(validator = Validators.TRUSTFUL_IP)
+    })
+    public Object ticket() {
+        return weixinHelper.getJsapiTicket(request.get("appId"));
+    }
 }

@@ -59,7 +59,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
     private WeixinHelper weixinHelper;
     @Inject
     private Optional<WeixinListener> weixinListener;
-    @Value("${tephra.weixin.mp.thread:5}")
+    @Value("${tephra.weixin.thread:5}")
     private int thread;
     private ExecutorService executorService;
 

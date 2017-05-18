@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.lpw.tephra.cache.Cache;
 import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.scheduler.HourJob;
 import org.lpw.tephra.util.Context;
@@ -14,6 +15,7 @@ import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.TimeUnit;
 import org.lpw.tephra.util.Validator;
 import org.lpw.tephra.weixin.gateway.PayGateway;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +33,10 @@ import java.util.Map;
  */
 @Service("tephra.weixin.helper")
 public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshedListener {
+    private static final String CACHE_JSON = "tephra.weixin.helper.json:";
+
+    @Inject
+    private Cache cache;
     @Inject
     private Digest digest;
     @Inject
@@ -51,8 +57,10 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
     private Logger logger;
     @Value("${tephra.ctrl.service-root:}")
     private String root;
-    @Value("${tephra.weixin.mp.config:}")
+    @Value("${tephra.weixin.config:}")
     private String config;
+    @Value("${tephra.weixin.refresh:false}")
+    private boolean refresh;
     private Map<String, WeixinConfig> configs;
     private String[] appIds;
     private Map<String, PayGateway> gateways;
@@ -168,6 +176,10 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
 
     @Override
     public String getToken(String appId) {
+        String token = fromCache(appId, "token");
+        if (!validator.isEmpty(token))
+            return token;
+
         WeixinConfig config = getConfig(appId);
 
         return config == null ? null : config.getCurrentToken();
@@ -175,9 +187,27 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
 
     @Override
     public String getJsapiTicket(String appId) {
+        String ticket = fromCache(appId, "ticket");
+        if (!validator.isEmpty(ticket))
+            return ticket;
+
         WeixinConfig config = getConfig(appId);
 
         return config == null ? null : config.getJsapiTicket();
+    }
+
+    private String fromCache(String appId, String key) {
+        for (int i = 0; i < 2; i++) {
+            JSONObject object = cache.get(getCacheKey(appId, i));
+            if (object != null)
+                return object.getString(key);
+        }
+
+        return null;
+    }
+
+    private String getCacheKey(String appId, int hour) {
+        return CACHE_JSON + (System.currentTimeMillis() / TimeUnit.Hour.getTime() - hour) + ":" + appId;
     }
 
     @Override
@@ -250,13 +280,15 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
     }
 
     private void refreshToken() {
-        if (validator.isEmpty(configs))
+        if (!refresh || validator.isEmpty(configs))
             return;
 
         configs.values().forEach(config -> {
+            JSONObject json = new JSONObject();
             JSONObject object = JSON.parseObject(http.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + config.getAppId() + "&secret=" + config.getSecret(), null, ""));
             if (object != null && object.containsKey("access_token")) {
                 config.setCurrentToken(object.getString("access_token"));
+                json.put("token", config.getCurrentToken());
                 if (logger.isInfoEnable())
                     logger.info("获取微信公众号Token[{}:{}]。", config.getAppId(), config.getCurrentToken());
             } else
@@ -265,10 +297,14 @@ public class WeixinHelperImpl implements WeixinHelper, HourJob, ContextRefreshed
             object = JSON.parseObject(http.get("https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=" + config.getCurrentToken(), null, ""));
             if (object != null && object.containsKey("ticket")) {
                 config.setJsapiTicket(object.getString("ticket"));
+                json.put("ticket", config.getJsapiTicket());
                 if (logger.isInfoEnable())
                     logger.info("获取微信公众号JSAPI Ticket[{}:{}]。", config.getAppId(), config.getCurrentToken());
             } else
                 logger.warn(null, "获取微信公众号JSAPI Ticket[{}]失败！", object);
+
+            if (json.isEmpty())
+                cache.put(getCacheKey(config.getAppId(), 0), json, false);
         });
     }
 }
