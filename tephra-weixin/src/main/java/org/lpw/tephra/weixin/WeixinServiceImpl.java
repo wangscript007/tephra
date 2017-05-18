@@ -81,7 +81,8 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
     }
 
     @Override
-    public String auth(String appId, String code) {
+    public JSONObject auth(String appId, String code) {
+        JSONObject object = new JSONObject();
         Map<String, String> map = new HashMap<>();
         map.put("appid", appId);
         map.put("secret", weixinHelper.getConfig(appId).getSecret());
@@ -91,12 +92,13 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
         if (!json.containsKey("openid"))
             return null;
 
+        object.putAll(json);
         String openId = json.getString("openid");
         if (logger.isDebugEnable())
             logger.debug("微信用户OpenID：{}。", openId);
         session.set(SESSION_OPEN_ID, openId);
         if (!json.containsKey("access_token") || getNickname() != null)
-            return openId;
+            return object;
 
         map.clear();
         map.put("access_token", json.getString("access_token"));
@@ -107,8 +109,9 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
             cache.put(CACHE_NICKNAME + openId, json.getString("nickname"), false);
         if (json.containsKey("headimgurl"))
             cache.put(CACHE_PORTRAIT + openId, json.getString("headimgurl"), false);
+        object.putAll(json);
 
-        return openId;
+        return object;
     }
 
     @Override

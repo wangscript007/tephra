@@ -1,5 +1,7 @@
 package org.lpw.tephra.weixin;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.Map;
 
 /**
@@ -33,9 +35,9 @@ public interface WeixinService {
      *
      * @param appId 微信公众号AppID。
      * @param code  认证码。
-     * @return 用户OpenID；如果验证失败则返回null。
+     * @return 微信用户信息，如果认证失败则返回空JSON。
      */
-    String auth(String appId, String code);
+    JSONObject auth(String appId, String code);
 
     /**
      * 处理接收到的XML数据。

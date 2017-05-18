@@ -57,15 +57,18 @@ public class WeixinCtrl {
     }
 
     /**
-     * 获取转发Open ID。
+     * 认证用户信息。
      * appId 微信App ID。
      * code 微信认证码。
      *
-     * @return 用户Open ID。
+     * @return 微信用户信息，如果认证失败则返回空JSON。
      */
-    @Execute(name = "redirect")
-    public Object redirect() {
-        return weixinService.auth(request.get("appId"), request.get("code"));
+    @Execute(name = "auth", validates = {
+            @Validate(validator = Validators.NOT_EMPTY, parameter = "appId", failureCode = 1),
+            @Validate(validator = Validators.NOT_EMPTY, parameter = "code", failureCode = 2)
+    })
+    public Object auth() {
+        return templates.get().success(weixinService.auth(request.get("appId"), request.get("code")), null);
     }
 
     /**
@@ -77,7 +80,7 @@ public class WeixinCtrl {
      */
     @Execute(name = "jsapi-sign", validates = {
             @Validate(validator = Validators.NOT_EMPTY, parameter = "appId", failureCode = 1),
-            @Validate(validator = Validators.NOT_EMPTY, parameter = "url", failureCode = 2)
+            @Validate(validator = Validators.NOT_EMPTY, parameter = "url", failureCode = 3)
     })
     public Object jsapiSign() {
         return weixinHelper.getJsApiSign(request.get("appId"), request.get("url"));
