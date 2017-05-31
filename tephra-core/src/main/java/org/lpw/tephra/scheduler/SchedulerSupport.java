@@ -1,7 +1,6 @@
 package org.lpw.tephra.scheduler;
 
 import io.netty.util.internal.ConcurrentSet;
-import org.lpw.tephra.atomic.Closable;
 import org.lpw.tephra.atomic.Closables;
 import org.lpw.tephra.atomic.Failable;
 import org.lpw.tephra.bean.ContextClosedListener;
@@ -53,11 +52,11 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
 
             try {
                 execute(job);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 exception(e);
+            } finally {
+                finish(job);
             }
-
-            finish(job);
         });
     }
 

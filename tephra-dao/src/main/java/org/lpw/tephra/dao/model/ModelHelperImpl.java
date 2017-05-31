@@ -185,6 +185,13 @@ public class ModelHelperImpl implements ModelHelper {
 
     @Override
     public <T extends Model> String toString(T model) {
-        return modelTables.get(getModelClass(model.getClass())).toString(model);
+        if (model == null)
+            return null;
+
+        ModelTable modelTable = modelTables.get(getModelClass(model.getClass()));
+        if (modelTable == null)
+            return null;
+
+        return modelTable.toString(model);
     }
 }

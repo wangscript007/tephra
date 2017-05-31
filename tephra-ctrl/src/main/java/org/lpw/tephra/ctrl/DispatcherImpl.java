@@ -121,10 +121,10 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
     }
 
     private Object exe() {
-        if (permit.isPresent() && !permit.get().allow())
-            return Failure.NotPermit;
-
         try {
+            if (permit.isPresent() && !permit.get().allow())
+                return Failure.NotPermit;
+
             return new ExecuteInvocation(interceptors, validators, executorHelper.get()).invoke();
         } catch (Throwable e) {
             failables.forEach(failable -> failable.fail(e));
