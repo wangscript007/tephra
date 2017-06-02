@@ -1,5 +1,6 @@
 package org.lpw.tephra.test;
 
+import com.alibaba.fastjson.JSONObject;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -18,6 +19,7 @@ public class MockWeixinImpl implements MockWeixin {
     private String nickname;
     private String portrait;
     private List<Object[]> args = new ArrayList<>();
+    private JSONObject object = new JSONObject();
 
     @Override
     public void reset() {
@@ -25,6 +27,7 @@ public class MockWeixinImpl implements MockWeixin {
         nickname = null;
         portrait = null;
         args = new ArrayList<>();
+        object = new JSONObject();
     }
 
     @Override
@@ -32,13 +35,19 @@ public class MockWeixinImpl implements MockWeixin {
         this.openId = openId;
         this.nickname = nickname;
         this.portrait = portrait;
+        object.put("openid", openId);
+        object.put("nickname", nickname);
+        object.put("headimgurl", portrait);
     }
 
     @Around("target(org.lpw.tephra.weixin.WeixinService)")
     public Object service(ProceedingJoinPoint point) throws Throwable {
         args.add(point.getArgs() == null ? new Object[0] : point.getArgs());
         String name = point.getSignature().getName();
-        if (name.equals("auth") || name.equals("getOpenId"))
+        if (name.equals("auth"))
+            return object;
+
+        if (name.equals("getOpenId"))
             return openId;
 
         if (name.equals("getNickname"))
