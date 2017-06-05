@@ -6,8 +6,6 @@ import org.lpw.tephra.atomic.Failable;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Thread;
-import org.lpw.tephra.util.TimeUnit;
 import org.lpw.tephra.util.Validator;
 
 import javax.inject.Inject;
@@ -25,8 +23,6 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
     @Inject
     protected Validator validator;
     @Inject
-    protected Thread thread;
-    @Inject
     protected Logger logger;
     @Inject
     protected Optional<Set<Failable>> failables;
@@ -41,8 +37,8 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
      * @param job 要执行的任务实例。
      */
     protected void pool(T job) {
-        while (runningJobs == null)
-            thread.sleep(100, TimeUnit.MilliSecond);
+        if (runningJobs == null)
+            return;
 
         if (isRunning(job))
             return;
@@ -111,7 +107,7 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
 
     @Override
     public int getContextRefreshedSort() {
-        return 4;
+        return 99;
     }
 
     @Override
@@ -122,7 +118,7 @@ public abstract class SchedulerSupport<T> implements ContextRefreshedListener, C
 
     @Override
     public int getContextClosedSort() {
-        return 4;
+        return 99;
     }
 
     @Override

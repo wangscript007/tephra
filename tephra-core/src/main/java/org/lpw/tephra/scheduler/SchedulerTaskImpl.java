@@ -1,6 +1,6 @@
 package org.lpw.tephra.scheduler;
 
-import org.lpw.tephra.atomic.Closable;
+import org.lpw.tephra.atomic.Closables;
 import org.lpw.tephra.atomic.Failable;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
@@ -21,9 +21,9 @@ public class SchedulerTaskImpl extends TimerTask implements SchedulerTask {
     @Inject
     private Logger logger;
     @Inject
-    protected Optional<Set<Failable>> failables;
+    private Optional<Set<Failable>> failables;
     @Inject
-    protected Optional<Set<Closable>> closables;
+    private Closables closables;
     private SchedulerJob job;
 
     @Override
@@ -49,6 +49,6 @@ public class SchedulerTaskImpl extends TimerTask implements SchedulerTask {
             logger.warn(e, "执行定时任务[{}]时发生异常！", job.getSchedulerName());
         }
 
-        closables.ifPresent(set -> set.forEach(Closable::close));
+        closables.close();
     }
 }

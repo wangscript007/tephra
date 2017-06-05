@@ -13,21 +13,20 @@ import java.util.Set;
 @Component("tephra.scheduler.minute")
 public class MinuteSchedulerImpl extends SchedulerSupport<MinuteJob> implements MinuteScheduler {
     @Inject
-    protected Optional<Set<MinuteJob>> jobs;
+    private Optional<Set<MinuteJob>> jobs;
 
     @Scheduled(cron = "${tephra.scheduler.minute.cron:0 * * * * ?}")
     @Override
     public synchronized void execute() {
-        if (!jobs.isPresent())
-            return;
+        jobs.ifPresent(set -> {
+            if (logger.isDebugEnable())
+                logger.debug("开始执行每分钟定时器调度。。。");
 
-        if (logger.isDebugEnable())
-            logger.debug("开始执行每分钟定时器调度。。。");
+            set.forEach(this::pool);
 
-        jobs.get().forEach(this::pool);
-
-        if (logger.isDebugEnable())
-            logger.debug("成功执行{}个每分钟定时器任务！", jobs.get().size());
+            if (logger.isDebugEnable())
+                logger.debug("成功执行{}个每分钟定时器任务！", set.size());
+        });
     }
 
     @Override

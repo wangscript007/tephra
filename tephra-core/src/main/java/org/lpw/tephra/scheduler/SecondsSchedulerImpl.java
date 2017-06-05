@@ -13,21 +13,20 @@ import java.util.Set;
 @Component("tephra.scheduler.seconds")
 public class SecondsSchedulerImpl extends SchedulerSupport<SecondsJob> implements SecondsScheduler {
     @Inject
-    protected Optional<Set<SecondsJob>> jobs;
+    private Optional<Set<SecondsJob>> jobs;
 
     @Scheduled(cron = "${tephra.scheduler.seconds.cron:* * * * * ?}")
     @Override
     public synchronized void execute() {
-        if (!jobs.isPresent())
-            return;
+        jobs.ifPresent(set -> {
+            if (logger.isDebugEnable())
+                logger.debug("开始执行每秒钟定时器调度。。。");
 
-        if (logger.isDebugEnable())
-            logger.debug("开始执行每秒钟定时器调度。。。");
+            set.forEach(this::pool);
 
-        jobs.get().forEach(this::pool);
-
-        if (logger.isDebugEnable())
-            logger.debug("成功执行{}个每秒钟定时器任务！", jobs.get().size());
+            if (logger.isDebugEnable())
+                logger.debug("成功执行{}个每秒钟定时器任务！", set.size());
+        });
     }
 
     @Override

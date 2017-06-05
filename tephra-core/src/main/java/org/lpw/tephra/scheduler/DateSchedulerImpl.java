@@ -13,21 +13,20 @@ import java.util.Set;
 @Component("tephra.scheduler.date")
 public class DateSchedulerImpl extends SchedulerSupport<DateJob> implements DateScheduler {
     @Inject
-    protected Optional<Set<DateJob>> jobs;
+    private Optional<Set<DateJob>> jobs;
 
     @Scheduled(cron = "${tephra.scheduler.date.cron:30 30 4 * * ?}")
     @Override
     public synchronized void execute() {
-        if (!jobs.isPresent())
-            return;
+        jobs.ifPresent(set -> {
+            if (logger.isDebugEnable())
+                logger.debug("开始执行每日定时器调度。。。");
 
-        if (logger.isDebugEnable())
-            logger.debug("开始执行每日定时器调度。。。");
+            set.forEach(this::pool);
 
-        jobs.get().forEach(this::pool);
-
-        if (logger.isDebugEnable())
-            logger.debug("成功执行{}个每日定时器任务！", jobs.get().size());
+            if (logger.isDebugEnable())
+                logger.debug("成功执行{}个每日定时器任务！", set.size());
+        });
     }
 
     @Override
