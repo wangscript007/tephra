@@ -27,4 +27,11 @@ public interface MockResponse extends ResponseAdapter {
      * @return 输出。
      */
     JSONObject asJson();
+
+    /**
+     * 获取字符串输出。
+     *
+     * @return 输出。
+     */
+    String asString();
 }

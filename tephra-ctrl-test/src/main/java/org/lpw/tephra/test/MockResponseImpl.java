@@ -57,6 +57,11 @@ public class MockResponseImpl implements MockResponse {
 
     @Override
     public JSONObject asJson() {
-        return JSON.parseObject(getOutputStream().toString());
+        return JSON.parseObject(asString());
+    }
+
+    @Override
+    public String asString() {
+        return getOutputStream().toString();
     }
 }

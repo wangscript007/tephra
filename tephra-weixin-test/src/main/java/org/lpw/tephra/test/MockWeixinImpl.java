@@ -19,7 +19,7 @@ public class MockWeixinImpl implements MockWeixin {
     private String nickname;
     private String portrait;
     private List<Object[]> args = new ArrayList<>();
-    private JSONObject object = new JSONObject();
+    private JSONObject object;
 
     @Override
     public void reset() {
@@ -27,7 +27,7 @@ public class MockWeixinImpl implements MockWeixin {
         nickname = null;
         portrait = null;
         args = new ArrayList<>();
-        object = new JSONObject();
+        object = null;
     }
 
     @Override
@@ -35,6 +35,7 @@ public class MockWeixinImpl implements MockWeixin {
         this.openId = openId;
         this.nickname = nickname;
         this.portrait = portrait;
+        object = new JSONObject();
         object.put("openid", openId);
         object.put("nickname", nickname);
         object.put("headimgurl", portrait);
