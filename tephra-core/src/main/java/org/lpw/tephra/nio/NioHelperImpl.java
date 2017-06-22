@@ -8,6 +8,7 @@ import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +34,13 @@ public class NioHelperImpl implements NioHelper, ContextClosedListener, MinuteJo
     @Override
     public String getSessionId(ChannelHandlerContext context) {
         return context.channel().id().asLongText();
+    }
+
+    @Override
+    public String getIp(String sessionId) {
+        ChannelHandlerContext context = map.get(sessionId);
+
+        return context == null ? null : ((InetSocketAddress) context.channel()).getAddress().getHostAddress();
     }
 
     @Override

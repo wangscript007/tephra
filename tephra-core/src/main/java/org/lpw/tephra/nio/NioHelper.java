@@ -23,6 +23,14 @@ public interface NioHelper {
     String getSessionId(ChannelHandlerContext context);
 
     /**
+     * 获取请求方IP地址。
+     *
+     * @param sessionId Session ID值。
+     * @return 请求方IP地址。
+     */
+    String getIp(String sessionId);
+
+    /**
      * 读取数据。
      *
      * @param message 数据源。
