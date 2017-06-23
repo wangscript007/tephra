@@ -2,13 +2,13 @@ package org.lpw.tephra.nio;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.scheduler.MinuteJob;
 import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +40,7 @@ public class NioHelperImpl implements NioHelper, ContextClosedListener, MinuteJo
     public String getIp(String sessionId) {
         ChannelHandlerContext context = map.get(sessionId);
 
-        return context == null ? null : ((InetSocketAddress) context.channel()).getAddress().getHostAddress();
+        return context == null ? null : ((NioSocketChannel) context.channel()).remoteAddress().getAddress().getHostAddress();
     }
 
     @Override
