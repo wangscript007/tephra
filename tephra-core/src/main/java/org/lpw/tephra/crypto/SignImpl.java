@@ -63,6 +63,9 @@ public class SignImpl implements Sign, StorageListener {
         StringBuilder sb = new StringBuilder();
         list.forEach(key -> sb.append(key).append('=').append(map.get(key)).append('&'));
 
+        if (logger.isDebugEnable())
+            logger.debug("签名参数：{}。", sb);
+
         return digest.md5(sb.append(getKey(name)).toString());
     }
 
