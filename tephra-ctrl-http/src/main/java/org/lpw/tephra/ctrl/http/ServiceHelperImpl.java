@@ -179,12 +179,18 @@ public class ServiceHelperImpl implements ServiceHelper {
     private String getSessionId(HttpServletRequest request) {
         String sessionId = request.getHeader(SESSION_ID);
         if (!validator.isEmpty(sessionId))
-            return sessionId;
+            return useTephraSessionId(request, sessionId);
 
         sessionId = request.getParameter(SESSION_ID);
         if (!validator.isEmpty(sessionId))
-            return sessionId;
+            return useTephraSessionId(request, sessionId);
 
         return request.getSession().getId();
+    }
+
+    private String useTephraSessionId(HttpServletRequest request, String sessionId) {
+        request.getSession().setAttribute(SESSION_ID, sessionId);
+
+        return sessionId;
     }
 }
