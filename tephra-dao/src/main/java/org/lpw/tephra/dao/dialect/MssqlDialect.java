@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
  * @author lpw
  */
 @Repository("tephra.dao.dialect.mssql")
-public class MssqlDialect implements Dialect {
+public class MssqlDialect extends DialectSupport implements Dialect {
     @Override
     public String getName() {
         return "mssql";
@@ -20,11 +20,6 @@ public class MssqlDialect implements Dialect {
     @Override
     public String getUrl(String ip, String schema) {
         return "jdbc:sqlserver://" + ip + ";DatabaseName=" + schema;
-    }
-
-    @Override
-    public String getValidationQuery() {
-        return "SELECT GETDATE()";
     }
 
     @Override

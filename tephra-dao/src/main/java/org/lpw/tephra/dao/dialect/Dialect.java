@@ -60,22 +60,5 @@ public interface Dialect {
      * @param suffix 是否模糊匹配尾部字符串，即是否在参数值末添加%。
      * @return LIKE参数值。
      */
-    default String getLike(String like, boolean prefix, boolean suffix) {
-        if (like == null)
-            return prefix || suffix ? "%" : "";
-
-        StringBuilder sb = new StringBuilder();
-        if (prefix)
-            sb.append('%');
-        for (char ch : like.toCharArray()) {
-            if (ch == '%')
-                sb.append("[%]");
-            else
-                sb.append(ch);
-        }
-        if (suffix)
-            sb.append('%');
-
-        return sb.toString();
-    }
+    String getLike(String like, boolean prefix, boolean suffix);
 }

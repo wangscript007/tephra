@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
  * @author lpw
  */
 @Repository("tephra.dao.dialect.oracle")
-public class OracleDialect implements Dialect {
+public class OracleDialect extends DialectSupport implements Dialect {
     @Override
     public String getName() {
         return "oracle";
@@ -23,11 +23,6 @@ public class OracleDialect implements Dialect {
             return "jdbc:oracle:thin:@" + ip + "/" + schema;
 
         return "jdbc:oracle:thin:@" + ip + ":" + schema;
-    }
-
-    @Override
-    public String getValidationQuery() {
-        return "SELECT SYSDATE FROM DUAL";
     }
 
     @Override
