@@ -52,7 +52,8 @@ public class QrCodeImpl implements QrCode {
     @Override
     public void create(String content, int size, String logo, OutputStream outputStream) {
         try {
-            create(content, size, validator.isEmpty(logo) ? null : new FileInputStream(logo), outputStream);
+            InputStream inputStream = validator.isEmpty(logo) ? null : new FileInputStream(logo);
+            create(content, size, inputStream, outputStream);
         } catch (Throwable e) {
             logger.warn(e, "生成二维码图片[{}:{}:{}]时发生异常！", content, size, logo);
         }
