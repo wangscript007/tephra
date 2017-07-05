@@ -90,7 +90,7 @@ public class QrCodeImpl implements QrCode {
         int wh = size / 5;
         int xy = wh << 1;
         int arc = wh >> 1;
-        graphics.drawImage(ImageIO.read(logo), xy , xy , wh, wh, null);
+        graphics.drawImage(ImageIO.read(logo), xy, xy, wh, wh, null);
         stroke(graphics, 4, xy - 3, wh + 6, arc, Color.WHITE);
         stroke(graphics, 2, xy - 1, wh + 2, arc, Color.GRAY);
         graphics.dispose();

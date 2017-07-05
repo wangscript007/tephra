@@ -15,9 +15,10 @@ public class QrCodeTest extends CoreTestSupport {
 
     @Test
     public void cr() {
-        qrCode.create("二维码内容", 128, null, "target/qr.png");
-        qrCode.create("带LOGO的二维码", 128, "src/test/logo.png", "target/qr-logo.png");
-        Assert.assertEquals("二维码内容", qrCode.read("target/qr.png"));
-        Assert.assertEquals("带LOGO的二维码", qrCode.read("target/qr-logo.png"));
+        String url = "https://github.com/heisedebaise/tephra";
+        qrCode.create(url, 128, null, "target/qr.png");
+        qrCode.create(url, 128, "src/test/logo.png", "target/qr-logo.png");
+        Assert.assertEquals(url, qrCode.read("target/qr.png"));
+        Assert.assertEquals(url, qrCode.read("target/qr-logo.png"));
     }
 }
