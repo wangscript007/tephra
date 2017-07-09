@@ -111,21 +111,11 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
         return querySql.toString();
     }
 
-    private String getFrom(LiteQuery query, ModelTable modelTable) {
-        if (!validator.isEmpty(query.getFrom()))
-            return query.getFrom();
-
-        if (!validator.isEmpty(modelTable.getMemoryName()))
-            return modelTable.getMemoryName();
-
-        return modelTable.getTableName();
-    }
-
     @Override
     public int count(LiteQuery query, Object[] args) {
         StringBuilder querySql = new StringBuilder().append("SELECT COUNT(*)");
         ModelTable modelTable = modelTables.get(query.getModelClass());
-        querySql.append(" FROM ").append(validator.isEmpty(query.getFrom()) ? modelTable.getTableName() : query.getFrom());
+        querySql.append(" FROM ").append(getFrom(query, modelTable));
         if (!validator.isEmpty(query.getWhere()))
             querySql.append(" WHERE ").append(query.getWhere());
         if (!validator.isEmpty(query.getGroup()))
@@ -136,6 +126,16 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
             return 0;
 
         return converter.toInt(sqlTable.get(0, 0));
+    }
+
+    private String getFrom(LiteQuery query, ModelTable modelTable) {
+        if (!validator.isEmpty(query.getFrom()))
+            return query.getFrom();
+
+        if (!validator.isEmpty(modelTable.getMemoryName()))
+            return modelTable.getMemoryName();
+
+        return modelTable.getTableName();
     }
 
     @Override
@@ -266,8 +266,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     public <T extends Model> boolean delete(String dataSource, T model) {
         return model != null
                 && !validator.isEmpty(model.getId())
-                && delete(new LiteQuery(model.getClass()).dataSource(dataSource).where(modelTables.get(model.getClass()).getIdColumnName() + "=?"),
-                new Object[]{model.getId()});
+                && delete(new LiteQuery(model.getClass()).dataSource(dataSource).where(modelTables.get(model.getClass()).getIdColumnName() + "=?"), new Object[]{model.getId()});
     }
 
     @Override
