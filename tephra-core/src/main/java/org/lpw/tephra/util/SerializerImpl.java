@@ -6,8 +6,10 @@ import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 /**
  * @author lpw
@@ -24,36 +26,48 @@ public class SerializerImpl implements Serializer {
         if (object == null)
             return null;
 
-        try {
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            ObjectOutputStream objectOutput = new ObjectOutputStream(output);
-            objectOutput.writeObject(object);
-            objectOutput.close();
-            output.close();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        serialize(object, outputStream);
 
-            return output.toByteArray();
+        return outputStream.toByteArray();
+    }
+
+    @Override
+    public void serialize(Object object, OutputStream outputStream) {
+        if (object == null || outputStream == null)
+            return;
+
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+            objectOutputStream.writeObject(object);
+            objectOutputStream.close();
+            outputStream.close();
         } catch (IOException e) {
             logger.warn(e, "序列化对象[{}]时发生异常！", object);
-
-            return null;
         }
+    }
+
+    @Override
+    public <T> T unserialize(byte[] bytes) {
+        return validator.isEmpty(bytes) ? null : unserialize(new ByteArrayInputStream(bytes));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T unserialize(byte[] bytes) {
-        if (validator.isEmpty(bytes))
+    public <T> T unserialize(InputStream inputStream) {
+        if (inputStream == null)
             return null;
 
-        T object = null;
         try {
-            ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(bytes));
-            object = (T) input.readObject();
-            input.close();
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+            T object = (T) objectInputStream.readObject();
+            objectInputStream.close();
+
+            return object;
         } catch (IOException | ClassNotFoundException e) {
             logger.warn(e, "反序列化对象时发生异常！");
-        }
 
-        return object;
+            return null;
+        }
     }
 }

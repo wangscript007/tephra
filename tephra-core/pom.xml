@@ -122,11 +122,6 @@
         </dependency>
         <dependency>
             <groupId>com.google.zxing</groupId>
-            <artifactId>core</artifactId>
-            <version>LATEST</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
             <version>LATEST</version>
         </dependency>
