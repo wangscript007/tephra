@@ -2,7 +2,7 @@ package org.lpw.tephra.cache.redis;
 
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.cache.Handler;
-import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.Serializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
@@ -17,7 +17,7 @@ import javax.inject.Inject;
 @Component("tephra.cache.redis.handler")
 public class HandlerImpl implements Handler, ContextRefreshedListener {
     @Inject
-    private Converter converter;
+    private Serializer serializer;
     @Value("${tephra.cache.name:}")
     private String name;
     @Value("${tephra.cache.redis.host:localhost}")
@@ -38,29 +38,30 @@ public class HandlerImpl implements Handler, ContextRefreshedListener {
     @Override
     public void put(String key, Object value, boolean resident) {
         Jedis jedis = pool.getResource();
-        jedis.set(key, converter.toString(value));
+        jedis.set(key.getBytes(), serializer.serialize(value));
         jedis.close();
     }
 
-    @SuppressWarnings({"unchecked"})
     @Override
     public <T> T get(String key) {
-        Jedis jedis = pool.getResource();
-        String value = jedis.get(key);
-        jedis.close();
+        return get(key, false);
+    }
 
-        return (T) value;
+    @Override
+    public <T> T remove(String key) {
+        return get(key, true);
     }
 
     @SuppressWarnings({"unchecked"})
-    @Override
-    public <T> T remove(String key) {
+    private <T> T get(String key, boolean remove) {
         Jedis jedis = pool.getResource();
-        String value = jedis.get(key);
-        jedis.del(key);
+        byte[] k = key.getBytes();
+        byte[] bytes = jedis.get(k);
+        if (remove)
+            jedis.del(k);
         jedis.close();
 
-        return (T) value;
+        return (T) serializer.unserialize(bytes);
     }
 
     @Override

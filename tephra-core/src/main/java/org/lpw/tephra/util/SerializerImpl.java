@@ -1,14 +1,15 @@
 package org.lpw.tephra.util;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.pool.KryoPool;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 /**
@@ -20,6 +21,7 @@ public class SerializerImpl implements Serializer {
     private Validator validator;
     @Inject
     private Logger logger;
+    private KryoPool kryoPool = new KryoPool.Builder(Kryo::new).build();
 
     @Override
     public byte[] serialize(Object object) {
@@ -37,14 +39,12 @@ public class SerializerImpl implements Serializer {
         if (object == null || outputStream == null)
             return;
 
-        try {
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-            objectOutputStream.writeObject(object);
-            objectOutputStream.close();
-            outputStream.close();
-        } catch (IOException e) {
-            logger.warn(e, "序列化对象[{}]时发生异常！", object);
-        }
+        Output output = new Output(outputStream);
+        Kryo kryo = kryoPool.borrow();
+        kryo.writeClass(output, object.getClass());
+        kryo.writeObject(output, object);
+        kryoPool.release(kryo);
+        output.close();
     }
 
     @Override
@@ -55,19 +55,12 @@ public class SerializerImpl implements Serializer {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T unserialize(InputStream inputStream) {
-        if (inputStream == null)
-            return null;
+        Input input = new Input(inputStream);
+        Kryo kryo = kryoPool.borrow();
+        T object = (T) kryo.readObject(input, kryo.readClass(input).getType());
+        kryoPool.release(kryo);
+        input.close();
 
-        try {
-            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            T object = (T) objectInputStream.readObject();
-            objectInputStream.close();
-
-            return object;
-        } catch (IOException | ClassNotFoundException e) {
-            logger.warn(e, "反序列化对象时发生异常！");
-
-            return null;
-        }
+        return object;
     }
 }
