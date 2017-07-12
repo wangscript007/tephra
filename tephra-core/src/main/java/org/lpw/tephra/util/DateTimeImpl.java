@@ -41,11 +41,18 @@ public class DateTimeImpl implements DateTime {
 
     @Override
     public Timestamp getStart(Date date) {
+        return getStart(date, false);
+    }
+
+    @Override
+    public Timestamp getStart(Date date, boolean month) {
         if (date == null)
             return null;
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date.getTime());
+        if (month)
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -56,11 +63,20 @@ public class DateTimeImpl implements DateTime {
 
     @Override
     public Timestamp getEnd(Date date) {
+        return getEnd(date, false);
+    }
+
+    @Override
+    public Timestamp getEnd(Date date, boolean month) {
         if (date == null)
             return null;
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date.getTime());
+        if (month) {
+            calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
+            calendar.set(Calendar.DAY_OF_MONTH, 0);
+        }
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
@@ -71,12 +87,22 @@ public class DateTimeImpl implements DateTime {
 
     @Override
     public Timestamp getStart(String string) {
-        return toTimestamp(getStart(toDate(string)));
+        return getStart(string, false);
+    }
+
+    @Override
+    public Timestamp getStart(String string, boolean month) {
+        return getStart(toDate(string), month);
     }
 
     @Override
     public Timestamp getEnd(String string) {
-        return toTimestamp(getEnd(toDate(string)));
+        return getEnd(string, false);
+    }
+
+    @Override
+    public Timestamp getEnd(String string, boolean month) {
+        return getEnd(toDate(string), month);
     }
 
     @Override
