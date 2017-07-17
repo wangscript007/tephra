@@ -87,6 +87,8 @@ public class ServiceHelperImpl implements ServiceHelper {
         servletContextPath = contextPath > 0 ? context : "";
         if (logger.isInfoEnable())
             logger.info("部署项目路径[{}]。", context);
+        if (logger.isInfoEnable())
+            logger.info("跨域设置[{}]。", crossDomain);
         prefixes = converter.toArray(ignorPrefixes, ",");
         suffixes = converter.toArray(ignorSuffixes, ",");
 

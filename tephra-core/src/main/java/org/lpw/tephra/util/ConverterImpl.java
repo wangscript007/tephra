@@ -1,23 +1,18 @@
 package org.lpw.tephra.util;
 
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,27 +39,14 @@ public class ConverterImpl implements Converter {
         if (validator.isEmpty(object))
             return "";
 
-        if (object.getClass().isArray()) {
-            StringBuilder sb = new StringBuilder();
-            for (int length = Array.getLength(object), i = 0; i < length; i++)
-                sb.append(',').append(toString(Array.get(object, i)));
+        if (object.getClass().isArray())
+            return arrayString((Object[]) object, ",");
 
-            return sb.substring(1);
-        }
+        if (object instanceof Iterable)
+            return iterableString((Iterable<?>) object, ",");
 
-        if (object instanceof Iterable) {
-            StringBuilder sb = new StringBuilder();
-            ((Iterable) object).forEach(obj -> sb.append(',').append(toString(obj)));
-
-            return sb.substring(1);
-        }
-
-        if (object instanceof Map) {
-            StringBuilder sb = new StringBuilder();
-            ((Map) object).forEach((key, value) -> sb.append(',').append(toString(key)).append('=').append(toString(value)));
-
-            return sb.substring(1);
-        }
+        if (object instanceof Map)
+            return mapString((Map<?, ?>) object, ",");
 
         if (object instanceof Date)
             return dateTime.toString((Date) object);
@@ -84,6 +66,43 @@ public class ConverterImpl implements Converter {
             sb.append('0');
 
         return toString(toLong(number) * Math.pow(0.1D, decimal), sb.toString());
+    }
+
+    @Override
+    public String toString(Object[] array, String separator) {
+        return validator.isEmpty(array) ? "" : arrayString(array, separator);
+    }
+
+    private String arrayString(Object[] array, String separator) {
+        StringBuilder sb = new StringBuilder();
+        for (Object object : array)
+            sb.append(separator).append(toString(object));
+
+        return sb.substring(separator.length());
+    }
+
+    @Override
+    public String toString(Iterable<?> iterable, String separator) {
+        return validator.isEmpty(iterable) ? "" : iterableString(iterable, separator);
+    }
+
+    private String iterableString(Iterable<?> iterable, String separator) {
+        StringBuilder sb = new StringBuilder();
+        iterable.forEach(obj -> sb.append(separator).append(toString(obj)));
+
+        return sb.substring(separator.length());
+    }
+
+    @Override
+    public String toString(Map<?, ?> map, String separator) {
+        return validator.isEmpty(map) ? "" : mapString(map, separator);
+    }
+
+    private String mapString(Map<?, ?> map, String separator) {
+        StringBuilder sb = new StringBuilder();
+        map.forEach((key, value) -> sb.append(separator).append(toString(key)).append('=').append(toString(value)));
+
+        return sb.substring(separator.length());
     }
 
     @Override

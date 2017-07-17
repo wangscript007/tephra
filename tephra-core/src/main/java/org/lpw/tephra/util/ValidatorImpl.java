@@ -29,8 +29,8 @@ public class ValidatorImpl implements Validator {
         if (object.getClass().isArray())
             return Array.getLength(object) == 0;
 
-        if (object instanceof Collection)
-            return ((Collection<?>) object).isEmpty();
+        if(object instanceof Iterable)
+            return !((Iterable<?>)object).iterator().hasNext();
 
         if (object instanceof Map)
             return ((Map<?, ?>) object).isEmpty();

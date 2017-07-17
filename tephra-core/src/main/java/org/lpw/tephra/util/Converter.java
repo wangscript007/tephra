@@ -1,6 +1,5 @@
 package org.lpw.tephra.util;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,6 +35,33 @@ public interface Converter {
      * @return 浮点数字符串。
      */
     String toString(Object number, int decimal, int point);
+
+    /**
+     * 将数组转化为字符串。
+     *
+     * @param array     数组。
+     * @param separator 分隔符。
+     * @return 字符串。
+     */
+    String toString(Object[] array, String separator);
+
+    /**
+     * 将可迭代的对象转化为字符串。
+     *
+     * @param iterable  可迭代的对象。
+     * @param separator 分隔符。
+     * @return 字符串。
+     */
+    String toString(Iterable<?> iterable, String separator);
+
+    /**
+     * 将集合转化为字符串。
+     *
+     * @param map       集合。
+     * @param separator 分隔符。
+     * @return 字符串。
+     */
+    String toString(Map<?, ?> map, String separator);
 
     /**
      * 将字符串按指定分隔符转化为字符串数组。

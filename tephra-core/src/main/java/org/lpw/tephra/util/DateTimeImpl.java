@@ -176,4 +176,9 @@ public class DateTimeImpl implements DateTime {
     private FastDateFormat getDateFormat(String format) {
         return dateFormatMap.computeIfAbsent(format, FastDateFormat::getInstance);
     }
+
+    @Override
+    public long toLong(Date date) {
+        return date == null ? 0L : date.getTime();
+    }
 }
