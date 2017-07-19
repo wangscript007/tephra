@@ -1,6 +1,7 @@
 package org.lpw.tephra.ctrl.template.json;
 
 import com.alibaba.fastjson.JSONObject;
+import org.lpw.tephra.ctrl.Dispatcher;
 import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
@@ -33,6 +34,8 @@ public class TemplateImpl extends TemplateSupport implements Template {
     private Logger logger;
     @Inject
     private ModelHelper modelHelper;
+    @Inject
+    private Dispatcher dispatcher;
 
     @Override
     public String getType() {
@@ -77,14 +80,25 @@ public class TemplateImpl extends TemplateSupport implements Template {
     }
 
     private Object pack(Object object) {
-        if (object instanceof JSONObject && ((JSONObject) object).containsKey("code"))
-            return object;
+        if (object instanceof JSONObject) {
+            JSONObject json = (JSONObject) object;
+            if (json.containsKey("code")) {
+                putTime(json);
+
+                return object;
+            }
+        }
 
         JSONObject json = new JSONObject();
         json.put("code", 0);
         json.put("data", object);
+        putTime(json);
 
         return json;
+    }
+
+    private void putTime(JSONObject object) {
+        object.put("time", dispatcher.getTime());
     }
 
     private void write(Object data, OutputStream outputStream) throws IOException {

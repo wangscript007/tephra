@@ -96,7 +96,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         counter.decrease(ip);
 
         if (logger.isDebugEnable())
-            logger.debug("处理请求[{}]完成，耗时[{}]毫秒。", uri, System.currentTimeMillis() - time.get());
+            logger.debug("处理请求[{}]完成，耗时[{}]毫秒。", uri, getTime());
     }
 
     private void execute(boolean statusService, boolean consoleService) {
@@ -132,6 +132,11 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
 
             return Failure.Exception;
         }
+    }
+
+    @Override
+    public long getTime() {
+        return System.currentTimeMillis() - time.get();
     }
 
     @Override
