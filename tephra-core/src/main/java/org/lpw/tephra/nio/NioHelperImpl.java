@@ -59,9 +59,10 @@ public class NioHelperImpl implements NioHelper, ContextClosedListener, MinuteJo
             return;
 
         try {
-            ByteBuf buffer = context.alloc().buffer(message.length);
+            ByteBuf buffer = context.alloc().directBuffer(message.length);
             buffer.writeBytes(message);
             context.writeAndFlush(buffer).sync();
+            buffer.release();
         } catch (InterruptedException e) {
             logger.warn(e, "发送数据[{}]时发生异常！", new String(message));
         }
