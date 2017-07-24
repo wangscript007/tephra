@@ -16,11 +16,32 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Validate {
     /**
+     * 验证范围。
+     */
+    enum Scope {
+        /**
+         * 请求头。
+         */
+        Header,
+        /**
+         * 请求参数。
+         */
+        Request
+    }
+
+    /**
      * 验证器Bean名称。
      *
      * @return 验证器Bean名称。
      */
     String validator();
+
+    /**
+     * 验证范围。
+     *
+     * @return 验证范围。
+     */
+    Scope scope() default Scope.Request;
 
     /**
      * 验证参数名。

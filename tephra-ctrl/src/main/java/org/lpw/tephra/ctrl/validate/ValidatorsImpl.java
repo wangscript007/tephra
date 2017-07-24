@@ -2,6 +2,7 @@ package org.lpw.tephra.ctrl.validate;
 
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.ctrl.FailureCode;
+import org.lpw.tephra.ctrl.context.Header;
 import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.Templates;
@@ -21,6 +22,8 @@ public class ValidatorsImpl implements Validators {
     private org.lpw.tephra.util.Validator validator;
     @Inject
     private Converter converter;
+    @Inject
+    private Header header;
     @Inject
     private Request request;
     @Inject
@@ -64,7 +67,7 @@ public class ValidatorsImpl implements Validators {
             throw new NullPointerException("验证器[" + validate.getValidator() + "]不存在！");
 
         if (this.validator.isEmpty(validate.getParameters())) {
-            String parameter = this.validator.isEmpty(validate.getParameter()) ? null : request.get(validate.getParameter());
+            String parameter = getParameter(validate, validate.getParameter());
             if ((validate.isEmptyable() && this.validator.isEmpty(parameter)) || validator.validate(validate, parameter))
                 return null;
 
@@ -73,12 +76,22 @@ public class ValidatorsImpl implements Validators {
 
         String[] parameters = new String[validate.getParameters().length];
         for (int i = 0; i < parameters.length; i++)
-            parameters[i] = request.get(validate.getParameters()[i]);
+            parameters[i] = getParameter(validate, validate.getParameters()[i]);
         if (validator.validate(validate, parameters))
             return null;
 
         return getTemplate(template).failure(getFailureCode(validate, validator), validator.getFailureMessage(validate),
                 converter.toString(validate.getParameters()), converter.toString(parameters));
+    }
+
+    private String getParameter(ValidateWrapper validate, String parameter) {
+        if (validator.isEmpty(parameter))
+            return null;
+
+        if (validate.getScope() == Validate.Scope.Header)
+            return header.get(parameter);
+
+        return request.get(parameter);
     }
 
     private Template getTemplate(Template template) {

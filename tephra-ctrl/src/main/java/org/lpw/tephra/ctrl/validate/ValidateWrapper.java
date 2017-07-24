@@ -28,6 +28,7 @@ public interface ValidateWrapper {
      * 设置验证规则。
      *
      * @param validator      验证器Bean名称。
+     * @param scope          验证范围。
      * @param parameter      验证参数名。
      * @param parameters     验证参数名集；同时验证多个参数，或多个参数之间进行关联验证。
      * @param emptyable      是否允许为空。
@@ -38,8 +39,8 @@ public interface ValidateWrapper {
      * @param failureArgKeys 验证失败错误信息参数资源key。
      * @return 当前实例。
      */
-    ValidateWrapper setValidate(String validator, String parameter, String[] parameters, boolean emptyable, int[] number, String[] string, int failureCode, String failureKey,
-                                String[] failureArgKeys);
+    ValidateWrapper setValidate(String validator, Validate.Scope scope, String parameter, String[] parameters, boolean emptyable,
+                                int[] number, String[] string, int failureCode, String failureKey, String[] failureArgKeys);
 
     /**
      * 获取验证器Bean名称。
@@ -47,6 +48,13 @@ public interface ValidateWrapper {
      * @return 验证器Bean名称。
      */
     String getValidator();
+
+    /**
+     * 验证范围。
+     *
+     * @return 验证范围。
+     */
+    Validate.Scope getScope();
 
     /**
      * 获取验证参数名。

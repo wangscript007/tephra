@@ -10,16 +10,17 @@ import org.springframework.stereotype.Controller;
 @Controller("tephra.ctrl.validate.wrapper")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ValidateWrapperImpl implements ValidateWrapper {
-    protected Validate validate;
-    protected String validator;
-    protected String parameter;
-    protected String[] parameters;
-    protected boolean emptyable;
-    protected int[] number;
-    protected String[] string;
-    protected int failureCode;
-    protected String failureKey;
-    protected String[] failureArgKeys;
+    private Validate validate;
+    private String validator;
+    private Validate.Scope scope;
+    private String parameter;
+    private String[] parameters;
+    private boolean emptyable;
+    private int[] number;
+    private String[] string;
+    private int failureCode;
+    private String failureKey;
+    private String[] failureArgKeys;
 
     @Override
     public ValidateWrapper setValidate(Validate validate) {
@@ -38,9 +39,10 @@ public class ValidateWrapperImpl implements ValidateWrapper {
     }
 
     @Override
-    public ValidateWrapper setValidate(String validator, String parameter, String[] parameters, boolean emptyable, int[] number, String[] string, int failureCode,
-                                       String failureKey, String[] failureArgKeys) {
+    public ValidateWrapper setValidate(String validator, Validate.Scope scope, String parameter, String[] parameters, boolean emptyable,
+                                       int[] number, String[] string, int failureCode, String failureKey, String[] failureArgKeys) {
         this.validator = validator;
+        this.scope = scope;
         this.parameter = parameter;
         this.parameters = parameters;
         this.emptyable = emptyable;
@@ -56,6 +58,11 @@ public class ValidateWrapperImpl implements ValidateWrapper {
     @Override
     public String getValidator() {
         return validate == null ? validator : validate.validator();
+    }
+
+    @Override
+    public Validate.Scope getScope() {
+        return validate == null ? scope : validate.scope();
     }
 
     @Override
