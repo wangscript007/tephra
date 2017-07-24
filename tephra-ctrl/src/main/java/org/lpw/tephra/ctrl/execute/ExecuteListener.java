@@ -11,6 +11,7 @@ public interface ExecuteListener {
      *
      * @param classExecute  类定义。
      * @param methodExecute 方法定义。
+     * @param executor      执行器。
      */
-    void definition(Execute classExecute, Execute methodExecute);
+    void definition(Execute classExecute, Execute methodExecute, Executor executor);
 }

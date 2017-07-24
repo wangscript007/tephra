@@ -11,6 +11,7 @@ import org.lpw.tephra.ctrl.context.Header;
 import org.lpw.tephra.ctrl.context.Session;
 import org.lpw.tephra.ctrl.execute.Execute;
 import org.lpw.tephra.ctrl.execute.ExecuteListener;
+import org.lpw.tephra.ctrl.execute.Executor;
 import org.lpw.tephra.ctrl.status.Status;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Http;
@@ -207,7 +208,7 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     }
 
     @Override
-    public void definition(Execute classExecute, Execute methodExecute) {
+    public void definition(Execute classExecute, Execute methodExecute, Executor executor) {
         if (!serviceAll)
             return;
 

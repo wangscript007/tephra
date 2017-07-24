@@ -119,7 +119,7 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
                     map.put(key, executor);
                     codes.put(key, code);
                 }
-                listeners.ifPresent(set -> set.forEach(listener -> listener.definition(classExecute, execute)));
+                listeners.ifPresent(set -> set.forEach(listener -> listener.definition(classExecute, execute, executor)));
             }
         }
 
