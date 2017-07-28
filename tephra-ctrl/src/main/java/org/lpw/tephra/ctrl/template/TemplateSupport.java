@@ -18,12 +18,14 @@ public abstract class TemplateSupport implements Template {
     protected Validator validator;
     @Inject
     protected Message message;
-    @Value("${tephra.ctrl.dispatcher.not-permit:9997}")
-    protected int notPermit;
-    @Value("${tephra.ctrl.dispatcher.busy:9998}")
-    protected int busy;
     @Value("${tephra.ctrl.dispatcher.exception:9999}")
     protected int exception;
+    @Value("${tephra.ctrl.dispatcher.busy:9998}")
+    protected int busy;
+    @Value("${tephra.ctrl.dispatcher.danger:9997}")
+    protected int danger;
+    @Value("${tephra.ctrl.dispatcher.not-permit:9996}")
+    protected int notPermit;
 
     @Override
     public Object failure(int code, String message, String parameter, String value) {
@@ -62,7 +64,10 @@ public abstract class TemplateSupport implements Template {
         if (failure == Failure.NotPermit)
             return notPermit;
 
-        else if (failure == Failure.Busy)
+        if (failure == Failure.Danger)
+            return danger;
+
+        if (failure == Failure.Busy)
             return busy;
 
         return exception;

@@ -76,7 +76,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         boolean statusService = status.isStatus(uri);
         String ip = header.getIp();
         if (!counter.increase(ip) && !statusService) {
-            failure(ip,Failure.Busy);
+            failure(ip, Failure.Busy);
 
             return;
         }
@@ -85,14 +85,15 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         if (!statusService && !consoleService)
             executorHelper.set(uri);
         if (!statusService && !consoleService && executorHelper.get() == null) {
-            response.sendError(404);
+            counter.decrease(ip);
             logger.warn(null, "无法获得请求[{}]的处理服务！", uri);
+            response.sendError(404);
 
             return;
         }
 
         if (xss.contains(uri, request.getMap())) {
-            failure(ip,Failure.Danger);
+            failure(ip, Failure.Danger);
 
             return;
         }
@@ -105,7 +106,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
             logger.debug("处理请求[{}]完成，耗时[{}]毫秒。", uri, getTime());
     }
 
-    private void failure(String ip,Failure failure){
+    private void failure(String ip, Failure failure) {
         counter.decrease(ip);
         response.write(failure);
     }

@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -34,7 +34,7 @@ public class CounterImpl implements Counter {
     @Value("${tephra.ctrl.counter.ip-delay:5000}")
     private int delay;
     private AtomicInteger counter = new AtomicInteger();
-    private Map<String, Integer> ipMap = new HashMap<>();
+    private Map<String, AtomicInteger> map = new ConcurrentHashMap<>();
 
     @Override
     public boolean increase(String ip) {
@@ -52,16 +52,13 @@ public class CounterImpl implements Counter {
         if (time != null && System.currentTimeMillis() - time < delay)
             return false;
 
-        int n = converter.toInt(ipMap.get(ip)) + 1;
+        int n = map.computeIfAbsent(ip, k -> new AtomicInteger()).incrementAndGet();
         if (n > ipMax) {
             cache.put(key, System.currentTimeMillis(), false);
-
             logger.warn(null, "超过IP[{}]最大并发处理数[{}]。", ip, ipMax);
 
             return false;
         }
-
-        ipMap.put(ip, n);
 
         return true;
     }
@@ -74,14 +71,11 @@ public class CounterImpl implements Counter {
     @Override
     public void decrease(String ip) {
         counter.decrementAndGet();
-
         if (trustfulIp.contains(ip))
             return;
 
-        int n = converter.toInt(ipMap.get(ip));
-        if (n < 2)
-            ipMap.remove(ip);
-        else
-            ipMap.put(ip, n - 1);
+        int n = map.computeIfAbsent(ip, k -> new AtomicInteger()).decrementAndGet();
+        if (n <= 0)
+            map.remove(ip);
     }
 }

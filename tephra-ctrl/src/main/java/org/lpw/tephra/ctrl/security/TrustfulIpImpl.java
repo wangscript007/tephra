@@ -26,7 +26,7 @@ public class TrustfulIpImpl implements TrustfulIp, StorageListener {
     private Io io;
     @Inject
     private Logger logger;
-    @Value("${tephra.ctrl.security.trustful-ip:/WEB-INF/secruity/trustful-ip}")
+    @Value("${tephra.ctrl.security.trustful-ip:/WEB-INF/security/trustful-ip}")
     private String trustfulIp;
     private Set<String> ips = new HashSet<>();
     private Set<String> patterns = new HashSet<>();
@@ -58,8 +58,11 @@ public class TrustfulIpImpl implements TrustfulIp, StorageListener {
         Set<String> ips = new HashSet<>();
         Set<String> patterns = new HashSet<>();
         for (String string : converter.toArray(new String(io.read(absolutePath)), "\n")) {
+            if (validator.isEmpty(string))
+                continue;
+
             string = string.trim();
-            if (string.equals("") || string.startsWith("#"))
+            if (string.charAt(0) == '#')
                 continue;
 
             if (string.startsWith("rg"))
