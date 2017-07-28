@@ -32,7 +32,7 @@ public class SignTest extends CoreTestSupport {
 
     @Test
     public void put() {
-        String path = context.getAbsolutePath("/WEB-INF/sign");
+        String path = context.getAbsolutePath("/WEB-INF/security/sign");
         byte[] bytes = io.read(path);
         io.write(path, "test key\n=new default key\nsign=new sign key".getBytes());
         thread.sleep(2, TimeUnit.Second);

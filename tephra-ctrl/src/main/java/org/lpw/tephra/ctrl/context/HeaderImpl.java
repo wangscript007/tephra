@@ -39,8 +39,11 @@ public class HeaderImpl implements Header, HeaderAware {
 
     @Override
     public String getIp() {
-        if (!validator.isEmpty(realIp))
-            return get(realIp);
+        if (!validator.isEmpty(realIp)) {
+            String ip = get(realIp);
+            if (!validator.isEmpty(ip))
+                return ip;
+        }
 
         HeaderAdapter adapter = this.adapter.get();
 

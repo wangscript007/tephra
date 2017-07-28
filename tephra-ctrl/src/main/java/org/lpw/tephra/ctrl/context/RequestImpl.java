@@ -36,7 +36,7 @@ public class RequestImpl implements Request, RequestAware {
     private ModelTables modelTables;
     @Inject
     private Optional<Coder> coder;
-    @Value("${tephra.ctrl.content.request.sign:tephra-ctrl-sign}")
+    @Value("${tephra.ctrl.context.request.sign:tephra-ctrl-sign}")
     private String signName;
     private ThreadLocal<RequestAdapter> adapter = new ThreadLocal<>();
 

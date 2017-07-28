@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl.validate;
 
-import org.lpw.tephra.ctrl.TrustfulIp;
+import org.lpw.tephra.ctrl.security.TrustfulIp;
 import org.lpw.tephra.ctrl.context.Header;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;

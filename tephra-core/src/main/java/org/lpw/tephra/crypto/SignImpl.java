@@ -34,7 +34,7 @@ public class SignImpl implements Sign, StorageListener {
     private Logger logger;
     @Inject
     private Digest digest;
-    @Value("${tephra.crypto.sign.path:/WEB-INF/sign}")
+    @Value("${tephra.crypto.sign.path:/WEB-INF/security/sign}")
     private String path;
     @Value("${tephra.crypto.sign.time:10000}")
     private long time;

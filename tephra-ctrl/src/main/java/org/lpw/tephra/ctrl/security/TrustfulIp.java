@@ -1,7 +1,7 @@
-package org.lpw.tephra.ctrl;
+package org.lpw.tephra.ctrl.security;
 
 /**
- * IP白名单。
+ * 可信任IP，即IP白名单。
  *
  * @author lpw
  */

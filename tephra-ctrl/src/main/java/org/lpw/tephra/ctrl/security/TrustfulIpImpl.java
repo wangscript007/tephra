@@ -1,4 +1,4 @@
-package org.lpw.tephra.ctrl;
+package org.lpw.tephra.ctrl.security;
 
 import org.lpw.tephra.storage.StorageListener;
 import org.lpw.tephra.storage.Storages;
@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * @author lpw
  */
-@Controller("tephra.ctrl.trustful-ip")
+@Controller("tephra.ctrl.security.trustful-ip")
 public class TrustfulIpImpl implements TrustfulIp, StorageListener {
     @Inject
     private Converter converter;
@@ -26,7 +26,7 @@ public class TrustfulIpImpl implements TrustfulIp, StorageListener {
     private Io io;
     @Inject
     private Logger logger;
-    @Value("${tephra.ctrl.trustful-ip:/WEB-INF/trustful-ip}")
+    @Value("${tephra.ctrl.security.trustful-ip:/WEB-INF/secruity/trustful-ip}")
     private String trustfulIp;
     private Set<String> ips = new HashSet<>();
     private Set<String> patterns = new HashSet<>();

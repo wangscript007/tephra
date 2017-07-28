@@ -9,6 +9,7 @@ import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.ctrl.execute.ExecuteInvocation;
 import org.lpw.tephra.ctrl.execute.ExecutorHelper;
+import org.lpw.tephra.ctrl.security.Xss;
 import org.lpw.tephra.ctrl.status.Status;
 import org.lpw.tephra.ctrl.validate.Validators;
 import org.lpw.tephra.util.Converter;
@@ -46,6 +47,8 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
     @Inject
     private Response response;
     @Inject
+    private Xss xss;
+    @Inject
     private Counter counter;
     @Inject
     private Status status;
@@ -73,8 +76,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         boolean statusService = status.isStatus(uri);
         String ip = header.getIp();
         if (!counter.increase(ip) && !statusService) {
-            counter.decrease(ip);
-            response.write(Failure.Busy);
+            failure(ip,Failure.Busy);
 
             return;
         }
@@ -83,10 +85,14 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         if (!statusService && !consoleService)
             executorHelper.set(uri);
         if (!statusService && !consoleService && executorHelper.get() == null) {
-            counter.decrease(ip);
-            response.write(Failure.Exception);
-
+            response.sendError(404);
             logger.warn(null, "无法获得请求[{}]的处理服务！", uri);
+
+            return;
+        }
+
+        if (xss.contains(uri, request.getMap())) {
+            failure(ip,Failure.Danger);
 
             return;
         }
@@ -97,6 +103,11 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
 
         if (logger.isDebugEnable())
             logger.debug("处理请求[{}]完成，耗时[{}]毫秒。", uri, getTime());
+    }
+
+    private void failure(String ip,Failure failure){
+        counter.decrease(ip);
+        response.write(failure);
     }
 
     private void execute(boolean statusService, boolean consoleService) {

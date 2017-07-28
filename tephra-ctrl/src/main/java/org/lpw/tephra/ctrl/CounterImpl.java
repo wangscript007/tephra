@@ -1,6 +1,7 @@
 package org.lpw.tephra.ctrl;
 
 import org.lpw.tephra.cache.Cache;
+import org.lpw.tephra.ctrl.security.TrustfulIp;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.springframework.beans.factory.annotation.Value;

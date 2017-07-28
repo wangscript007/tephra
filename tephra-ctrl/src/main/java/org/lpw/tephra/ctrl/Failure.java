@@ -9,6 +9,10 @@ public enum Failure {
      */
     NotPermit("tephra.ctrl.not-permit"),
     /**
+     * 安全隐患。
+     */
+    Danger("tephra.ctrl.danger"),
+    /**
      * 系统繁忙。
      */
     Busy("tephra.ctrl.busy"),
