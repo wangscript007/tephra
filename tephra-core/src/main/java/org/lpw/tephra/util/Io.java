@@ -52,20 +52,20 @@ public interface Io {
     /**
      * 将输入流中的数据复制到输出流中。
      *
-     * @param input  输入流。
-     * @param output 输出流。
+     * @param inputStream  输入流。
+     * @param outputStream 输出流。
      * @throws IOException 未处理IO读写异常。
      */
-    void copy(InputStream input, OutputStream output) throws IOException;
+    void copy(InputStream inputStream, OutputStream outputStream) throws IOException;
 
     /**
      * 将字符串输出到输出流中。
      *
-     * @param output 输出流。
-     * @param source 要输出的字符串。
+     * @param outputStream 输出流。
+     * @param source       要输出的字符串。
      * @throws IOException 未处理IO读写异常。
      */
-    void write(OutputStream output, StringBuffer source) throws IOException;
+    void write(OutputStream outputStream, StringBuffer source) throws IOException;
 
     /**
      * 移动文件。

@@ -92,19 +92,19 @@ public class IoImpl implements Io {
     }
 
     @Override
-    public void copy(InputStream input, OutputStream output) throws IOException {
+    public void copy(InputStream inputStream, OutputStream outputStream) throws IOException {
         byte[] buffer = new byte[BUFFER_SIZE];
-        for (int length; (length = input.read(buffer)) > -1; )
-            output.write(buffer, 0, length);
-        output.flush();
+        for (int length; (length = inputStream.read(buffer)) > -1; )
+            outputStream.write(buffer, 0, length);
+        outputStream.flush();
     }
 
     @Override
-    public void write(OutputStream output, StringBuffer source) throws IOException {
+    public void write(OutputStream outputStream, StringBuffer source) throws IOException {
         if (source == null || source.length() == 0)
             return;
 
-        Writer writer = new OutputStreamWriter(output);
+        Writer writer = new OutputStreamWriter(outputStream);
         for (int i = 0, length = source.length(); i < length; i++)
             writer.append(source.charAt(i));
         writer.flush();
