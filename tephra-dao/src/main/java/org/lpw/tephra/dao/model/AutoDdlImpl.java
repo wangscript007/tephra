@@ -54,8 +54,13 @@ public class AutoDdlImpl implements ContextRefreshedListener {
             if (array == null)
                 return;
 
-            for (String string : array)
+            for (String string : array) {
+                string = string.trim();
+                if (string.length() == 0)
+                    continue;
+
                 sql.update(modelTable.getDataSource(), string, new Object[0]);
+            }
         });
     }
 
