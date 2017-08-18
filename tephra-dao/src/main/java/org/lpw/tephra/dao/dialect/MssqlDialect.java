@@ -23,6 +23,11 @@ public class MssqlDialect extends DialectSupport implements Dialect {
     }
 
     @Override
+    public String selectTables(String schema) {
+        return "SELECT * FROM sys.tables";
+    }
+
+    @Override
     public String getHibernateDialect() {
         return "org.hibernate.dialect.SQLServerDialect";
     }

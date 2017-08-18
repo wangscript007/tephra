@@ -24,6 +24,8 @@ Dao模块提供对数据持久化的支持，包含SQL、Hibernate、及一个�
 
 [Model定义](doc/model.md)
 
+[自动建表](doc/auto-ddl.md)
+
 [使用ModelHelper管理Model](doc/model-helper.md)
 
 [ORM接口说明](doc/orm.md)

@@ -37,6 +37,14 @@ public interface Dialect {
     String getValidationQuery();
 
     /**
+     * 获取检索所有表名称SQL语句。
+     *
+     * @param schema 数据库Schema。
+     * @return 检索所有表名称SQL语句。
+     */
+    String selectTables(String schema);
+
+    /**
      * 获取Hibernate使用的数据库方言类名称。
      *
      * @return Hibernate使用的数据库方言类名称。

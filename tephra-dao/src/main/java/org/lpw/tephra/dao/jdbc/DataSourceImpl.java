@@ -52,6 +52,7 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
     private String config;
     @Value("${tephra.dao.data-source.key:}")
     private String key;
+    private Map<String, JSONObject> configs = new HashMap<>();
     private Map<String, Dialect> dialects = new HashMap<>();
     private Map<String, DataSource> writeables = new ConcurrentHashMap<>();
     private Map<String, List<DataSource>> readonlys = new ConcurrentHashMap<>();
@@ -102,6 +103,11 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
     }
 
     @Override
+    public JSONObject getConfig(String key) {
+        return configs.get(key);
+    }
+
+    @Override
     public int getContextRefreshedSort() {
         return 3;
     }
@@ -119,6 +125,7 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
     @Override
     public synchronized void create(JSONObject config) {
         String key = config.getString("key");
+        configs.put(key, config);
         Dialect dialect = dialectFactory.get(config.getString("type"));
         dialects.put(key, dialect);
         createDataSource(key, dialect, config.getString("username"), config.getString("password"), config.getJSONArray("ips"), config.getString("schema"));

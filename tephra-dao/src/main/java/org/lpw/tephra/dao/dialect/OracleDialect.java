@@ -26,6 +26,11 @@ public class OracleDialect extends DialectSupport implements Dialect {
     }
 
     @Override
+    public String selectTables(String schema) {
+        return "SELECT * FROM user_tables";
+    }
+
+    @Override
     public String getHibernateDialect() {
         return "org.hibernate.dialect.Oracle10gDialect";
     }

@@ -1,5 +1,6 @@
 package org.lpw.tephra.dao.jdbc;
 
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.dao.ConnectionFactory;
 import org.lpw.tephra.dao.dialect.Dialect;
 
@@ -47,4 +48,12 @@ public interface DataSource extends ConnectionFactory<javax.sql.DataSource> {
      * @return 数据源key值。
      */
     String getDefaultKey();
+
+    /**
+     * 获取数据源配置。
+     *
+     * @param key 数据源key值。
+     * @return 数据源配置；如果不存在则返回null。
+     */
+    JSONObject getConfig(String key);
 }

@@ -23,6 +23,11 @@ public class MysqlDialect extends DialectSupport implements Dialect {
     }
 
     @Override
+    public String selectTables(String schema) {
+        return "show tables";
+    }
+
+    @Override
     public String getHibernateDialect() {
         return "org.hibernate.dialect.MySQLDialect";
     }
