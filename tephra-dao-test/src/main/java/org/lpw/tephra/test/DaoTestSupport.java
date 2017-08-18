@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author lpw
@@ -27,9 +29,24 @@ public class DaoTestSupport extends CoreTestSupport {
     public void before() throws Exception {
         String path = getClass().getResource("/").getPath();
         path = path.substring(0, path.lastIndexOf("/target/")) + "/src/";
-        sql(path + "main/sql/create.sql");
+        Set<String> set = new HashSet<>();
+        scan(set, new File(path + "main"));
+        for (String p : set)
+            sql(p);
         sql(path + "test/sql/mock.sql");
         close();
+    }
+
+    private void scan(Set<String> set, File file) {
+        if (file.isFile()) {
+            if (file.getName().equals("create.sql"))
+                set.add(file.getAbsolutePath());
+        } else if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null && files.length > 0)
+                for (File f : files)
+                    scan(set, f);
+        }
     }
 
     private void sql(String path) throws Exception {
