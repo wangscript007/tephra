@@ -200,16 +200,7 @@ public class ConverterImpl implements Converter {
 
     @Override
     public int toInt(Object object) {
-        if (validator.isEmpty(object))
-            return 0;
-
-        try {
-            return Integer.parseInt(object.toString().replaceAll(",", ""));
-        } catch (Exception e) {
-            logger.warn(e, "将对象[{}]转化为数值时发生异常！", object);
-
-            return 0;
-        }
+        return (int) toLong(object);
     }
 
     @Override
@@ -224,30 +215,12 @@ public class ConverterImpl implements Converter {
 
     @Override
     public long toLong(Object object) {
-        if (validator.isEmpty(object))
-            return 0L;
-
-        try {
-            return Long.parseLong(object.toString());
-        } catch (Exception e) {
-            logger.warn(e, "将对象[{}]转化为数值时发生异常！", object);
-
-            return 0L;
-        }
+        return Math.round(toDouble(object));
     }
 
     @Override
     public float toFloat(Object object) {
-        if (validator.isEmpty(object))
-            return 0.0F;
-
-        try {
-            return Float.parseFloat(object.toString());
-        } catch (Exception e) {
-            logger.warn(e, "将对象[{}]转化为数值时发生异常！", object);
-
-            return 0.0F;
-        }
+        return (float) toDouble(object);
     }
 
     @Override
@@ -256,7 +229,7 @@ public class ConverterImpl implements Converter {
             return 0.0D;
 
         try {
-            return Double.parseDouble(object.toString());
+            return Double.parseDouble(object.toString().replaceAll(",", ""));
         } catch (Exception e) {
             logger.warn(e, "将对象[{}]转化为数值时发生异常！", object);
 
