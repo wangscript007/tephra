@@ -102,7 +102,7 @@ public class ClassReloaderImpl implements ClassReloader, StorageListener, Applic
     }
 
     private List<String> names(String absolutePath) {
-        String names = new String(io.read(absolutePath)).trim();
+        String names = io.readAsString(absolutePath).trim();
         if (validator.isEmpty(names))
             return null;
 

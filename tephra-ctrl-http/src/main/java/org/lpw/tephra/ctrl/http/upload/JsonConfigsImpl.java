@@ -1,11 +1,11 @@
 package org.lpw.tephra.ctrl.http.upload;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.scheduler.MinuteJob;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Io;
+import org.lpw.tephra.util.Json;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +23,8 @@ public class JsonConfigsImpl implements JsonConfigs, MinuteJob {
     private Context context;
     @Inject
     private Io io;
+    @Inject
+    private Json json;
     @Value("${tephra.ctrl.http.upload.json-configs:/WEB-INF/upload}")
     private String configs;
     private Map<String, JsonConfig> map;
@@ -55,7 +57,7 @@ public class JsonConfigsImpl implements JsonConfigs, MinuteJob {
                 continue;
 
             config = new JsonConfigImpl();
-            JSONObject json = JSON.parseObject(new String(io.read(file.getPath())));
+            JSONObject json = this.json.toObject(io.readAsString(file.getPath()));
             JSONObject path = json.getJSONObject("path");
             for (Object contentType : path.keySet())
                 config.addPath(contentType.toString(), path.getString(contentType.toString()));

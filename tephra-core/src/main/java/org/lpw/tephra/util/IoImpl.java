@@ -43,17 +43,30 @@ public class IoImpl implements Io {
 
     @Override
     public byte[] read(String path) {
+        ByteArrayOutputStream outputStream = readAsStream(path);
+
+        return outputStream == null ? null : outputStream.toByteArray();
+    }
+
+    @Override
+    public String readAsString(String path) {
+        ByteArrayOutputStream outputStream = readAsStream(path);
+
+        return outputStream == null ? null : outputStream.toString();
+    }
+
+    private ByteArrayOutputStream readAsStream(String path) {
         if (validator.isEmpty(path) || !new File(path).exists())
             return null;
 
         try {
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            InputStream input = new FileInputStream(path);
-            copy(input, output);
-            input.close();
-            output.close();
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            InputStream inputStream = new FileInputStream(path);
+            copy(inputStream, outputStream);
+            inputStream.close();
+            outputStream.close();
 
-            return output.toByteArray();
+            return outputStream;
         } catch (IOException e) {
             logger.warn(e, "读文件[{}]时异常！", path);
 

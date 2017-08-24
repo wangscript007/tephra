@@ -90,7 +90,7 @@ public class SignImpl implements Sign, StorageListener {
     @Override
     public void onStorageChanged(String path, String absolutePath) {
         Map<String, String> map = new HashMap<>();
-        for (String string : converter.toArray(new String(io.read(absolutePath)), "\n")) {
+        for (String string : converter.toArray(io.readAsString(absolutePath), "\n")) {
             string = string.trim();
             int indexOf;
             if (string.equals("") || string.startsWith("#") || (indexOf = string.indexOf('=')) == -1)

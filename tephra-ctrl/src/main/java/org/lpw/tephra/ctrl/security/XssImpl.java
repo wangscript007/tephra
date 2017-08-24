@@ -69,7 +69,7 @@ public class XssImpl implements Xss, StorageListener {
     @Override
     public void onStorageChanged(String path, String absolutePath) {
         Set<String> set = new HashSet<>();
-        for (String string : converter.toArray(new String(io.read(absolutePath)), "\n")) {
+        for (String string : converter.toArray(io.readAsString(absolutePath), "\n")) {
             if (validator.isEmpty(string))
                 continue;
 

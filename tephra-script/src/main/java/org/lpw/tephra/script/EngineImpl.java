@@ -99,7 +99,7 @@ public class EngineImpl implements Engine, StorageListener {
 
     @Override
     public String read(String name) {
-        return new String(io.read(context.getAbsolutePath(path) + name));
+        return io.readAsString(context.getAbsolutePath(path) + name);
     }
 
     protected ScriptEngine get() {

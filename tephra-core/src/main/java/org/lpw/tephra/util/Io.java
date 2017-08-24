@@ -29,9 +29,17 @@ public interface Io {
      * 读取指定路径下的文件。
      *
      * @param path 文件所在路径。
-     * @return 文件内容。如果读文件异常则返回null，如果文件为空则返回空字符串""。
+     * @return 文件内容。如果读文件异常则返回null。
      */
     byte[] read(String path);
+
+    /**
+     * 读取指定路径下的文件。
+     *
+     * @param path 文件所在路径。
+     * @return 文件内容。如果读文件异常则返回null。
+     */
+    String readAsString(String path);
 
     /**
      * 写入文件。
