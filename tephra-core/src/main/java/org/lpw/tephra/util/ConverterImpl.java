@@ -229,6 +229,9 @@ public class ConverterImpl implements Converter {
             return 0.0D;
 
         try {
+            if (object instanceof Double)
+                return (Double) object;
+
             return Double.parseDouble(object.toString().replaceAll(",", ""));
         } catch (Exception e) {
             logger.warn(e, "将对象[{}]转化为数值时发生异常！", object);
