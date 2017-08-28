@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.lpw.tephra.test.CoreTestSupport;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
@@ -30,6 +31,8 @@ public class ContainerTest extends CoreTestSupport {
     private Container container;
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Logger logger;
 
@@ -111,13 +114,13 @@ public class ContainerTest extends CoreTestSupport {
     public void contextRefreshed() throws Exception {
         Assert.assertEquals(2, contextRefreshedList.size());
         for (int i = 0; i < contextRefreshedList.size(); i++)
-            Assert.assertEquals(i + 1, converter.toInt(contextRefreshedList.get(i)));
+            Assert.assertEquals(i + 1, numeric.toInt(contextRefreshedList.get(i)));
 
         for (int i = 0; i < 2; i++) {
             ((ContainerImpl) container).onApplicationEvent(new ContextRefreshedEvent(getApplicationContext()));
             Assert.assertEquals(4 + i * 2, contextRefreshedList.size());
             for (int j = 0; j < contextRefreshedList.size(); j++)
-                Assert.assertEquals(j % 2 + 1, converter.toInt(contextRefreshedList.get(j)));
+                Assert.assertEquals(j % 2 + 1, numeric.toInt(contextRefreshedList.get(j)));
         }
 
         Field field = ContainerImpl.class.getDeclaredField("refreshedListeners");
@@ -128,14 +131,14 @@ public class ContainerTest extends CoreTestSupport {
             ((ContainerImpl) container).onApplicationEvent(new ContextRefreshedEvent(getApplicationContext()));
             Assert.assertEquals(6, contextRefreshedList.size());
             for (int j = 0; j < contextRefreshedList.size(); j++)
-                Assert.assertEquals(j % 2 + 1, converter.toInt(contextRefreshedList.get(j)));
+                Assert.assertEquals(j % 2 + 1, numeric.toInt(contextRefreshedList.get(j)));
         }
 
         ((ContainerImpl) container).onApplicationEvent(new ApplicationContextEvent(getApplicationContext()) {
         });
         Assert.assertEquals(6, contextRefreshedList.size());
         for (int i = 0; i < contextRefreshedList.size(); i++)
-            Assert.assertEquals(i % 2 + 1, converter.toInt(contextRefreshedList.get(i)));
+            Assert.assertEquals(i % 2 + 1, numeric.toInt(contextRefreshedList.get(i)));
 
         field.set(container, object);
     }
@@ -146,7 +149,7 @@ public class ContainerTest extends CoreTestSupport {
             ((ContainerImpl) container).onApplicationEvent(new ContextClosedEvent(getApplicationContext()));
             Assert.assertEquals(2 + i * 2, contextClosedList.size());
             for (int j = 0; j < contextRefreshedList.size(); j++)
-                Assert.assertEquals(j % 2 + 1, converter.toInt(contextClosedList.get(j)));
+                Assert.assertEquals(j % 2 + 1, numeric.toInt(contextClosedList.get(j)));
         }
 
         Field field = ContainerImpl.class.getDeclaredField("closedListeners");
@@ -157,14 +160,14 @@ public class ContainerTest extends CoreTestSupport {
             ((ContainerImpl) container).onApplicationEvent(new ContextClosedEvent(getApplicationContext()));
             Assert.assertEquals(4, contextClosedList.size());
             for (int j = 0; j < contextClosedList.size(); j++)
-                Assert.assertEquals(j % 2 + 1, converter.toInt(contextClosedList.get(j)));
+                Assert.assertEquals(j % 2 + 1, numeric.toInt(contextClosedList.get(j)));
         }
 
         ((ContainerImpl) container).onApplicationEvent(new ApplicationContextEvent(getApplicationContext()) {
         });
         Assert.assertEquals(4, contextClosedList.size());
         for (int i = 0; i < contextClosedList.size(); i++)
-            Assert.assertEquals(i % 2 + 1, converter.toInt(contextClosedList.get(i)));
+            Assert.assertEquals(i % 2 + 1, numeric.toInt(contextClosedList.get(i)));
 
         field.set(container, object);
     }

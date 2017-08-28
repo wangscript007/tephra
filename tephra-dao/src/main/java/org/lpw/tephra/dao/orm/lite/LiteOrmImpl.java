@@ -12,6 +12,7 @@ import org.lpw.tephra.dao.orm.OrmSupport;
 import org.lpw.tephra.dao.orm.PageList;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
+import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
@@ -25,6 +26,8 @@ import java.util.List;
 public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Generator generator;
     @Inject
@@ -125,7 +128,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
         if (sqlTable.getRowCount() == 0)
             return 0;
 
-        return converter.toInt(sqlTable.get(0, 0));
+        return numeric.toInt(sqlTable.get(0, 0));
     }
 
     private String getFrom(LiteQuery query, ModelTable modelTable) {

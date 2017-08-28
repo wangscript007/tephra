@@ -1,6 +1,6 @@
 package org.lpw.tephra.ctrl.context;
 
-import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -17,7 +17,7 @@ public class HeaderImpl implements Header, HeaderAware {
     @Inject
     private Validator validator;
     @Inject
-    private Converter converter;
+    private Numeric numeric;
     @Value("${tephra.ctrl.context.header.real-ip:}")
     private String realIp;
     private ThreadLocal<HeaderAdapter> adapter = new ThreadLocal<>();
@@ -29,12 +29,12 @@ public class HeaderImpl implements Header, HeaderAware {
 
     @Override
     public int getAsInt(String name) {
-        return converter.toInt(get(name));
+        return numeric.toInt(get(name));
     }
 
     @Override
     public long getAsLong(String name) {
-        return converter.toLong(get(name));
+        return numeric.toLong(get(name));
     }
 
     @Override

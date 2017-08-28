@@ -5,6 +5,7 @@ import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,8 @@ public class SignImpl implements Sign, StorageListener {
 
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Validator validator;
     @Inject
@@ -52,7 +55,7 @@ public class SignImpl implements Sign, StorageListener {
     @Override
     public boolean verify(Map<String, String> map, String name) {
         return !validator.isEmpty(map) && map.containsKey(SIGN) && map.containsKey(SIGN_TIME) &&
-                System.currentTimeMillis() - converter.toLong(map.get(SIGN_TIME)) < time && get(map, name).equals(map.get(SIGN));
+                System.currentTimeMillis() - numeric.toLong(map.get(SIGN_TIME)) < time && get(map, name).equals(map.get(SIGN));
     }
 
     protected String get(Map<String, String> map, String name) {

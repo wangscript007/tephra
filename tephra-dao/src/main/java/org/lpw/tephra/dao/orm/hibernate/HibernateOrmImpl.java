@@ -8,6 +8,7 @@ import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.orm.OrmSupport;
 import org.lpw.tephra.dao.orm.PageList;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
@@ -23,6 +24,8 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
 
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Session session;
 
@@ -86,7 +89,7 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         if (!validator.isEmpty(query.getGroup()))
             hql.append(" GROUP BY ").append(query.getGroup());
 
-        return converter.toInt(createQuery(getDataSource(null, query, null, null), Mode.Read, hql, args, query.isLocked(), 0, 0).iterate().next());
+        return numeric.toInt(createQuery(getDataSource(null, query, null, null), Mode.Read, hql, args, query.isLocked(), 0, 0).iterate().next());
     }
 
     @Override

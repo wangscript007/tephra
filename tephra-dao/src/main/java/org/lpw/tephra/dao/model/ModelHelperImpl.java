@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Repository;
 
@@ -26,6 +27,8 @@ public class ModelHelperImpl implements ModelHelper {
     private Validator validator;
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Logger logger;
     @Inject
@@ -109,7 +112,7 @@ public class ModelHelperImpl implements ModelHelper {
         String format = jsonable.format();
         if (!validator.isEmpty(format)) {
             if (format.startsWith("number.")) {
-                int[] ns = converter.toInts(format.substring(7));
+                int[] ns = numeric.toInts(format.substring(7));
                 return converter.toString(value, ns[0], ns[1]);
             }
         }

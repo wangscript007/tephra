@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.lpw.tephra.test.DaoTestSupport;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.TimeUnit;
 
 import javax.inject.Inject;
@@ -16,6 +17,8 @@ import java.sql.Timestamp;
 public class SqlTest extends DaoTestSupport {
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Sql sql;
 
@@ -40,10 +43,10 @@ public class SqlTest extends DaoTestSupport {
         Assert.assertEquals(9, table.getRowCount());
         Assert.assertEquals(5, table.getColumnCount());
         Assert.assertEquals("id0", table.get(0, 0));
-        Assert.assertEquals(0, converter.toInt(table.get(0, 1)));
+        Assert.assertEquals(0, numeric.toInt(table.get(0, 1)));
         Assert.assertEquals("tephra", table.get(0, 2));
         Assert.assertEquals("id0", table.get(0, "c_id"));
-        Assert.assertEquals(0, converter.toInt(table.get(0, "c_sort")));
+        Assert.assertEquals(0, numeric.toInt(table.get(0, "c_sort")));
         Assert.assertEquals("tephra", table.get(0, "c_name"));
         check(table, 1, 0, time);
 
@@ -64,10 +67,10 @@ public class SqlTest extends DaoTestSupport {
     private void check(SqlTable table, int start, int off, long time) {
         for (int i = start; i < 9 - off; i++) {
             Assert.assertEquals("id" + (i + off), table.get(i, 0));
-            Assert.assertEquals(i + off, converter.toInt(table.get(i, 1)));
+            Assert.assertEquals(i + off, numeric.toInt(table.get(i, 1)));
             Assert.assertEquals("name" + (i + off), table.get(i, 2));
             Assert.assertEquals("id" + (i + off), table.get(i, "c_id"));
-            Assert.assertEquals(i + off, converter.toInt(table.get(i, "c_sort")));
+            Assert.assertEquals(i + off, numeric.toInt(table.get(i, "c_sort")));
             Assert.assertEquals("name" + (i + off), table.get(i, "c_name"));
             Assert.assertEquals(converter.toString(new Date(time - (i + off) * TimeUnit.Day.getTime())), converter.toString(table.get(i, "c_date")));
             Assert.assertEquals(converter.toString(new Timestamp(time - (i + off) * TimeUnit.Hour.getTime())), converter.toString(table.get(i, "c_time")));

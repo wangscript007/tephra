@@ -107,46 +107,6 @@ public interface Converter {
     long toBitSize(String size);
 
     /**
-     * 将对象转化为int数值。
-     *
-     * @param object 要转化的对象。
-     * @return 数值；如果转化失败则返回0。
-     */
-    int toInt(Object object);
-
-    /**
-     * 将整数字符串转化为整数数组。
-     *
-     * @param string 整数字符串，数值间以逗号区分。
-     * @return 整数数组。
-     */
-    int[] toInts(String string);
-
-    /**
-     * 将对象转化为long数值。
-     *
-     * @param object 要转化的对象。
-     * @return 数值；如果转化失败则返回0。
-     */
-    long toLong(Object object);
-
-    /**
-     * 将对象转化为float数值。
-     *
-     * @param object 要转化的对象。
-     * @return 数值；如果转化失败则返回0。
-     */
-    float toFloat(Object object);
-
-    /**
-     * 将对象转化为double数值。
-     *
-     * @param object 要转化的对象。
-     * @return 数值；如果转化失败则返回0。
-     */
-    double toDouble(Object object);
-
-    /**
      * 将对象转化为boolean值。
      *
      * @param object 要转化的对象。

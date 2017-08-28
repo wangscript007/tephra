@@ -7,6 +7,7 @@ import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Controller;
 
@@ -26,6 +27,8 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
     private Validator validator;
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Logger logger;
     @Inject
@@ -84,7 +87,7 @@ public class ExecutorHelperImpl implements ExecutorHelper, FailureCode, ContextR
     }
 
     private int getCode(String prefix, int code) {
-        int n = converter.toInt(prefix + converter.toString(code, "00"));
+        int n = numeric.toInt(prefix + converter.toString(code, "00"));
 
         return n == 0 ? -1 : n;
     }

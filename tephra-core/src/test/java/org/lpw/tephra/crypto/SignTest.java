@@ -6,6 +6,7 @@ import org.lpw.tephra.test.CoreTestSupport;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Thread;
 import org.lpw.tephra.util.TimeUnit;
 
@@ -19,6 +20,8 @@ import java.util.Map;
 public class SignTest extends CoreTestSupport {
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Context context;
     @Inject
@@ -41,7 +44,7 @@ public class SignTest extends CoreTestSupport {
         Map<String, String> map = new HashMap<>();
         sign.put(map, "name");
         Assert.assertEquals(2, map.size());
-        Assert.assertTrue(System.currentTimeMillis() - converter.toLong(map.get("sign-time")) < 2L * 1000);
+        Assert.assertTrue(System.currentTimeMillis() - numeric.toLong(map.get("sign-time")) < 2L * 1000);
         Assert.assertEquals(digest.md5("sign-time=" + map.get("sign-time") + "&new default key"), map.get("sign"));
 
         map.clear();
@@ -54,7 +57,7 @@ public class SignTest extends CoreTestSupport {
         Assert.assertEquals(7, map.size());
         for (int i = 0; i < 5; i++)
             Assert.assertEquals("value " + i, map.get("key " + i));
-        Assert.assertTrue(System.currentTimeMillis() - converter.toLong(map.get("sign-time")) < 2L * 1000);
+        Assert.assertTrue(System.currentTimeMillis() - numeric.toLong(map.get("sign-time")) < 2L * 1000);
         Assert.assertEquals(digest.md5(sb.append("sign-time=").append(map.get("sign-time")).append("&new default key").toString()), map.get("sign"));
 
         map.clear();
@@ -67,7 +70,7 @@ public class SignTest extends CoreTestSupport {
         Assert.assertEquals(7, map.size());
         for (int i = 0; i < 5; i++)
             Assert.assertEquals("value " + i, map.get("key " + i));
-        Assert.assertTrue(System.currentTimeMillis() - converter.toLong(map.get("sign-time")) < 2L * 1000);
+        Assert.assertTrue(System.currentTimeMillis() - numeric.toLong(map.get("sign-time")) < 2L * 1000);
         Assert.assertEquals(digest.md5(sb.append("sign-time=").append(map.get("sign-time")).append("&new sign key").toString()), map.get("sign"));
 
         map.clear();
@@ -80,7 +83,7 @@ public class SignTest extends CoreTestSupport {
         Assert.assertEquals(7, map.size());
         for (int i = 0; i < 5; i++)
             Assert.assertEquals("value " + i, map.get("key " + i));
-        Assert.assertTrue(System.currentTimeMillis() - converter.toLong(map.get("sign-time")) < 2L * 1000);
+        Assert.assertTrue(System.currentTimeMillis() - numeric.toLong(map.get("sign-time")) < 2L * 1000);
         Assert.assertEquals(digest.md5(sb.append("sign-time=").append(map.get("sign-time")).append("&new default key").toString()), map.get("sign"));
 
         map.clear();
@@ -93,7 +96,7 @@ public class SignTest extends CoreTestSupport {
         Assert.assertEquals(7, map.size());
         for (int i = 0; i < 5; i++)
             Assert.assertEquals("value " + i, map.get("key " + i));
-        Assert.assertTrue(System.currentTimeMillis() - converter.toLong(map.get("sign-time")) < 2L * 1000);
+        Assert.assertTrue(System.currentTimeMillis() - numeric.toLong(map.get("sign-time")) < 2L * 1000);
         Assert.assertEquals(digest.md5(sb.append("sign-time=").append(map.get("sign-time")).append("&new default key").toString()), map.get("sign"));
 
         io.write(path, bytes);
@@ -109,7 +112,7 @@ public class SignTest extends CoreTestSupport {
         Assert.assertEquals(7, map.size());
         for (int i = 0; i < 5; i++)
             Assert.assertEquals("value " + i, map.get("key " + i));
-        Assert.assertTrue(System.currentTimeMillis() - converter.toLong(map.get("sign-time")) < 2L * 1000);
+        Assert.assertTrue(System.currentTimeMillis() - numeric.toLong(map.get("sign-time")) < 2L * 1000);
         Assert.assertEquals(digest.md5(sb.append("sign-time=").append(map.get("sign-time")).append("&default key").toString()), map.get("sign"));
 
         map.clear();
@@ -122,7 +125,7 @@ public class SignTest extends CoreTestSupport {
         Assert.assertEquals(7, map.size());
         for (int i = 0; i < 5; i++)
             Assert.assertEquals("value " + i, map.get("key " + i));
-        Assert.assertTrue(System.currentTimeMillis() - converter.toLong(map.get("sign-time")) < 2L * 1000);
+        Assert.assertTrue(System.currentTimeMillis() - numeric.toLong(map.get("sign-time")) < 2L * 1000);
         Assert.assertEquals(digest.md5(sb.append("sign-time=").append(map.get("sign-time")).append("&sign key").toString()), map.get("sign"));
     }
 

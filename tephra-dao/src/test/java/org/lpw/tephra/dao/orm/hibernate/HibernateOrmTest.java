@@ -6,6 +6,7 @@ import org.lpw.tephra.dao.orm.PageList;
 import org.lpw.tephra.dao.orm.TestModel;
 import org.lpw.tephra.test.DaoTestSupport;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.TimeUnit;
 
 import javax.inject.Inject;
@@ -20,6 +21,8 @@ import java.util.List;
 public class HibernateOrmTest extends DaoTestSupport {
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private HibernateOrm hibernateOrm;
 
@@ -96,7 +99,7 @@ public class HibernateOrmTest extends DaoTestSupport {
             Assert.assertEquals("name" + i, model.getName());
             Assert.assertEquals(converter.toString(new Date(time - i * TimeUnit.Day.getTime())), converter.toString(model.getDate()));
             Assert.assertEquals(converter.toString(new Timestamp(time - i * TimeUnit.Hour.getTime())), converter.toString(model.getTime()));
-            Assert.assertEquals(converter.toInt(list.get(i)), model.hashCode());
+            Assert.assertEquals(numeric.toInt(list.get(i)), model.hashCode());
         }
 
         hibernateOrm.close();

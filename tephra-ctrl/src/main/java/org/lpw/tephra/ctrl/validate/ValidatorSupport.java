@@ -4,6 +4,7 @@ import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.execute.ExecutorHelper;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Message;
+import org.lpw.tephra.util.Numeric;
 
 import javax.inject.Inject;
 
@@ -15,6 +16,8 @@ public abstract class ValidatorSupport implements Validator {
     protected org.lpw.tephra.util.Validator validator;
     @Inject
     protected Converter converter;
+    @Inject
+    protected Numeric numeric;
     @Inject
     protected Message message;
     @Inject

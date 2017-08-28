@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 public class BetweenValidatorImpl extends ValidatorSupport {
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
-        int n = converter.toInt(parameter);
+        int n = numeric.toInt(parameter);
 
         return n >= validate.getNumber()[0] && n <= validate.getNumber()[1];
     }

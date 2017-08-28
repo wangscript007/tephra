@@ -1,13 +1,14 @@
 package org.lpw.tephra.ctrl.console;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.ctrl.context.Header;
 import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,10 @@ public class ConsoleImpl implements Console, ContextRefreshedListener {
     private Validator validator;
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
+    @Inject
+    private Json json;
     @Inject
     private Logger logger;
     @Inject
@@ -110,14 +115,14 @@ public class ConsoleImpl implements Console, ContextRefreshedListener {
 
             if (type.equals("int")) {
                 classes.add(int.class);
-                args.add(converter.toInt(value));
+                args.add(numeric.toInt(value));
 
                 continue;
             }
 
             if (type.equals("long")) {
                 classes.add(long.class);
-                args.add(converter.toLong(value));
+                args.add(numeric.toLong(value));
 
                 continue;
             }
@@ -131,7 +136,7 @@ public class ConsoleImpl implements Console, ContextRefreshedListener {
 
             if (type.equals("json")) {
                 classes.add(JSONObject.class);
-                args.add(JSON.parseObject(value));
+                args.add(json.toObject(value));
             }
         }
     }

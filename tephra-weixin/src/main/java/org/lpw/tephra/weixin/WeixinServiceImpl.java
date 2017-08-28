@@ -11,6 +11,7 @@ import org.lpw.tephra.ctrl.context.Session;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.lpw.tephra.util.Xml;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +44,8 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
     private Validator validator;
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Http http;
     @Inject
@@ -122,7 +125,7 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
         weixinListener.ifPresent(listener -> executorService.submit(() -> {
             Map<String, String> map = this.xml.toMap(xml, false);
             String userOpenId = map.get("FromUserName");
-            Timestamp time = new Timestamp(converter.toLong(map.get("CreateTime")) * 1000);
+            Timestamp time = new Timestamp(numeric.toLong(map.get("CreateTime")) * 1000);
             String type = map.get("MsgType");
             String messageId = map.get("MsgId");
             xml(map, appId, userOpenId, time, type, messageId);
@@ -163,8 +166,8 @@ public class WeixinServiceImpl implements WeixinService, ContextRefreshedListene
         }
 
         if ("location".equals(type)) {
-            weixinListener.location(appId, userOpenId, messageId, converter.toDouble(map.get("Location_X")), converter.toDouble(map.get("Location_Y")),
-                    converter.toInt(map.get("Scale")), map.get("Label"), time);
+            weixinListener.location(appId, userOpenId, messageId, numeric.toDouble(map.get("Location_X")), numeric.toDouble(map.get("Location_Y")),
+                    numeric.toInt(map.get("Scale")), map.get("Label"), time);
 
             return;
         }

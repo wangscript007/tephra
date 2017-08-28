@@ -7,6 +7,7 @@ import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -36,6 +37,8 @@ public class ModelTableImpl implements ModelTable {
     private Validator validator;
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private DateTime dateTime;
     @Inject
@@ -272,7 +275,7 @@ public class ModelTableImpl implements ModelTable {
             return value;
 
         if (format.startsWith("number.")) {
-            int[] ns = converter.toInts(format.substring(7));
+            int[] ns = numeric.toInts(format.substring(7));
             String v = (String) value;
             StringBuilder sb = new StringBuilder().append(v);
             int indexOf = v.indexOf('.');
@@ -299,16 +302,16 @@ public class ModelTableImpl implements ModelTable {
             return converter.toString(value);
 
         if (int.class.equals(type) || Integer.class.equals(type))
-            return converter.toInt(value);
+            return numeric.toInt(value);
 
         if (long.class.equals(type) || Long.class.equals(type))
-            return converter.toLong(value);
+            return numeric.toLong(value);
 
         if (float.class.equals(type) || Float.class.equals(type))
-            return converter.toFloat(value);
+            return numeric.toFloat(value);
 
         if (double.class.equals(type) || Double.class.equals(type))
-            return converter.toDouble(value);
+            return numeric.toDouble(value);
 
         if (java.util.Date.class.equals(type) || Date.class.equals(type) || Timestamp.class.equals(type)) {
             java.util.Date date = dateTime.toDate(value);

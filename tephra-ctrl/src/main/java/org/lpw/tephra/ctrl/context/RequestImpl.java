@@ -8,6 +8,7 @@ import org.lpw.tephra.dao.model.ModelTables;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,8 @@ public class RequestImpl implements Request, RequestAware {
     private Validator validator;
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private DateTime dateTime;
     @Inject
@@ -47,12 +50,12 @@ public class RequestImpl implements Request, RequestAware {
 
     @Override
     public int getAsInt(String name) {
-        return converter.toInt(get(name));
+        return numeric.toInt(get(name));
     }
 
     @Override
     public long getAsLong(String name) {
-        return converter.toLong(get(name));
+        return numeric.toLong(get(name));
     }
 
     @Override

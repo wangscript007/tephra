@@ -10,6 +10,7 @@ import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Serializer;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,8 @@ public class RemoteImpl implements Remote, MinuteJob, StorageListener, ContextRe
     private Validator validator;
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Generator generator;
     @Inject
@@ -107,7 +110,7 @@ public class RemoteImpl implements Remote, MinuteJob, StorageListener, ContextRe
 
                 int indexOf = line.indexOf(':');
                 String ip = indexOf == -1 ? line : line.substring(0, indexOf);
-                int port = indexOf == -1 ? this.port : converter.toInt(line.substring(indexOf + 1));
+                int port = indexOf == -1 ? this.port : numeric.toInt(line.substring(indexOf + 1));
                 if (port < 1)
                     continue;
 

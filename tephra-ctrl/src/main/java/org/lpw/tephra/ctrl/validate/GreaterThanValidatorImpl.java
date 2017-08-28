@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 public class GreaterThanValidatorImpl extends ValidatorSupport {
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
-        return converter.toInt(parameter) > validate.getNumber()[0];
+        return numeric.toInt(parameter) > validate.getNumber()[0];
     }
 
     @Override

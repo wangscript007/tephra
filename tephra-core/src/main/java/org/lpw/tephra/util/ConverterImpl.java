@@ -27,6 +27,7 @@ public class ConverterImpl implements Converter {
 
     @Inject
     private Validator validator;
+    @Inject private Numeric numeric;
     @Inject
     private DateTime dateTime;
     @Inject
@@ -65,7 +66,7 @@ public class ConverterImpl implements Converter {
         for (int i = 0; i < point; i++)
             sb.append('0');
 
-        return toString(toLong(number) * Math.pow(0.1D, decimal), sb.toString());
+        return toString(numeric.toLong(number) * Math.pow(0.1D, decimal), sb.toString());
     }
 
     @Override
@@ -171,7 +172,7 @@ public class ConverterImpl implements Converter {
         if (validator.isEmpty(size))
             return -1L;
 
-        double value = toDouble(size.substring(0, size.length() - 1).trim(), -1);
+        double value = numeric.toDouble(size.substring(0, size.length() - 1).trim(), -1.0D);
         char unit = size.toLowerCase().charAt(size.length() - 1);
         if (unit == 't')
             return Math.round(value * 1024 * 1024 * 1024 * 1024);
@@ -185,59 +186,7 @@ public class ConverterImpl implements Converter {
         if (unit == 'k')
             return Math.round(value * 1024);
 
-        return Math.round(toDouble(size.trim(), -1));
-    }
-
-    private double toDouble(String string, double failure) {
-        try {
-            return Double.parseDouble(string);
-        } catch (Exception e) {
-            logger.warn(e, "将字符串[{}]转化为浮点数时发生异常！", string);
-
-            return failure;
-        }
-    }
-
-    @Override
-    public int toInt(Object object) {
-        return (int) toLong(object);
-    }
-
-    @Override
-    public int[] toInts(String string) {
-        String[] array = toArray(string, ",");
-        int[] ints = new int[array.length];
-        for (int i = 0; i < ints.length; i++)
-            ints[i] = toInt(array[i]);
-
-        return ints;
-    }
-
-    @Override
-    public long toLong(Object object) {
-        return Math.round(toDouble(object));
-    }
-
-    @Override
-    public float toFloat(Object object) {
-        return (float) toDouble(object);
-    }
-
-    @Override
-    public double toDouble(Object object) {
-        if (validator.isEmpty(object))
-            return 0.0D;
-
-        try {
-            if (object instanceof Double)
-                return (Double) object;
-
-            return Double.parseDouble(object.toString().replaceAll(",", ""));
-        } catch (Exception e) {
-            logger.warn(e, "将对象[{}]转化为数值时发生异常！", object);
-
-            return 0.0D;
-        }
+        return Math.round(numeric.toDouble(size.trim(), -1.0D));
     }
 
     @Override
