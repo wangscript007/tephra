@@ -251,4 +251,16 @@ public class NumericTest extends CoreTestSupport {
         Assert.assertArrayEquals(new int[]{0, 1, 2, 3, 0}, numeric.toInts(new String[]{"0", "1", "2", "3", "a"}));
         Assert.assertArrayEquals(new int[]{0, 1, 0, 3, 0}, numeric.toInts(new String[]{"0", "1", "b", "3", "a"}));
     }
+
+    @Test
+    public void formatToString() {
+        Assert.assertEquals("123", numeric.toString(123, "0"));
+        Assert.assertEquals("123", numeric.toString(123L, "0"));
+        Assert.assertEquals("123", numeric.toString(123.456F, "0"));
+        Assert.assertEquals("123", numeric.toString(123.456D, "0"));
+        Assert.assertEquals("123.0", numeric.toString(123, "0.0"));
+        Assert.assertEquals("123.0", numeric.toString(123L, "0.0"));
+        Assert.assertEquals("123.5", numeric.toString(123.456F, "0.0"));
+        Assert.assertEquals("123.5", numeric.toString(123.456D, "0.0"));
+    }
 }

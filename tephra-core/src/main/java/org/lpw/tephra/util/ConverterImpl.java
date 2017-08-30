@@ -6,7 +6,6 @@ import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -15,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lpw
@@ -27,12 +25,12 @@ public class ConverterImpl implements Converter {
 
     @Inject
     private Validator validator;
-    @Inject private Numeric numeric;
+    @Inject
+    private Numeric numeric;
     @Inject
     private DateTime dateTime;
     @Inject
     private Logger logger;
-    private Map<String, DecimalFormat> decimalFormatMap = new ConcurrentHashMap<>();
 
     @SuppressWarnings({"unchecked"})
     @Override
@@ -57,7 +55,7 @@ public class ConverterImpl implements Converter {
 
     @Override
     public String toString(Number number, String format) {
-        return decimalFormatMap.computeIfAbsent(format, DecimalFormat::new).format(number);
+        return numeric.toString(number, format);
     }
 
     @Override

@@ -30,10 +30,28 @@ public interface Request {
     /**
      * 获得整型请求参数值。
      *
+     * @param name         参数名称。
+     * @param defaultValue 默认值。
+     * @return 整型参数值。
+     */
+    int getAsInt(String name, int defaultValue);
+
+    /**
+     * 获得整型请求参数值。
+     *
      * @param name 参数名称。
      * @return 整型参数值。
      */
     long getAsLong(String name);
+
+    /**
+     * 获得整型请求参数值。
+     *
+     * @param name         参数名称。
+     * @param defaultValue 默认值。
+     * @return 整型参数值。
+     */
+    long getAsLong(String name, long defaultValue);
 
     /**
      * 获取布尔请求参数值。

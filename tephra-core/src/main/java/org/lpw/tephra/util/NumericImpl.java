@@ -3,6 +3,9 @@ package org.lpw.tephra.util;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.text.DecimalFormat;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lpw
@@ -13,6 +16,7 @@ public class NumericImpl implements Numeric {
     private Validator validator;
     @Inject
     private Logger logger;
+    private Map<String, DecimalFormat> formats = new ConcurrentHashMap<>();
 
     @Override
     public int toInt(Object object) {
@@ -172,5 +176,10 @@ public class NumericImpl implements Numeric {
             ns[i] = toInt(array[i]);
 
         return ns;
+    }
+
+    @Override
+    public String toString(Number number, String format) {
+        return formats.computeIfAbsent(format, DecimalFormat::new).format(number);
     }
 }

@@ -54,8 +54,18 @@ public class RequestImpl implements Request, RequestAware {
     }
 
     @Override
+    public int getAsInt(String name, int defaultValue) {
+        return numeric.toInt(get(name), defaultValue);
+    }
+
+    @Override
     public long getAsLong(String name) {
         return numeric.toLong(get(name));
+    }
+
+    @Override
+    public long getAsLong(String name, long defaultValue) {
+        return numeric.toLong(get(name), defaultValue);
     }
 
     @Override
