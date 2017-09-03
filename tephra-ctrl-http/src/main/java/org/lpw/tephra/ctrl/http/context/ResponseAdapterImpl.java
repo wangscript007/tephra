@@ -12,9 +12,9 @@ import java.io.OutputStream;
  * @author lpw
  */
 public class ResponseAdapterImpl implements ResponseAdapter {
-    protected String servletContextPath;
-    protected HttpServletResponse response;
-    protected OutputStream output;
+    private String servletContextPath;
+    private HttpServletResponse response;
+    private OutputStream output;
 
     public ResponseAdapterImpl(String servletContextPath, HttpServletResponse response, OutputStream output) {
         this.servletContextPath = servletContextPath;

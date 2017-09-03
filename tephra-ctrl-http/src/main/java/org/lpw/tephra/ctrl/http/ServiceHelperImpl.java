@@ -171,7 +171,7 @@ public class ServiceHelperImpl implements ServiceHelper {
         sessionAware.set(new SessionAdapterImpl(getSessionId(request)));
         requestAware.set(new RequestAdapterImpl(request, uri));
         cookieAware.set(request, response);
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding(context.getCharset(null));
         OutputStream outputStream = response.getOutputStream();
         responseAware.set(new ResponseAdapterImpl(servletContextPath, response, outputStream));
 

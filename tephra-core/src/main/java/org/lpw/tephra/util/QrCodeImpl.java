@@ -14,7 +14,9 @@ import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
@@ -33,6 +35,8 @@ public class QrCodeImpl implements QrCode {
     private static final int WHITE = Color.WHITE.getRGB();
     private static final int BLACK = Color.BLACK.getRGB();
 
+    @Inject
+    private Context context;
     @Inject
     private Validator validator;
     @Inject
@@ -75,7 +79,7 @@ public class QrCodeImpl implements QrCode {
     private BufferedImage create(String content, int size) throws WriterException {
         Map<EncodeHintType, Object> hint = new HashMap<>();
         hint.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-        hint.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+        hint.put(EncodeHintType.CHARACTER_SET, context.getCharset(null));
         hint.put(EncodeHintType.MARGIN, 1);
         BitMatrix matrix = writer.encode(content, BarcodeFormat.QR_CODE, size, size, hint);
         BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);

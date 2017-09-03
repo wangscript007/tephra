@@ -1,6 +1,7 @@
 package org.lpw.tephra.util;
 
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -15,9 +16,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component("tephra.util.context")
 public class ContextImpl implements Context, ContextRefreshedListener {
     @Inject
+    private Validator validator;
+    @Inject
     private Thread thread;
     @Inject
     private Logger logger;
+    @Value("${tephra.util.context.charset:UTF-8}")
+    private String charset;
     private String root;
     private Map<String, String> map = new ConcurrentHashMap<>();
     private ThreadLocal<Locale> locale = new ThreadLocal<>();
@@ -36,6 +41,11 @@ public class ContextImpl implements Context, ContextRefreshedListener {
         }
 
         return absolutePath;
+    }
+
+    @Override
+    public String getCharset(String charset) {
+        return validator.isEmpty(charset) ? this.charset : charset;
     }
 
     @Override

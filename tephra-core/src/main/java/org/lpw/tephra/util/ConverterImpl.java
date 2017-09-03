@@ -21,8 +21,9 @@ import java.util.Set;
 @Component("tephra.util.converter")
 public class ConverterImpl implements Converter {
     private static final String[] BIT_SIZE_FORMAT = {"0 B", "0.00 K", "0.00 M", "0.00 G", "0.00 T"};
-    private static final String CHAR_SET = "utf-8";
 
+    @Inject
+    private Context context;
     @Inject
     private Validator validator;
     @Inject
@@ -207,7 +208,7 @@ public class ConverterImpl implements Converter {
             return null;
 
         try {
-            return URLEncoder.encode(string, validator.isEmpty(charset) ? CHAR_SET : charset);
+            return URLEncoder.encode(string, context.getCharset(charset));
         } catch (UnsupportedEncodingException e) {
             logger.warn(e, "将字符串[{}]进行URL编码[{}]转换时发生异常！", string, charset);
 
@@ -221,7 +222,7 @@ public class ConverterImpl implements Converter {
             return null;
 
         try {
-            return URLDecoder.decode(string, validator.isEmpty(charset) ? CHAR_SET : charset);
+            return URLDecoder.decode(string, context.getCharset(charset));
         } catch (UnsupportedEncodingException e) {
             logger.warn(e, "将字符串[{}]进行URL解码[{}]转换时发生异常！", string, charset);
 

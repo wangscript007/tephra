@@ -48,8 +48,8 @@ import java.util.Map;
  */
 @Component("tephra.util.http")
 public class HttpImpl implements Http, ContextRefreshedListener {
-    private static final String CHARSET = "UTF-8";
-
+    @Inject
+    private Context context;
     @Inject
     private Validator validator;
     @Inject
@@ -115,7 +115,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
             List<NameValuePair> nvps = new ArrayList<>();
             parameters.forEach((key, value) -> nvps.add(new BasicNameValuePair(key, value)));
 
-            return postByEntity(url, headers, new UrlEncodedFormEntity(nvps, getCharset(charset)), charset);
+            return postByEntity(url, headers, new UrlEncodedFormEntity(nvps, context.getCharset(charset)), charset);
         } catch (Exception e) {
             logger.warn(e, "使用POST访问[{}]时发生异常！", url);
 
@@ -126,7 +126,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     @Override
     public String post(String url, Map<String, String> headers, String content, String charset) {
         try {
-            return postByEntity(url, headers, validator.isEmpty(content) ? null : new StringEntity(content, getCharset(charset)), charset);
+            return postByEntity(url, headers, validator.isEmpty(content) ? null : new StringEntity(content, context.getCharset(charset)), charset);
         } catch (Exception e) {
             logger.warn(e, "使用POST访问[{}]时发生异常！", url);
 
@@ -140,7 +140,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
             return post(url, headers, parameters, charset);
 
         MultipartEntityBuilder entity = MultipartEntityBuilder.create();
-        ContentType contentType = ContentType.create("text/plain", getCharset(charset));
+        ContentType contentType = ContentType.create("text/plain", context.getCharset(charset));
         if (!validator.isEmpty(parameters))
             parameters.forEach((key, value) -> entity.addTextBody(key, value, contentType));
         files.forEach(entity::addBinaryBody);
@@ -195,7 +195,9 @@ public class HttpImpl implements Http, ContextRefreshedListener {
             logger.debug("使用GET下载文件[{}]。", url);
 
         try {
-            new File(dest.substring(0, dest.lastIndexOf('/'))).mkdirs();
+            if (!new File(dest.substring(0, dest.lastIndexOf('/'))).mkdirs())
+                return null;
+
             HttpGet get = new HttpGet(url);
             get.setConfig(getRequestConfig());
             CloseableHttpResponse response = execute(get, headers);
@@ -233,7 +235,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     private String execute(HttpUriRequest request, Map<String, String> headers, String charset) throws IOException {
         CloseableHttpResponse response = execute(request, headers);
         statusCode.set(response.getStatusLine().getStatusCode());
-        String content = EntityUtils.toString(response.getEntity(), getCharset(charset));
+        String content = EntityUtils.toString(response.getEntity(), context.getCharset(charset));
         response.close();
 
         return content;
@@ -249,10 +251,6 @@ public class HttpImpl implements Http, ContextRefreshedListener {
         request.addHeader("time-hash", converter.toString(timeHash.generate()));
 
         return HttpClients.custom().setConnectionManager(manager).build().execute(request, HttpClientContext.create());
-    }
-
-    private String getCharset(String charset) {
-        return charset == null ? CHARSET : charset;
     }
 
     @Override

@@ -27,7 +27,7 @@ public interface Http {
      * @param url        目标URL地址。
      * @param headers    HTTP头信息集。
      * @param parameters 参数集。
-     * @param charset    编码，为null则使用UTF-8。
+     * @param charset    编码，为null则使用默认配置。
      * @return 如果成功则返回页面数据；否则返回null。
      */
     String get(String url, Map<String, String> headers, Map<String, String> parameters, String charset);
@@ -50,7 +50,7 @@ public interface Http {
      * @param url        目标URL地址。
      * @param headers    HTTP头信息集。
      * @param parameters 参数集。
-     * @param charset    编码，为null则使用UTF-8。
+     * @param charset    编码，为null则使用默认配置。
      * @return 如果成功则返回页面数据；否则返回null。
      */
     String get(String url, Map<String, String> headers, String parameters, String charset);
@@ -73,7 +73,7 @@ public interface Http {
      * @param url        目标URL地址。
      * @param headers    HTTP头信息集。
      * @param parameters 参数集。
-     * @param charset    编码，为null则使用UTF-8。
+     * @param charset    编码，为null则使用默认配置。
      * @return 如果成功则返回页面数据；否则返回null。
      */
     String post(String url, Map<String, String> headers, Map<String, String> parameters, String charset);
@@ -96,7 +96,7 @@ public interface Http {
      * @param url     目标URL地址。
      * @param headers HTTP头信息集。
      * @param content 参数内容。
-     * @param charset 编码，为null则使用UTF-8。
+     * @param charset 编码，为null则使用默认配置。
      * @return 如果成功则返回页面数据；否则返回null。
      */
     String post(String url, Map<String, String> headers, String content, String charset);
@@ -121,7 +121,7 @@ public interface Http {
      * @param headers    HTTP头信息集。
      * @param parameters 参数集。
      * @param files      文件集。
-     * @param charset    编码，为null则使用UTF-8。
+     * @param charset    编码，为null则使用默认配置。
      * @return 如果成功则返回页面数据；否则返回null。
      */
     String upload(String url, Map<String, String> headers, Map<String, String> parameters, Map<String, File> files, String charset);
@@ -145,7 +145,7 @@ public interface Http {
      * @param url        目标URL地址。
      * @param headers    HTTP头信息集。
      * @param parameters 参数集。
-     * @param charset    编码，为null则使用UTF-8。
+     * @param charset    编码，为null则使用默认配置。
      * @param dest       下载文件保存路径。
      * @return HTTP请求返回头部信息集。
      */

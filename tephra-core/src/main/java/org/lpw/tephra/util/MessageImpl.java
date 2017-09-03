@@ -61,7 +61,7 @@ public class MessageImpl implements Message, ContextRefreshedListener {
         for (String name : messages)
             names[i++] = name + ".message";
         messageSource = new ResourceBundleMessageSource();
-        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setDefaultEncoding(context.getCharset(null));
         messageSource.setBasenames(names);
     }
 }

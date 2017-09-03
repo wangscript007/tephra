@@ -4,6 +4,7 @@ import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
 import org.lpw.tephra.ctrl.template.Templates;
+import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Message;
 import org.springframework.stereotype.Controller;
 
@@ -16,6 +17,8 @@ import java.io.OutputStream;
  */
 @Controller("tephra.ctrl.template.string")
 public class TemplateImpl extends TemplateSupport implements Template {
+    @Inject
+    private Context context;
     @Inject
     private Message message;
 
@@ -42,6 +45,6 @@ public class TemplateImpl extends TemplateSupport implements Template {
     }
 
     private void write(Object data, OutputStream outputStream) throws IOException {
-        outputStream.write(data.toString().getBytes("UTF-8"));
+        outputStream.write(data.toString().getBytes(context.getCharset(null)));
     }
 }

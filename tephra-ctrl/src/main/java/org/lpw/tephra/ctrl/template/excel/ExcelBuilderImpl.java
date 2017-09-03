@@ -6,6 +6,7 @@ import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelHelper;
 import org.lpw.tephra.poi.Excel;
+import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -22,6 +23,8 @@ import java.util.Collection;
 @Controller("tephra.ctrl.template.excel.builder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ExcelBuilderImpl implements ExcelBuilder {
+    @Inject
+    private Context context;
     @Inject
     private Validator validator;
     @Inject
@@ -68,7 +71,7 @@ public class ExcelBuilderImpl implements ExcelBuilder {
         }
 
         if (!validator.isEmpty(name))
-            response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + converter.encodeUrl(name, null) + ".xls");
+            response.setHeader("Content-Disposition", "attachment; filename*=" + context.getCharset(null) + "''" + converter.encodeUrl(name, null) + ".xls");
 
         excel.write(titles, names, array, outputStream);
     }

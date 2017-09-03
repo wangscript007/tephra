@@ -17,6 +17,14 @@ public interface Context {
     String getAbsolutePath(String path);
 
     /**
+     * 获取字符集编码。
+     *
+     * @param charset 字符集编码，如果为空则使用默认字符集编码。
+     * @return 字符集编码。
+     */
+    String getCharset(String charset);
+
+    /**
      * 设置本地化信息。仅当前线程有效。
      *
      * @param locale 本地化信息。

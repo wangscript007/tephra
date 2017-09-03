@@ -10,6 +10,7 @@ import org.lpw.tephra.ctrl.http.IgnoreUri;
 import org.lpw.tephra.ctrl.http.ServiceHelper;
 import org.lpw.tephra.storage.Storage;
 import org.lpw.tephra.storage.Storages;
+import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Generator;
@@ -22,7 +23,8 @@ import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.OutputStream;
@@ -34,6 +36,8 @@ import java.util.Map;
  */
 @Service("tephra.ctrl.http.upload-helper")
 public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefreshedListener {
+    @Inject
+    private Context context;
     @Inject
     private Validator validator;
     @Inject
@@ -92,7 +96,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
                     item.delete();
 
                     if (!validator.isEmpty(result))
-                        outputStream.write(result.getBytes("UTF-8"));
+                        outputStream.write(result.getBytes(context.getCharset(null)));
 
                     if (logger.isDebugEnable())
                         logger.debug("保存上传[{}:{}]的文件[{}:{}:{}]。", item.getFieldName(), item.getName(), path, thumbnail, converter.toBitSize(item.getSize()));
