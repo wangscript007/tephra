@@ -13,6 +13,8 @@ import org.lpw.tephra.ctrl.http.context.ResponseAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.SessionAdapterImpl;
 import org.lpw.tephra.ctrl.http.upload.UploadHelper;
 import org.lpw.tephra.ctrl.status.Status;
+import org.lpw.tephra.storage.StorageListener;
+import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
@@ -24,6 +26,8 @@ import org.springframework.stereotype.Controller;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -35,7 +39,7 @@ import java.util.Set;
  * @author lpw
  */
 @Controller("tephra.ctrl.http.service.helper")
-public class ServiceHelperImpl implements ServiceHelper {
+public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private static final String ROOT = "/";
     private static final String SESSION_ID = "tephra-session-id";
 
@@ -73,13 +77,16 @@ public class ServiceHelperImpl implements ServiceHelper {
     private String ignorNames;
     @Value("${tephra.ctrl.http.ignor.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png}")
     private String ignorSuffixes;
-    @Value("${tephra.ctrl.http.cross-domain:false}")
-    private boolean crossDomain;
+    @Value("${tephra.ctrl.http.cors:false}")
+    private boolean cors;
+    @Value("${tephra.ctrl.http.cors.headers:/WEB-INF/cors-headers}")
+    private String corsHeaders;
     private int contextPath;
     private String servletContextPath;
     private String[] prefixes;
     private String[] suffixes;
     private Set<String> ignoreUris;
+    private String headers;
 
     @Override
     public void setPath(String real, String context) {
@@ -88,7 +95,7 @@ public class ServiceHelperImpl implements ServiceHelper {
         if (logger.isInfoEnable())
             logger.info("部署项目路径[{}]。", context);
         if (logger.isInfoEnable())
-            logger.info("跨域设置[{}]。", crossDomain);
+            logger.info("跨域设置[{}]。", cors);
         prefixes = converter.toArray(ignorPrefixes, ",");
         suffixes = converter.toArray(ignorSuffixes, ",");
 
@@ -112,15 +119,14 @@ public class ServiceHelperImpl implements ServiceHelper {
             return false;
         }
 
-        if (ignoreUris.contains(uri) || ignor(uri)) {
+        if (ignoreUris.contains(uri) || ignore(uri)) {
             if (logger.isDebugEnable())
                 logger.debug("忽略请求[{}]。", uri);
 
             return false;
         }
 
-        if (crossDomain)
-            response.addHeader("Access-Control-Allow-Origin", "*");
+        setCors(response);
         OutputStream outputStream = setContext(request, response, uri);
         if (timeHash.isEnable() && !timeHash.valid(request.getIntHeader("time-hash")) && !status.isStatus(uri) && (!ignoreTimeHash.isPresent() || !ignoreTimeHash.get().ignore())) {
             if (logger.isDebugEnable())
@@ -136,7 +142,7 @@ public class ServiceHelperImpl implements ServiceHelper {
         return true;
     }
 
-    private boolean ignor(String uri) {
+    private boolean ignore(String uri) {
         if (ignorRoot && uri.equals(ROOT))
             return true;
 
@@ -163,6 +169,15 @@ public class ServiceHelperImpl implements ServiceHelper {
                 return true;
 
         return false;
+    }
+
+    private void setCors(HttpServletResponse response) {
+        if (!cors)
+            return;
+
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        if (!validator.isEmpty(headers))
+            response.addHeader("Access-Control-Allow-Headers", headers);
     }
 
     public OutputStream setContext(HttpServletRequest request, HttpServletResponse response, String uri) throws IOException {
@@ -194,5 +209,37 @@ public class ServiceHelperImpl implements ServiceHelper {
         request.getSession().setAttribute(SESSION_ID, sessionId);
 
         return sessionId;
+    }
+
+    @Override
+    public String getStorageType() {
+        return Storages.TYPE_DISK;
+    }
+
+    @Override
+    public String[] getScanPathes() {
+        return new String[]{corsHeaders};
+    }
+
+    @Override
+    public void onStorageChanged(String path, String absolutePath) {
+        try {
+            Set<String> set = new HashSet<>();
+            BufferedReader reader = new BufferedReader(new FileReader(absolutePath));
+            for (String line; (line = reader.readLine()) != null; ) {
+                line = line.trim();
+                if (line.length() == 0 || line.indexOf('#') == 0)
+                    continue;
+
+                set.add(line);
+            }
+            reader.close();
+            set.add(SESSION_ID);
+            headers = converter.toString(set);
+            if (logger.isInfoEnable())
+                logger.info("设置跨域允许的请求头[{}]。", headers);
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "读取跨域头配置[{}]发生异常！", absolutePath);
+        }
     }
 }
