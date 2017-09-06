@@ -40,6 +40,26 @@ public interface QrCode {
     void create(String content, int size, InputStream logo, OutputStream outputStream);
 
     /**
+     * 生成二维码图片，并返回图片的Base64数据。
+     *
+     * @param content 二维码内容。
+     * @param size    二维码图片大小（长&宽）。
+     * @param logo    LOGO文件地址，为空则不添加LOGO。
+     * @return 图片的Base64数据；如果生成失败将返回null。
+     */
+    String create(String content, int size, String logo);
+
+    /**
+     * 生成二维码图片，并返回图片的Base64数据。
+     *
+     * @param content 二维码内容。
+     * @param size    二维码图片大小（长&宽）。
+     * @param logo    LOGO输入流，为空则不添加LOGO。
+     * @return 图片的Base64数据；如果生成失败将返回null。
+     */
+    String create(String content, int size, InputStream logo);
+
+    /**
      * 读取二维码内容。
      *
      * @param path 二维码图片地址。

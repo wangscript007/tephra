@@ -19,11 +19,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,6 +78,34 @@ public class QrCodeImpl implements QrCode {
         }
     }
 
+    @Override
+    public String create(String content, int size, String logo) {
+        try {
+            InputStream inputStream = validator.isEmpty(logo) ? null : new FileInputStream(logo);
+
+            return create(content, size, inputStream);
+        } catch (Throwable e) {
+            logger.warn(e, "生成二维码图片[{}:{}:{}]时发生异常！", content, size, logo);
+
+            return null;
+        }
+    }
+
+    @Override
+    public String create(String content, int size, InputStream logo) {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            create(content, size, logo, outputStream);
+            outputStream.close();
+
+            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
+        } catch (Throwable e) {
+            logger.warn(e, "生成二维码图片[{}:{}]时发生异常！", content, size);
+
+            return null;
+        }
+    }
+
     private BufferedImage create(String content, int size) throws WriterException {
         Map<EncodeHintType, Object> hint = new HashMap<>();
         hint.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
@@ -100,6 +130,7 @@ public class QrCodeImpl implements QrCode {
         stroke(graphics, 2, xy - 1, wh + 2, arc, Color.GRAY);
         graphics.dispose();
         image.flush();
+        logo.close();
     }
 
     private void stroke(Graphics2D graphics, int width, int xy, int wh, int arc, Color color) {
@@ -124,7 +155,10 @@ public class QrCodeImpl implements QrCode {
     @Override
     public String read(InputStream inputStream) {
         try {
-            return reader.decode(new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(inputStream))))).getText();
+            String string = reader.decode(new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(inputStream))))).getText();
+            inputStream.close();
+
+            return string;
         } catch (Throwable e) {
             logger.warn(e, "读取二维码图片内容时发生异常！");
 
