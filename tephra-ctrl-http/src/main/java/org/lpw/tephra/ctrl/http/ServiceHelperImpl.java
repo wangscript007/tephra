@@ -100,8 +100,6 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         servletContextPath = contextPath > 0 ? context : "";
         if (logger.isInfoEnable())
             logger.info("部署项目路径[{}]。", context);
-        if (logger.isInfoEnable())
-            logger.info("跨域设置[{}]。", cors);
         prefixes = converter.toArray(ignorPrefixes, ",");
         suffixes = converter.toArray(ignorSuffixes, ",");
 
@@ -241,15 +239,21 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
             map.put("headers", toString(object.getJSONArray("headers")));
         }
         corsMap = map;
+        if (logger.isInfoEnable())
+            logger.info("设置跨域[{}]。", converter.toString(corsMap));
     }
 
     private String toString(JSONArray array) {
         if (array == null)
             return "";
 
-        StringBuilder sb = new StringBuilder();
+        Set<String> set = new HashSet<>();
         for (int i = 0, size = array.size(); i < size; i++)
-            sb.append(',').append(array.getString(i));
+            set.add(array.getString(i));
+
+        StringBuilder sb = new StringBuilder();
+        for (String string : set)
+            sb.append(',').append(string);
 
         return sb.length() == 0 ? "" : sb.substring(1);
     }
