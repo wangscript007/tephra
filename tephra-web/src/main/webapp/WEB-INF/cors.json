@@ -1,0 +1,11 @@
+{
+    "origin": "*",
+    "methods": [
+        "GET",
+        "POST"
+    ],
+    "headers": [
+        "Content-Type",
+        "tephra-session-id"
+    ]
+}

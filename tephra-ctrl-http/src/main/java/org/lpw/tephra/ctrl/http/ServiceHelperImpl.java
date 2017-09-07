@@ -1,5 +1,7 @@
 package org.lpw.tephra.ctrl.http;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.ctrl.Dispatcher;
 import org.lpw.tephra.ctrl.context.HeaderAware;
@@ -17,6 +19,8 @@ import org.lpw.tephra.storage.StorageListener;
 import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.Io;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.TimeHash;
 import org.lpw.tephra.util.Validator;
@@ -26,12 +30,12 @@ import org.springframework.stereotype.Controller;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -47,6 +51,10 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private Validator validator;
     @Inject
     private Converter converter;
+    @Inject
+    private Io io;
+    @Inject
+    private Json json;
     @Inject
     private Context context;
     @Inject
@@ -77,16 +85,14 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private String ignorNames;
     @Value("${tephra.ctrl.http.ignor.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png}")
     private String ignorSuffixes;
-    @Value("${tephra.ctrl.http.cors:false}")
-    private boolean cors;
-    @Value("${tephra.ctrl.http.cors.headers:/WEB-INF/cors-headers}")
-    private String corsHeaders;
+    @Value("${tephra.ctrl.http.cors:/WEB-INF/cors.json}")
+    private String cors;
     private int contextPath;
     private String servletContextPath;
     private String[] prefixes;
     private String[] suffixes;
     private Set<String> ignoreUris;
-    private String headers;
+    private Map<String, String> corsMap;
 
     @Override
     public void setPath(String real, String context) {
@@ -101,6 +107,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
 
         ignoreUris = new HashSet<>();
         BeanFactory.getBeans(IgnoreUri.class).forEach(ignoreUri -> ignoreUris.addAll(Arrays.asList(ignoreUri.getIgnoreUris())));
+
+        corsMap = new HashMap<>();
     }
 
     @Override
@@ -172,12 +180,12 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     }
 
     private void setCors(HttpServletResponse response) {
-        if (!cors)
+        if (validator.isEmpty(corsMap.get("origin")))
             return;
 
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        if (!validator.isEmpty(headers))
-            response.addHeader("Access-Control-Allow-Headers", headers);
+        response.addHeader("Access-Control-Allow-Origin", corsMap.get("origin"));
+        response.addHeader("Access-Control-Allow-Methods", corsMap.get("methods"));
+        response.addHeader("Access-Control-Allow-Headers", corsMap.get("headers"));
     }
 
     public OutputStream setContext(HttpServletRequest request, HttpServletResponse response, String uri) throws IOException {
@@ -218,28 +226,31 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
 
     @Override
     public String[] getScanPathes() {
-        return new String[]{corsHeaders};
+        return new String[]{cors};
     }
 
     @Override
     public void onStorageChanged(String path, String absolutePath) {
-        try {
-            Set<String> set = new HashSet<>();
-            BufferedReader reader = new BufferedReader(new FileReader(absolutePath));
-            for (String line; (line = reader.readLine()) != null; ) {
-                line = line.trim();
-                if (line.length() == 0 || line.indexOf('#') == 0)
-                    continue;
-
-                set.add(line);
-            }
-            reader.close();
-            set.add(SESSION_ID);
-            headers = converter.toString(set);
-            if (logger.isInfoEnable())
-                logger.info("设置跨域允许的请求头[{}]。", headers);
-        } catch (Throwable throwable) {
-            logger.warn(throwable, "读取跨域头配置[{}]发生异常！", absolutePath);
+        Map<String, String> map = new HashMap<>();
+        JSONObject object = json.toObject(io.readAsString(absolutePath));
+        if (object == null)
+            map.put("origin", "");
+        else {
+            map.put("origin", object.containsKey("origin") ? object.getString("origin") : "");
+            map.put("methods", toString(object.getJSONArray("methods")).toUpperCase());
+            map.put("headers", toString(object.getJSONArray("headers")));
         }
+        corsMap = map;
+    }
+
+    private String toString(JSONArray array) {
+        if (array == null)
+            return "";
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0, size = array.size(); i < size; i++)
+            sb.append(',').append(array.getString(i));
+
+        return sb.length() == 0 ? "" : sb.substring(1);
     }
 }
