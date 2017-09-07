@@ -4,3 +4,5 @@
 Ctrl－Http提供了一个更为简洁的方式，只需将Session ID保存在HTTP(S)请求的头信息或参数集中，即可达到多节点间自动同步Session数据。
 
 在每次发起HTTP(S)请求时，在Header或参数中添加tephra-session-id，并且值为当前用户的Session ID值即可。
+
+APP端访问时，也可以使用客户端的Mac ID或IMEI号作为tephra-session-id的值，实现快速自动登入。
