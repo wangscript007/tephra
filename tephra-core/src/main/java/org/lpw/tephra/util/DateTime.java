@@ -35,7 +35,7 @@ public interface DateTime {
      * 获取指定日期当天的开始时间，即当天的00:00:00.000。
      *
      * @param date  目标日期。
-     * @param month 是否月份，如果时则将日期设置为当月第一天。
+     * @param month 是否月份，如果是则将日期设置为当月第一天。
      * @return 开始时间；如果获取失败则返回null。
      */
     Timestamp getStart(Date date, boolean month);
@@ -52,7 +52,7 @@ public interface DateTime {
      * 获取指定日期当天的结束时间，即当天的23:59:59.999。
      *
      * @param date  目标日期。
-     * @param month 是否月份，如果时则将日期设置为当月最后一天。
+     * @param month 是否月份，如果是则将日期设置为当月最后一天。
      * @return 结束时间；如果获取失败则返回null。
      */
     Timestamp getEnd(Date date, boolean month);
