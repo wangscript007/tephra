@@ -77,14 +77,14 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private Optional<IgnoreTimeHash> ignoreTimeHash;
     @Inject
     private CookieAware cookieAware;
-    @Value("${tephra.ctrl.http.ignor.root:false}")
-    private boolean ignorRoot;
-    @Value("${tephra.ctrl.http.ignor.prefixes:/upload/}")
-    private String ignorPrefixes;
-    @Value("${tephra.ctrl.http.ignor.names:}")
-    private String ignorNames;
-    @Value("${tephra.ctrl.http.ignor.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png}")
-    private String ignorSuffixes;
+    @Value("${tephra.ctrl.http.ignore.root:false}")
+    private boolean ignoreRoot;
+    @Value("${tephra.ctrl.http.ignore.prefixes:/upload/}")
+    private String ignorePrefixes;
+    @Value("${tephra.ctrl.http.ignore.names:}")
+    private String ignoreNames;
+    @Value("${tephra.ctrl.http.ignore.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png}")
+    private String ignoreSuffixes;
     @Value("${tephra.ctrl.http.cors:/WEB-INF/cors.json}")
     private String cors;
     private int contextPath;
@@ -100,8 +100,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         servletContextPath = contextPath > 0 ? context : "";
         if (logger.isInfoEnable())
             logger.info("部署项目路径[{}]。", context);
-        prefixes = converter.toArray(ignorPrefixes, ",");
-        suffixes = converter.toArray(ignorSuffixes, ",");
+        prefixes = converter.toArray(ignorePrefixes, ",");
+        suffixes = converter.toArray(ignoreSuffixes, ",");
 
         ignoreUris = new HashSet<>();
         BeanFactory.getBeans(IgnoreUri.class).forEach(ignoreUri -> ignoreUris.addAll(Arrays.asList(ignoreUri.getIgnoreUris())));
@@ -149,7 +149,7 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     }
 
     private boolean ignore(String uri) {
-        if (ignorRoot && uri.equals(ROOT))
+        if (ignoreRoot && uri.equals(ROOT))
             return true;
 
         for (String prefix : prefixes)
