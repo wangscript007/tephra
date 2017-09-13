@@ -208,6 +208,10 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         if (!validator.isEmpty(sessionId))
             return useTephraSessionId(request, sessionId);
 
+        sessionId = converter.toString(request.getSession().getAttribute(SESSION_ID));
+        if (!validator.isEmpty(sessionId))
+            return sessionId;
+
         return request.getSession().getId();
     }
 
