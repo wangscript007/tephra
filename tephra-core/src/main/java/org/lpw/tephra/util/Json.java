@@ -51,12 +51,34 @@ public interface Json {
     JSONObject toObject(Object object);
 
     /**
+     * 转化为JSON对象。
+     * 如果nullable=true，则当转化失败时将返回null；
+     * 如果nullable=false，则当转化失败时将新建一个JSON对象返回。
+     *
+     * @param object   要转化的对象。
+     * @param nullable 是否允许为null。
+     * @return JSON对象。
+     */
+    JSONObject toObject(Object object, boolean nullable);
+
+    /**
      * 转化为JSON数组。
      *
      * @param object 要转化的对象。
      * @return JSON数组；转化失败则返回null。
      */
     JSONArray toArray(Object object);
+
+    /**
+     * 转化为JSON数组。
+     * 如果nullable=true，则当转化失败时将返回null；
+     * 如果nullable=false，则当转化失败时将新建一个JSON对象返回。
+     *
+     * @param object   要转化的对象。
+     * @param nullable 是否允许为null。
+     * @return JSON数组；转化失败则返回null。
+     */
+    JSONArray toArray(Object object, boolean nullable);
 
     /**
      * 将JSON数据转化为JSON字符串。

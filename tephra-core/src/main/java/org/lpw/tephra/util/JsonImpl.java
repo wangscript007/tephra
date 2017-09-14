@@ -77,8 +77,13 @@ public class JsonImpl implements Json {
 
     @Override
     public JSONObject toObject(Object object) {
+        return toObject(object, true);
+    }
+
+    @Override
+    public JSONObject toObject(Object object, boolean nullable) {
         if (object == null)
-            return null;
+            return nullable ? null : new JSONObject();
 
         if (object instanceof JSONObject)
             return (JSONObject) object;
@@ -86,22 +91,29 @@ public class JsonImpl implements Json {
         try {
             if (object instanceof String) {
                 String string = (String) object;
+                if (validator.isEmpty(string))
+                    return nullable ? null : new JSONObject();
 
-                return validator.isEmpty(string) ? null : JSON.parseObject(string);
+                return JSON.parseObject(string);
             }
 
             return JSON.parseObject(object.toString());
         } catch (Throwable throwable) {
             logger.warn(throwable, "转化对象[{}]为JSON对象时发生异常！", object);
 
-            return null;
+            return nullable ? null : new JSONObject();
         }
     }
 
     @Override
     public JSONArray toArray(Object object) {
+        return toArray(object, true);
+    }
+
+    @Override
+    public JSONArray toArray(Object object, boolean nullable) {
         if (object == null)
-            return null;
+            return nullable ? null : new JSONArray();
 
         if (object instanceof JSONArray)
             return (JSONArray) object;
@@ -109,15 +121,17 @@ public class JsonImpl implements Json {
         try {
             if (object instanceof String) {
                 String string = (String) object;
+                if (validator.isEmpty(string))
+                    return nullable ? null : new JSONArray();
 
-                return validator.isEmpty(string) ? null : JSON.parseArray(string);
+                return JSON.parseArray(string);
             }
 
             return JSON.parseArray(object.toString());
         } catch (Throwable throwable) {
             logger.warn(throwable, "转化对象[{}]为JSON数组时发生异常！", object);
 
-            return null;
+            return nullable ? null : new JSONArray();
         }
     }
 
