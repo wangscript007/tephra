@@ -17,7 +17,7 @@
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
-            <version>LATEST</version>
+            <version>${version.inject}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
