@@ -47,13 +47,14 @@ public class AutoUpdateImpl implements ContextRefreshedListener {
             for (int i = 0; i < sqlTable.getRowCount(); i++)
                 tables.add(sqlTable.get(i, 0));
         });
+        sql.close();
 
         modelTables.getModelClasses().forEach(modelClass -> {
             ModelTable modelTable = modelTables.get(modelClass);
             create(tables, modelTable, modelClass);
             memory(modelTable);
+            sql.close();
         });
-        sql.close();
     }
 
     private void create(Set<String> tables, ModelTable modelTable, Class<? extends Model> modelClass) {
