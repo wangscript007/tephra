@@ -1,5 +1,6 @@
 package org.lpw.tephra.ctrl.template.stream;
 
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
@@ -46,6 +47,9 @@ public class TemplateImpl extends TemplateSupport implements Template {
 
             return;
         }
+
+        if (data instanceof JSONObject)
+            data = ((JSONObject) data).toJSONString().getBytes(context.getCharset(null));
 
         outputStream.write((byte[]) data);
     }
