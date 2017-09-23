@@ -96,7 +96,7 @@ public class SignImpl implements Sign, StorageListener {
         for (String string : converter.toArray(io.readAsString(absolutePath), "\n")) {
             string = string.trim();
             int indexOf;
-            if (string.equals("") || string.startsWith("#") || (indexOf = string.indexOf('=')) == -1)
+            if (string.length() == 0 || string.charAt(0) == '#' || (indexOf = string.indexOf('=')) == -1)
                 continue;
 
             map.put(string.substring(0, indexOf).trim(), string.substring(indexOf + 1).trim());

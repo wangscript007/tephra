@@ -90,7 +90,7 @@ public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
             }
 
             String propertyName = converter.toFirstLowerCase(name.substring(3));
-            if (name.startsWith("get")) {
+            if (startsWith(name, 'g')) {
                 modelTable.addGetMethod(propertyName, method);
                 Column column = method.getAnnotation(Column.class);
                 if (column != null)
@@ -99,10 +99,14 @@ public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
                 continue;
             }
 
-            if (name.startsWith("set"))
+            if (startsWith(name, 's'))
                 modelTable.addSetMethod(propertyName, method);
         }
 
         map.put(modelClass, modelTable);
+    }
+
+    private boolean startsWith(String name, char ch) {
+        return name.charAt(0) == ch && name.charAt(1) == 'e' && name.charAt(2) == 't';
     }
 }

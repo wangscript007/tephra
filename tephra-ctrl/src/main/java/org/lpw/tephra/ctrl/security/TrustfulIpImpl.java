@@ -65,7 +65,7 @@ public class TrustfulIpImpl implements TrustfulIp, StorageListener {
             if (string.charAt(0) == '#')
                 continue;
 
-            if (string.startsWith("rg"))
+            if (string.charAt(0) == 'r' && string.charAt(1) == 'g')
                 patterns.add(string.substring(2));
             else
                 ips.add(string);
