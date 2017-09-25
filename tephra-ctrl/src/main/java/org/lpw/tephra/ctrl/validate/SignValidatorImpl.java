@@ -1,8 +1,7 @@
 package org.lpw.tephra.ctrl.validate;
 
-import org.lpw.tephra.ctrl.security.TrustfulIp;
 import org.lpw.tephra.ctrl.context.Header;
-import org.springframework.beans.factory.annotation.Value;
+import org.lpw.tephra.ctrl.security.TrustfulIp;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
@@ -11,17 +10,25 @@ import javax.inject.Inject;
  * @author lpw
  */
 @Controller(Validators.SIGN)
-public class SignValidatorImpl extends ValidatorSupport {
+public class SignValidatorImpl extends ValidatorSupport implements SignValidator {
     @Inject
     private Header header;
     @Inject
     private TrustfulIp trustfulIp;
-    @Value("${" + Validators.SIGN + ".enable:true}")
-    private boolean enable;
+    private ThreadLocal<Boolean> threadLocal = new ThreadLocal<>();
+
+    @Override
+    public void setSignEnable(boolean enable) {
+        threadLocal.set(enable);
+    }
 
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
-        return !enable || trustfulIp.contains(header.getIp()) || request.checkSign();
+        return !enable() || trustfulIp.contains(header.getIp()) || request.checkSign();
+    }
+
+    private boolean enable() {
+        return threadLocal.get() == null || threadLocal.get();
     }
 
     @Override
