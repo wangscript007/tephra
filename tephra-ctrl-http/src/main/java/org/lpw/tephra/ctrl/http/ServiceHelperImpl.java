@@ -132,7 +132,7 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
             return false;
         }
 
-        setCors(response);
+        setCors(request, response);
         OutputStream outputStream = setContext(request, response, uri);
         if (timeHash.isEnable() && !timeHash.valid(request.getIntHeader("time-hash")) && !status.isStatus(uri) && (!ignoreTimeHash.isPresent() || !ignoreTimeHash.get().ignore())) {
             if (logger.isDebugEnable())
@@ -177,13 +177,17 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         return false;
     }
 
-    private void setCors(HttpServletResponse response) {
+    private void setCors(HttpServletRequest request, HttpServletResponse response) {
         if (validator.isEmpty(corsMap.get("origin")))
             return;
 
-        response.addHeader("Access-Control-Allow-Origin", corsMap.get("origin"));
+        String origin = corsMap.get("origin");
+        if (origin.equals("*"))
+            origin = request.getHeader("Origin");
+        response.addHeader("Access-Control-Allow-Origin", origin);
         response.addHeader("Access-Control-Allow-Methods", corsMap.get("methods"));
         response.addHeader("Access-Control-Allow-Headers", corsMap.get("headers"));
+        response.addHeader("Access-Control-Allow-Credentials", "true");
     }
 
     public OutputStream setContext(HttpServletRequest request, HttpServletResponse response, String uri) throws IOException {
