@@ -31,17 +31,15 @@ public class ImageParserImpl extends ParserSupport implements Parser {
 
     @Override
     public void parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
-        if (!object.containsKey("image"))
-            return;
-
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Map<String, String> map = http.download(object.getString("image"), null, null, outputStream);
         if (map == null)
             return;
 
-        XSLFPictureData pictureData = xmlSlideShow.addPicture(outputStream.toByteArray(), getPictureType(map.get("Content-Type")));
-        XSLFPictureShape pictureShape = xslfSlide.createPicture(pictureData);
-        pictureShape.setAnchor(getRectangle(object));
+        XSLFPictureData xslfPictureData = xmlSlideShow.addPicture(outputStream.toByteArray(), getPictureType(map.get("Content-Type")));
+        XSLFPictureShape xslfPictureShape = xslfSlide.createPicture(xslfPictureData);
+        xslfPictureShape.setAnchor(getRectangle(object));
+        rotate(xslfPictureShape, object);
     }
 
     private PictureData.PictureType getPictureType(String contentType) {
