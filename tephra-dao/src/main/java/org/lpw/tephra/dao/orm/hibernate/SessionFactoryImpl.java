@@ -12,7 +12,7 @@ import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;

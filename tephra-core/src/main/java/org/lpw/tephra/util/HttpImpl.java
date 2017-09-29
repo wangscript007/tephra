@@ -188,6 +188,28 @@ public class HttpImpl implements Http, ContextRefreshedListener {
         if (validator.isEmpty(url))
             return null;
 
+        try {
+            if (!new File(dest.substring(0, dest.lastIndexOf('/'))).mkdirs())
+                return null;
+
+            Map<String, String> map = download(url, headers, parameters, new FileOutputStream(dest));
+
+            if (logger.isDebugEnable())
+                logger.debug("使用GET下载文件[{}]到[{}]。", url, dest);
+
+            return map;
+        } catch (Exception e) {
+            logger.warn(e, "使用GET下载文件[{}]时发生异常！", url);
+
+            return null;
+        }
+    }
+
+    @Override
+    public Map<String, String> download(String url, Map<String, String> headers, String parameters, OutputStream outputStream) {
+        if (validator.isEmpty(url))
+            return null;
+
         if (!validator.isEmpty(parameters))
             url = url + (url.indexOf('?') == -1 ? '?' : '&') + parameters;
 
@@ -195,22 +217,18 @@ public class HttpImpl implements Http, ContextRefreshedListener {
             logger.debug("使用GET下载文件[{}]。", url);
 
         try {
-            if (!new File(dest.substring(0, dest.lastIndexOf('/'))).mkdirs())
-                return null;
-
             HttpGet get = new HttpGet(url);
             get.setConfig(getRequestConfig());
             CloseableHttpResponse response = execute(get, headers);
             Map<String, String> map = toMap(response.getAllHeaders());
-            InputStream input = response.getEntity().getContent();
-            OutputStream output = new FileOutputStream(dest);
-            io.copy(input, output);
-            input.close();
-            output.close();
+            InputStream inputStream = response.getEntity().getContent();
+            io.copy(inputStream, outputStream);
+            inputStream.close();
+            outputStream.close();
             response.close();
 
             if (logger.isDebugEnable())
-                logger.debug("使用GET下载文件[{}]到[{}]。", url, dest);
+                logger.debug("下载文件Header[{}]信息。", converter.toString(map));
 
             return map;
         } catch (Exception e) {

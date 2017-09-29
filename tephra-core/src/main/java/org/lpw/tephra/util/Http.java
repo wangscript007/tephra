@@ -1,6 +1,7 @@
 package org.lpw.tephra.util;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.Map;
 
 /**
@@ -161,6 +162,17 @@ public interface Http {
      * @return HTTP请求返回头部信息集。
      */
     Map<String, String> download(String url, Map<String, String> headers, String parameters, String dest);
+
+    /**
+     * 下载文件。
+     *
+     * @param url          目标URL地址。
+     * @param headers      HTTP头信息集。
+     * @param parameters   参数集。
+     * @param outputStream 下载文件输出流。
+     * @return HTTP请求返回头部信息集。
+     */
+    Map<String, String> download(String url, Map<String, String> headers, String parameters, OutputStream outputStream);
 
     /**
      * 获取最近一次请求返回状态码。

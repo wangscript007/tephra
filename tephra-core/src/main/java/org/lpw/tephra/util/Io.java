@@ -29,7 +29,7 @@ public interface Io {
      * 读取指定路径下的文件。
      *
      * @param path 文件所在路径。
-     * @return 文件内容。如果读文件异常则返回null。
+     * @return 文件内容；如果读取异常则返回null。
      */
     byte[] read(String path);
 
@@ -37,9 +37,25 @@ public interface Io {
      * 读取指定路径下的文件。
      *
      * @param path 文件所在路径。
-     * @return 文件内容。如果读文件异常则返回null。
+     * @return 文件内容；如果读取异常则返回null。
      */
     String readAsString(String path);
+
+    /**
+     * 读取输入流中的数据。
+     *
+     * @param inputStream 输入流。
+     * @return 数据；如果读取异常则返回null。
+     */
+    byte[] read(InputStream inputStream);
+
+    /**
+     * 读取输入流中的数据。
+     *
+     * @param inputStream 输入流。
+     * @return 数据；如果读取异常则返回null。
+     */
+    String readAsString(InputStream inputStream);
 
     /**
      * 写入文件。

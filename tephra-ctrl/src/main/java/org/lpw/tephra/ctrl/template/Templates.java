@@ -30,6 +30,10 @@ public interface Templates {
      * Excel模板类型。
      */
     String EXCEL = "excel";
+    /**
+     * PPTx模板类型。
+     */
+    String PPTX = "pptx";
 
     /**
      * 获取默认模板实例。

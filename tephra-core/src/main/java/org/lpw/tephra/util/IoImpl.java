@@ -55,20 +55,47 @@ public class IoImpl implements Io {
         return outputStream == null ? null : outputStream.toString();
     }
 
+    @Override
+    public byte[] read(InputStream inputStream) {
+        ByteArrayOutputStream outputStream = readAsStream(inputStream);
+
+        return outputStream == null ? null : outputStream.toByteArray();
+    }
+
+    @Override
+    public String readAsString(InputStream inputStream) {
+        ByteArrayOutputStream outputStream = readAsStream(inputStream);
+
+        return outputStream == null ? null : outputStream.toString();
+    }
+
     private ByteArrayOutputStream readAsStream(String path) {
         if (validator.isEmpty(path) || !new File(path).exists())
             return null;
 
+
+        try {
+            return readAsStream(new FileInputStream(path));
+        } catch (IOException e) {
+            logger.warn(e, "读文件[{}]时异常！", path);
+
+            return null;
+        }
+    }
+
+    private ByteArrayOutputStream readAsStream(InputStream inputStream) {
+        if (inputStream == null)
+            return null;
+
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            InputStream inputStream = new FileInputStream(path);
             copy(inputStream, outputStream);
             inputStream.close();
             outputStream.close();
 
             return outputStream;
         } catch (IOException e) {
-            logger.warn(e, "读文件[{}]时异常！", path);
+            logger.warn(e, "读取输入流时异常！");
 
             return null;
         }
