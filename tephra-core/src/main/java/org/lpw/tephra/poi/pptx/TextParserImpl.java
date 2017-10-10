@@ -18,9 +18,11 @@ import java.awt.Color;
  * @author lpw
  */
 @Component("tephra.poi.pptx.text")
-public class TextParserImpl extends ParserSupport implements Parser {
+public class TextParserImpl implements Parser {
     @Inject
     private Numeric numeric;
+    @Inject
+    private ParserHelper parserHelper;
 
     @Override
     public String getType() {
@@ -30,15 +32,15 @@ public class TextParserImpl extends ParserSupport implements Parser {
     @Override
     public void parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
         XSLFTextBox xslfTextBox = xslfSlide.createTextBox();
-        xslfTextBox.setAnchor(getRectangle(object));
-        xslfTextBox.setInsets(new Insets2D(-15.0D, 0.0D, 0.0D, 0.0D));
-        if (object.containsKey("rotation"))
-            xslfTextBox.setRotation(object.getDoubleValue("rotation"));
+        xslfTextBox.clearText();
+        xslfTextBox.setAnchor(parserHelper.getRectangle(object));
+        xslfTextBox.setInsets(new Insets2D(0.0D, 0.0D, 0.0D, 0.0D));
+        parserHelper.rotate(xslfTextBox, object);
         XSLFTextParagraph xslfTextParagraph = xslfTextBox.addNewTextParagraph();
         align(xslfTextParagraph, object);
         XSLFTextRun xslfTextRun = xslfTextParagraph.addNewTextRun();
         xslfTextRun.setText(object.getString("text"));
-        font(xslfTextRun, object);
+        font(xslfTextParagraph, xslfTextRun, object);
         color(xslfTextRun, object);
         if (hasTrue(object, "bold"))
             xslfTextRun.setBold(true);
@@ -63,34 +65,29 @@ public class TextParserImpl extends ParserSupport implements Parser {
             xslfTextParagraph.setTextAlign(TextParagraph.TextAlign.RIGHT);
     }
 
-    private void font(XSLFTextRun xslfTextRun, JSONObject object) {
+    private void font(XSLFTextParagraph xslfTextParagraph, XSLFTextRun xslfTextRun, JSONObject object) {
         if (!object.containsKey("font"))
             return;
 
         JSONObject font = object.getJSONObject("font");
         if (font.containsKey("family"))
             xslfTextRun.setFontFamily(font.getString("family"));
-        if (font.containsKey("size"))
-            xslfTextRun.setFontSize(numeric.toDouble(font.getString("size")));
+        if (font.containsKey("size")) {
+            double height = 0.0D;
+            if (font.containsKey("height"))
+                height = Math.max(0.0D, font.getDoubleValue("height") - 1);
+            double size = numeric.toDouble(font.getString("size"));
+            double space = size * height / 2;
+            xslfTextParagraph.setSpaceBefore(space);
+            xslfTextParagraph.setSpaceAfter(space);
+            xslfTextRun.setFontSize(size);
+        }
     }
 
     private void color(XSLFTextRun xslfTextRun, JSONObject object) {
-        if (!object.containsKey("color"))
-            return;
-
-        String color = object.getString("color");
-        int[] ns;
-        if (color.charAt(0) == '#') {
-            String[] array = new String[3];
-            boolean full = color.length() == 7;
-            for (int i = 0; i < array.length; i++)
-                array[i] = full ? color.substring(2 * i + 1, 2 * (i + 1) + 1) : (color.substring(i + 1, i + 2) + color.substring(i + 1, i + 2));
-            ns = new int[3];
-            for (int i = 0; i < ns.length; i++)
-                ns[i] = Integer.parseInt(array[i], 16);
-        } else
-            ns = numeric.toInts(color);
-        xslfTextRun.setFontColor(new Color(ns[0], ns[1], ns[2]));
+        Color color = parserHelper.getColor(object, "color");
+        if (color != null)
+            xslfTextRun.setFontColor(color);
     }
 
     private boolean hasTrue(JSONObject object, String key) {

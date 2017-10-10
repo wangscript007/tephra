@@ -24,7 +24,8 @@ public class PptxTest extends CoreTestSupport {
     @Test
     public void write() throws Exception {
         JSONObject object = json.toObject(io.readAsString(getClass().getResourceAsStream("pptx.json")));
-        OutputStream outputStream = new FileOutputStream(getClass().getResource("pptx.json").getPath().replace("pptx.json", "test.pptx"));
+//        OutputStream outputStream = new FileOutputStream(getClass().getResource("pptx.json").getPath().replace("pptx.json", "test.pptx"));
+        OutputStream outputStream = new FileOutputStream("/media/sf_share/test.pptx");
         pptx.write(object, outputStream);
         outputStream.close();
     }

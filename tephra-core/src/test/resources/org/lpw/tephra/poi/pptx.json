@@ -3,7 +3,13 @@
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_14_bg_1.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -12,46 +18,86 @@
                     "height": 720
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_1_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 320,
+                        "y": 0,
+                        "height": 684
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_icon_3.png",
                     "rotation": 0,
-                    "x": 598,
-                    "width": 84,
-                    "y": 366,
+                    "x": 96,
+                    "width": 320,
+                    "y": 36,
+                    "type": "image",
+                    "height": 684
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 921,
+                        "y": 0,
+                        "height": 504
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_icon_1.png",
+                    "rotation": 0,
+                    "x": 214,
+                    "width": 921,
+                    "y": 146,
+                    "type": "image",
+                    "height": 504
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 76,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_icon_2.png",
+                    "rotation": 0,
+                    "x": 408,
+                    "width": 76,
+                    "y": 365,
                     "type": "image",
                     "height": 50
                 },
                 {
-                    "spacing": "14",
-                    "color": "#ffffff",
+                    "color": "#050505",
+                    "underline": false,
                     "rotation": 0,
-                    "x": 294,
-                    "width": 692,
-                    "y": 264,
-                    "text": "sss",
                     "bold": true,
                     "type": "text",
-                    "align": "center",
-                    "height": 81,
+                    "align": "left",
+                    "italic": false,
+                    "spacing": "14",
+                    "x": 379,
+                    "width": 664,
+                    "y": 212,
+                    "text": "撒地方撒旦",
+                    "height": 75,
                     "font": {
-                        "size": "65",
-                        "family": "SimHei"
+                        "size": "60",
+                        "family": "SimHei",
+                        "height": 1.25
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 45,
-                    "x": 366,
-                    "width": 548,
-                    "y": 452,
+                    "color": "#505050",
+                    "rotation": 0,
+                    "x": 408,
+                    "width": 493,
+                    "y": 420,
                     "text": "请输入项目描述",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
+                    "align": "left",
                     "height": 35,
                     "font": {
                         "size": "25",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 }
             ]
@@ -59,7 +105,13 @@
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_bg_1.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -68,393 +120,440 @@
                     "height": 720
                 },
                 {
-                    "spacing": "4",
-                    "color": "#ffffff",
+                    "sub": {
+                        "x": 0,
+                        "width": 272,
+                        "y": 0,
+                        "height": 517
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_9_icon_1.png",
                     "rotation": 0,
-                    "x": 0,
-                    "width": 1280,
-                    "y": 36,
+                    "x": 43,
+                    "width": 272,
+                    "y": 167,
+                    "type": "image",
+                    "height": 517
+                },
+                {
+                    "spacing": "4",
+                    "color": "#fafcfd",
+                    "rotation": 0,
+                    "x": 77,
+                    "width": 500,
+                    "y": 50,
                     "text": "团队介绍",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
+                    "align": "start",
                     "height": 50,
                     "font": {
                         "size": "36",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 564,
-                    "width": 155,
-                    "y": 85,
+                    "x": 77,
+                    "width": 150,
+                    "y": 95,
                     "text": "BUSINESS PLAN",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
-                    "height": 26,
+                    "align": "start",
+                    "height": 25,
                     "font": {
                         "size": "18",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 0.0
                     }
                 },
                 {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/7ec17c20-9932-11e7-8176-338ce0b2ef77",
+                    "sub": {
+                        "x": 0,
+                        "width": 60,
+                        "y": 0,
+                        "height": 113
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_6.png",
+                    "rotation": 0,
+                    "x": 45,
+                    "width": 60,
+                    "y": 25,
+                    "type": "image",
+                    "height": 113
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 172,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_9_icon_2.png",
+                    "rotation": 0,
+                    "x": 122,
+                    "width": 172,
+                    "y": 372,
+                    "type": "image",
+                    "height": 50
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 172,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_9_icon_2.png",
+                    "rotation": 0,
+                    "x": 429,
+                    "width": 172,
+                    "y": 372,
+                    "type": "image",
+                    "height": 50
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 172,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_9_icon_2.png",
+                    "rotation": 0,
+                    "x": 737,
+                    "width": 172,
+                    "y": 372,
+                    "type": "image",
+                    "height": 50
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 172,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_9_icon_2.png",
+                    "rotation": 0,
+                    "x": 1044,
+                    "width": 172,
+                    "y": 372,
+                    "type": "image",
+                    "height": 50
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 272,
+                        "y": 0,
+                        "height": 517
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_9_icon_1.png",
+                    "rotation": 0,
+                    "x": 350,
+                    "width": 272,
+                    "y": 167,
+                    "type": "image",
+                    "height": 517
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 272,
+                        "y": 0,
+                        "height": 517
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_9_icon_1.png",
+                    "rotation": 0,
+                    "x": 658,
+                    "width": 272,
+                    "y": 167,
+                    "type": "image",
+                    "height": 517
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 272,
+                        "y": 0,
+                        "height": 517
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_9_icon_1.png",
+                    "rotation": 0,
+                    "x": 965,
+                    "width": 272,
+                    "y": 167,
+                    "type": "image",
+                    "height": 517
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 64,
+                    "width": 229,
+                    "y": 420,
+                    "text": "请输入姓名",
+                    "bold": true,
+                    "type": "text",
+                    "align": "right",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 64,
+                    "width": 229,
+                    "y": 466,
+                    "text": "请输入职位",
+                    "bold": true,
+                    "type": "text",
+                    "align": "right",
+                    "height": 28,
+                    "font": {
+                        "size": "20",
+                        "family": "SimHei",
+                        "height": 0.0
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 64,
+                    "width": 229,
+                    "y": 505,
+                    "text": "请输入简介",
+                    "bold": false,
+                    "type": "text",
+                    "align": "right",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 372,
+                    "width": 229,
+                    "y": 420,
+                    "text": "请输入姓名",
+                    "bold": true,
+                    "type": "text",
+                    "align": "right",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 372,
+                    "width": 229,
+                    "y": 466,
+                    "text": "请输入职位",
+                    "bold": true,
+                    "type": "text",
+                    "align": "right",
+                    "height": 28,
+                    "font": {
+                        "size": "20",
+                        "family": "SimHei",
+                        "height": 0.0
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 372,
+                    "width": 229,
+                    "y": 505,
+                    "text": "请输入简介",
+                    "bold": false,
+                    "type": "text",
+                    "align": "right",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 680,
+                    "width": 229,
+                    "y": 420,
+                    "text": "请输入姓名",
+                    "bold": true,
+                    "type": "text",
+                    "align": "right",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 680,
+                    "width": 229,
+                    "y": 466,
+                    "text": "请输入职位",
+                    "bold": true,
+                    "type": "text",
+                    "align": "right",
+                    "height": 28,
+                    "font": {
+                        "size": "20",
+                        "family": "SimHei",
+                        "height": 0.0
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 680,
+                    "width": 229,
+                    "y": 505,
+                    "text": "请输入简介",
+                    "bold": false,
+                    "type": "text",
+                    "align": "right",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 987,
+                    "width": 229,
+                    "y": 420,
+                    "text": "请输入姓名",
+                    "bold": true,
+                    "type": "text",
+                    "align": "right",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 987,
+                    "width": 229,
+                    "y": 466,
+                    "text": "请输入职位",
+                    "bold": true,
+                    "type": "text",
+                    "align": "right",
+                    "height": 28,
+                    "font": {
+                        "size": "20",
+                        "family": "SimHei",
+                        "height": 0.0
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 987,
+                    "width": 229,
+                    "y": 505,
+                    "text": "请输入简介",
+                    "bold": false,
+                    "type": "text",
+                    "align": "right",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 458.58310626703\" enable-background=\"0 0 500 458.58310626703\" xml:space=\"preserve\" data-width=\"500\" data-height=\"500\">\n    <clipPath id=\"nuts_1505374443160\">\n        <rect width=\"500\" height=\"500\" class=\"nuts-box-c\" transform=\"translate(0, 0) scale(1, 0.91716621253406)\"></rect>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1505374443160)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/826f40a0-991f-11e7-8520-8b3bb0dd80d5\" x=\"0\" y=\"-2.2301859969197895\" width=\"500\" height=\"463.04347826086956\"></image>\n</svg>",
                     "rotation": 0,
                     "x": 69,
-                    "width": 86,
-                    "y": 120,
-                    "type": "image",
-                    "height": 86
+                    "width": 225,
+                    "y": 184,
+                    "type": "svg",
+                    "height": 207
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_icon_1.png",
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 458.58310626703\" enable-background=\"0 0 500 458.58310626703\" xml:space=\"preserve\" data-width=\"500\" data-height=\"500\">\n    <clipPath id=\"nuts_1505374443160\">\n        <rect width=\"500\" height=\"500\" class=\"nuts-box-c\" transform=\"translate(0, 0) scale(1, 0.91716621253406)\"></rect>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1505374443160)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/87378eb0-991f-11e7-98f6-67e577f41d05\" x=\"0\" y=\"-1.227927385965527\" width=\"500\" height=\"461.038961038961\"></image>\n</svg>",
                     "rotation": 0,
-                    "x": 68,
-                    "width": 546,
-                    "y": 223,
-                    "type": "image",
-                    "height": 154
+                    "x": 375,
+                    "width": 225,
+                    "y": 184,
+                    "type": "svg",
+                    "height": 207
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_icon_1.png",
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 458.58310626703\" enable-background=\"0 0 500 458.58310626703\" xml:space=\"preserve\" data-width=\"500\" data-height=\"500\">\n    <clipPath id=\"nuts_1505374443160\">\n        <rect width=\"500\" height=\"500\" class=\"nuts-box-c\" transform=\"translate(0, 0) scale(1, 0.91716621253406)\"></rect>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1505374443160)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/8bc32470-991f-11e7-b6f9-5944608c4541\" x=\"0\" y=\"-0.14567630371445997\" width=\"500\" height=\"458.8744588744589\"></image>\n</svg>",
                     "rotation": 0,
-                    "x": 667,
-                    "width": 546,
-                    "y": 223,
-                    "type": "image",
-                    "height": 154
+                    "x": 682,
+                    "width": 225,
+                    "y": 184,
+                    "type": "svg",
+                    "height": 207
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_icon_1.png",
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 458.58310626703\" enable-background=\"0 0 500 458.58310626703\" xml:space=\"preserve\" data-width=\"500\" data-height=\"500\">\n    <clipPath id=\"nuts_1505374443160\">\n        <rect width=\"500\" height=\"500\" class=\"nuts-box-c\" transform=\"translate(0, 0) scale(1, 0.91716621253406)\"></rect>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1505374443160)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/9001b2e0-991f-11e7-9e51-512f2ac69b5b\" x=\"0\" y=\"-1.143229475180655\" width=\"500\" height=\"460.8695652173913\"></image>\n</svg>",
                     "rotation": 0,
-                    "x": 68,
-                    "width": 546,
-                    "y": 521,
-                    "type": "image",
-                    "height": 154
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_icon_1.png",
-                    "rotation": 0,
-                    "x": 667,
-                    "width": 546,
-                    "y": 521,
-                    "type": "image",
-                    "height": 154
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_icon_3.png",
-                    "rotation": 0,
-                    "x": 167,
-                    "width": 50,
-                    "y": 173,
-                    "type": "image",
-                    "height": 50
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_icon_2.png",
-                    "rotation": 0,
-                    "x": 529,
-                    "width": 50,
-                    "y": 303,
-                    "type": "image",
-                    "height": 50
-                },
-                {
-                    "spacing": "0",
-                    "color": "#00ffff",
-                    "rotation": 0,
-                    "x": 167,
-                    "width": 205,
-                    "y": 126,
-                    "text": "请输入姓名",
-                    "bold": true,
-                    "type": "text",
-                    "align": "left",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 167,
-                    "width": 205,
-                    "y": 169,
-                    "text": "请输入职位",
-                    "bold": true,
-                    "type": "text",
-                    "align": "left",
-                    "height": 28,
-                    "font": {
-                        "size": "20",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/327a2240-9933-11e7-87da-a3fbcc0ccfbc",
-                    "rotation": 0,
-                    "x": 667,
-                    "width": 86,
-                    "y": 120,
-                    "type": "image",
-                    "height": 86
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 94,
-                    "width": 478,
-                    "y": 281,
-                    "text": "请输入简介",
-                    "bold": false,
-                    "type": "text",
-                    "align": "left",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_icon_3.png",
-                    "rotation": 0,
-                    "x": 766,
-                    "width": 50,
-                    "y": 173,
-                    "type": "image",
-                    "height": 50
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_icon_2.png",
-                    "rotation": 0,
-                    "x": 1137,
-                    "width": 50,
-                    "y": 303,
-                    "type": "image",
-                    "height": 50
-                },
-                {
-                    "spacing": "0",
-                    "color": "#00ffff",
-                    "rotation": 0,
-                    "x": 766,
-                    "width": 205,
-                    "y": 126,
-                    "text": "请输入姓名",
-                    "bold": true,
-                    "type": "text",
-                    "align": "left",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 766,
-                    "width": 205,
-                    "y": 169,
-                    "text": "请输入职位",
-                    "bold": true,
-                    "type": "text",
-                    "align": "left",
-                    "height": 28,
-                    "font": {
-                        "size": "20",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/37435750-9933-11e7-8a15-397a9c38830c",
-                    "rotation": 0,
-                    "x": 68,
-                    "width": 86,
-                    "y": 421,
-                    "type": "image",
-                    "height": 86
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 693,
-                    "width": 478,
-                    "y": 281,
-                    "text": "请输入简介",
-                    "bold": false,
-                    "type": "text",
-                    "align": "left",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_icon_3.png",
-                    "rotation": 0,
-                    "x": 167,
-                    "width": 50,
-                    "y": 471,
-                    "type": "image",
-                    "height": 50
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_icon_2.png",
-                    "rotation": 0,
-                    "x": 529,
-                    "width": 50,
-                    "y": 601,
-                    "type": "image",
-                    "height": 50
-                },
-                {
-                    "spacing": "0",
-                    "color": "#00ffff",
-                    "rotation": 0,
-                    "x": 167,
-                    "width": 205,
-                    "y": 424,
-                    "text": "请输入姓名",
-                    "bold": true,
-                    "type": "text",
-                    "align": "left",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 167,
-                    "width": 205,
-                    "y": 467,
-                    "text": "请输入职位",
-                    "bold": true,
-                    "type": "text",
-                    "align": "left",
-                    "height": 28,
-                    "font": {
-                        "size": "20",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/3b75c7b0-9933-11e7-a13d-c1fa19b02cf6",
-                    "rotation": 0,
-                    "x": 667,
-                    "width": 86,
-                    "y": 418,
-                    "type": "image",
-                    "height": 86
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 94,
-                    "width": 478,
-                    "y": 579,
-                    "text": "请输入简介",
-                    "bold": false,
-                    "type": "text",
-                    "align": "left",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_icon_3.png",
-                    "rotation": 0,
-                    "x": 766,
-                    "width": 50,
-                    "y": 471,
-                    "type": "image",
-                    "height": 50
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_9_icon_2.png",
-                    "rotation": 0,
-                    "x": 1137,
-                    "width": 50,
-                    "y": 601,
-                    "type": "image",
-                    "height": 50
-                },
-                {
-                    "spacing": "0",
-                    "color": "#00ffff",
-                    "rotation": 0,
-                    "x": 766,
-                    "width": 205,
-                    "y": 424,
-                    "text": "请输入姓名",
-                    "bold": true,
-                    "type": "text",
-                    "align": "left",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 766,
-                    "width": 205,
-                    "y": 467,
-                    "text": "请输入职位",
-                    "bold": true,
-                    "type": "text",
-                    "align": "left",
-                    "height": 28,
-                    "font": {
-                        "size": "20",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 693,
-                    "width": 478,
-                    "y": 579,
-                    "text": "请输入简介",
-                    "bold": false,
-                    "type": "text",
-                    "align": "left",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
+                    "x": 989,
+                    "width": 225,
+                    "y": 184,
+                    "type": "svg",
+                    "height": 207
                 }
             ]
         },
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_2_bg_1.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -464,59 +563,88 @@
                 },
                 {
                     "spacing": "4",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 0,
-                    "width": 1280,
-                    "y": 36,
+                    "x": 77,
+                    "width": 500,
+                    "y": 50,
                     "text": "痛点分析",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
+                    "align": "start",
                     "height": 50,
                     "font": {
                         "size": "36",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 564,
-                    "width": 155,
-                    "y": 85,
+                    "x": 77,
+                    "width": 150,
+                    "y": 95,
                     "text": "BUSINESS PLAN",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
-                    "height": 26,
+                    "align": "start",
+                    "height": 25,
                     "font": {
                         "size": "18",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 0.0
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_2_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 60,
+                        "y": 0,
+                        "height": 113
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_6.png",
                     "rotation": 0,
-                    "x": 145,
-                    "width": 109,
-                    "y": 261,
+                    "x": 45,
+                    "width": 60,
+                    "y": 25,
                     "type": "image",
-                    "height": 80
+                    "height": 113
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_2_icon_2.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 129,
+                        "y": 0,
+                        "height": 91
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_1.png",
                     "rotation": 0,
-                    "x": 168,
-                    "width": 60,
-                    "y": 273,
+                    "x": 136,
+                    "width": 129,
+                    "y": 223,
                     "type": "image",
-                    "height": 60
+                    "height": 91
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 52,
+                        "y": 0,
+                        "height": 53
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_2.png",
+                    "rotation": 0,
+                    "x": 174,
+                    "width": 52,
+                    "y": 248,
+                    "type": "image",
+                    "height": 53
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
                     "x": 86,
                     "width": 228,
@@ -528,16 +656,17 @@
                     "height": 39,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
                     "x": 86,
                     "width": 228,
-                    "y": 456,
+                    "y": 448,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
@@ -545,30 +674,43 @@
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_2_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 129,
+                        "y": 0,
+                        "height": 91
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_1.png",
                     "rotation": 0,
-                    "x": 438,
-                    "width": 109,
-                    "y": 261,
+                    "x": 429,
+                    "width": 129,
+                    "y": 223,
                     "type": "image",
-                    "height": 80
+                    "height": 91
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_2_icon_3.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 52,
+                        "y": 0,
+                        "height": 53
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_3.png",
                     "rotation": 0,
-                    "x": 466,
-                    "width": 60,
-                    "y": 273,
+                    "x": 464,
+                    "width": 52,
+                    "y": 248,
                     "type": "image",
-                    "height": 60
+                    "height": 53
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
                     "x": 379,
                     "width": 228,
@@ -580,16 +722,17 @@
                     "height": 39,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
                     "x": 379,
                     "width": 228,
-                    "y": 456,
+                    "y": 448,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
@@ -597,32 +740,45 @@
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_2_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 129,
+                        "y": 0,
+                        "height": 91
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_1.png",
                     "rotation": 0,
-                    "x": 732,
-                    "width": 109,
-                    "y": 261,
+                    "x": 722,
+                    "width": 129,
+                    "y": 223,
                     "type": "image",
-                    "height": 80
+                    "height": 91
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_2_icon_4.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 52,
+                        "y": 0,
+                        "height": 53
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_4.png",
                     "rotation": 0,
-                    "x": 761,
-                    "width": 60,
-                    "y": 273,
+                    "x": 758,
+                    "width": 52,
+                    "y": 248,
                     "type": "image",
-                    "height": 60
+                    "height": 53
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 673,
+                    "x": 672,
                     "width": 228,
                     "y": 386,
                     "text": "请输入标题",
@@ -632,16 +788,17 @@
                     "height": 39,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 673,
+                    "x": 672,
                     "width": 228,
-                    "y": 456,
+                    "y": 448,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
@@ -649,32 +806,45 @@
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_2_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 129,
+                        "y": 0,
+                        "height": 91
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_1.png",
                     "rotation": 0,
-                    "x": 1025,
-                    "width": 109,
-                    "y": 261,
+                    "x": 1015,
+                    "width": 129,
+                    "y": 223,
                     "type": "image",
-                    "height": 80
+                    "height": 91
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_2_icon_5.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 52,
+                        "y": 0,
+                        "height": 53
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_5.png",
                     "rotation": 0,
-                    "x": 1050,
-                    "width": 60,
-                    "y": 273,
+                    "x": 1056,
+                    "width": 52,
+                    "y": 248,
                     "type": "image",
-                    "height": 60
+                    "height": 53
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 966,
+                    "x": 965,
                     "width": 228,
                     "y": 386,
                     "text": "请输入标题",
@@ -684,16 +854,17 @@
                     "height": 39,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 966,
+                    "x": 965,
                     "width": 228,
-                    "y": 456,
+                    "y": 448,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
@@ -701,7 +872,8 @@
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 }
             ]
@@ -709,7 +881,13 @@
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_3_bg_1.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -719,208 +897,257 @@
                 },
                 {
                     "spacing": "4",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 0,
-                    "width": 1280,
-                    "y": 36,
+                    "x": 77,
+                    "width": 500,
+                    "y": 50,
                     "text": "解决方案",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
+                    "align": "start",
                     "height": 50,
                     "font": {
                         "size": "36",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 564,
-                    "width": 155,
-                    "y": 85,
+                    "x": 77,
+                    "width": 150,
+                    "y": 95,
                     "text": "BUSINESS PLAN",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
-                    "height": 26,
+                    "align": "start",
+                    "height": 25,
                     "font": {
                         "size": "18",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 0.0
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_3_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 60,
+                        "y": 0,
+                        "height": 113
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_6.png",
                     "rotation": 0,
-                    "x": 172,
-                    "width": 420,
-                    "y": 121,
+                    "x": 45,
+                    "width": 60,
+                    "y": 25,
                     "type": "image",
-                    "height": 242
+                    "height": 113
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 422,
+                        "y": 0,
+                        "height": 268
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_3_icon_1.png",
+                    "rotation": 0,
+                    "x": 198,
+                    "width": 422,
+                    "y": 126,
+                    "type": "image",
+                    "height": 268
                 },
                 {
                     "spacing": "0",
-                    "color": "#0cffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 211,
-                    "width": 333,
-                    "y": 167,
+                    "x": 277,
+                    "width": 290,
+                    "y": 211,
                     "text": "请输入标题",
                     "bold": true,
                     "type": "text",
-                    "align": "right",
+                    "align": "left",
                     "height": 39,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 211,
-                    "width": 333,
-                    "y": 222,
+                    "x": 277,
+                    "width": 290,
+                    "y": 268,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
-                    "align": "right",
+                    "align": "left",
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_3_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 422,
+                        "y": 0,
+                        "height": 268
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_3_icon_1.png",
                     "rotation": 0,
-                    "x": 699,
-                    "width": 420,
-                    "y": 121,
+                    "x": 743,
+                    "width": 422,
+                    "y": 126,
                     "type": "image",
-                    "height": 242
+                    "height": 268
                 },
                 {
                     "spacing": "0",
-                    "color": "#0cffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 738,
-                    "width": 333,
-                    "y": 167,
+                    "x": 822,
+                    "width": 290,
+                    "y": 211,
                     "text": "请输入标题",
                     "bold": true,
                     "type": "text",
-                    "align": "right",
+                    "align": "left",
                     "height": 39,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 738,
-                    "width": 333,
-                    "y": 222,
+                    "x": 822,
+                    "width": 290,
+                    "y": 268,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
-                    "align": "right",
+                    "align": "left",
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_3_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 422,
+                        "y": 0,
+                        "height": 268
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_3_icon_1.png",
                     "rotation": 0,
-                    "x": 172,
-                    "width": 420,
-                    "y": 400,
+                    "x": 116,
+                    "width": 422,
+                    "y": 412,
                     "type": "image",
-                    "height": 242
+                    "height": 268
                 },
                 {
                     "spacing": "0",
-                    "color": "#0cffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 211,
-                    "width": 333,
-                    "y": 446,
+                    "x": 195,
+                    "width": 290,
+                    "y": 497,
                     "text": "请输入标题",
                     "bold": true,
                     "type": "text",
-                    "align": "right",
+                    "align": "left",
                     "height": 39,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 211,
-                    "width": 333,
-                    "y": 501,
+                    "x": 195,
+                    "width": 290,
+                    "y": 553,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
-                    "align": "right",
+                    "align": "left",
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_3_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 422,
+                        "y": 0,
+                        "height": 268
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_3_icon_1.png",
                     "rotation": 0,
-                    "x": 699,
-                    "width": 420,
-                    "y": 400,
+                    "x": 661,
+                    "width": 422,
+                    "y": 412,
                     "type": "image",
-                    "height": 242
+                    "height": 268
                 },
                 {
                     "spacing": "0",
-                    "color": "#0cffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 699,
-                    "width": 333,
-                    "y": 446,
+                    "x": 740,
+                    "width": 290,
+                    "y": 497,
                     "text": "请输入标题",
                     "bold": true,
                     "type": "text",
-                    "align": "right",
+                    "align": "left",
                     "height": 39,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 699,
-                    "width": 333,
-                    "y": 501,
+                    "x": 740,
+                    "width": 290,
+                    "y": 553,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
-                    "align": "right",
+                    "align": "left",
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 }
             ]
@@ -928,7 +1155,13 @@
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_11_bg_1.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -938,70 +1171,124 @@
                 },
                 {
                     "spacing": "4",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 0,
-                    "width": 1280,
-                    "y": 36,
+                    "x": 77,
+                    "width": 500,
+                    "y": 50,
                     "text": "市场概况",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
+                    "align": "start",
                     "height": 50,
                     "font": {
                         "size": "36",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 564,
-                    "width": 155,
-                    "y": 85,
+                    "x": 77,
+                    "width": 150,
+                    "y": 95,
                     "text": "BUSINESS PLAN",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
-                    "height": 26,
+                    "align": "start",
+                    "height": 25,
                     "font": {
                         "size": "18",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 0.0
                     }
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 60,
+                        "y": 0,
+                        "height": 113
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_6.png",
+                    "rotation": 0,
+                    "x": 45,
+                    "width": 60,
+                    "y": 25,
+                    "type": "image",
+                    "height": 113
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 747,
+                        "y": 0,
+                        "height": 458
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_11_icon_2.png",
+                    "rotation": 0,
+                    "x": 461,
+                    "width": 747,
+                    "y": 154,
+                    "type": "image",
+                    "height": 458
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 544,
+                        "y": 0,
+                        "height": 319
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_11_icon_1.png",
+                    "rotation": 0,
+                    "x": 55,
+                    "width": 544,
+                    "y": 224,
+                    "type": "image",
+                    "height": 319
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 91,
-                    "width": 470,
-                    "y": 269,
+                    "x": 611,
+                    "width": 511,
+                    "y": 261,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
-                    "align": "left",
+                    "align": "start",
                     "height": 33,
                     "font": {
                         "size": "24",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/529816b0-9934-11e7-9a12-439273eac584",
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 312.8166915052161\" enable-background=\"0 0 500 312.8166915052161\" xml:space=\"preserve\" data-width=\"500\" data-height=\"500\">\n    <clipPath id=\"nuts_1505375189096\">\n        <rect width=\"500\" height=\"500\" class=\"nuts-box-c\" transform=\"translate(0, 0) scale(1, 0.6256333830104323)\"></rect>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1505375189096)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/8002fb20-9920-11e7-b39d-7186c853d839\" x=\"-0.011795913435255474\" y=\"0\" width=\"500.02359182687053\" height=\"312.8166915052161\"></image>\n</svg>",
                     "rotation": 0,
-                    "x": 632,
-                    "width": 519,
-                    "y": 212,
-                    "type": "image",
-                    "height": 345
+                    "x": 121,
+                    "width": 412,
+                    "y": 248,
+                    "type": "svg",
+                    "height": 258
                 }
             ]
         },
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_4_bg_1.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -1011,54 +1298,77 @@
                 },
                 {
                     "spacing": "4",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 0,
-                    "width": 1280,
-                    "y": 36,
+                    "x": 77,
+                    "width": 500,
+                    "y": 50,
                     "text": "产品介绍",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
+                    "align": "start",
                     "height": 50,
                     "font": {
                         "size": "36",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 564,
-                    "width": 155,
-                    "y": 85,
+                    "x": 77,
+                    "width": 150,
+                    "y": 95,
                     "text": "BUSINESS PLAN",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
-                    "height": 26,
+                    "align": "start",
+                    "height": 25,
                     "font": {
                         "size": "18",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 0.0
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_4_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 60,
+                        "y": 0,
+                        "height": 113
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_6.png",
                     "rotation": 0,
-                    "x": 56,
-                    "width": 558,
-                    "y": 229,
+                    "x": 45,
+                    "width": 60,
+                    "y": 25,
                     "type": "image",
-                    "height": 329
+                    "height": 113
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 488,
+                        "y": 0,
+                        "height": 330
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_4_icon_1.png",
+                    "rotation": 0,
+                    "x": 724,
+                    "width": 488,
+                    "y": 227,
+                    "type": "image",
+                    "height": 330
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 639,
-                    "width": 572,
-                    "y": 203,
+                    "x": 73,
+                    "width": 592,
+                    "y": 210,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
@@ -1066,24 +1376,31 @@
                     "height": 33,
                     "font": {
                         "size": "24",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/472aa9d0-992f-11e7-bf9c-014ea9118e3f",
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 379.51051145277694\" enable-background=\"0 0 500 379.51051145277694\" xml:space=\"preserve\" data-width=\"500\" data-height=\"500\">\n    <clipPath id=\"nuts_1505374024070\">\n        <rect width=\"500\" height=\"500\" class=\"nuts-box-c\" transform=\"translate(0, 0) scale(1, 0.7590210229055538)\"></rect>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1505374024070)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/d64d58c0-991d-11e7-99f0-0783a1672ecb\" x=\"-1.5061186068402745\" y=\"0\" width=\"503.0122372136806\" height=\"379.51051145277694\"></image>\n</svg>",
                     "rotation": 0,
-                    "x": 122,
-                    "width": 426,
-                    "y": 253,
-                    "type": "image",
-                    "height": 264
+                    "x": 772,
+                    "width": 391,
+                    "y": 244,
+                    "type": "svg",
+                    "height": 297
                 }
             ]
         },
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_5_bg_1.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -1093,63 +1410,143 @@
                 },
                 {
                     "spacing": "4",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 0,
-                    "width": 1280,
-                    "y": 36,
+                    "x": 77,
+                    "width": 500,
+                    "y": 50,
                     "text": "盈利模式",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
+                    "align": "start",
                     "height": 50,
                     "font": {
                         "size": "36",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 564,
-                    "width": 152,
-                    "y": 85,
+                    "x": 77,
+                    "width": 150,
+                    "y": 95,
                     "text": "BUSINESS PLAN",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
-                    "height": 26,
+                    "align": "start",
+                    "height": 25,
                     "font": {
                         "size": "18",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 0.0
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_5_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 60,
+                        "y": 0,
+                        "height": 113
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_6.png",
                     "rotation": 0,
-                    "x": 69,
-                    "width": 77,
-                    "y": 151,
+                    "x": 45,
+                    "width": 60,
+                    "y": 25,
                     "type": "image",
-                    "height": 77
+                    "height": 113
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_5_icon_2.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 76,
+                        "y": 0,
+                        "height": 86
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_5_icon_2.png",
                     "rotation": 0,
-                    "x": 80,
-                    "width": 50,
-                    "y": 165,
+                    "x": 602,
+                    "width": 76,
+                    "y": 350,
                     "type": "image",
-                    "height": 50
+                    "height": 86
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 145,
+                        "y": 0,
+                        "height": 111
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_5_icon_5.png",
+                    "rotation": 0,
+                    "x": 404,
+                    "width": 145,
+                    "y": 214,
+                    "type": "image",
+                    "height": 111
                 },
                 {
                     "spacing": "0",
-                    "color": "#0cffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 182,
-                    "width": 242,
-                    "y": 139,
+                    "x": 77,
+                    "width": 291,
+                    "y": 184,
+                    "text": "请输入标题",
+                    "bold": true,
+                    "type": "text",
+                    "align": "right",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#fafcfd",
+                    "rotation": 0,
+                    "x": 77,
+                    "width": 291,
+                    "y": 247,
+                    "text": "请输入描述",
+                    "bold": false,
+                    "type": "text",
+                    "align": "right",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 145,
+                        "y": 0,
+                        "height": 111
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_5_icon_6.png",
+                    "rotation": 0,
+                    "x": 734,
+                    "width": 145,
+                    "y": 214,
+                    "type": "image",
+                    "height": 111
+                },
+                {
+                    "spacing": "0",
+                    "color": "#fafcfd",
+                    "rotation": 0,
+                    "x": 912,
+                    "width": 291,
+                    "y": 184,
                     "text": "请输入标题",
                     "bold": true,
                     "type": "text",
@@ -1157,16 +1554,17 @@
                     "height": 39,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 182,
-                    "width": 456,
-                    "y": 197,
+                    "x": 912,
+                    "width": 291,
+                    "y": 247,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
@@ -1174,43 +1572,83 @@
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_5_icon_5.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 145,
+                        "y": 0,
+                        "height": 111
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_5_icon_7.png",
                     "rotation": 0,
-                    "x": 105,
-                    "width": 117,
-                    "y": 225,
+                    "x": 404,
+                    "width": 145,
+                    "y": 462,
                     "type": "image",
-                    "height": 107
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_5_icon_1.png",
-                    "rotation": 0,
-                    "x": 220,
-                    "width": 77,
-                    "y": 291,
-                    "type": "image",
-                    "height": 77
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_5_icon_2.png",
-                    "rotation": 0,
-                    "x": 234,
-                    "width": 50,
-                    "y": 305,
-                    "type": "image",
-                    "height": 50
+                    "height": 111
                 },
                 {
                     "spacing": "0",
-                    "color": "#0cffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 331,
-                    "width": 242,
-                    "y": 279,
+                    "x": 77,
+                    "width": 291,
+                    "y": 475,
+                    "text": "请输入标题",
+                    "bold": true,
+                    "type": "text",
+                    "align": "right",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#fafcfd",
+                    "rotation": 0,
+                    "x": 77,
+                    "width": 291,
+                    "y": 537,
+                    "text": "请输入描述",
+                    "bold": false,
+                    "type": "text",
+                    "align": "right",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 145,
+                        "y": 0,
+                        "height": 111
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_5_icon_9.png",
+                    "rotation": 0,
+                    "x": 734,
+                    "width": 145,
+                    "y": 462,
+                    "type": "image",
+                    "height": 111
+                },
+                {
+                    "spacing": "0",
+                    "color": "#fafcfd",
+                    "rotation": 0,
+                    "x": 912,
+                    "width": 291,
+                    "y": 475,
                     "text": "请输入标题",
                     "bold": true,
                     "type": "text",
@@ -1218,16 +1656,17 @@
                     "height": 39,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 331,
-                    "width": 456,
-                    "y": 337,
+                    "x": 912,
+                    "width": 291,
+                    "y": 537,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
@@ -1235,137 +1674,37 @@
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_5_icon_5.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 293,
+                        "y": 0,
+                        "height": 293
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_5_icon_1.png",
                     "rotation": 0,
-                    "x": 259,
-                    "width": 117,
-                    "y": 365,
+                    "x": 493,
+                    "width": 293,
+                    "y": 246,
                     "type": "image",
-                    "height": 107
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_5_icon_1.png",
-                    "rotation": 0,
-                    "x": 372,
-                    "width": 77,
-                    "y": 428,
-                    "type": "image",
-                    "height": 77
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_5_icon_2.png",
-                    "rotation": 0,
-                    "x": 386,
-                    "width": 50,
-                    "y": 442,
-                    "type": "image",
-                    "height": 50
-                },
-                {
-                    "spacing": "0",
-                    "color": "#0cffff",
-                    "rotation": 0,
-                    "x": 484,
-                    "width": 242,
-                    "y": 416,
-                    "text": "请输入标题",
-                    "bold": true,
-                    "type": "text",
-                    "align": "left",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 484,
-                    "width": 456,
-                    "y": 474,
-                    "text": "请输入描述",
-                    "bold": false,
-                    "type": "text",
-                    "align": "left",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_5_icon_5.png",
-                    "rotation": 0,
-                    "x": 408,
-                    "width": 117,
-                    "y": 502,
-                    "type": "image",
-                    "height": 107
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_5_icon_1.png",
-                    "rotation": 0,
-                    "x": 523,
-                    "width": 77,
-                    "y": 568,
-                    "type": "image",
-                    "height": 77
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_5_icon_2.png",
-                    "rotation": 0,
-                    "x": 537,
-                    "width": 50,
-                    "y": 582,
-                    "type": "image",
-                    "height": 50
-                },
-                {
-                    "spacing": "0",
-                    "color": "#0cffff",
-                    "rotation": 0,
-                    "x": 635,
-                    "width": 242,
-                    "y": 556,
-                    "text": "请输入标题",
-                    "bold": true,
-                    "type": "text",
-                    "align": "left",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 635,
-                    "width": 456,
-                    "y": 614,
-                    "text": "请输入描述",
-                    "bold": false,
-                    "type": "text",
-                    "align": "left",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
+                    "height": 293
                 }
             ]
         },
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_6_bg_4.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -1375,248 +1714,367 @@
                 },
                 {
                     "spacing": "4",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 0,
-                    "width": 1280,
-                    "y": 36,
+                    "x": 77,
+                    "width": 500,
+                    "y": 50,
                     "text": "竞争对手",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
+                    "align": "start",
                     "height": 50,
                     "font": {
                         "size": "36",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "spacing": "0",
-                    "color": "#ffffff",
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 500\" enable-background=\"new 0 0 500 500\" xml:space=\"preserve\">\n    <clipPath id=\"nuts_1504678205492\">\n        <circle cx=\"250\" cy=\"250\" r=\"250\"></circle>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1504678205492)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/21c05040-991e-11e7-87e3-1b7328cf9e09\" x=\"0\" y=\"0\" width=\"499.99999999999994\" height=\"499.99999999999994\"></image>\n</svg>",
                     "rotation": 0,
-                    "x": 564,
-                    "width": 155,
-                    "y": 85,
+                    "x": 517,
+                    "width": 145,
+                    "y": 467,
+                    "type": "svg",
+                    "height": 145
+                },
+                {
+                    "spacing": "0",
+                    "color": "#fafcfd",
+                    "rotation": 0,
+                    "x": 77,
+                    "width": 150,
+                    "y": 95,
                     "text": "BUSINESS PLAN",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
-                    "height": 26,
+                    "align": "start",
+                    "height": 25,
                     "font": {
                         "size": "18",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 0.0
                     }
                 },
                 {
-                    "spacing": "0",
-                    "color": "#ffffff",
+                    "sub": {
+                        "x": 0,
+                        "width": 60,
+                        "y": 0,
+                        "height": 113
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_6.png",
                     "rotation": 0,
-                    "x": 283,
-                    "width": 250,
-                    "y": 149,
-                    "text": "请输入标题",
-                    "bold": true,
-                    "type": "text",
-                    "align": "center",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 283,
-                    "width": 250,
-                    "y": 207,
-                    "text": "请输入描述",
-                    "bold": false,
-                    "type": "text",
-                    "align": "center",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 830,
-                    "width": 250,
-                    "y": 149,
-                    "text": "请输入标题",
-                    "bold": true,
-                    "type": "text",
-                    "align": "center",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 830,
-                    "width": 250,
-                    "y": 207,
-                    "text": "请输入描述",
-                    "bold": false,
-                    "type": "text",
-                    "align": "center",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 468,
-                    "width": 250,
-                    "y": 452,
-                    "text": "请输入标题",
-                    "bold": true,
-                    "type": "text",
-                    "align": "center",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 468,
-                    "width": 250,
-                    "y": 512,
-                    "text": "请输入描述",
-                    "bold": false,
-                    "type": "text",
-                    "align": "center",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 943,
-                    "width": 250,
-                    "y": 452,
-                    "text": "请输入标题",
-                    "bold": true,
-                    "type": "text",
-                    "align": "center",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 943,
-                    "width": 250,
-                    "y": 512,
-                    "text": "请输入描述",
-                    "bold": false,
-                    "type": "text",
-                    "align": "center",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "rotation": 0,
-                    "x": 141,
-                    "width": 133,
-                    "y": 149,
-                    "type": "svg",
-                    "height": 133
-                },
-                {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/e6986a20-9931-11e7-835b-976ddd4fd89e",
-                    "rotation": 0,
-                    "x": 151,
-                    "width": 113,
-                    "y": 159,
+                    "x": 45,
+                    "width": 60,
+                    "y": 25,
                     "type": "image",
                     "height": 113
                 },
                 {
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_6_icon_1.png",
                     "rotation": 0,
-                    "x": 617,
-                    "width": 133,
-                    "y": 149,
-                    "type": "svg",
-                    "height": 133
-                },
-                {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/4f8ff880-9930-11e7-a664-cd44081c9133",
-                    "rotation": 0,
-                    "x": 627,
-                    "width": 113,
-                    "y": 159,
+                    "x": 419,
+                    "width": 50,
+                    "y": 173,
                     "type": "image",
-                    "height": 113
+                    "height": 50
                 },
                 {
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_6_icon_1.png",
                     "rotation": 0,
-                    "x": 322,
-                    "width": 133,
-                    "y": 512,
-                    "type": "svg",
-                    "height": 133
-                },
-                {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/73e931a0-9932-11e7-961c-5b6b30e0a888",
-                    "rotation": 0,
-                    "x": 332,
-                    "width": 113,
-                    "y": 522,
+                    "x": 811,
+                    "width": 50,
+                    "y": 173,
                     "type": "image",
-                    "height": 113
+                    "height": 50
                 },
                 {
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_6_icon_1.png",
                     "rotation": 0,
-                    "x": 802,
-                    "width": 133,
-                    "y": 512,
-                    "type": "svg",
-                    "height": 133
-                },
-                {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/792d9200-9932-11e7-aa57-977b6d93813a",
-                    "rotation": 0,
-                    "x": 812,
-                    "width": 113,
-                    "y": 522,
+                    "x": 463,
+                    "width": 50,
+                    "y": 424,
                     "type": "image",
-                    "height": 113
+                    "height": 50
+                },
+                {
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 500\" enable-background=\"new 0 0 500 500\" xml:space=\"preserve\">\n    <clipPath id=\"nuts_1504678205492\">\n        <circle cx=\"250\" cy=\"250\" r=\"250\"></circle>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1504678205492)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/f949a630-991d-11e7-add7-b7e9abf93580\" x=\"0\" y=\"0\" width=\"499.99999999999994\" height=\"499.99999999999994\"></image>\n</svg>",
+                    "rotation": 0,
+                    "x": 463,
+                    "width": 145,
+                    "y": 198,
+                    "type": "svg",
+                    "height": 145
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_6_icon_1.png",
+                    "rotation": 0,
+                    "x": 855,
+                    "width": 50,
+                    "y": 424,
+                    "type": "image",
+                    "height": 50
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 155,
+                        "y": 0,
+                        "height": 155
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_6_icon_2.png",
+                    "rotation": 0,
+                    "x": 458,
+                    "width": 155,
+                    "y": 191,
+                    "type": "image",
+                    "height": 155
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 134,
+                    "width": 291,
+                    "y": 175,
+                    "text": "请输入标题",
+                    "bold": true,
+                    "type": "text",
+                    "align": "right",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 134,
+                    "width": 291,
+                    "y": 249,
+                    "text": "请输入描述",
+                    "bold": false,
+                    "type": "text",
+                    "align": "right",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 856,
+                    "width": 291,
+                    "y": 175,
+                    "text": "请输入标题",
+                    "bold": true,
+                    "type": "text",
+                    "align": "left",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 856,
+                    "width": 291,
+                    "y": 249,
+                    "text": "请输入描述",
+                    "bold": false,
+                    "type": "text",
+                    "align": "left",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 155,
+                        "y": 0,
+                        "height": 155
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_6_icon_2.png",
+                    "rotation": 0,
+                    "x": 511,
+                    "width": 155,
+                    "y": 463,
+                    "type": "image",
+                    "height": 155
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 178,
+                    "width": 291,
+                    "y": 425,
+                    "text": "请输入标题",
+                    "bold": true,
+                    "type": "text",
+                    "align": "right",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 178,
+                    "width": 291,
+                    "y": 500,
+                    "text": "请输入描述",
+                    "bold": false,
+                    "type": "text",
+                    "align": "right",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 898,
+                    "width": 291,
+                    "y": 425,
+                    "text": "请输入标题",
+                    "bold": true,
+                    "type": "text",
+                    "align": "left",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 898,
+                    "width": 291,
+                    "y": 500,
+                    "text": "请输入描述",
+                    "bold": false,
+                    "type": "text",
+                    "align": "left",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 500\" enable-background=\"new 0 0 500 500\" xml:space=\"preserve\">\n    <clipPath id=\"nuts_1504678205492\">\n        <circle cx=\"250\" cy=\"250\" r=\"250\"></circle>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1504678205492)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/febe1fa0-991d-11e7-b385-d98159e0d98b\" x=\"0\" y=\"0\" width=\"499.99999999999994\" height=\"499.99999999999994\"></image>\n</svg>",
+                    "rotation": 0,
+                    "x": 668,
+                    "width": 145,
+                    "y": 198,
+                    "type": "svg",
+                    "height": 145
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 155,
+                        "y": 0,
+                        "height": 155
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_6_icon_2.png",
+                    "rotation": 0,
+                    "x": 665,
+                    "width": 155,
+                    "y": 191,
+                    "type": "image",
+                    "height": 155
+                },
+                {
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 500\" enable-background=\"new 0 0 500 500\" xml:space=\"preserve\">\n    <clipPath id=\"nuts_1504678205492\">\n        <circle cx=\"250\" cy=\"250\" r=\"250\"></circle>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1504678205492)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/37ece800-991e-11e7-bfd1-07414c95d8f2\" x=\"0\" y=\"0\" width=\"499.99999999999994\" height=\"499.99999999999994\"></image>\n</svg>",
+                    "rotation": 0,
+                    "x": 719,
+                    "width": 145,
+                    "y": 467,
+                    "type": "svg",
+                    "height": 145
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 155,
+                        "y": 0,
+                        "height": 155
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_6_icon_2.png",
+                    "rotation": 0,
+                    "x": 717,
+                    "width": 155,
+                    "y": 463,
+                    "type": "image",
+                    "height": 155
                 }
             ]
         },
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_7_bg_4.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -1626,248 +2084,367 @@
                 },
                 {
                     "spacing": "4",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 0,
-                    "width": 1280,
-                    "y": 36,
+                    "x": 77,
+                    "width": 500,
+                    "y": 50,
                     "text": "竞争优势",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
+                    "align": "start",
                     "height": 50,
                     "font": {
                         "size": "36",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 564,
-                    "width": 155,
-                    "y": 85,
+                    "x": 77,
+                    "width": 150,
+                    "y": 95,
                     "text": "BUSINESS PLAN",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
-                    "height": 26,
+                    "align": "start",
+                    "height": 25,
                     "font": {
                         "size": "18",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 0.0
                     }
                 },
                 {
-                    "spacing": "0",
-                    "color": "#ffffff",
+                    "sub": {
+                        "x": 0,
+                        "width": 60,
+                        "y": 0,
+                        "height": 113
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_6.png",
+                    "rotation": 0,
+                    "x": 45,
+                    "width": 60,
+                    "y": 25,
+                    "type": "image",
+                    "height": 113
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_7_icon_1.png",
                     "rotation": 0,
                     "x": 260,
-                    "width": 249,
-                    "y": 142,
-                    "text": "请输入标题",
-                    "bold": true,
-                    "type": "text",
-                    "align": "center",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 260,
-                    "width": 249,
-                    "y": 201,
-                    "text": "请输入描述",
-                    "bold": false,
-                    "type": "text",
-                    "align": "center",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 739,
-                    "width": 249,
-                    "y": 142,
-                    "text": "请输入标题",
-                    "bold": true,
-                    "type": "text",
-                    "align": "center",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 739,
-                    "width": 249,
-                    "y": 201,
-                    "text": "请输入描述",
-                    "bold": false,
-                    "type": "text",
-                    "align": "center",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 79,
-                    "width": 249,
-                    "y": 443,
-                    "text": "请输入标题",
-                    "bold": true,
-                    "type": "text",
-                    "align": "center",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 79,
-                    "width": 249,
-                    "y": 506,
-                    "text": "请输入描述",
-                    "bold": false,
-                    "type": "text",
-                    "align": "center",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 555,
-                    "width": 249,
-                    "y": 443,
-                    "text": "请输入标题",
-                    "bold": true,
-                    "type": "text",
-                    "align": "center",
-                    "height": 39,
-                    "font": {
-                        "size": "28",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "spacing": "0",
-                    "color": "#ffffff",
-                    "rotation": 0,
-                    "x": 555,
-                    "width": 249,
-                    "y": 506,
-                    "text": "请输入描述",
-                    "bold": false,
-                    "type": "text",
-                    "align": "center",
-                    "height": 30,
-                    "font": {
-                        "size": "22",
-                        "family": "SimHei"
-                    }
-                },
-                {
-                    "rotation": 0,
-                    "x": 523,
-                    "width": 133,
-                    "y": 135,
-                    "type": "svg",
-                    "height": 133
-                },
-                {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/4f8ff880-9930-11e7-a664-cd44081c9133",
-                    "rotation": 0,
-                    "x": 532,
-                    "width": 113,
-                    "y": 144,
+                    "width": 50,
+                    "y": 170,
                     "type": "image",
-                    "height": 113
+                    "height": 50
                 },
                 {
-                    "rotation": 0,
-                    "x": 997,
-                    "width": 133,
-                    "y": 116,
-                    "type": "svg",
-                    "height": 133
-                },
-                {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/e6986a20-9931-11e7-835b-976ddd4fd89e",
-                    "rotation": 0,
-                    "x": 1006,
-                    "width": 113,
-                    "y": 126,
-                    "type": "image",
-                    "height": 113
-                },
-                {
-                    "rotation": 0,
-                    "x": 342,
-                    "width": 133,
-                    "y": 521,
-                    "type": "svg",
-                    "height": 133
-                },
-                {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/73e931a0-9932-11e7-961c-5b6b30e0a888",
-                    "rotation": 0,
-                    "x": 352,
-                    "width": 113,
-                    "y": 531,
-                    "type": "image",
-                    "height": 113
-                },
-                {
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_7_icon_1.png",
                     "rotation": 0,
                     "x": 820,
-                    "width": 133,
-                    "y": 521,
-                    "type": "svg",
-                    "height": 133
+                    "width": 50,
+                    "y": 170,
+                    "type": "image",
+                    "height": 50
                 },
                 {
-                    "image": "http://az.img.nutsbp.com/public/nutsbp/template/image/25969/792d9200-9932-11e7-aa57-977b6d93813a",
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_7_icon_1.png",
                     "rotation": 0,
-                    "x": 830,
-                    "width": 113,
-                    "y": 531,
+                    "x": 260,
+                    "width": 50,
+                    "y": 437,
                     "type": "image",
-                    "height": 113
+                    "height": 50
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_7_icon_1.png",
+                    "rotation": 0,
+                    "x": 820,
+                    "width": 50,
+                    "y": 437,
+                    "type": "image",
+                    "height": 50
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 305,
+                    "width": 291,
+                    "y": 177,
+                    "text": "请输入标题",
+                    "bold": true,
+                    "type": "text",
+                    "align": "left",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 305,
+                    "width": 291,
+                    "y": 247,
+                    "text": "请输入描述",
+                    "bold": false,
+                    "type": "text",
+                    "align": "left",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 500\" enable-background=\"new 0 0 500 500\" xml:space=\"preserve\">\n    <clipPath id=\"nuts_1504678205492\">\n        <circle cx=\"250\" cy=\"250\" r=\"250\"></circle>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1504678205492)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/7ee695c0-991e-11e7-85b6-abd5fa867a79\" x=\"0\" y=\"0\" width=\"499.99999999999994\" height=\"499.99999999999994\"></image>\n</svg>",
+                    "rotation": 0,
+                    "x": 679,
+                    "width": 145,
+                    "y": 195,
+                    "type": "svg",
+                    "height": 145
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 155,
+                        "y": 0,
+                        "height": 155
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_7_icon_2.png",
+                    "rotation": 0,
+                    "x": 674,
+                    "width": 155,
+                    "y": 189,
+                    "type": "image",
+                    "height": 155
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 865,
+                    "width": 291,
+                    "y": 177,
+                    "text": "请输入标题",
+                    "bold": true,
+                    "type": "text",
+                    "align": "left",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 500\" enable-background=\"new 0 0 500 500\" xml:space=\"preserve\">\n    <clipPath id=\"nuts_1504678205492\">\n        <circle cx=\"250\" cy=\"250\" r=\"250\"></circle>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1504678205492)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/82b2a330-991e-11e7-8d00-8dce4d179c5f\" x=\"0\" y=\"0\" width=\"499.99999999999994\" height=\"499.99999999999994\"></image>\n</svg>",
+                    "rotation": 0,
+                    "x": 119,
+                    "width": 145,
+                    "y": 462,
+                    "type": "svg",
+                    "height": 145
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 865,
+                    "width": 291,
+                    "y": 247,
+                    "text": "请输入描述",
+                    "bold": false,
+                    "type": "text",
+                    "align": "left",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 155,
+                        "y": 0,
+                        "height": 155
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_7_icon_2.png",
+                    "rotation": 0,
+                    "x": 114,
+                    "width": 155,
+                    "y": 456,
+                    "type": "image",
+                    "height": 155
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 305,
+                    "width": 291,
+                    "y": 444,
+                    "text": "请输入标题",
+                    "bold": true,
+                    "type": "text",
+                    "align": "left",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 500\" enable-background=\"new 0 0 500 500\" xml:space=\"preserve\">\n    <clipPath id=\"nuts_1504678205492\">\n        <circle cx=\"250\" cy=\"250\" r=\"250\"></circle>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1504678205492)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/86b0c760-991e-11e7-a731-5d2396013acb\" x=\"0\" y=\"0\" width=\"499.99999999999994\" height=\"499.99999999999994\"></image>\n</svg>",
+                    "rotation": 0,
+                    "x": 680,
+                    "width": 145,
+                    "y": 461,
+                    "type": "svg",
+                    "height": 145
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 305,
+                    "width": 291,
+                    "y": 514,
+                    "text": "请输入描述",
+                    "bold": false,
+                    "type": "text",
+                    "align": "left",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 155,
+                        "y": 0,
+                        "height": 155
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_7_icon_2.png",
+                    "rotation": 0,
+                    "x": 674,
+                    "width": 155,
+                    "y": 456,
+                    "type": "image",
+                    "height": 155
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 865,
+                    "width": 291,
+                    "y": 444,
+                    "text": "请输入标题",
+                    "bold": true,
+                    "type": "text",
+                    "align": "left",
+                    "height": 39,
+                    "font": {
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#ffffff",
+                    "rotation": 0,
+                    "x": 865,
+                    "width": 291,
+                    "y": 514,
+                    "text": "请输入描述",
+                    "bold": false,
+                    "type": "text",
+                    "align": "left",
+                    "height": 30,
+                    "font": {
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "svg": "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 500\" enable-background=\"new 0 0 500 500\" xml:space=\"preserve\">\n    <clipPath id=\"nuts_1504678205492\">\n        <circle cx=\"250\" cy=\"250\" r=\"250\"></circle>\n    </clipPath>\n    <image class=\"placeholder\" clip-path=\"url(#nuts_1504678205492)\" xlink:href=\"http://az.img.nutsbp.com/public/nutsbp/template/image/25969/7afb4cc0-991e-11e7-8dd5-e95eb6f1e730\" x=\"0\" y=\"0\" width=\"499.99999999999994\" height=\"499.99999999999994\"></image>\n</svg>",
+                    "rotation": 0,
+                    "x": 120,
+                    "width": 145,
+                    "y": 194,
+                    "type": "svg",
+                    "height": 145
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 155,
+                        "y": 0,
+                        "height": 155
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_7_icon_2.png",
+                    "rotation": 0,
+                    "x": 114,
+                    "width": 155,
+                    "y": 189,
+                    "type": "image",
+                    "height": 155
                 }
             ]
         },
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_8_bg_1.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -1877,80 +2454,170 @@
                 },
                 {
                     "spacing": "4",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 0,
-                    "width": 1280,
-                    "y": 36,
+                    "x": 77,
+                    "width": 500,
+                    "y": 50,
                     "text": "业务数据",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
+                    "align": "start",
                     "height": 50,
                     "font": {
                         "size": "36",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 564,
-                    "width": 154,
-                    "y": 85,
+                    "x": 77,
+                    "width": 150,
+                    "y": 95,
                     "text": "BUSINESS PLAN",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
-                    "height": 26,
+                    "align": "start",
+                    "height": 25,
                     "font": {
                         "size": "18",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 0.0
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_8_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 60,
+                        "y": 0,
+                        "height": 113
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_6.png",
                     "rotation": 0,
-                    "x": 139,
-                    "width": 79,
-                    "y": 233,
+                    "x": 45,
+                    "width": 60,
+                    "y": 25,
                     "type": "image",
-                    "height": 79
+                    "height": 113
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_8_icon_2.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 269,
+                        "y": 0,
+                        "height": 269
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_8_icon_2.png",
                     "rotation": 0,
-                    "x": 154,
-                    "width": 50,
-                    "y": 248,
+                    "x": 504,
+                    "width": 269,
+                    "y": 266,
                     "type": "image",
-                    "height": 50
+                    "height": 269
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 155,
+                        "y": 0,
+                        "height": 163
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_8_icon_3.png",
+                    "rotation": 0,
+                    "x": 564,
+                    "width": 155,
+                    "y": 322,
+                    "type": "image",
+                    "height": 163
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 435,
+                        "y": 0,
+                        "height": 230
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_8_icon_1.png",
+                    "rotation": 0,
+                    "x": 70,
+                    "width": 435,
+                    "y": 158,
+                    "type": "image",
+                    "height": 230
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 435,
+                        "y": 0,
+                        "height": 230
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_8_icon_4.png",
+                    "rotation": 0,
+                    "x": 774,
+                    "width": 435,
+                    "y": 158,
+                    "type": "image",
+                    "height": 230
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 435,
+                        "y": 0,
+                        "height": 230
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_8_icon_6.png",
+                    "rotation": 0,
+                    "x": 70,
+                    "width": 435,
+                    "y": 442,
+                    "type": "image",
+                    "height": 230
+                },
+                {
+                    "sub": {
+                        "x": 0,
+                        "width": 435,
+                        "y": 0,
+                        "height": 230
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_8_icon_7.png",
+                    "rotation": 0,
+                    "x": 774,
+                    "width": 435,
+                    "y": 442,
+                    "type": "image",
+                    "height": 230
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#0b0b0b",
                     "rotation": 0,
-                    "x": 283,
-                    "width": 291,
-                    "y": 230,
+                    "x": 107,
+                    "width": 279,
+                    "y": 189,
                     "text": "请输入标题",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 39,
+                    "height": 28,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.0
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#0b0b0b",
                     "rotation": 0,
-                    "x": 283,
-                    "width": 291,
-                    "y": 289,
+                    "x": 107,
+                    "width": 290,
+                    "y": 245,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
@@ -1958,51 +2625,35 @@
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_8_icon_1.png",
-                    "rotation": 0,
-                    "x": 696,
-                    "width": 79,
-                    "y": 233,
-                    "type": "image",
-                    "height": 79
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_8_icon_2.png",
-                    "rotation": 0,
-                    "x": 711,
-                    "width": 50,
-                    "y": 248,
-                    "type": "image",
-                    "height": 50
-                },
-                {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#0b0b0b",
                     "rotation": 0,
-                    "x": 840,
-                    "width": 291,
-                    "y": 230,
+                    "x": 884,
+                    "width": 279,
+                    "y": 189,
                     "text": "请输入标题",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 39,
+                    "height": 28,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.0
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#0b0b0b",
                     "rotation": 0,
-                    "x": 840,
-                    "width": 291,
-                    "y": 289,
+                    "x": 884,
+                    "width": 290,
+                    "y": 245,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
@@ -2010,51 +2661,35 @@
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_8_icon_1.png",
-                    "rotation": 0,
-                    "x": 139,
-                    "width": 79,
-                    "y": 472,
-                    "type": "image",
-                    "height": 79
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_8_icon_2.png",
-                    "rotation": 0,
-                    "x": 154,
-                    "width": 50,
-                    "y": 487,
-                    "type": "image",
-                    "height": 50
-                },
-                {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#0b0b0b",
                     "rotation": 0,
-                    "x": 283,
-                    "width": 291,
-                    "y": 469,
+                    "x": 107,
+                    "width": 279,
+                    "y": 462,
                     "text": "请输入标题",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 39,
+                    "height": 28,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.0
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#0b0b0b",
                     "rotation": 0,
-                    "x": 283,
-                    "width": 291,
-                    "y": 528,
+                    "x": 107,
+                    "width": 290,
+                    "y": 518,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
@@ -2062,51 +2697,35 @@
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_8_icon_1.png",
-                    "rotation": 0,
-                    "x": 696,
-                    "width": 79,
-                    "y": 472,
-                    "type": "image",
-                    "height": 79
-                },
-                {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_8_icon_2.png",
-                    "rotation": 0,
-                    "x": 711,
-                    "width": 50,
-                    "y": 487,
-                    "type": "image",
-                    "height": 50
-                },
-                {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#0b0b0b",
                     "rotation": 0,
-                    "x": 840,
-                    "width": 291,
-                    "y": 469,
+                    "x": 884,
+                    "width": 279,
+                    "y": 462,
                     "text": "请输入标题",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 39,
+                    "height": 28,
                     "font": {
                         "size": "28",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.0
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#0b0b0b",
                     "rotation": 0,
-                    "x": 840,
-                    "width": 291,
-                    "y": 528,
+                    "x": 884,
+                    "width": 290,
+                    "y": 518,
                     "text": "请输入描述",
                     "bold": false,
                     "type": "text",
@@ -2114,7 +2733,8 @@
                     "height": 30,
                     "font": {
                         "size": "22",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 }
             ]
@@ -2122,7 +2742,13 @@
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_8_bg_1.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -2134,42 +2760,60 @@
                     "spacing": "4",
                     "color": "#ffffff",
                     "rotation": 0,
-                    "x": 0,
-                    "width": 1280,
-                    "y": 36,
+                    "x": 77,
+                    "width": 500,
+                    "y": 50,
                     "text": "股权结构",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
+                    "align": "start",
                     "height": 50,
                     "font": {
                         "size": "36",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
                     "color": "#ffffff",
                     "rotation": 0,
-                    "x": 564,
-                    "width": 155,
-                    "y": 85,
+                    "x": 77,
+                    "width": 150,
+                    "y": 95,
                     "text": "BUSINESS PLAN",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
-                    "height": 26,
+                    "align": "start",
+                    "height": 25,
                     "font": {
                         "size": "18",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 0.0
                     }
                 },
                 {
+                    "sub": {
+                        "x": 0,
+                        "width": 60,
+                        "y": 0,
+                        "height": 113
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_6.png",
+                    "rotation": 0,
+                    "x": 45,
+                    "width": 60,
+                    "y": 25,
+                    "type": "image",
+                    "height": 113
+                },
+                {
+                    "image": "http://az.img.nutsbp.com/public/nutsbp/image/slide/22825/a35933e0-a590-11e7-93a1-41f341732685",
                     "rotation": 0,
                     "x": 231,
                     "width": 820,
-                    "y": 101,
-                    "type": "chart",
+                    "y": 71,
+                    "type": "image",
                     "height": 720
                 }
             ]
@@ -2177,7 +2821,13 @@
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_10_bg_1.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -2186,82 +2836,123 @@
                     "height": 720
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_10_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 178,
+                        "y": 0,
+                        "height": 178
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_10_icon_1.png",
                     "rotation": 0,
-                    "x": 173,
-                    "width": 123,
-                    "y": 307,
+                    "x": 179,
+                    "width": 178,
+                    "y": 277,
                     "type": "image",
-                    "height": 142
+                    "height": 178
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_10_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 178,
+                        "y": 0,
+                        "height": 178
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_10_icon_1.png",
                     "rotation": 0,
-                    "x": 443,
-                    "width": 123,
-                    "y": 307,
+                    "x": 428,
+                    "width": 178,
+                    "y": 277,
                     "type": "image",
-                    "height": 142
+                    "height": 178
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_10_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 178,
+                        "y": 0,
+                        "height": 178
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_10_icon_1.png",
                     "rotation": 0,
-                    "x": 714,
-                    "width": 123,
-                    "y": 307,
+                    "x": 676,
+                    "width": 178,
+                    "y": 277,
                     "type": "image",
-                    "height": 142
+                    "height": 178
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_10_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 178,
+                        "y": 0,
+                        "height": 178
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_10_icon_1.png",
                     "rotation": 0,
-                    "x": 984,
-                    "width": 123,
-                    "y": 307,
+                    "x": 924,
+                    "width": 178,
+                    "y": 277,
                     "type": "image",
-                    "height": 142
+                    "height": 178
                 },
                 {
                     "spacing": "4",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 0,
-                    "width": 1280,
-                    "y": 36,
+                    "x": 77,
+                    "width": 500,
+                    "y": 50,
                     "text": "融资计划",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
+                    "align": "start",
                     "height": 50,
                     "font": {
                         "size": "36",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 564,
-                    "width": 155,
-                    "y": 85,
+                    "x": 77,
+                    "width": 150,
+                    "y": 95,
                     "text": "BUSINESS PLAN",
                     "bold": false,
                     "type": "text",
-                    "align": "center",
-                    "height": 26,
+                    "align": "start",
+                    "height": 25,
                     "font": {
                         "size": "18",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 0.0
                     }
                 },
                 {
-                    "spacing": "0",
-                    "color": "#ffffff",
+                    "sub": {
+                        "x": 0,
+                        "width": 60,
+                        "y": 0,
+                        "height": 113
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_2_icon_6.png",
                     "rotation": 0,
-                    "x": 185,
-                    "width": 98,
-                    "y": 513,
+                    "x": 45,
+                    "width": 60,
+                    "y": 25,
+                    "type": "image",
+                    "height": 113
+                },
+                {
+                    "spacing": "0",
+                    "color": "#fafcfd",
+                    "rotation": 0,
+                    "x": 219,
+                    "width": 100,
+                    "y": 535,
                     "text": "请输入用途",
                     "bold": true,
                     "type": "text",
@@ -2269,50 +2960,53 @@
                     "height": 66,
                     "font": {
                         "size": "24",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#00ffff",
+                    "color": "#f7f7f7",
                     "rotation": 0,
-                    "x": 163,
-                    "width": 71,
-                    "y": 362,
+                    "x": 191,
+                    "width": 84,
+                    "y": 351,
                     "text": "100",
                     "bold": true,
                     "type": "text",
                     "align": "right",
-                    "height": 33,
+                    "height": 30,
                     "font": {
-                        "size": "24",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#00ffff",
+                    "color": "#f7f7f7",
                     "rotation": 0,
-                    "x": 237,
-                    "width": 24,
-                    "y": 362,
+                    "x": 278,
+                    "width": 22,
+                    "y": 351,
                     "text": "万",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 33,
+                    "height": 30,
                     "font": {
-                        "size": "24",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 455,
-                    "width": 98,
-                    "y": 513,
+                    "x": 467,
+                    "width": 100,
+                    "y": 535,
                     "text": "请输入用途",
                     "bold": true,
                     "type": "text",
@@ -2320,50 +3014,53 @@
                     "height": 66,
                     "font": {
                         "size": "24",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#00ffff",
+                    "color": "#f7f7f7",
                     "rotation": 0,
-                    "x": 436,
-                    "width": 72,
-                    "y": 360,
+                    "x": 437,
+                    "width": 86,
+                    "y": 351,
                     "text": "100",
                     "bold": true,
                     "type": "text",
                     "align": "right",
-                    "height": 33,
+                    "height": 30,
                     "font": {
-                        "size": "24",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#00ffff",
+                    "color": "#f7f7f7",
                     "rotation": 0,
-                    "x": 511,
-                    "width": 24,
-                    "y": 360,
+                    "x": 526,
+                    "width": 22,
+                    "y": 351,
                     "text": "万",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 33,
+                    "height": 30,
                     "font": {
-                        "size": "24",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 726,
-                    "width": 98,
-                    "y": 513,
+                    "x": 716,
+                    "width": 100,
+                    "y": 535,
                     "text": "请输入用途",
                     "bold": true,
                     "type": "text",
@@ -2371,50 +3068,53 @@
                     "height": 66,
                     "font": {
                         "size": "24",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#00ffff",
+                    "color": "#f7f7f7",
                     "rotation": 0,
-                    "x": 701,
-                    "width": 80,
-                    "y": 360,
+                    "x": 685,
+                    "width": 87,
+                    "y": 351,
                     "text": "100",
                     "bold": true,
                     "type": "text",
                     "align": "right",
-                    "height": 33,
+                    "height": 30,
                     "font": {
-                        "size": "24",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#00ffff",
+                    "color": "#f7f7f7",
                     "rotation": 0,
-                    "x": 783,
-                    "width": 24,
-                    "y": 360,
+                    "x": 775,
+                    "width": 22,
+                    "y": 351,
                     "text": "万",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 33,
+                    "height": 30,
                     "font": {
-                        "size": "24",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#ffffff",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 996,
-                    "width": 98,
-                    "y": 513,
+                    "x": 964,
+                    "width": 100,
+                    "y": 535,
                     "text": "请输入用途",
                     "bold": true,
                     "type": "text",
@@ -2422,190 +3122,206 @@
                     "height": 66,
                     "font": {
                         "size": "24",
-                        "family": "SimHei"
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#00ffff",
+                    "color": "#f7f7f7",
                     "rotation": 0,
-                    "x": 972,
-                    "width": 79,
-                    "y": 360,
+                    "x": 935,
+                    "width": 85,
+                    "y": 351,
                     "text": "100",
                     "bold": true,
                     "type": "text",
                     "align": "right",
-                    "height": 33,
+                    "height": 30,
                     "font": {
-                        "size": "24",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#00ffff",
+                    "color": "#f7f7f7",
                     "rotation": 0,
-                    "x": 1053,
-                    "width": 24,
-                    "y": 360,
+                    "x": 1023,
+                    "width": 22,
+                    "y": 351,
                     "text": "万",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 33,
+                    "height": 30,
                     "font": {
-                        "size": "24",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#fbfcfd",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 469,
-                    "width": 63,
-                    "y": 175,
+                    "x": 415,
+                    "width": 35,
+                    "y": 149,
+                    "text": "\"",
+                    "bold": true,
+                    "type": "text",
+                    "align": "center",
+                    "height": 67,
+                    "font": {
+                        "size": "48",
+                        "family": "SimHei",
+                        "height": 1.4
+                    }
+                },
+                {
+                    "spacing": "0",
+                    "color": "#fafcfd",
+                    "rotation": 0,
+                    "x": 450,
+                    "width": 74,
+                    "y": 163,
                     "text": "融资",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 33,
+                    "height": 39,
                     "font": {
-                        "size": "24",
-                        "family": "SimHei"
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#00ffff",
+                    "color": "#24c8d1",
                     "rotation": 0,
-                    "x": 526,
-                    "width": 83,
-                    "y": 170,
+                    "x": 514,
+                    "width": 96,
+                    "y": 161,
                     "text": "1000",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 42,
+                    "height": 44,
                     "font": {
-                        "size": "30",
-                        "family": "SimHei"
+                        "size": "32",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#fbfcfd",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 607,
-                    "width": 24,
-                    "y": 175,
+                    "x": 610,
+                    "width": 28,
+                    "y": 163,
                     "text": "万",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 33,
+                    "height": 39,
                     "font": {
-                        "size": "24",
-                        "family": "SimHei"
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#fbfcfd",
+                    "color": "#fafcfd",
                     "rotation": 0,
                     "x": 645,
-                    "width": 69,
-                    "y": 175,
+                    "width": 84,
+                    "y": 163,
                     "text": ",出让",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 33,
+                    "height": 39,
                     "font": {
-                        "size": "24",
-                        "family": "SimHei"
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#00ffff",
+                    "color": "#24c8d1",
                     "rotation": 0,
-                    "x": 718,
-                    "width": 36,
-                    "y": 170,
+                    "x": 732,
+                    "width": 38,
+                    "y": 161,
                     "text": "20",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 42,
+                    "height": 44,
                     "font": {
-                        "size": "30",
-                        "family": "SimHei"
+                        "size": "32",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#00ffff",
+                    "color": "#24c8d1",
                     "rotation": 0,
-                    "x": 751,
-                    "width": 30,
-                    "y": 170,
+                    "x": 768,
+                    "width": 31,
+                    "y": 161,
                     "text": "%",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 42,
+                    "height": 44,
                     "font": {
-                        "size": "30",
-                        "family": "SimHei"
+                        "size": "32",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
-                    "color": "#fbfcfd",
+                    "color": "#fafcfd",
                     "rotation": 0,
-                    "x": 787,
-                    "width": 48,
-                    "y": 175,
+                    "x": 786,
+                    "width": 56,
+                    "y": 163,
                     "text": "股权",
                     "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 33,
+                    "height": 39,
                     "font": {
-                        "size": "24",
-                        "family": "SimHei"
+                        "size": "28",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
-                    "color": "#fbfcfd",
-                    "rotation": 0,
-                    "x": 436,
-                    "width": 33,
-                    "y": 149,
-                    "text": "\"",
-                    "type": "text",
-                    "align": "center",
-                    "height": 84,
-                    "font": {
-                        "size": "56",
-                        "family": ""
-                    }
-                },
-                {
-                    "color": "#fbfcfd",
+                    "spacing": "0",
+                    "color": "#fafcfd",
                     "rotation": 0,
                     "x": 837,
-                    "width": 33,
+                    "width": 28,
                     "y": 149,
                     "text": "\"",
+                    "bold": true,
                     "type": "text",
                     "align": "center",
-                    "height": 84,
+                    "height": 67,
                     "font": {
-                        "size": "56",
-                        "family": ""
+                        "size": "48",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 }
             ]
@@ -2613,7 +3329,13 @@
         {
             "elements": [
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_14_bg_1.jpg",
+                    "sub": {
+                        "x": 0,
+                        "width": 1280,
+                        "y": 0,
+                        "height": 720
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_1_bg_1.jpg",
                     "rotation": 0,
                     "x": 0,
                     "width": 1280,
@@ -2622,24 +3344,46 @@
                     "height": 720
                 },
                 {
+                    "sub": {
+                        "x": 0,
+                        "width": 1042,
+                        "y": 0,
+                        "height": 602
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_14_icon_8.png",
+                    "rotation": 0,
+                    "x": 133,
+                    "width": 1042,
+                    "y": 73,
+                    "type": "image",
+                    "height": 602
+                },
+                {
                     "spacing": "0",
                     "color": "#fbfcfd",
                     "rotation": 0,
-                    "x": 314,
-                    "width": 310,
-                    "y": 306,
+                    "x": 276,
+                    "width": 339,
+                    "y": 321,
                     "text": "Thanks.",
                     "bold": true,
                     "type": "text",
                     "align": "start",
-                    "height": 91,
+                    "height": 106,
                     "font": {
                         "size": "80",
-                        "family": "SimHei"
+                        "family": "Microsoft YaHei",
+                        "height": 0.0
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_14_icon_1.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_14_icon_1.png",
                     "rotation": 0,
                     "x": 673,
                     "width": 50,
@@ -2652,37 +3396,45 @@
                     "color": "#ffffff",
                     "rotation": 0,
                     "x": 723,
-                    "width": 64,
+                    "width": 66,
                     "y": 197,
                     "text": "姓名：",
                     "bold": false,
                     "type": "text",
                     "align": "left",
-                    "height": 28,
+                    "height": 33,
                     "font": {
-                        "size": "20",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
                     "color": "#ffffff",
                     "rotation": 0,
-                    "x": 787,
-                    "width": 100,
+                    "x": 789,
+                    "width": 110,
                     "y": 197,
                     "text": "请输入姓名",
                     "bold": false,
                     "type": "text",
                     "align": "left",
-                    "height": 30,
+                    "height": 33,
                     "font": {
-                        "size": "20",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.5
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_14_icon_2.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_14_icon_2.png",
                     "rotation": 0,
                     "x": 673,
                     "width": 50,
@@ -2695,37 +3447,45 @@
                     "color": "#ffffff",
                     "rotation": 0,
                     "x": 723,
-                    "width": 64,
+                    "width": 66,
                     "y": 254,
                     "text": "电话：",
                     "bold": false,
                     "type": "text",
                     "align": "left",
-                    "height": 28,
+                    "height": 33,
                     "font": {
-                        "size": "20",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
                     "color": "#ffffff",
                     "rotation": 0,
-                    "x": 787,
-                    "width": 140,
+                    "x": 789,
+                    "width": 154,
                     "y": 254,
                     "text": "请输入电话号码",
                     "bold": false,
                     "type": "text",
                     "align": "left",
-                    "height": 30,
+                    "height": 33,
                     "font": {
-                        "size": "20",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.5
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_14_icon_3.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_14_icon_3.png",
                     "rotation": 0,
                     "x": 673,
                     "width": 50,
@@ -2738,37 +3498,45 @@
                     "color": "#ffffff",
                     "rotation": 0,
                     "x": 723,
-                    "width": 64,
+                    "width": 66,
                     "y": 311,
                     "text": "邮箱：",
                     "bold": false,
                     "type": "text",
                     "align": "left",
-                    "height": 28,
+                    "height": 33,
                     "font": {
-                        "size": "20",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
                     "color": "#ffffff",
                     "rotation": 0,
-                    "x": 787,
-                    "width": 100,
+                    "x": 789,
+                    "width": 110,
                     "y": 311,
                     "text": "请输入邮箱",
                     "bold": false,
                     "type": "text",
                     "align": "left",
-                    "height": 30,
+                    "height": 33,
                     "font": {
-                        "size": "20",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.5
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_14_icon_4.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_14_icon_4.png",
                     "rotation": 0,
                     "x": 673,
                     "width": 50,
@@ -2781,41 +3549,49 @@
                     "color": "#ffffff",
                     "rotation": 0,
                     "x": 723,
-                    "width": 54,
+                    "width": 64,
                     "y": 368,
                     "text": "QQ：",
                     "bold": false,
                     "type": "text",
                     "align": "left",
-                    "height": 28,
+                    "height": 30,
                     "font": {
-                        "size": "20",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
                     "color": "#ffffff",
                     "rotation": 0,
-                    "x": 787,
-                    "width": 131,
+                    "x": 789,
+                    "width": 144,
                     "y": 368,
                     "text": "请输入QQ号码",
                     "bold": false,
                     "type": "text",
                     "align": "left",
-                    "height": 30,
+                    "height": 33,
                     "font": {
-                        "size": "20",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.5
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_14_icon_5.png",
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_14_icon_5.png",
                     "rotation": 0,
                     "x": 673,
                     "width": 50,
-                    "y": 420,
+                    "y": 425,
                     "type": "image",
                     "height": 50
                 },
@@ -2824,41 +3600,49 @@
                     "color": "#ffffff",
                     "rotation": 0,
                     "x": 723,
-                    "width": 64,
-                    "y": 430,
+                    "width": 66,
+                    "y": 435,
                     "text": "微信：",
                     "bold": false,
                     "type": "text",
                     "align": "left",
-                    "height": 28,
+                    "height": 33,
                     "font": {
-                        "size": "20",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
                     "color": "#ffffff",
                     "rotation": 0,
-                    "x": 787,
-                    "width": 140,
-                    "y": 430,
+                    "x": 789,
+                    "width": 154,
+                    "y": 435,
                     "text": "请输入微信号码",
                     "bold": false,
                     "type": "text",
                     "align": "left",
-                    "height": 30,
+                    "height": 33,
                     "font": {
-                        "size": "20",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.5
                     }
                 },
                 {
-                    "image": "http://edit.nutsbp.com/template/1011/images/1011_14_icon_6.png",
-                    "rotation": 10,
+                    "sub": {
+                        "x": 0,
+                        "width": 50,
+                        "y": 0,
+                        "height": 50
+                    },
+                    "image": "http://edit.nutsbp.com/template/1010/images/1010_14_icon_6.png",
+                    "rotation": 0,
                     "x": 673,
                     "width": 50,
-                    "y": 478,
+                    "y": 483,
                     "type": "image",
                     "height": 50
                 },
@@ -2867,33 +3651,35 @@
                     "color": "#ffffff",
                     "rotation": 0,
                     "x": 723,
-                    "width": 63,
-                    "y": 488,
+                    "width": 66,
+                    "y": 493,
                     "text": "地址：",
                     "bold": false,
                     "type": "text",
                     "align": "left",
-                    "height": 28,
+                    "height": 33,
                     "font": {
-                        "size": "20",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.4
                     }
                 },
                 {
                     "spacing": "0",
                     "color": "#ffffff",
                     "rotation": 0,
-                    "x": 787,
-                    "width": 100,
-                    "y": 488,
+                    "x": 789,
+                    "width": 110,
+                    "y": 493,
                     "text": "请输入地址",
                     "bold": false,
                     "type": "text",
                     "align": "left",
-                    "height": 30,
+                    "height": 33,
                     "font": {
-                        "size": "20",
-                        "family": "SimHei"
+                        "size": "22",
+                        "family": "SimHei",
+                        "height": 1.5
                     }
                 }
             ]

@@ -12,17 +12,20 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Map;
 
 /**
  * @author lpw
  */
 @Component("tephra.poi.pptx.image")
-public class ImageParserImpl extends ParserSupport implements Parser {
+public class ImageParserImpl implements Parser {
     @Inject
     private Http http;
     @Inject
     private Logger logger;
+    @Inject
+    private ParserHelper parserHelper;
 
     @Override
     public String getType() {
@@ -32,19 +35,29 @@ public class ImageParserImpl extends ParserSupport implements Parser {
     @Override
     public void parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Map<String, String> map = http.download(object.getString("image"), null, null, outputStream);
+        String image = object.getString("image");
+        Map<String, String> map = http.download(image, null, null, outputStream);
         if (map == null)
             return;
 
-        XSLFPictureData xslfPictureData = xmlSlideShow.addPicture(outputStream.toByteArray(), getPictureType(map.get("Content-Type")));
-        XSLFPictureShape xslfPictureShape = xslfSlide.createPicture(xslfPictureData);
-        xslfPictureShape.setAnchor(getRectangle(object));
-        rotate(xslfPictureShape, object);
+        try {
+            String contenType = map.get("Content-Type");
+            XSLFPictureData xslfPictureData = xmlSlideShow.addPicture(parserHelper.subImage(outputStream.toByteArray(),
+                    object, contenType.substring(contenType.indexOf('/') + 1).toUpperCase()), getPictureType(contenType));
+            XSLFPictureShape xslfPictureShape = xslfSlide.createPicture(xslfPictureData);
+            xslfPictureShape.setAnchor(parserHelper.getRectangle(object));
+            parserHelper.rotate(xslfPictureShape, object);
+        } catch (IOException e) {
+            logger.warn(e, "解析图片[{}]时发生异常！", object.toJSONString());
+        }
     }
 
     private PictureData.PictureType getPictureType(String contentType) {
         if (contentType.equals("image/jpeg"))
             return PictureData.PictureType.JPEG;
+
+        if (contentType.equals("image/gif"))
+            return PictureData.PictureType.GIF;
 
         if (!contentType.equals("image/png"))
             logger.warn(null, "未处理图片类型[{}]！", contentType);
