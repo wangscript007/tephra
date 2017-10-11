@@ -97,5 +97,6 @@ public class ResponseImpl implements Response, ResponseAware {
     @Override
     public void set(ResponseAdapter adapter) {
         this.adapter.set(adapter);
+        contentType.remove();
     }
 }
