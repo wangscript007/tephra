@@ -2,6 +2,8 @@ package org.lpw.tephra.poi.pptx;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.lpw.tephra.bean.BeanFactory;
+import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Component;
 
@@ -13,14 +15,22 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author lpw
  */
 @Component("tephra.poi.pptx.parser-helper")
-public class ParserHelperImpl implements ParserHelper {
+public class ParserHelperImpl implements ParserHelper, ContextRefreshedListener {
     @Inject
     private Numeric numeric;
+    private Map<String, Parser> parsers;
+
+    @Override
+    public Parser get(String type) {
+        return parsers.get(type);
+    }
 
     @Override
     public Rectangle getRectangle(JSONObject object) {
@@ -82,5 +92,16 @@ public class ParserHelperImpl implements ParserHelper {
         outputStream.close();
 
         return outputStream.toByteArray();
+    }
+
+    @Override
+    public int getContextRefreshedSort() {
+        return 8;
+    }
+
+    @Override
+    public void onContextRefreshed() {
+        parsers = new HashMap<>();
+        BeanFactory.getBeans(Parser.class).forEach(parser -> parsers.put(parser.getType(), parser));
     }
 }

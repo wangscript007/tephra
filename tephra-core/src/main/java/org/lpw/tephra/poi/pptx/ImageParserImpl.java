@@ -33,12 +33,12 @@ public class ImageParserImpl implements Parser {
     }
 
     @Override
-    public void parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
+    public boolean parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         String image = object.getString("image");
         Map<String, String> map = http.download(image, null, null, outputStream);
         if (map == null)
-            return;
+            return false;
 
         try {
             String contenType = map.get("Content-Type");
@@ -47,8 +47,12 @@ public class ImageParserImpl implements Parser {
             XSLFPictureShape xslfPictureShape = xslfSlide.createPicture(xslfPictureData);
             xslfPictureShape.setAnchor(parserHelper.getRectangle(object));
             parserHelper.rotate(xslfPictureShape, object);
+
+            return true;
         } catch (IOException e) {
             logger.warn(e, "解析图片[{}]时发生异常！", object.toJSONString());
+
+            return false;
         }
     }
 

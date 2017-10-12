@@ -4,9 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.lpw.tephra.bean.BeanFactory;
-import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.poi.pptx.Parser;
+import org.lpw.tephra.poi.pptx.ParserHelper;
 import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
 
@@ -14,17 +13,16 @@ import javax.inject.Inject;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author lpw
  */
 @Component("tephra.poi.pptx")
-public class PptxImpl implements Pptx, ContextRefreshedListener {
+public class PptxImpl implements Pptx {
     @Inject
     private Logger logger;
-    private Map<String, Parser> parsers;
+    @Inject
+    private ParserHelper parserHelper;
 
     @Override
     public void write(JSONObject object, OutputStream outputStream) {
@@ -61,22 +59,9 @@ public class PptxImpl implements Pptx, ContextRefreshedListener {
             if (!element.containsKey("type"))
                 continue;
 
-            String type = element.getString("type");
-            if (!parsers.containsKey(type))
-                continue;
-
-            parsers.get(type).parse(xmlSlideShow, xslfSlide, element);
+            Parser parser = parserHelper.get(element.getString("type"));
+            if (parser != null)
+                parser.parse(xmlSlideShow, xslfSlide, element);
         }
-    }
-
-    @Override
-    public int getContextRefreshedSort() {
-        return 8;
-    }
-
-    @Override
-    public void onContextRefreshed() {
-        parsers = new HashMap<>();
-        BeanFactory.getBeans(Parser.class).forEach(parser -> parsers.put(parser.getType(), parser));
     }
 }

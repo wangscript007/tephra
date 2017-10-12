@@ -38,15 +38,19 @@ public class SvgParserImpl implements Parser {
     }
 
     @Override
-    public void parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
+    public boolean parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
         try {
             XSLFPictureData xslfPictureData = xmlSlideShow.addPicture(parserHelper.subImage(readSvg(object.getString("svg")),
                     object, "PNG"), PictureData.PictureType.PNG);
             XSLFPictureShape xslfPictureShape = xslfSlide.createPicture(xslfPictureData);
             xslfPictureShape.setAnchor(parserHelper.getRectangle(object));
             parserHelper.rotate(xslfPictureShape, object);
+
+            return true;
         } catch (IOException | TranscoderException e) {
             logger.warn(e, "解析SVG图片[{}]时发生异常！", object.toJSONString());
+
+            return false;
         }
     }
 

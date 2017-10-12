@@ -30,7 +30,7 @@ public class TextParserImpl implements Parser {
     }
 
     @Override
-    public void parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
+    public boolean parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
         XSLFTextBox xslfTextBox = xslfSlide.createTextBox();
         xslfTextBox.clearText();
         xslfTextBox.setAnchor(parserHelper.getRectangle(object));
@@ -50,6 +50,8 @@ public class TextParserImpl implements Parser {
             xslfTextRun.setItalic(true);
         if (object.containsKey("spacing"))
             xslfTextRun.setCharacterSpacing(numeric.toDouble(object.getString("spacing")));
+
+        return true;
     }
 
     private void align(XSLFTextParagraph xslfTextParagraph, JSONObject object) {

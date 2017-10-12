@@ -14,6 +14,14 @@ import java.io.IOException;
  */
 public interface ParserHelper {
     /**
+     * 获取解析器。
+     *
+     * @param type 解析器类型。
+     * @return 解析器；如果不存在则返回null。
+     */
+    Parser get(String type);
+
+    /**
      * 获取矩形对象。
      *
      * @param object JSON数据。

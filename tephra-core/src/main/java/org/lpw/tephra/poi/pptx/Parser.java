@@ -23,6 +23,7 @@ public interface Parser {
      * @param xmlSlideShow PPTx实例。
      * @param xslfSlide    Slide实例。
      * @param object       数据。
+     * @return 如果解析成功则返回true；否则返回false。
      */
-    void parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object);
+    boolean parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object);
 }
