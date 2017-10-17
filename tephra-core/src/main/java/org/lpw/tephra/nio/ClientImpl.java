@@ -21,28 +21,22 @@ public class ClientImpl extends Handler implements Client {
     protected String ip;
     protected int port;
     protected EventLoopGroup group;
-    protected Bootstrap bootstrap;
 
     @Override
     public void connect(ClientListener listener, String ip, int port) {
         this.listener = listener;
         this.ip = ip;
         this.port = port;
-        if (group == null)
-            group = new NioEventLoopGroup(1);
-        if (bootstrap == null)
-            bootstrap = new Bootstrap().group(group).channel(NioSocketChannel.class).handler(this);
-
+        close();
+        group = new NioEventLoopGroup(1);
+        new Bootstrap().group(group).channel(NioSocketChannel.class).handler(this).connect(ip, port);
         if (logger.isInfoEnable())
             logger.info("连接远程服务[{}:{}]。", ip, port);
-
-        bootstrap.connect(ip, port);
     }
 
     @Override
     public void channelActive(ChannelHandlerContext context) throws Exception {
         listener.connect(nioHelper.put(context));
-
         if (logger.isInfoEnable())
             logger.info("连接到远程服务[{}:{}]。", ip, port);
     }
@@ -54,7 +48,7 @@ public class ClientImpl extends Handler implements Client {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext context, Throwable cause) throws Exception {
-        logger.warn(cause, "连接远程服务[{}:{}]发生异常！", ip, port);
+        logger.warn(cause, "连接远程服务时[{}:{}]发生异常！", ip, port);
         if (context != null)
             context.close();
         close();
@@ -62,13 +56,11 @@ public class ClientImpl extends Handler implements Client {
 
     @Override
     public void close() {
-        if (listener != null)
-            listener.disconnect();
-        listener = null;
+        if (listener == null || group == null || group.isShutdown())
+            return;
 
-        if (group != null && !group.isShutdown())
-            group.shutdownGracefully();
-
+        listener.disconnect();
+        group.shutdownGracefully();
         if (logger.isInfoEnable())
             logger.info("断开远程服务[{}:{}]连接。", ip, port);
     }

@@ -8,6 +8,8 @@ package org.lpw.tephra.nio;
 public interface ClientListener extends Listener {
     /**
      * 连接完成。当连接完成时回调此方法。
+     *
+     * @param sessionId Session ID值。
      */
     void connect(String sessionId);
 

@@ -1,4 +1,4 @@
-package org.lpw.tephra.nio;
+package org.lpw.tephra.ws;
 
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextClosedListener;
@@ -11,13 +11,13 @@ import java.util.Set;
 /**
  * @author lpw
  */
-@Component("tephra.nio.client-manager")
-public class ClientManagerImpl implements ClientManager, ContextClosedListener {
-    private Set<Client> clients = Collections.synchronizedSet(new HashSet<>());
+@Component("tephra.ws.clients")
+public class WsClientsImpl implements WsClients, ContextClosedListener {
+    private Set<WsClient> clients = Collections.synchronizedSet(new HashSet<>());
 
     @Override
-    public Client get() {
-        Client client = BeanFactory.getBean(Client.class);
+    public WsClient get() {
+        WsClient client = BeanFactory.getBean(WsClient.class);
         clients.add(client);
 
         return client;
@@ -28,7 +28,7 @@ public class ClientManagerImpl implements ClientManager, ContextClosedListener {
         if (clients.isEmpty())
             return;
 
-        clients.forEach(Client::close);
+        clients.forEach(WsClient::close);
     }
 
     @Override
