@@ -10,5 +10,13 @@ import java.util.concurrent.Callable;
  * @author lpw
  */
 public interface ChromeClient extends Callable<byte[]> {
+    /**
+     * 设置请求参数。
+     * @param service
+     * @param url
+     * @param wait
+     * @param message
+     * @return
+     */
     ChromeClient set(String service, String url, int wait, JSONObject message);
 }
