@@ -39,12 +39,12 @@ public class TextParserImpl implements Parser {
         parserHelper.rotate(xslfTextBox, object);
         XSLFTextParagraph xslfTextParagraph = xslfTextBox.addNewTextParagraph();
         align(xslfTextParagraph, object);
+        add(xslfTextParagraph, object);
         if (object.containsKey("texts")) {
             JSONArray texts = object.getJSONArray("texts");
             for (int i = 0, size = texts.size(); i < size; i++)
                 add(xslfTextParagraph, texts.getJSONObject(i));
-        } else if (object.containsKey("text"))
-            add(xslfTextParagraph, object);
+        }
 
 
         return true;
@@ -52,7 +52,8 @@ public class TextParserImpl implements Parser {
 
     private void add(XSLFTextParagraph xslfTextParagraph, JSONObject object) {
         XSLFTextRun xslfTextRun = xslfTextParagraph.addNewTextRun();
-        xslfTextRun.setText(object.getString("text"));
+        if (!object.containsKey("texts"))
+            xslfTextRun.setText(object.getString("text"));
         font(xslfTextParagraph, xslfTextRun, object);
         color(xslfTextRun, object);
         if (hasTrue(object, "bold"))
