@@ -40,6 +40,7 @@ Tephra旨在构建一个稳定、高效、易于集群、快速扩展的JavaEE�
 - [dao](tephra-dao/)——持久化模块。
 - [ctrl](tephra-ctrl/)——控制层模块。
 - [ctrl-http](tephra-ctrl-http/)——HTTP(S)模块。
+- [ctrl-socket](tephra-ctrl-socket/)——Socket模块。
 - [script](tephra-script/)——脚本（JavaScript）模块。
 - [carousel](tephra-carousel/)——Carousel访问支持。
 - [hadoop](tephra-hadoop/)——Hadoop访问支持。
