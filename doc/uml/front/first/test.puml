@@ -1,0 +1,9 @@
+@startuml
+
+[core-test] <-- [dao-test]
+[dao-test] <-- [ctrl-test]
+[ctrl-test] <-- [test]
+[ctrl-test] <-- [carousel-test]
+[ctrl-test] <-- [hadoop-test]
+
+@enduml

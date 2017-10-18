@@ -33,6 +33,8 @@ Tephra旨在构建一个稳定、高效、易于集群、快速扩展的JavaEE�
 
 ![组件图](doc/uml/front/first/module.png "组件图")
 
+![单元测试组件图](doc/uml/front/first/test.png "单元测试组件图")
+
 # 模块说明
 - [core](tephra-core/)——基础模块。
 - [dao](tephra-dao/)——持久化模块。
@@ -40,6 +42,5 @@ Tephra旨在构建一个稳定、高效、易于集群、快速扩展的JavaEE�
 - [ctrl-http](tephra-ctrl-http/)——HTTP(S)模块。
 - [script](tephra-script/)——脚本（JavaScript）模块。
 - [carousel](tephra-carousel/)——Carousel访问支持。
-- [weixin](tephra-weixin/)——微信公众号模块。
 - [hadoop](tephra-hadoop/)——Hadoop访问支持。
 - [*test](tephra-test/)——单元测试支持。

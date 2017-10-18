@@ -12,7 +12,6 @@
         <module>tephra-ctrl-http</module>
         <module>tephra-ctrl-socket</module>
         <module>tephra-script</module>
-        <module>tephra-weixin</module>
         <module>tephra-carousel</module>
         <module>tephra-hadoop</module>
         <module>tephra-web</module>
@@ -21,7 +20,6 @@
         <module>tephra-ctrl-test</module>
         <module>tephra-test</module>
         <module>tephra-carousel-test</module>
-        <module>tephra-weixin-test</module>
         <module>tephra-hadoop-test</module>
     </modules>
     <packaging>pom</packaging>
