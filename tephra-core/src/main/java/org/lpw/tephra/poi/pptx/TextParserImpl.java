@@ -1,5 +1,6 @@
 package org.lpw.tephra.poi.pptx;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.TextParagraph;
@@ -38,6 +39,18 @@ public class TextParserImpl implements Parser {
         parserHelper.rotate(xslfTextBox, object);
         XSLFTextParagraph xslfTextParagraph = xslfTextBox.addNewTextParagraph();
         align(xslfTextParagraph, object);
+        if (object.containsKey("texts")) {
+            JSONArray texts = object.getJSONArray("texts");
+            for (int i = 0, size = texts.size(); i < size; i++)
+                add(xslfTextParagraph, texts.getJSONObject(i));
+        } else if (object.containsKey("text"))
+            add(xslfTextParagraph, object);
+
+
+        return true;
+    }
+
+    private void add(XSLFTextParagraph xslfTextParagraph, JSONObject object) {
         XSLFTextRun xslfTextRun = xslfTextParagraph.addNewTextRun();
         xslfTextRun.setText(object.getString("text"));
         font(xslfTextParagraph, xslfTextRun, object);
@@ -49,9 +62,7 @@ public class TextParserImpl implements Parser {
         if (hasTrue(object, "italic"))
             xslfTextRun.setItalic(true);
         if (object.containsKey("spacing"))
-            xslfTextRun.setCharacterSpacing(numeric.toDouble(object.getString("spacing")));
-
-        return true;
+            xslfTextRun.setCharacterSpacing(object.getDoubleValue("spacing"));
     }
 
     private void align(XSLFTextParagraph xslfTextParagraph, JSONObject object) {
@@ -78,7 +89,7 @@ public class TextParserImpl implements Parser {
             double height = 0.0D;
             if (font.containsKey("height"))
                 height = Math.max(0.0D, font.getDoubleValue("height") - 1);
-            double size = numeric.toDouble(font.getString("size"));
+            double size = numeric.toDouble(font.getDoubleValue("size"));
             double space = size * height / 2;
             xslfTextParagraph.setSpaceBefore(space);
             xslfTextParagraph.setSpaceAfter(space);

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,8 @@ import java.util.Map;
 public class ParserHelperImpl implements ParserHelper, ContextRefreshedListener {
     @Inject
     private Numeric numeric;
+    @Inject
+    private Json json;
     private Map<String, Parser> parsers;
 
     @Override
@@ -42,6 +45,10 @@ public class ParserHelperImpl implements ParserHelper, ContextRefreshedListener 
     public void rotate(XSLFSimpleShape xslfSimpleShape, JSONObject object) {
         if (object.containsKey("rotation"))
             xslfSimpleShape.setRotation(object.getDoubleValue("rotation"));
+        if (json.hasTrue(object, "rotationX"))
+            xslfSimpleShape.setFlipVertical(true);
+        if (json.hasTrue(object, "rotationY"))
+            xslfSimpleShape.setFlipHorizontal(true);
     }
 
     @Override

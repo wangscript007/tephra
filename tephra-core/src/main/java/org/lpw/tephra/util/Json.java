@@ -95,4 +95,13 @@ public interface Json {
      * @return JSON字节流。
      */
     byte[] toBytes(Object object);
+
+    /**
+     * 验证是否包含值为true的元素。
+     *
+     * @param object JSON数据。
+     * @param key    属性KEY。
+     * @return 如果包含则返回true。
+     */
+    boolean hasTrue(JSONObject object, String key);
 }

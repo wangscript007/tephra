@@ -144,4 +144,9 @@ public class JsonImpl implements Json {
     public byte[] toBytes(Object object) {
         return JSON.toJSONBytes(object, SerializerFeature.DisableCircularReferenceDetect);
     }
+
+    @Override
+    public boolean hasTrue(JSONObject object, String key) {
+        return object.containsKey(key) && object.getBooleanValue(key);
+    }
 }
