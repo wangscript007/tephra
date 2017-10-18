@@ -1,5 +1,6 @@
 package org.lpw.tephra.ws;
 
+import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -25,23 +26,33 @@ import java.net.URI;
 @ClientEndpoint
 public class WsClientImpl implements WsClient {
     @Inject
+    private Converter converter;
+    @Inject
     private Logger logger;
     @Value("${tephra.ws.client.max-size:67108864}")
     private int maxSize;
+    private WebSocketContainer container;
     private WsClientListener listener;
     private Session session;
 
     @Override
     public void connect(WsClientListener listener, String url) {
         this.listener = listener;
-        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-        container.setDefaultMaxTextMessageBufferSize(maxSize);
         try {
-            container.connectToServer(this, new URI(url));
+            getContainer().connectToServer(this, new URI(url));
         } catch (Exception e) {
             logger.warn(e, "连接远程WebSocket服务[{}]时发生异常！", url);
             close();
         }
+    }
+
+    private synchronized WebSocketContainer getContainer() {
+        if (container == null) {
+            container = ContainerProvider.getWebSocketContainer();
+            container.setDefaultMaxTextMessageBufferSize(maxSize);
+        }
+
+        return container;
     }
 
     @OnOpen
@@ -56,7 +67,7 @@ public class WsClientImpl implements WsClient {
     public void message(String message) {
         listener.receive(message);
         if (logger.isDebugEnable())
-            logger.debug("接收到远程WebSocket发送的数据[{}]。", message.length());
+            logger.debug("接收到远程WebSocket发送的数据[{}]。", converter.toBitSize(message.length()));
     }
 
     @OnError
@@ -67,11 +78,13 @@ public class WsClientImpl implements WsClient {
     @Override
     public void send(String message) {
         session.getAsyncRemote().sendText(message);
+        if (logger.isDebugEnable())
+            logger.debug("发送数据[{}]到远程WebSocket服务[{}]。", message, session);
     }
 
     @Override
     public void close() {
-        if (session == null || !session.isOpen())
+        if (session == null)
             return;
 
         if (logger.isDebugEnable())
@@ -79,6 +92,7 @@ public class WsClientImpl implements WsClient {
 
         try {
             session.close();
+            session = null;
         } catch (IOException e) {
             logger.warn(e, "关闭远程WebSocket连接[{}]时发生异常！", session);
         }

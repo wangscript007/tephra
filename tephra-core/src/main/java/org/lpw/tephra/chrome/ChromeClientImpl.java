@@ -65,7 +65,7 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
         wsClient.close();
         http.get("http://" + service + "/json/close/" + object.getString("id"), null, "");
 
-        return Base64.getDecoder().decode(result);
+        return Base64.getDecoder().decode(json.toObject(result).getJSONObject("result").getString("data"));
     }
 
     @Override

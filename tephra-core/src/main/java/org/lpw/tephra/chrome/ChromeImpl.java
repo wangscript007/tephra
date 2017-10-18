@@ -58,7 +58,7 @@ public class ChromeImpl implements Chrome, StorageListener, ContextRefreshedList
     private List<String> list;
 
     @Override
-    public byte[] pdf(String url, int wait, int width, int height) {
+    public byte[] pdf(String url, int wait, int width, int height, String range) {
         if (validator.isEmpty(list))
             return null;
 
@@ -73,6 +73,49 @@ public class ChromeImpl implements Chrome, StorageListener, ContextRefreshedList
         params.put("marginBottom", 0.0D);
         params.put("marginLeft", 0.0D);
         params.put("marginRight", 0.0D);
+        params.put("pageRanges", range);
+        message.put("params", params);
+        Future<byte[]> future = executorService.submit(BeanFactory.getBean(ChromeClient.class).set(
+                list.get(generator.random(0, list.size() - 1)), url, wait, message));
+
+        try {
+            return future.get();
+        } catch (Exception e) {
+            logger.warn(e, "获取PDF数据[{}:{}:{}:{}]时发生异常！", url, wait, width, height);
+
+            return null;
+        }
+    }
+
+    @Override
+    public byte[] png(String url, int wait, int x, int y, int width, int height) {
+        return img(url, wait, "png", 0, x, y, width, height);
+    }
+
+    @Override
+    public byte[] jpeg(String url, int wait, int x, int y, int width, int height) {
+        return img(url, wait, "jpeg", 100, x, y, width, height);
+    }
+
+    private byte[] img(String url, int wait, String format, int quality, int x, int y, int width, int height) {
+        if (validator.isEmpty(list))
+            return null;
+
+        JSONObject message = new JSONObject();
+        message.put("id", generator.random(1, 9999));
+        message.put("method", "Page.captureScreenshot");
+        JSONObject params = new JSONObject();
+        params.put("format", format);
+        if (quality > 0)
+            params.put("quality", quality);
+        JSONObject clip = new JSONObject();
+        clip.put("offsetX", x);
+        clip.put("offsetY", y);
+        clip.put("pageX", 0);
+        clip.put("pageY", 0);
+        clip.put("clientWidth", x + width);
+        clip.put("clientHeight", y + height);
+        params.put("clip", clip);
         message.put("params", params);
         Future<byte[]> future = executorService.submit(BeanFactory.getBean(ChromeClient.class).set(
                 list.get(generator.random(0, list.size() - 1)), url, wait, message));
