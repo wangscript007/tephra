@@ -3,6 +3,7 @@ package org.lpw.tephra.chrome;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Json;
+import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Thread;
 import org.lpw.tephra.util.TimeUnit;
 import org.lpw.tephra.ws.WsClient;
@@ -28,6 +29,8 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
     private Json json;
     @Inject
     private Thread thread;
+    @Inject
+    private Logger logger;
     @Inject
     private WsClients wsClients;
     @Value("${tephra.chrome.max-wait:30}")
@@ -64,6 +67,11 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
         }
         wsClient.close();
         http.get("http://" + service + "/json/close/" + object.getString("id"), null, "");
+        if (result == null) {
+            logger.warn(null, "请求[{}]等待[{}]秒未获得Chrome推送的数据！", message, maxWait);
+
+            return null;
+        }
 
         return Base64.getDecoder().decode(json.toObject(result).getJSONObject("result").getString("data"));
     }
