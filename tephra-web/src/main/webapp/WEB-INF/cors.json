@@ -1,5 +1,7 @@
 {
-    "origin": "*",
+    "origin": [
+        "*"
+    ],
     "methods": [
         "GET",
         "POST"
