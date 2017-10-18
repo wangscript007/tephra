@@ -33,9 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -92,7 +90,9 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private String[] prefixes;
     private String[] suffixes;
     private Set<String> ignoreUris;
-    private Map<String, String> corsMap;
+    private Set<String> corsOrigins;
+    private String corsMethods;
+    private String corsHeaders;
 
     @Override
     public void setPath(String real, String context) {
@@ -105,8 +105,6 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
 
         ignoreUris = new HashSet<>();
         BeanFactory.getBeans(IgnoreUri.class).forEach(ignoreUri -> ignoreUris.addAll(Arrays.asList(ignoreUri.getIgnoreUris())));
-
-        corsMap = new HashMap<>();
     }
 
     @Override
@@ -178,15 +176,16 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     }
 
     private void setCors(HttpServletRequest request, HttpServletResponse response) {
-        if (validator.isEmpty(corsMap.get("origin")))
+        if (validator.isEmpty(corsOrigins))
             return;
 
-        String origin = corsMap.get("origin");
-        if (origin.equals("*"))
-            origin = request.getHeader("Origin");
+        String origin = request.getHeader("Origin");
+        if (!corsOrigins.contains("*") && !corsOrigins.contains(origin))
+            return;
+
         response.addHeader("Access-Control-Allow-Origin", origin);
-        response.addHeader("Access-Control-Allow-Methods", corsMap.get("methods"));
-        response.addHeader("Access-Control-Allow-Headers", corsMap.get("headers"));
+        response.addHeader("Access-Control-Allow-Methods", corsMethods);
+        response.addHeader("Access-Control-Allow-Headers", corsHeaders);
         response.addHeader("Access-Control-Allow-Credentials", "true");
     }
 
@@ -237,18 +236,23 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
 
     @Override
     public void onStorageChanged(String path, String absolutePath) {
-        Map<String, String> map = new HashMap<>();
         JSONObject object = json.toObject(io.readAsString(absolutePath));
-        if (object == null)
-            map.put("origin", "");
-        else {
-            map.put("origin", object.containsKey("origin") ? object.getString("origin") : "");
-            map.put("methods", toString(object.getJSONArray("methods")).toUpperCase());
-            map.put("headers", toString(object.getJSONArray("headers")));
+        if (object == null) {
+            corsOrigins = new HashSet<>();
+            corsMethods = "";
+            corsHeaders = "";
+        } else {
+            corsOrigins = new HashSet<>();
+            if (object.containsKey("origin")) {
+                JSONArray array = object.getJSONArray("origin");
+                for (int i = 0, size = array.size(); i < size; i++)
+                    corsOrigins.add(array.getString(i));
+            }
+            corsMethods = toString(object.getJSONArray("methods")).toUpperCase();
+            corsHeaders = toString(object.getJSONArray("headers"));
         }
-        corsMap = map;
         if (logger.isInfoEnable())
-            logger.info("设置跨域[{}]。", converter.toString(corsMap));
+            logger.info("设置跨域[{}:{}:{}]。", converter.toString(corsOrigins), corsMethods, corsHeaders);
     }
 
     private String toString(JSONArray array) {
