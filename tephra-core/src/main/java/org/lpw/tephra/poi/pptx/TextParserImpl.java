@@ -9,6 +9,7 @@ import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTextBox;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,8 @@ import java.awt.Color;
 public class TextParserImpl implements Parser {
     @Inject
     private Numeric numeric;
+    @Inject
+    private Json json;
     @Inject
     private ParserHelper parserHelper;
 
@@ -39,31 +42,14 @@ public class TextParserImpl implements Parser {
         parserHelper.rotate(xslfTextBox, object);
         XSLFTextParagraph xslfTextParagraph = xslfTextBox.addNewTextParagraph();
         align(xslfTextParagraph, object);
-        add(xslfTextParagraph, object);
         if (object.containsKey("texts")) {
             JSONArray texts = object.getJSONArray("texts");
             for (int i = 0, size = texts.size(); i < size; i++)
-                add(xslfTextParagraph, texts.getJSONObject(i));
-        }
-
+                add(xslfTextParagraph, object, texts.getJSONObject(i));
+        } else if (object.containsKey("text"))
+            add(xslfTextParagraph, object, new JSONObject());
 
         return true;
-    }
-
-    private void add(XSLFTextParagraph xslfTextParagraph, JSONObject object) {
-        XSLFTextRun xslfTextRun = xslfTextParagraph.addNewTextRun();
-        if (!object.containsKey("texts"))
-            xslfTextRun.setText(object.getString("text"));
-        font(xslfTextParagraph, xslfTextRun, object);
-        color(xslfTextRun, object);
-        if (hasTrue(object, "bold"))
-            xslfTextRun.setBold(true);
-        if (hasTrue(object, "underline"))
-            xslfTextRun.setUnderlined(true);
-        if (hasTrue(object, "italic"))
-            xslfTextRun.setItalic(true);
-        if (object.containsKey("spacing"))
-            xslfTextRun.setCharacterSpacing(object.getDoubleValue("spacing"));
     }
 
     private void align(XSLFTextParagraph xslfTextParagraph, JSONObject object) {
@@ -79,11 +65,26 @@ public class TextParserImpl implements Parser {
             xslfTextParagraph.setTextAlign(TextParagraph.TextAlign.RIGHT);
     }
 
-    private void font(XSLFTextParagraph xslfTextParagraph, XSLFTextRun xslfTextRun, JSONObject object) {
-        if (!object.containsKey("font"))
+    private void add(XSLFTextParagraph xslfTextParagraph, JSONObject object, JSONObject child) {
+        XSLFTextRun xslfTextRun = xslfTextParagraph.addNewTextRun();
+        xslfTextRun.setText(child.containsKey("text") ? child.getString("text") : object.getString("text"));
+        font(xslfTextParagraph, xslfTextRun, object, child);
+        color(xslfTextRun, object, child);
+        if (json.hasTrue(object, "bold") || json.hasTrue(child, "bold"))
+            xslfTextRun.setBold(true);
+        if (json.hasTrue(object, "underline") || json.hasTrue(child, "underline"))
+            xslfTextRun.setUnderlined(true);
+        if (json.hasTrue(object, "italic") || json.hasTrue(child, "italic"))
+            xslfTextRun.setItalic(true);
+        if (object.containsKey("spacing") || child.containsKey("spacing"))
+            xslfTextRun.setCharacterSpacing((child.containsKey("spacing") ? child : object).getDoubleValue("spacing"));
+    }
+
+    private void font(XSLFTextParagraph xslfTextParagraph, XSLFTextRun xslfTextRun, JSONObject object, JSONObject child) {
+        if (!object.containsKey("font") && !child.containsKey("font"))
             return;
 
-        JSONObject font = object.getJSONObject("font");
+        JSONObject font = (child.containsKey("font") ? child : object).getJSONObject("font");
         if (font.containsKey("family"))
             xslfTextRun.setFontFamily(font.getString("family"));
         if (font.containsKey("size")) {
@@ -98,13 +99,12 @@ public class TextParserImpl implements Parser {
         }
     }
 
-    private void color(XSLFTextRun xslfTextRun, JSONObject object) {
-        Color color = parserHelper.getColor(object, "color");
+    private void color(XSLFTextRun xslfTextRun, JSONObject object, JSONObject child) {
+        if (!object.containsKey("color") && !child.containsKey("color"))
+            return;
+
+        Color color = parserHelper.getColor(child.containsKey("color") ? child : object, "color");
         if (color != null)
             xslfTextRun.setFontColor(color);
-    }
-
-    private boolean hasTrue(JSONObject object, String key) {
-        return object.containsKey(key) && object.getBoolean(key);
     }
 }
