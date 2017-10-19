@@ -7,6 +7,7 @@ import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.poi.pptx.Parser;
 import org.lpw.tephra.poi.pptx.ParserHelper;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -20,12 +21,17 @@ import java.io.OutputStream;
 @Component("tephra.poi.pptx")
 public class PptxImpl implements Pptx {
     @Inject
+    private Validator validator;
+    @Inject
     private Logger logger;
     @Inject
     private ParserHelper parserHelper;
 
     @Override
     public void write(JSONObject object, OutputStream outputStream) {
+        if (validator.isEmpty(object) || !object.containsKey("slides"))
+            return;
+
         XMLSlideShow xmlSlideShow = new XMLSlideShow();
         setSize(xmlSlideShow, object);
         slides(xmlSlideShow, object.getJSONArray("slides"));
