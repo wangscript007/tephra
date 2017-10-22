@@ -16,7 +16,7 @@ import java.sql.SQLException;
 /**
  * @author lpw
  */
-public abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
+abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
     @Inject
     protected Validator validator;
     @Inject
@@ -26,7 +26,7 @@ public abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
     @Inject
     protected Connection connection;
 
-    protected SqlTable query(ResultSet rs) throws SQLException {
+    SqlTable query(ResultSet rs) throws SQLException {
         SqlTable sqlTable = BeanFactory.getBean(SqlTable.class);
         sqlTable.set(rs);
         rs.close();
@@ -34,7 +34,7 @@ public abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
         return sqlTable;
     }
 
-    protected JSONArray queryAsJson(ResultSet rs) throws SQLException {
+    JSONArray queryAsJson(ResultSet rs) throws SQLException {
         JSONArray array = new JSONArray();
         String[] columns = new String[rs.getMetaData().getColumnCount()];
         for (int i = 0; i < columns.length; i++)
@@ -52,14 +52,15 @@ public abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
 
     @Override
     public int update(String dataSource, String sql, Object[] args) {
-        if (logger.isDebugEnable())
-            logger.debug("成功执行SQL[{}:{}]更新操作。", sql, converter.toString(args));
-
         try {
+            long time = System.currentTimeMillis();
             T pstmt = newPreparedStatement(dataSource, Mode.Write, sql);
             setArgs(pstmt, args);
             int n = pstmt.executeUpdate();
             pstmt.close();
+
+            if (logger.isDebugEnable())
+                logger.debug("执行SQL[{}:{}:{}]更新操作。", sql, converter.toString(args), System.currentTimeMillis() - time);
 
             return n;
         } catch (SQLException e) {
@@ -69,9 +70,9 @@ public abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
         }
     }
 
-    protected abstract T newPreparedStatement(String dataSource, Mode mode, String sql) throws SQLException;
+    abstract T newPreparedStatement(String dataSource, Mode mode, String sql) throws SQLException;
 
-    protected java.sql.Connection getConnection(String dataSource, Mode mode) throws SQLException {
+    java.sql.Connection getConnection(String dataSource, Mode mode) throws SQLException {
         java.sql.Connection connection = this.connection.get(dataSource, mode);
         if (connection == null)
             throw new NullPointerException("无法获得数据库[" + mode + "]连接！");
@@ -84,9 +85,9 @@ public abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
      *
      * @param pstmt PreparedStatement实例。
      * @param args  参数集。
-     * @throws SQLException
+     * @throws SQLException 未处理SQLException异常。
      */
-    protected void setArgs(T pstmt, Object[] args) throws SQLException {
+    void setArgs(T pstmt, Object[] args) throws SQLException {
         if (validator.isEmpty(args))
             return;
 

@@ -15,14 +15,15 @@ import java.util.List;
 public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
     @Override
     public SqlTable query(String dataSource, String sql, Object[] args) {
-        if (logger.isDebugEnable())
-            logger.debug("执行SQL[{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args));
-
         try {
+            long time = System.currentTimeMillis();
             PreparedStatement pstmt = newPreparedStatement(dataSource, Mode.Read, sql);
             setArgs(pstmt, args);
             SqlTable sqlTable = query(pstmt.executeQuery());
             pstmt.close();
+
+            if (logger.isDebugEnable())
+                logger.debug("执行SQL[{}:{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args), System.currentTimeMillis() - time);
 
             return sqlTable;
         } catch (SQLException e) {
@@ -34,14 +35,15 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
 
     @Override
     public JSONArray queryAsJson(String dataSource, String sql, Object[] args) {
-        if (logger.isDebugEnable())
-            logger.debug("执行SQL[{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args));
-
         try {
+            long time = System.currentTimeMillis();
             PreparedStatement pstmt = newPreparedStatement(dataSource, Mode.Read, sql);
             setArgs(pstmt, args);
             JSONArray array = queryAsJson(pstmt.executeQuery());
             pstmt.close();
+
+            if (logger.isDebugEnable())
+                logger.debug("执行SQL[{}:{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args), System.currentTimeMillis() - time);
 
             return array;
         } catch (SQLException e) {
@@ -58,9 +60,6 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
 
     @Override
     public int[] update(String dataSource, String sql, List<Object[]> args) {
-        if (logger.isDebugEnable())
-            logger.debug("成功执行SQL[{}:{}:{}]批量更新操作。", dataSource, sql, converter.toString(args));
-
         if (validator.isEmpty(args))
             return new int[]{update(sql, new Object[0])};
 
@@ -68,6 +67,7 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
             return new int[]{update(sql, args.get(0))};
 
         try {
+            long time = System.currentTimeMillis();
             PreparedStatement pstmt = newPreparedStatement(dataSource, Mode.Write, sql);
             for (Object[] array : args) {
                 setArgs(pstmt, array);
@@ -75,6 +75,9 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
             }
             int[] array = pstmt.executeBatch();
             pstmt.close();
+
+            if (logger.isDebugEnable())
+                logger.debug("执行SQL[{}:{}:{}:{}]批量更新操作。", dataSource, sql, converter.toString(args), System.currentTimeMillis() - time);
 
             return array;
         } catch (SQLException e) {

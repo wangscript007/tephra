@@ -16,10 +16,8 @@ import java.sql.Types;
 public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Procedure {
     @Override
     public SqlTable query(String dataSource, String sql, Object[] args) {
-        if (logger.isDebugEnable())
-            logger.debug("执行SQL[{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args));
-
         try {
+            long time = System.currentTimeMillis();
             CallableStatement pstmt = newPreparedStatement(dataSource, Mode.Read, sql);
             setArgs(pstmt, args);
             int index = (validator.isEmpty(args) ? 0 : args.length) + 1;
@@ -27,6 +25,9 @@ public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Pro
             pstmt.execute();
             SqlTable sqlTable = query((ResultSet) pstmt.getObject(index));
             pstmt.close();
+
+            if (logger.isDebugEnable())
+                logger.debug("执行SQL[{}:{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args), System.currentTimeMillis() - time);
 
             return sqlTable;
         } catch (SQLException e) {
@@ -38,10 +39,8 @@ public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Pro
 
     @Override
     public JSONArray queryAsJson(String dataSource, String sql, Object[] args) {
-        if (logger.isDebugEnable())
-            logger.debug("执行SQL[{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args));
-
         try {
+            long time = System.currentTimeMillis();
             CallableStatement pstmt = newPreparedStatement(dataSource, Mode.Read, sql);
             setArgs(pstmt, args);
             int index = (validator.isEmpty(args) ? 0 : args.length) + 1;
@@ -49,6 +48,9 @@ public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Pro
             pstmt.execute();
             JSONArray array = queryAsJson((ResultSet) pstmt.getObject(index));
             pstmt.close();
+
+            if (logger.isDebugEnable())
+                logger.debug("执行SQL[{}:{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args), System.currentTimeMillis() - time);
 
             return array;
         } catch (SQLException e) {
@@ -66,10 +68,8 @@ public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Pro
     @SuppressWarnings({"unchecked"})
     @Override
     public <T> T queryObject(String dataSource, String sql, Object[] args) {
-        if (logger.isDebugEnable())
-            logger.debug("执行SQL[{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args));
-
         try {
+            long time = System.currentTimeMillis();
             CallableStatement pstmt = newPreparedStatement(dataSource, Mode.Read, sql);
             setArgs(pstmt, args);
             int index = (validator.isEmpty(args) ? 0 : args.length) + 1;
@@ -77,6 +77,9 @@ public class ProcedureImpl extends JdbcSupport<CallableStatement> implements Pro
             pstmt.execute();
             T object = (T) pstmt.getObject(index);
             pstmt.close();
+
+            if (logger.isDebugEnable())
+                logger.debug("执行SQL[{}:{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args), System.currentTimeMillis() - time);
 
             return object;
         } catch (SQLException e) {
