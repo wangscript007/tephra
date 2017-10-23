@@ -40,34 +40,24 @@ public class TextParserImpl implements Parser {
         xslfTextBox.setAnchor(parserHelper.getRectangle(object));
         xslfTextBox.setInsets(new Insets2D(0.0D, 0.0D, 0.0D, 0.0D));
         parserHelper.rotate(xslfTextBox, object);
-        XSLFTextParagraph xslfTextParagraph = xslfTextBox.addNewTextParagraph();
-        align(xslfTextParagraph, object);
+        XSLFTextParagraph xslfTextParagraph = newParagraph(xslfTextBox, object);
         if (object.containsKey("texts")) {
             JSONArray texts = object.getJSONArray("texts");
             for (int i = 0, size = texts.size(); i < size; i++)
-                add(xslfTextParagraph, object, texts.getJSONObject(i));
+                xslfTextParagraph = add(xslfTextBox, xslfTextParagraph, object, texts.getJSONObject(i));
         } else if (object.containsKey("text"))
-            add(xslfTextParagraph, object, new JSONObject());
+            add(xslfTextBox, xslfTextParagraph, object, new JSONObject());
 
         return true;
     }
 
-    private void align(XSLFTextParagraph xslfTextParagraph, JSONObject object) {
-        if (!object.containsKey("align"))
-            return;
+    private XSLFTextParagraph add(XSLFTextBox xslfTextBox, XSLFTextParagraph xslfTextParagraph, JSONObject object, JSONObject child) {
+        String text = child.containsKey("text") ? child.getString("text") : object.getString("text");
+        if (text.equals("\n"))
+            return newParagraph(xslfTextBox, object);
 
-        String align = object.getString("align");
-        if (align.equals("left"))
-            xslfTextParagraph.setTextAlign(TextParagraph.TextAlign.LEFT);
-        else if (align.equals("center"))
-            xslfTextParagraph.setTextAlign(TextParagraph.TextAlign.CENTER);
-        else if (align.equals("right"))
-            xslfTextParagraph.setTextAlign(TextParagraph.TextAlign.RIGHT);
-    }
-
-    private void add(XSLFTextParagraph xslfTextParagraph, JSONObject object, JSONObject child) {
         XSLFTextRun xslfTextRun = xslfTextParagraph.addNewTextRun();
-        xslfTextRun.setText(child.containsKey("text") ? child.getString("text") : object.getString("text"));
+        xslfTextRun.setText(text);
         font(xslfTextParagraph, xslfTextRun, object, child);
         color(xslfTextRun, object, child);
         if (json.hasTrue(object, "bold") || json.hasTrue(child, "bold"))
@@ -78,6 +68,34 @@ public class TextParserImpl implements Parser {
             xslfTextRun.setItalic(true);
         if (object.containsKey("spacing") || child.containsKey("spacing"))
             xslfTextRun.setCharacterSpacing((child.containsKey("spacing") ? child : object).getDoubleValue("spacing"));
+
+        return xslfTextParagraph;
+    }
+
+    private XSLFTextParagraph newParagraph(XSLFTextBox xslfTextBox, JSONObject object) {
+        XSLFTextParagraph xslfTextParagraph = xslfTextBox.addNewTextParagraph();
+        align(xslfTextParagraph, object);
+
+        return xslfTextParagraph;
+    }
+
+    private void align(XSLFTextParagraph xslfTextParagraph, JSONObject object) {
+        if (!object.containsKey("align"))
+            return;
+
+        switch (object.getString("align")) {
+            case "left":
+                xslfTextParagraph.setTextAlign(TextParagraph.TextAlign.LEFT);
+                break;
+            case "center":
+                xslfTextParagraph.setTextAlign(TextParagraph.TextAlign.CENTER);
+                break;
+            case "right":
+                xslfTextParagraph.setTextAlign(TextParagraph.TextAlign.RIGHT);
+                break;
+            default:
+                xslfTextParagraph.setTextAlign(TextParagraph.TextAlign.JUSTIFY);
+        }
     }
 
     private void font(XSLFTextParagraph xslfTextParagraph, XSLFTextRun xslfTextRun, JSONObject object, JSONObject child) {
