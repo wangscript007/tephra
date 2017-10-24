@@ -36,11 +36,7 @@ public class UpdateImpl implements Update {
         if (validator.isEmpty(sqls))
             return;
 
-        for (String sql : sqls) {
-            if (validator.isEmpty(sql) || sql.charAt(0) == '-')
-                continue;
-
+        for (String sql : sqls)
             executer.execute(null, sql, true);
-        }
     }
 }

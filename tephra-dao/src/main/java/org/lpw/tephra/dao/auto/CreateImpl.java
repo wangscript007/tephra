@@ -45,13 +45,8 @@ public class CreateImpl implements Create {
         if (array == null)
             return;
 
-        for (String string : array) {
-            string = string.trim();
-            if (string.length() == 0 || string.charAt(0) == '-')
-                continue;
-
+        for (String string : array)
             executer.execute(dataSource, string, false);
-        }
     }
 
     private String[] read(Class<? extends Model> modelClass) {
