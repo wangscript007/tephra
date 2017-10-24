@@ -43,6 +43,14 @@ public interface DataSource extends ConnectionFactory<javax.sql.DataSource> {
     Dialect getDialect(String key);
 
     /**
+     * 获取数据源名称。
+     *
+     * @param key 数据源名称。
+     * @return 数据源名称。
+     */
+    String getKey(String key);
+
+    /**
      * 获取默认数据源key值。
      *
      * @return 数据源key值。

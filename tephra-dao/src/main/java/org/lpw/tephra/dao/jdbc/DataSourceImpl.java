@@ -93,7 +93,8 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
         return dialects.get(getKey(key));
     }
 
-    private String getKey(String key) {
+    @Override
+    public String getKey(String key) {
         return key == null ? this.key : key;
     }
 

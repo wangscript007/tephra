@@ -1,8 +1,6 @@
 package org.lpw.tephra.dao.auto;
 
 import org.lpw.tephra.dao.jdbc.DataSource;
-import org.lpw.tephra.dao.jdbc.Sql;
-import org.lpw.tephra.dao.jdbc.SqlTable;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelTable;
 import org.lpw.tephra.dao.model.ModelTables;
@@ -14,7 +12,7 @@ import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -27,33 +25,20 @@ public class CreateImpl implements Create {
     @Inject
     private Logger logger;
     @Inject
-    private DataSource dataSource;
-    @Inject
-    private Sql sql;
-    @Inject
     private ModelTables modelTables;
+    @Inject
+    private DataSource dataSource;
     @Inject
     private Executer executer;
 
     @Override
-    public void execute() {
-        Set<String> tables = new HashSet<>();
-        dataSource.getDialects().forEach((key, dialect) -> {
-            SqlTable sqlTable = sql.query(key, dialect.selectTables(dataSource.getConfig(key).getString("schema")), null);
-            for (int i = 0; i < sqlTable.getRowCount(); i++)
-                tables.add(sqlTable.get(i, 0));
-        });
-        sql.close();
-
-        modelTables.getModelClasses().forEach(modelClass -> {
-            ModelTable modelTable = modelTables.get(modelClass);
-            create(tables, modelTable, modelClass);
-            sql.close();
-        });
+    public void execute(Map<String, Set<String>> tables) {
+        modelTables.getModelClasses().forEach(modelClass -> create(tables, modelTables.get(modelClass), modelClass));
     }
 
-    private void create(Set<String> tables, ModelTable modelTable, Class<? extends Model> modelClass) {
-        if (tables.contains(modelTable.getTableName()))
+    private void create(Map<String, Set<String>> tables, ModelTable modelTable, Class<? extends Model> modelClass) {
+        String dataSource = this.dataSource.getKey(modelTable.getDataSource());
+        if (tables.containsKey(dataSource) && tables.get(dataSource).contains(modelTable.getTableName()))
             return;
 
         String[] array = read(modelClass);
@@ -65,7 +50,7 @@ public class CreateImpl implements Create {
             if (string.length() == 0 || string.charAt(0) == '-')
                 continue;
 
-            executer.execute(modelTable.getDataSource(), string, false);
+            executer.execute(dataSource, string, false);
         }
     }
 
