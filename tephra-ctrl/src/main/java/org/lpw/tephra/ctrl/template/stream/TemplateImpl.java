@@ -2,6 +2,7 @@ package org.lpw.tephra.ctrl.template.stream;
 
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Failure;
+import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
 import org.lpw.tephra.ctrl.template.Templates;
@@ -25,6 +26,8 @@ public class TemplateImpl extends TemplateSupport implements Template {
     private Io io;
     @Inject
     private Context context;
+    @Inject
+    private Response response;
     @Value("${tephra.ctrl.template.stream.failure:failure.jpg}")
     private String failure;
 
@@ -48,8 +51,10 @@ public class TemplateImpl extends TemplateSupport implements Template {
             return;
         }
 
-        if (data instanceof JSONObject)
+        if (data instanceof JSONObject) {
+            response.setContentType("application/json");
             data = ((JSONObject) data).toJSONString().getBytes(context.getCharset(null));
+        }
 
         outputStream.write((byte[]) data);
     }
