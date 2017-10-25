@@ -123,7 +123,7 @@ public class ChromeImpl implements Chrome, StorageListener, ContextRefreshedList
         try {
             return future.get();
         } catch (Exception e) {
-            logger.warn(e, "获取PDF数据[{}:{}:{}:{}]时发生异常！", url, wait, width, height);
+            logger.warn(e, "获取图片数据[{}:{}:{}:{}:{}]时发生异常！", url, wait, format, width, height);
 
             return null;
         }
