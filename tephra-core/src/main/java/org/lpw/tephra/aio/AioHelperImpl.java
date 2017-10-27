@@ -57,7 +57,7 @@ public class AioHelperImpl implements AioHelper, MinuteJob {
 
         try {
             map.remove(sessionId).close();
-            services.remove(sessionId);
+            services.remove(sessionId).shutdown();
         } catch (IOException e) {
             logger.warn(e, "关闭AIO Socket Channel[{}]时发生异常！", sessionId);
         }
