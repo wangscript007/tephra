@@ -74,13 +74,10 @@ public class ReceiveHandlerImpl implements ReceiveHandler, SecondsJob {
         }
 
         outputStream.computeIfAbsent(sessionId, sid -> new ByteArrayOutputStream()).write(bytes, 0, bytes.length);
-        if (finish) {
+        if (finish)
             read(sessionId);
-
-            return;
-        }
-
-        time.put(sessionId, System.currentTimeMillis());
+        else
+            time.put(sessionId, System.currentTimeMillis());
     }
 
     private void read(String sessionId) {
