@@ -7,10 +7,11 @@ public interface Counter {
     /**
      * 增加访问计数。
      *
-     * @param ip 请求方IP地址。
+     * @param uri 请求URI地址。
+     * @param ip  请求方IP地址。
      * @return 如果允许访问则返回true；否则返回false。
      */
-    boolean increase(String ip);
+    boolean increase(String uri, String ip);
 
     /**
      * 获取当前请求总数。
@@ -22,7 +23,8 @@ public interface Counter {
     /**
      * 减少访问计数。
      *
-     * @param ip 请求方IP地址。
+     * @param uri 请求URI地址。
+     * @param ip  请求方IP地址。
      */
-    void decrease(String ip);
+    void decrease(String uri, String ip);
 }
