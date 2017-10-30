@@ -1,6 +1,7 @@
 package org.lpw.tephra.aio;
 
-import org.lpw.tephra.scheduler.SecondsJob;
+import org.lpw.tephra.scheduler.SchedulerHelper;
+import org.lpw.tephra.scheduler.SchedulerJob;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.TimeUnit;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -22,7 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component("tephra.aio.handler.receive")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ReceiveHandlerImpl implements ReceiveHandler, SecondsJob {
+public class ReceiveHandlerImpl implements ReceiveHandler, SchedulerJob {
+    @Inject private SchedulerHelper schedulerHelper;
     @Inject
     private Logger logger;
     private Map<String, ByteArrayOutputStream> outputStream = new ConcurrentHashMap<>();
@@ -76,8 +78,10 @@ public class ReceiveHandlerImpl implements ReceiveHandler, SecondsJob {
         outputStream.computeIfAbsent(sessionId, sid -> new ByteArrayOutputStream()).write(bytes, 0, bytes.length);
         if (finish)
             read(sessionId);
-        else
+        else {
             time.put(sessionId, System.currentTimeMillis());
+            schedulerHelper.delay(this,100);
+        }
     }
 
     private void read(String sessionId) {
@@ -97,10 +101,15 @@ public class ReceiveHandlerImpl implements ReceiveHandler, SecondsJob {
     }
 
     @Override
-    public void executeSecondsJob() {
+    public String getSchedulerName() {
+        return "tephra.aio.handler.receive";
+    }
+
+    @Override
+    public void executeSchedulerJob() {
         Set<String> set = new HashSet<>();
         time.forEach((sessionId, time) -> {
-            if (System.currentTimeMillis() - time > TimeUnit.Second.getTime())
+            if (System.currentTimeMillis() - time >= 99)
                 set.add(sessionId);
         });
         set.forEach(this::read);
