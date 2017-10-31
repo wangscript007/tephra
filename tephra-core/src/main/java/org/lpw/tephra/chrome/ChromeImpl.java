@@ -109,6 +109,7 @@ public class ChromeImpl implements Chrome, StorageListener, ContextRefreshedList
         clip.put("height", y + height);
         clip.put("scale", 1);
         params.put("clip", clip);
+        params.put("fromSurface", false);
         message.put("params", params);
         Future<byte[]> future = executorService.submit(BeanFactory.getBean(ChromeClient.class).set(
                 list.get(generator.random(0, list.size() - 1)), url, wait, message));
