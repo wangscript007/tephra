@@ -29,30 +29,26 @@ public class WsClientImpl implements WsClient {
     private Converter converter;
     @Inject
     private Logger logger;
-    @Value("${tephra.ws.client.max-size:67108864}")
-    private int maxSize;
     private WebSocketContainer container;
     private WsClientListener listener;
     private Session session;
 
     @Override
+    public WsClient setContainer(WebSocketContainer container) {
+        this.container = container;
+
+        return this;
+    }
+
+    @Override
     public void connect(WsClientListener listener, String url) {
         this.listener = listener;
         try {
-            getContainer().connectToServer(this, new URI(url));
+            container.connectToServer(this, new URI(url));
         } catch (Exception e) {
             logger.warn(e, "连接远程WebSocket服务[{}]时发生异常！", url);
             close();
         }
-    }
-
-    private synchronized WebSocketContainer getContainer() {
-        if (container == null) {
-            container = ContainerProvider.getWebSocketContainer();
-            container.setDefaultMaxTextMessageBufferSize(maxSize);
-        }
-
-        return container;
     }
 
     @OnOpen

@@ -1,11 +1,21 @@
 package org.lpw.tephra.ws;
 
+import javax.websocket.WebSocketContainer;
+
 /**
  * WebSocket客户端。
  *
  * @author lpw
  */
 public interface WsClient {
+    /**
+     * 设置容器实例。
+     *
+     * @param container 容器实例。
+     * @return 当前实例。
+     */
+    WsClient setContainer(WebSocketContainer container);
+
     /**
      * 连接远程WebSocket服务。
      *
