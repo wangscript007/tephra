@@ -103,11 +103,11 @@ public class ChromeImpl implements Chrome, StorageListener, ContextRefreshedList
         if (quality > 0)
             params.put("quality", quality);
         JSONObject clip = new JSONObject();
-        clip.put("x", numeric.toDouble(x));
-        clip.put("y", numeric.toDouble(y));
-        clip.put("width", numeric.toDouble(x + width));
-        clip.put("height", numeric.toDouble(y + height));
-        clip.put("scale", 0.0D);
+        clip.put("x", x);
+        clip.put("y", y);
+        clip.put("width", x + width);
+        clip.put("height", y + height);
+        clip.put("scale", 1);
         params.put("clip", clip);
         message.put("params", params);
         Future<byte[]> future = executorService.submit(BeanFactory.getBean(ChromeClient.class).set(

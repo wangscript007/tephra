@@ -99,8 +99,6 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
     @Override
     public void receive(String message) {
         result = message;
-        if (logger.isDebugEnable())
-            logger.debug("接收到Chrome推送的数据[{}]。", result.length() < 8192 ? result : result.length());
     }
 
     @Override
