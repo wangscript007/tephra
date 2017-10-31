@@ -37,6 +37,9 @@ public class ResponseImpl implements Response, ResponseAware {
 
     @Override
     public void setContentType(String contentType) {
+        if (logger.isDebugEnable())
+            logger.debug("设置Content-Type[{}]", contentType);
+
         this.contentType.set(contentType);
     }
 
@@ -63,7 +66,12 @@ public class ResponseImpl implements Response, ResponseAware {
                 view = templateHelper.getTemplate();
                 templateHelper.setTemplate(null);
             }
-            adapter.get().setContentType(validator.isEmpty(contentType.get()) ? template.getContentType() : contentType.get());
+            String contentType = this.contentType.get();
+            if (validator.isEmpty(contentType))
+                contentType = template.getContentType();
+            if (logger.isDebugEnable())
+                logger.debug("使用Content-Type[{}]", contentType);
+            adapter.get().setContentType(contentType);
             if (!coder.isPresent()) {
                 template.process(view, object, getOutputStream());
                 adapter.get().send();

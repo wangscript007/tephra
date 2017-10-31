@@ -8,11 +8,9 @@ import org.lpw.tephra.storage.StorageListener;
 import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
-import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Io;
-import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Thread;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.lpw.tephra.ws.WsClients;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,13 +37,9 @@ public class ChromeImpl implements Chrome, StorageListener, ContextRefreshedList
     @Inject
     private Io io;
     @Inject
-    private Http http;
-    @Inject
-    private Json json;
-    @Inject
     private Generator generator;
     @Inject
-    private Thread thread;
+    private Numeric numeric;
     @Inject
     private Logger logger;
     @Inject
@@ -109,12 +103,11 @@ public class ChromeImpl implements Chrome, StorageListener, ContextRefreshedList
         if (quality > 0)
             params.put("quality", quality);
         JSONObject clip = new JSONObject();
-        clip.put("offsetX", x);
-        clip.put("offsetY", y);
-        clip.put("pageX", 0);
-        clip.put("pageY", 0);
-        clip.put("clientWidth", x + width);
-        clip.put("clientHeight", y + height);
+        clip.put("x", numeric.toDouble(x));
+        clip.put("y", numeric.toDouble(y));
+        clip.put("width", numeric.toDouble(x + width));
+        clip.put("height", numeric.toDouble(y + height));
+        clip.put("scale", 0.0D);
         params.put("clip", clip);
         message.put("params", params);
         Future<byte[]> future = executorService.submit(BeanFactory.getBean(ChromeClient.class).set(

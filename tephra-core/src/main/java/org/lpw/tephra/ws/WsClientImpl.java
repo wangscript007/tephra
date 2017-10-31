@@ -73,6 +73,7 @@ public class WsClientImpl implements WsClient {
     @OnError
     public void error(Session session, Throwable throwable) {
         logger.warn(throwable, "与远程WebSocket服务[{}]交互时发生异常！", session);
+        close();
     }
 
     @Override
@@ -93,6 +94,7 @@ public class WsClientImpl implements WsClient {
         try {
             session.close();
             session = null;
+            System.gc();
         } catch (IOException e) {
             logger.warn(e, "关闭远程WebSocket连接[{}]时发生异常！", session);
         }

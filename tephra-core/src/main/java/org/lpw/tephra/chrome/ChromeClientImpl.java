@@ -58,22 +58,37 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
         thread.sleep(wait, TimeUnit.Second);
         result = null;
         wsClient = wsClients.get();
-        wsClient.connect(this, object.getString("webSocketDebuggerUrl"));
-        for (int i = 0; i < maxWait; i++) {
-            if (result != null)
-                break;
+        try {
+            wsClient.connect(this, object.getString("webSocketDebuggerUrl"));
+            for (int i = 0; i < maxWait; i++) {
+                if (result != null)
+                    break;
 
-            thread.sleep(1, TimeUnit.Second);
+                thread.sleep(1, TimeUnit.Second);
+            }
+            if (result == null) {
+                logger.warn(null, "请求[{}]等待[{}]秒未获得Chrome推送的数据！", message, maxWait);
+
+                return null;
+            }
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "请求Chrome[{}]时发生异常！", object.toJSONString());
+        } finally {
+            wsClient.close();
+            http.get("http://" + service + "/json/close/" + object.getString("id"), null, "");
         }
-        wsClient.close();
-        http.get("http://" + service + "/json/close/" + object.getString("id"), null, "");
-        if (result == null) {
-            logger.warn(null, "请求[{}]等待[{}]秒未获得Chrome推送的数据！", message, maxWait);
+
+        JSONObject obj = json.toObject(result);
+        if (obj == null)
+            return null;
+
+        if (!obj.containsKey("result")) {
+            logger.warn(null, "请求Chrome失败[{}]！", result);
 
             return null;
         }
 
-        return Base64.getDecoder().decode(json.toObject(result).getJSONObject("result").getString("data"));
+        return Base64.getDecoder().decode(obj.getJSONObject("result").getString("data"));
     }
 
     @Override
@@ -84,6 +99,8 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
     @Override
     public void receive(String message) {
         result = message;
+        if (logger.isDebugEnable())
+            logger.debug("接收到Chrome推送的数据[{}]。", result.length() < 8192 ? result : result.length());
     }
 
     @Override
