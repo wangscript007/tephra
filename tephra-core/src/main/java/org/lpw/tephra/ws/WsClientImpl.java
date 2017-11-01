@@ -2,14 +2,12 @@ package org.lpw.tephra.ws;
 
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.websocket.ClientEndpoint;
-import javax.websocket.ContainerProvider;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -88,7 +86,8 @@ public class WsClientImpl implements WsClient {
             logger.debug("关闭远程WebSocket连接[{}]。", session);
 
         try {
-            session.close();
+            if (session.isOpen())
+                session.close();
             session = null;
             System.gc();
         } catch (IOException e) {
