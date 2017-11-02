@@ -113,15 +113,16 @@ public class ConverterImpl implements Converter {
         if (separator == null || !string.contains(separator))
             return new String[]{string};
 
-        if (!string.endsWith(separator))
-            return string.split(separator);
+        List<String> list = new ArrayList<>();
+        int length = separator.length();
+        int index = 0;
+        for (int indexOf; index <= (indexOf = string.indexOf(separator, index)); index = indexOf + length) {
+            list.add(string.substring(index, indexOf));
+        }
+        if (index <= string.length())
+            list.add(string.substring(index));
 
-        String[] strs = string.split(separator);
-        String[] array = new String[strs.length + 1];
-        System.arraycopy(strs, 0, array, 0, strs.length);
-        array[strs.length] = "";
-
-        return array;
+        return list.toArray(new String[0]);
     }
 
     @Override
@@ -132,7 +133,7 @@ public class ConverterImpl implements Converter {
 
         List<String> list = new ArrayList<>();
         for (String str : toArray(string, separator[0]))
-            if (string.contains(separator[1]) && str.indexOf(separator[1]) == str.lastIndexOf(separator[1]))
+            if (string.contains(separator[1]))
                 list.add(str);
 
         if (list.isEmpty())
