@@ -45,7 +45,7 @@ public class RequestImpl implements Request, RequestAware {
 
     @Override
     public String get(String name) {
-        return adapter.get().get(name);
+        return adapter.get() == null ? null : adapter.get().get(name);
     }
 
     @Override
@@ -87,6 +87,9 @@ public class RequestImpl implements Request, RequestAware {
 
     @Override
     public String[] getAsArray(String name) {
+        if (adapter.get() == null)
+            return null;
+
         String[] array = adapter.get().getAsArray(name);
 
         return array == null ? converter.toArray(get(name), ",") : array;
@@ -94,6 +97,9 @@ public class RequestImpl implements Request, RequestAware {
 
     @Override
     public Map<String, String> getMap() {
+        if (adapter.get() == null)
+            return null;
+
         Map<String, String> map = adapter.get().getMap();
 
         return coder.isPresent() ? coder.get().decode(map) : map;
@@ -101,11 +107,14 @@ public class RequestImpl implements Request, RequestAware {
 
     @Override
     public String getFromInputStream() {
-        return adapter.get().getFromInputStream();
+        return adapter.get() == null ? null : adapter.get().getFromInputStream();
     }
 
     @Override
     public <T extends Model> T setToModel(T model) {
+        if (adapter.get() == null)
+            return model;
+
         Map<String, String> map = getMap();
         if (validator.isEmpty(map))
             return model;
@@ -153,32 +162,32 @@ public class RequestImpl implements Request, RequestAware {
 
     @Override
     public String getServerName() {
-        return adapter.get().getServerName();
+        return adapter.get() == null ? null : adapter.get().getServerName();
     }
 
     @Override
     public int getServerPort() {
-        return adapter.get().getServerPort();
+        return adapter.get() == null ? 0 : adapter.get().getServerPort();
     }
 
     @Override
     public String getContextPath() {
-        return adapter.get().getContextPath();
+        return adapter.get() == null ? null : adapter.get().getContextPath();
     }
 
     @Override
     public String getUrl() {
-        return adapter.get().getUrl();
+        return adapter.get() == null ? null : adapter.get().getUrl();
     }
 
     @Override
     public String getUri() {
-        return adapter.get().getUri();
+        return adapter.get() == null ? null : adapter.get().getUri();
     }
 
     @Override
     public String getMethod() {
-        return adapter.get().getMethod();
+        return adapter.get() == null ? null : adapter.get().getMethod();
     }
 
     @Override
