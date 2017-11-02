@@ -60,7 +60,7 @@ public class WsClientImpl implements WsClient {
     @OnMessage
     public void message(String message) {
         listener.receive(message);
-        if (logger.isDebugEnable())
+        if (logger.isDebugEnable() || logger.isDebugEnable())
             logger.debug("接收到远程WebSocket发送的数据[{}]。", converter.toBitSize(message.length()));
     }
 
@@ -89,7 +89,6 @@ public class WsClientImpl implements WsClient {
             if (session.isOpen())
                 session.close();
             session = null;
-            System.gc();
         } catch (IOException e) {
             logger.warn(e, "关闭远程WebSocket连接[{}]时发生异常！", session);
         }

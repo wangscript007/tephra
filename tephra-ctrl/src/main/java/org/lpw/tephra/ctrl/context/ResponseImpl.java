@@ -66,14 +66,9 @@ public class ResponseImpl implements Response, ResponseAware {
                 view = templateHelper.getTemplate();
                 templateHelper.setTemplate(null);
             }
-            String contentType = this.contentType.get();
-            if (validator.isEmpty(contentType))
-                contentType = template.getContentType();
-            if (logger.isDebugEnable())
-                logger.debug("使用Content-Type[{}]", contentType);
-            adapter.get().setContentType(contentType);
             if (!coder.isPresent()) {
                 template.process(view, object, getOutputStream());
+                setContentType(template);
                 adapter.get().send();
 
                 return;
@@ -82,11 +77,21 @@ public class ResponseImpl implements Response, ResponseAware {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             template.process(view, object, baos);
             baos.close();
+            setContentType(template);
             getOutputStream().write(coder.get().encode(baos.toByteArray()));
             adapter.get().send();
         } catch (Exception e) {
             logger.warn(e, "返回输出结果时发生异常！");
         }
+    }
+
+    private void setContentType(Template template){
+        String contentType = this.contentType.get();
+        if (validator.isEmpty(contentType))
+            contentType = template.getContentType();
+        if (logger.isDebugEnable())
+            logger.debug("使用Content-Type[{}]", contentType);
+        adapter.get().setContentType(contentType);
     }
 
     @Override

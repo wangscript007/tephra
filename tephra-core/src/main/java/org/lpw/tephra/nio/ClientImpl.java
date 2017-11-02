@@ -17,10 +17,10 @@ import org.springframework.stereotype.Component;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Sharable
 public class ClientImpl extends Handler implements Client {
-    protected ClientListener listener;
-    protected String ip;
-    protected int port;
-    protected EventLoopGroup group;
+    private ClientListener listener;
+    private String ip;
+    private int port;
+    private EventLoopGroup group;
 
     @Override
     public void connect(ClientListener listener, String ip, int port) {

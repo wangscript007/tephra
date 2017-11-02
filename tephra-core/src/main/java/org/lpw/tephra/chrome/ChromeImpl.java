@@ -96,7 +96,7 @@ public class ChromeImpl implements Chrome, StorageListener, ContextRefreshedList
             return null;
 
         JSONObject message = new JSONObject();
-        message.put("id", generator.random(1, 9999));
+        message.put("id", generator.random(1, 99999999));
         message.put("method", "Page.captureScreenshot");
         JSONObject params = new JSONObject();
         params.put("format", format);

@@ -18,7 +18,7 @@ class HandlerSupport {
     int port;
 
     void read(AsynchronousSocketChannel socketChannel, String sessionId, AioListener listener) {
-        ByteBuffer buffer = (ByteBuffer) ByteBuffer.allocate(8192).clear();
+        ByteBuffer buffer = (ByteBuffer) ByteBuffer.allocate(4096).clear();
         socketChannel.read(buffer, null, BeanFactory.getBean(ReceiveHandler.class).bind(socketChannel, buffer, sessionId, listener));
     }
 }
