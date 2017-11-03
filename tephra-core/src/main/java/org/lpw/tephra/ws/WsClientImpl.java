@@ -7,6 +7,7 @@ import org.lpw.tephra.aio.AioHelper;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,8 @@ public class WsClientImpl implements WsClient, AioClientListener {
     @Inject
     private Converter converter;
     @Inject
+    private Validator validator;
+    @Inject
     private Logger logger;
     @Inject
     private AioHelper aioHelper;
@@ -39,6 +42,7 @@ public class WsClientImpl implements WsClient, AioClientListener {
     private WsClientListener listener;
     private URI uri;
     private String sessionId;
+    private ByteArrayOutputStream outputStream;
 
     @Override
     public void connect(WsClientListener listener, String url) {
@@ -111,28 +115,7 @@ public class WsClientImpl implements WsClient, AioClientListener {
             return;
         }
 
-        if (logger.isDebugEnable())
-            logger.debug("接收到WebSocket[{}]服务推送的数据[{}]。", uri.toString(), converter.toBitSize(message.length));
-
-        boolean mask = (message[1] & 0x80) == 0x80;
-        long length = message[1] & 0x7F;
-        int start = 2;
-        if (length == 126)
-            start += 2;
-        else if (length == 127)
-            start += 8;
-        if (mask)
-            start += 4;
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        for (int i = start, m = start - 4, j = 0; i < message.length; i++)
-            outputStream.write(mask ? unmask(message[i], message[m + (j++ % 4)]) : message[i]);
-        try {
-            outputStream.close();
-            listener.receive(outputStream.toString());
-        } catch (IOException e) {
-            logger.warn(e, "关闭输出流时发生异常！");
-        }
+        receive(message);
     }
 
     private boolean isHandshake(byte[] message) {
@@ -144,6 +127,41 @@ public class WsClientImpl implements WsClient, AioClientListener {
                 return false;
 
         return true;
+    }
+
+    private void receive(byte[] message) {
+        long length = message[1] & 0x7F;
+        int start = 2;
+        if (length == 126)
+            start += 2;
+        else if (length == 127)
+            start += 8;
+        boolean mask = (message[1] & 0x80) == 0x80;
+        byte[] masks = new byte[4];
+        if (mask) {
+            System.arraycopy(masks, start, masks, 0, masks.length);
+            start += 4;
+        }
+        if (outputStream == null)
+            outputStream = new ByteArrayOutputStream();
+        for (int i = start, j = 0; i < message.length; i++)
+            outputStream.write(mask ? unmask(message[i], masks[j++ % masks.length]) : message[i]);
+        if ((message[0] & 0x80) == 0) {
+            if (logger.isDebugEnable())
+                logger.debug("接收到WebSocket[{}]服务推送的数据[{}]未完结，等待下一个数据包。", uri.toString(), message.length);
+
+            return;
+        }
+
+        try {
+            outputStream.close();
+            if (logger.isDebugEnable())
+                logger.debug("接收到WebSocket[{}]服务推送的数据[{}]。", uri.toString(), converter.toBitSize(message.length));
+            listener.receive(outputStream.toString());
+            outputStream = null;
+        } catch (IOException e) {
+            logger.warn(e, "关闭输出流时发生异常！");
+        }
     }
 
     private int unmask(byte message, byte mask) {
