@@ -43,7 +43,7 @@ public class AioHelperImpl implements AioHelper, MinuteJob {
 
     @Override
     public void send(String sessionId, byte[] message) {
-        if (!map.containsKey(sessionId))
+        if (!map.containsKey(sessionId) || !map.get(sessionId).isOpen())
             return;
 
         services.computeIfAbsent(sessionId, sid -> Executors.newFixedThreadPool(1))
