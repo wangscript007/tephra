@@ -50,7 +50,9 @@ public class AioClientImpl extends HandlerSupport implements AioClient, Completi
     @Override
     public void close() {
         try {
-            socketChannel.close();
+            listener.disconnect(sessionId);
+            if (socketChannel.isOpen())
+                socketChannel.close();
         } catch (IOException e) {
             logger.warn(e, "关闭/断开AIO连接[{}:{}]时发生异常！", host, port);
         }

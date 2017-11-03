@@ -4,6 +4,8 @@ import org.lpw.tephra.atomic.Closables;
 import org.lpw.tephra.atomic.Failable;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -15,6 +17,7 @@ import java.util.TimerTask;
  * @author lpw
  */
 @Component("tephra.scheduler.task")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SchedulerTaskImpl extends TimerTask implements SchedulerTask {
     @Inject
     private Validator validator;

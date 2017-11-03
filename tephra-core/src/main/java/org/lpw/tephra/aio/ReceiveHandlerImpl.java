@@ -3,7 +3,6 @@ package org.lpw.tephra.aio;
 import org.lpw.tephra.scheduler.SchedulerHelper;
 import org.lpw.tephra.scheduler.SchedulerJob;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.TimeUnit;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -24,7 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component("tephra.aio.handler.receive")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ReceiveHandlerImpl implements ReceiveHandler, SchedulerJob {
-    @Inject private SchedulerHelper schedulerHelper;
+    @Inject
+    private SchedulerHelper schedulerHelper;
     @Inject
     private Logger logger;
     private Map<String, ByteArrayOutputStream> outputStream = new ConcurrentHashMap<>();
@@ -80,7 +80,7 @@ public class ReceiveHandlerImpl implements ReceiveHandler, SchedulerJob {
             read(sessionId);
         else {
             time.put(sessionId, System.currentTimeMillis());
-            schedulerHelper.delay(this,100);
+            schedulerHelper.delay(this, 100);
         }
     }
 
@@ -97,7 +97,8 @@ public class ReceiveHandlerImpl implements ReceiveHandler, SchedulerJob {
 
     @Override
     public void failed(Throwable throwable, Object object) {
-        logger.warn(throwable, "监听AIO[{}]数据时发生异常！", socketChannel);
+        if (socketChannel.isOpen())
+            logger.warn(throwable, "监听AIO[{}]数据时发生异常！", socketChannel);
     }
 
     @Override

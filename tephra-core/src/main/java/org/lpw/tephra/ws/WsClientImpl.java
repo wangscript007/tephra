@@ -1,96 +1,157 @@
 package org.lpw.tephra.ws;
 
+import org.lpw.tephra.aio.AioClient;
+import org.lpw.tephra.aio.AioClientListener;
+import org.lpw.tephra.aio.AioClients;
+import org.lpw.tephra.aio.AioHelper;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.websocket.ClientEndpoint;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Base64;
 
 /**
  * @author lpw
  */
 @Component("tephra.ws.client")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@ClientEndpoint
-public class WsClientImpl implements WsClient {
+public class WsClientImpl implements WsClient, AioClientListener {
+    private static final byte[] HANDSHAKE = "HTTP/1.1 101".getBytes();
+    @Inject
+    private Generator generator;
     @Inject
     private Converter converter;
     @Inject
     private Logger logger;
-    private WebSocketContainer container;
+    @Inject
+    private AioHelper aioHelper;
+    @Inject
+    private AioClients aioClients;
+    private AioClient aioClient;
     private WsClientListener listener;
-    private Session session;
-
-    @Override
-    public WsClient setContainer(WebSocketContainer container) {
-        this.container = container;
-
-        return this;
-    }
+    private URI uri;
+    private String sessionId;
 
     @Override
     public void connect(WsClientListener listener, String url) {
         this.listener = listener;
         try {
-            container.connectToServer(this, new URI(url));
-        } catch (Exception e) {
-            logger.warn(e, "连接远程WebSocket服务[{}]时发生异常！", url);
-            close();
+            uri = new URI(url);
+            aioClient = aioClients.get();
+            aioClient.connect(uri.getHost(), uri.getPort(), this);
+        } catch (URISyntaxException e) {
+            logger.warn(e, "解析URL[{}]地址时发生异常！", url);
         }
-    }
-
-    @OnOpen
-    public void open(Session session) {
-        this.session = session;
-        listener.connect();
-        if (logger.isDebugEnable())
-            logger.debug("连接到远程WebSocket服务[{}]。", session);
-    }
-
-    @OnMessage
-    public void message(String message) {
-        listener.receive(message);
-        if (logger.isDebugEnable() || logger.isDebugEnable())
-            logger.debug("接收到远程WebSocket发送的数据[{}]。", converter.toBitSize(message.length()));
-    }
-
-    @OnError
-    public void error(Session session, Throwable throwable) {
-        logger.warn(throwable, "与远程WebSocket服务[{}]交互时发生异常！", session);
-        close();
     }
 
     @Override
     public void send(String message) {
-        session.getAsyncRemote().sendText(message);
+        byte[] msg = message.getBytes();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        outputStream.write(0x80 | 0x1);
+        writeLength(outputStream, msg.length);
+        byte[] mask = new byte[4];
+        for (int i = 0; i < mask.length; i++)
+            mask[i] = (byte) generator.random(Byte.MIN_VALUE, Byte.MAX_VALUE);
+        outputStream.write(mask, 0, mask.length);
+        for (int i = 0; i < msg.length; i++)
+            outputStream.write((msg[i] ^ mask[i % 4]) & 0xFF);
+        try {
+            outputStream.close();
+        } catch (IOException e) {
+            logger.warn(e, "关闭输出流时发生异常！");
+        }
+        aioHelper.send(sessionId, outputStream.toByteArray());
         if (logger.isDebugEnable())
-            logger.debug("发送数据[{}]到远程WebSocket服务[{}]。", message, session);
+            logger.debug("发送数据[{}]到WebSocket服务[{}]。", message, uri.toString());
+    }
+
+    private void writeLength(ByteArrayOutputStream outputStream, int length) {
+        if (length <= 125)
+            outputStream.write(0x80 | length);
+        else if (length <= 0xFFFF) {
+            outputStream.write(0x80 | 126);
+            outputStream.write((length >> 8) & 0xFF);
+            outputStream.write(length & 0xFF);
+        } else {
+            outputStream.write(0x80 | 127);
+            for (int i = 7; i >= 0; i--)
+                outputStream.write((length >> (i * 8)) & 0xFF);
+        }
+    }
+
+    @Override
+    public void connect(String sessionId) {
+        this.sessionId = sessionId;
+        StringBuilder sb = new StringBuilder().append("GET ").append(uri.getPath()).append(" HTTP/1.1\r\n")
+                .append("Host: ").append(uri.getHost()).append(':').append(uri.getPort()).append("\r\n")
+                .append("Upgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Protocol: chat, superchat\r\nSec-WebSocket-Version: 13\r\n")
+                .append("Sec-WebSocket-Key: ").append(Base64.getUrlEncoder().encodeToString(generator.random(32).getBytes())).append("\r\n")
+                .append("Origin: http://").append(uri.getHost()).append(':').append(uri.getPort()).append("\r\n\r\n");
+        if (logger.isDebugEnable())
+            logger.debug("发送连接Handshake[{}]到WebSocket服务[{}]。", sb.toString(), uri.toString());
+        aioHelper.send(sessionId, sb.toString().getBytes());
+    }
+
+    @Override
+    public void receive(String sessionId, byte[] message) {
+        if (isHandshake(message)) {
+            if (logger.isDebugEnable())
+                logger.debug("接收到WebSocket[{}]推送的Handshake[{}]。", uri.toString(), new String(message));
+            listener.connect();
+
+            return;
+        }
+
+        if (logger.isDebugEnable())
+            logger.debug("接收到WebSocket[{}]服务推送的数据[{}]。", uri.toString(), converter.toBitSize(message.length));
+
+        boolean mask = (message[1] & 0x80) != 0;
+        long length = message[1] & 0x7F;
+        int start = 2;
+        if (length == 126)
+            start += 2;
+        else if (length == 127)
+            start += 8;
+        if (mask)
+            start += 4;
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        for (int i = start,m=0; i < message.length; i++)
+            outputStream.write(mask ? (message[i]^message[m%4]) : message[i]);
+        try {
+            outputStream.close();
+            listener.receive(outputStream.toString());
+        } catch (IOException e) {
+            logger.warn(e, "关闭输出流时发生异常！");
+        }
+    }
+
+    private boolean isHandshake(byte[] message) {
+        if (message.length < HANDSHAKE.length)
+            return false;
+
+        for (int i = 0; i < HANDSHAKE.length; i++)
+            if (message[i] != HANDSHAKE[i])
+                return false;
+
+        return true;
+    }
+
+    @Override
+    public void disconnect(String sessionId) {
     }
 
     @Override
     public void close() {
-        if (session == null)
-            return;
-
-        if (logger.isDebugEnable())
-            logger.debug("关闭远程WebSocket连接[{}]。", session);
-
-        try {
-            if (session.isOpen())
-                session.close();
-            session = null;
-        } catch (IOException e) {
-            logger.warn(e, "关闭远程WebSocket连接[{}]时发生异常！", session);
-        }
+        aioClient.close();
     }
 }
