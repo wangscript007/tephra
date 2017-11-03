@@ -148,7 +148,7 @@ public class WsClientImpl implements WsClient, AioClientListener {
             outputStream.write(mask ? unmask(message[i], masks[j++ % masks.length]) : message[i]);
         if ((message[0] & 0x80) == 0) {
             if (logger.isDebugEnable())
-                logger.debug("接收到WebSocket[{}]服务推送的数据[{}]未完结，等待下一个数据包。", uri.toString(), message.length);
+                logger.debug("接收到WebSocket[{}]服务推送的数据[{}]未完结，等待下一个数据包。", uri.toString(), converter.toBitSize(message.length));
 
             return;
         }
