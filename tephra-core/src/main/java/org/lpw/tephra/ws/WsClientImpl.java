@@ -114,7 +114,7 @@ public class WsClientImpl implements WsClient, AioClientListener {
         if (logger.isDebugEnable())
             logger.debug("接收到WebSocket[{}]服务推送的数据[{}]。", uri.toString(), converter.toBitSize(message.length));
 
-        boolean mask = (message[1] & 0x80) != 0;
+        boolean mask = (message[1] & 0x80) == 0x80;
         long length = message[1] & 0x7F;
         int start = 2;
         if (length == 126)
@@ -125,8 +125,8 @@ public class WsClientImpl implements WsClient, AioClientListener {
             start += 4;
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        for (int i = start,m=0; i < message.length; i++)
-            outputStream.write(mask ? (message[i]^message[m%4]) : message[i]);
+        for (int i = start, m = start - 4, j = 0; i < message.length; i++)
+            outputStream.write(mask ? unmask(message[i], message[m + (j++ % 4)]) : message[i]);
         try {
             outputStream.close();
             listener.receive(outputStream.toString());
@@ -146,12 +146,21 @@ public class WsClientImpl implements WsClient, AioClientListener {
         return true;
     }
 
+    private int unmask(byte message, byte mask) {
+        int um = message ^ mask;
+        if ((um & 0x80) == 0x80)
+            um |= 0xffffff00;
+
+        return um;
+    }
+
     @Override
     public void disconnect(String sessionId) {
     }
 
     @Override
     public void close() {
+        aioHelper.send(sessionId, new byte[]{(byte) (0x80 | 0x8)});
         aioClient.close();
     }
 }
