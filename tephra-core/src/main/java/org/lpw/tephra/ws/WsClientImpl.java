@@ -42,7 +42,6 @@ public class WsClientImpl implements WsClient, AioClientListener {
     private WsClientListener listener;
     private URI uri;
     private String sessionId;
-    private ByteArrayOutputStream outputStream;
 
     @Override
     public void connect(WsClientListener listener, String url) {
@@ -60,14 +59,14 @@ public class WsClientImpl implements WsClient, AioClientListener {
     public void send(String message) {
         byte[] msg = message.getBytes();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        outputStream.write(0x80 | 0x1);
+        outputStream.write(0x80 | 1);
         writeLength(outputStream, msg.length);
         byte[] mask = new byte[4];
         for (int i = 0; i < mask.length; i++)
             mask[i] = (byte) generator.random(Byte.MIN_VALUE, Byte.MAX_VALUE);
         outputStream.write(mask, 0, mask.length);
         for (int i = 0; i < msg.length; i++)
-            outputStream.write((msg[i] ^ mask[i % 4]) & 0xFF);
+            outputStream.write((msg[i] ^ mask[i % 4]) & 0xff);
         try {
             outputStream.close();
         } catch (IOException e) {
@@ -81,14 +80,14 @@ public class WsClientImpl implements WsClient, AioClientListener {
     private void writeLength(ByteArrayOutputStream outputStream, int length) {
         if (length <= 125)
             outputStream.write(0x80 | length);
-        else if (length <= 0xFFFF) {
+        else if (length <= 0xffff) {
             outputStream.write(0x80 | 126);
-            outputStream.write((length >> 8) & 0xFF);
-            outputStream.write(length & 0xFF);
+            outputStream.write((length >> 8) & 0xff);
+            outputStream.write(length & 0xff);
         } else {
             outputStream.write(0x80 | 127);
             for (int i = 7; i >= 0; i--)
-                outputStream.write((length >> (i * 8)) & 0xFF);
+                outputStream.write((length >> (i * 8)) & 0xff);
         }
     }
 
@@ -130,7 +129,10 @@ public class WsClientImpl implements WsClient, AioClientListener {
     }
 
     private void receive(byte[] message) {
-        long length = message[1] & 0x7F;
+        if (logger.isDebugEnable())
+            logger.debug("接收到WebSocket[{}]服务推送的数据[{}]。", uri.toString(), converter.toBitSize(message.length));
+
+        long length = message[1] & 0x7f;
         int start = 2;
         if (length == 126)
             start += 2;
@@ -142,23 +144,12 @@ public class WsClientImpl implements WsClient, AioClientListener {
             System.arraycopy(masks, start, masks, 0, masks.length);
             start += 4;
         }
-        if (outputStream == null)
-            outputStream = new ByteArrayOutputStream();
-        for (int i = start, j = 0; i < message.length; i++)
-            outputStream.write(mask ? unmask(message[i], masks[j++ % masks.length]) : message[i]);
-        if ((message[0] & 0x80) == 0) {
-            if (logger.isDebugEnable())
-                logger.debug("接收到WebSocket[{}]服务推送的数据[{}]未完结，等待下一个数据包。", uri.toString(), converter.toBitSize(message.length));
-
-            return;
-        }
-
         try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            for (int i = start, j = 0; i < message.length; i++)
+                outputStream.write(mask ? unmask(message[i], masks[j++ % masks.length]) : message[i]);
             outputStream.close();
-            if (logger.isDebugEnable())
-                logger.debug("接收到WebSocket[{}]服务推送的数据[{}]。", uri.toString(), converter.toBitSize(message.length));
             listener.receive(outputStream.toString());
-            outputStream = null;
         } catch (IOException e) {
             logger.warn(e, "关闭输出流时发生异常！");
         }
