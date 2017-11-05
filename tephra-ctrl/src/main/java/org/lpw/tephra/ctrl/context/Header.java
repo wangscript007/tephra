@@ -38,6 +38,13 @@ public interface Header {
     String getIp();
 
     /**
+     * 设置求者IP地址。
+     *
+     * @param ip 求者IP地址。
+     */
+    void setIp(String ip);
+
+    /**
      * 获得所有请求头信息值对。
      *
      * @return 请求头信息值对。

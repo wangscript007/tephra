@@ -21,6 +21,7 @@ public class HeaderImpl implements Header, HeaderAware {
     @Value("${tephra.ctrl.context.header.real-ip:}")
     private String realIp;
     private ThreadLocal<HeaderAdapter> adapter = new ThreadLocal<>();
+    private ThreadLocal<String> ip = new ThreadLocal<>();
 
     @Override
     public String get(String name) {
@@ -39,6 +40,9 @@ public class HeaderImpl implements Header, HeaderAware {
 
     @Override
     public String getIp() {
+        if (ip.get() != null)
+            return ip.get();
+
         if (!validator.isEmpty(realIp)) {
             String ip = get(realIp);
             if (!validator.isEmpty(ip))
@@ -51,6 +55,11 @@ public class HeaderImpl implements Header, HeaderAware {
     }
 
     @Override
+    public void setIp(String ip) {
+        this.ip.set(ip);
+    }
+
+    @Override
     public Map<String, String> getMap() {
         HeaderAdapter adapter = this.adapter.get();
 
@@ -60,5 +69,6 @@ public class HeaderImpl implements Header, HeaderAware {
     @Override
     public void set(HeaderAdapter adapter) {
         this.adapter.set(adapter);
+        ip.remove();
     }
 }
