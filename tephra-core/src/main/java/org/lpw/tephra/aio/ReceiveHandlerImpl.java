@@ -1,34 +1,27 @@
 package org.lpw.tephra.aio;
 
 import org.lpw.tephra.scheduler.SchedulerHelper;
-import org.lpw.tephra.scheduler.SchedulerJob;
 import org.lpw.tephra.util.Logger;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lpw
  */
 @Component("tephra.aio.handler.receive")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ReceiveHandlerImpl implements ReceiveHandler, SchedulerJob {
+public class ReceiveHandlerImpl implements ReceiveHandler {
     @Inject
     private SchedulerHelper schedulerHelper;
     @Inject
     private Logger logger;
-    private Map<String, ByteArrayOutputStream> outputStream = new ConcurrentHashMap<>();
-    private Map<String, Long> time = new ConcurrentHashMap<>();
+    @Inject
+    private AioHelper aioHelper;
     private AsynchronousSocketChannel socketChannel;
     private ByteBuffer buffer;
     private String sessionId;
@@ -50,12 +43,8 @@ public class ReceiveHandlerImpl implements ReceiveHandler, SchedulerJob {
             if (logger.isDebugEnable())
                 logger.debug("AIO连接[{}]断开。", socketChannel);
 
-            try {
-                listener.disconnect(sessionId);
-                socketChannel.close();
-            } catch (IOException e) {
-                logger.warn(e, "关闭AIO[{}]连接时发生异常！", socketChannel);
-            }
+            listener.disconnect(sessionId);
+            aioHelper.close(sessionId);
 
             return;
         }
@@ -64,55 +53,13 @@ public class ReceiveHandlerImpl implements ReceiveHandler, SchedulerJob {
         byte[] bytes = new byte[buffer.remaining()];
         buffer.get(bytes);
         buffer.clear();
-        read(sessionId, bytes, bytes.length < buffer.capacity());
+        listener.receive(sessionId, bytes);
         socketChannel.read(buffer, null, this);
-    }
-
-    private void read(String sessionId, byte[] bytes, boolean finish) {
-        if (finish && !outputStream.containsKey(sessionId)) {
-            listener.receive(sessionId, bytes);
-
-            return;
-        }
-
-        outputStream.computeIfAbsent(sessionId, sid -> new ByteArrayOutputStream()).write(bytes, 0, bytes.length);
-        if (finish)
-            read(sessionId);
-        else {
-            time.put(sessionId, System.currentTimeMillis());
-            schedulerHelper.delay(this, 100);
-        }
-    }
-
-    private void read(String sessionId) {
-        try {
-            ByteArrayOutputStream outputStream = this.outputStream.remove(sessionId);
-            time.remove(sessionId);
-            outputStream.close();
-            listener.receive(sessionId, outputStream.toByteArray());
-        } catch (IOException e) {
-            logger.warn(null, "读取AIO[{}]数据时发生异常！", sessionId);
-        }
     }
 
     @Override
     public void failed(Throwable throwable, Object object) {
         if (socketChannel.isOpen())
             logger.warn(throwable, "监听AIO[{}]数据时发生异常！", socketChannel);
-    }
-
-    @Override
-    public String getSchedulerName() {
-        return "tephra.aio.handler.receive";
-    }
-
-    @Override
-    public void executeSchedulerJob() {
-        Set<String> set = new HashSet<>();
-        time.forEach((sessionId, time) -> {
-            if (System.currentTimeMillis() - time >= 99)
-                set.add(sessionId);
-        });
-        set.forEach(this::read);
     }
 }

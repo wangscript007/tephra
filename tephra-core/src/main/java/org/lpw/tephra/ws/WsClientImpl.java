@@ -42,6 +42,7 @@ public class WsClientImpl implements WsClient, AioClientListener {
     private WsClientListener listener;
     private URI uri;
     private String sessionId;
+    private ByteArrayOutputStream outputStream;
 
     @Override
     public void connect(WsClientListener listener, String url) {
@@ -114,7 +115,18 @@ public class WsClientImpl implements WsClient, AioClientListener {
             return;
         }
 
-        receive(message);
+        if (outputStream == null)
+            outputStream = new ByteArrayOutputStream();
+        outputStream.write(message, 0, message.length);
+        if (listener.complete(message)) {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                logger.warn(e, "关闭输出流时发生异常！");
+            }
+            receive(outputStream.toByteArray());
+            outputStream = null;
+        }
     }
 
     private boolean isHandshake(byte[] message) {
@@ -142,9 +154,6 @@ public class WsClientImpl implements WsClient, AioClientListener {
         if (mask) {
             System.arraycopy(masks, start, masks, 0, masks.length);
             start += 4;
-        }
-        for (int i = 0; i < start; i++) {
-            System.out.println("#### " + i + "=" + (message[i] & 0xff) + ":" + message[i]);
         }
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

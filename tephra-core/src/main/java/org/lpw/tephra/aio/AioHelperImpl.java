@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
  */
 @Component("tephra.aio.helper")
 public class AioHelperImpl implements AioHelper, MinuteJob {
-    private static final int BUFFER_SZE = 10 * (1 << 20);
+    private static final int BUFFER_SZE = 4 * (1 << 10); // 4K
 
     @Inject
     private Thread thread;

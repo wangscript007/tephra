@@ -16,9 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 
 /**
  * @author lpw
@@ -45,8 +43,7 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
     private String url;
     private int wait;
     private JSONObject message;
-    private List<String> list;
-    private long time;
+    private String result;
 
     @Override
     public ChromeClient set(String service, String url, int wait, JSONObject message) {
@@ -59,20 +56,24 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
     }
 
     @Override
+    public boolean complete(byte[] message) {
+        return message[message.length - 2] == '}' && message[message.length - 1] == '}';
+    }
+
+    @Override
     public byte[] call() throws Exception {
         JSONObject object = json.toObject(http.get("http://" + service + "/json/new", null, url));
         thread.sleep(wait, TimeUnit.Second);
         wsClient = wsClients.get();
         try {
-            list = new ArrayList<>();
             wsClient.connect(this, object.getString("webSocketDebuggerUrl"));
             for (int i = 0; i < maxWait; i++) {
-                if (!list.isEmpty() && System.currentTimeMillis() - time > 1000L)
+                if (result != null)
                     break;
 
                 thread.sleep(1, TimeUnit.Second);
             }
-            if (list.isEmpty()) {
+            if (result == null) {
                 logger.warn(null, "请求[{}]等待[{}]秒未获得Chrome推送的数据！", message, maxWait);
 
                 return null;
@@ -84,10 +85,8 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
             http.get("http://" + service + "/json/close/" + object.getString("id"), null, "");
         }
 
-        String result = getResult();
         if (logger.isDebugEnable())
-            logger.debug("接收到Chrome推送的数据[{}:{}]。", list.size(), converter.toBitSize(result.length()));
-        list.clear();
+            logger.debug("接收到Chrome推送的数据[{}]。", converter.toBitSize(result.length()));
         JSONObject obj = json.toObject(result);
         if (obj == null)
             return null;
@@ -101,28 +100,6 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
         return Base64.getDecoder().decode(obj.getJSONObject("result").getString("data"));
     }
 
-    private String getResult() {
-        if (list.size() == 1)
-            return list.get(0);
-
-        String[] array = new String[list.size()];
-        int i = 1;
-        for (String string : list) {
-            if (string.charAt(0) == '{')
-                array[0] = string;
-            else if (string.charAt(string.length() - 1) == '}')
-                array[array.length - 1] = string;
-            else
-                array[i++] = string;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (String string : array)
-            sb.append(string);
-
-        return sb.toString();
-    }
-
     @Override
     public void connect() {
         wsClient.send(message.toJSONString());
@@ -130,8 +107,7 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
 
     @Override
     public void receive(String message) {
-        time = System.currentTimeMillis();
-        list.add(message);
+        result = message;
     }
 
     @Override

@@ -10,6 +10,14 @@ public interface WsClientListener {
     void connect();
 
     /**
+     * 判断是否为最后一个数据包。
+     *
+     * @param message 数据包。
+     * @return 如果是则返回true；否则返回false。
+     */
+    boolean complete(byte[] message);
+
+    /**
      * 接收数据。当监听端口接收到数据时，通知此方法。
      *
      * @param message 数据。
