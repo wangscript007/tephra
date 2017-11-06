@@ -1,5 +1,6 @@
 package org.lpw.tephra.aio;
 
+import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 
 /**
@@ -23,6 +24,14 @@ public interface AioHelper {
      * @return Session ID值。
      */
     String getSessionId(AsynchronousSocketChannel socketChannel);
+
+    /**
+     * 获取缓冲区。
+     *
+     * @param sessionId Session ID值。
+     * @return 缓冲区。
+     */
+    ByteBuffer getBuffer(String sessionId);
 
     /**
      * 发送信息。

@@ -21,11 +21,14 @@ import java.util.concurrent.Executors;
  */
 @Component("tephra.aio.helper")
 public class AioHelperImpl implements AioHelper, MinuteJob {
+    private static final int BUFFER_SZE = 10 * (1 << 20);
+
     @Inject
     private Thread thread;
     @Inject
     private Logger logger;
     private Map<String, AsynchronousSocketChannel> map = new ConcurrentHashMap<>();
+    private Map<String, ByteBuffer> buffers = new ConcurrentHashMap<>();
     private Map<String, ExecutorService> services = new ConcurrentHashMap<>();
 
     @Override
@@ -39,6 +42,11 @@ public class AioHelperImpl implements AioHelper, MinuteJob {
     @Override
     public String getSessionId(AsynchronousSocketChannel socketChannel) {
         return socketChannel.toString();
+    }
+
+    @Override
+    public ByteBuffer getBuffer(String sessionId) {
+        return buffers.computeIfAbsent(sessionId, sid -> ByteBuffer.allocate(BUFFER_SZE));
     }
 
     @Override
@@ -57,6 +65,7 @@ public class AioHelperImpl implements AioHelper, MinuteJob {
 
         try {
             map.remove(sessionId).close();
+            buffers.remove(sessionId);
             services.remove(sessionId).shutdown();
         } catch (IOException e) {
             logger.warn(e, "关闭AIO Socket Channel[{}]时发生异常！", sessionId);

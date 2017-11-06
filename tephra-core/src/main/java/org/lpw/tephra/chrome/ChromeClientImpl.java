@@ -67,7 +67,7 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
             list = new ArrayList<>();
             wsClient.connect(this, object.getString("webSocketDebuggerUrl"));
             for (int i = 0; i < maxWait; i++) {
-                if (!list.isEmpty() && System.currentTimeMillis() - time < 1000L)
+                if (!list.isEmpty() && System.currentTimeMillis() - time > 1000L)
                     break;
 
                 thread.sleep(1, TimeUnit.Second);
@@ -84,6 +84,27 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
             http.get("http://" + service + "/json/close/" + object.getString("id"), null, "");
         }
 
+        String result = getResult();
+        if (logger.isDebugEnable())
+            logger.debug("接收到Chrome推送的数据[{}:{}]。", list.size(), converter.toBitSize(result.length()));
+        list.clear();
+        JSONObject obj = json.toObject(result);
+        if (obj == null)
+            return null;
+
+        if (!obj.containsKey("result")) {
+            logger.warn(null, "请求Chrome失败[{}]！", result);
+
+            return null;
+        }
+
+        return Base64.getDecoder().decode(obj.getJSONObject("result").getString("data"));
+    }
+
+    private String getResult() {
+        if (list.size() == 1)
+            return list.get(0);
+
         String[] array = new String[list.size()];
         int i = 1;
         for (String string : list) {
@@ -98,20 +119,8 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
         StringBuilder sb = new StringBuilder();
         for (String string : array)
             sb.append(string);
-        String result = sb.toString();
-        if (logger.isDebugEnable())
-            logger.debug("接收到Chrome推送的数据[{}:{}]。", array.length, converter.toBitSize(result.length()));
-        JSONObject obj = json.toObject(result);
-        if (obj == null)
-            return null;
 
-        if (!obj.containsKey("result")) {
-            logger.warn(null, "请求Chrome失败[{}]！", result);
-
-            return null;
-        }
-
-        return Base64.getDecoder().decode(obj.getJSONObject("result").getString("data"));
+        return sb.toString();
     }
 
     @Override

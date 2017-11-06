@@ -131,7 +131,6 @@ public class WsClientImpl implements WsClient, AioClientListener {
     private void receive(byte[] message) {
         if (logger.isDebugEnable())
             logger.debug("接收到WebSocket[{}]服务推送的数据[{}]。", uri.toString(), converter.toBitSize(message.length));
-
         long length = message[1] & 0x7f;
         int start = 2;
         if (length == 126)
@@ -143,6 +142,9 @@ public class WsClientImpl implements WsClient, AioClientListener {
         if (mask) {
             System.arraycopy(masks, start, masks, 0, masks.length);
             start += 4;
+        }
+        for (int i = 0; i < start; i++) {
+            System.out.println("#### " + i + "=" + (message[i] & 0xff) + ":" + message[i]);
         }
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
