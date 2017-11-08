@@ -205,12 +205,8 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
             insertSql.append('?');
         }
         insertSql.append(")");
-        int n = update(dataSource, modelTable, insertSql, args.toArray());
 
-        if (n == 0)
-            logger.warn(null, "新增操作失败！jdbc:{};args:{}", insertSql, modelHelper.toJson(model));
-
-        return n;
+        return update(dataSource, modelTable, insertSql, args.toArray());
     }
 
     /**
@@ -234,12 +230,8 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
         }
         updateSql.append(" WHERE ").append(modelTable.getIdColumnName()).append("=?");
         args.add(model.getId());
-        int n = update(dataSource, modelTable, updateSql, args.toArray());
 
-        if (n == 0)
-            logger.warn(null, "更新操作失败！jdbc:{};args:{}", updateSql, modelHelper.toJson(model));
-
-        return n;
+        return update(dataSource, modelTable, updateSql, args.toArray());
     }
 
     @Override
@@ -248,12 +240,8 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
         StringBuilder updateSql = new StringBuilder().append("UPDATE ").append(modelTable.getTableName()).append(" SET ").append(query.getSet());
         if (!validator.isEmpty(query.getWhere()))
             updateSql.append(" WHERE ").append(query.getWhere());
-        int n = update(query.getDataSource(), modelTable, updateSql, args);
 
-        if (n == 0)
-            logger.warn(null, "更新操作失败！jdbc:{};args:{}", updateSql, converter.toString(args));
-
-        return n > 0;
+        return update(query.getDataSource(), modelTable, updateSql, args) > 0;
     }
 
     private int update(String dataSource, ModelTable modelTable, StringBuilder updateSql, Object[] args) {
@@ -278,12 +266,8 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
         StringBuilder deleteSql = new StringBuilder().append("DELETE FROM ").append(modelTable.getTableName());
         if (!validator.isEmpty(query.getWhere()))
             deleteSql.append(" WHERE ").append(query.getWhere());
-        int n = update(query.getDataSource(), modelTable, deleteSql, args);
 
-        if (n == 0)
-            logger.warn(null, "删除操作失败！jdbc:{};args:{}", deleteSql, converter.toString(args));
-
-        return n > 0;
+        return update(query.getDataSource(), modelTable, deleteSql, args) > 0;
     }
 
     @Override
