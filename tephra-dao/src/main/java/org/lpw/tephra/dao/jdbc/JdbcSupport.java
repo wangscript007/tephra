@@ -18,13 +18,15 @@ import java.sql.SQLException;
  */
 abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
     @Inject
-    protected Validator validator;
+    Validator validator;
     @Inject
-    protected Converter converter;
+    Converter converter;
     @Inject
-    protected Logger logger;
+    Logger logger;
     @Inject
-    protected Connection connection;
+    private Connection connection;
+    @Inject
+    BatchSql batchSql;
 
     SqlTable query(ResultSet rs) throws SQLException {
         SqlTable sqlTable = BeanFactory.getBean(SqlTable.class);
@@ -52,6 +54,13 @@ abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
 
     @Override
     public int update(String dataSource, String sql, Object[] args) {
+        if (batchSql.collect(dataSource, sql, args)) {
+            if (logger.isDebugEnable())
+                logger.debug("添加SQL[{}:{}]到收集器中。", sql, converter.toString(args));
+
+            return 0;
+        }
+
         try {
             long time = System.currentTimeMillis();
             T pstmt = newPreparedStatement(dataSource, Mode.Write, sql);
