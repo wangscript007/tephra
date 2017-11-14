@@ -58,21 +58,17 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
 
     @SuppressWarnings("unchecked")
     private <T extends Model> T queryOne(LiteQuery query, Object[] args) {
-        List<T> list = (List<T>) query(query, args, false).getList();
+        List<T> list = (List<T>) query(query.countable(false), args).getList();
 
         return validator.isEmpty(list) ? null : list.get(0);
     }
 
     @Override
-    public <T extends Model> PageList<T> query(LiteQuery query, Object[] args) {
-        return query(query, args, true);
-    }
-
     @SuppressWarnings("unchecked")
-    private <T extends Model> PageList<T> query(LiteQuery query, Object[] args, boolean countable) {
+    public <T extends Model> PageList<T> query(LiteQuery query, Object[] args) {
         PageList<T> models = BeanFactory.getBean(PageList.class);
-        if (query.getSize() > 0 && query.getSize() > 0)
-            models.setPage(countable ? count(query, args) : query.getSize() * query.getPage(), query.getSize(), query.getPage());
+        if (query.getSize() > 0 && query.getPage() > 0)
+            models.setPage(query.isCountable() ? count(query, args) : query.getSize() * query.getPage(), query.getSize(), query.getPage());
         models.setList(new ArrayList<>());
 
         ModelTable modelTable = modelTables.get(query.getModelClass());
@@ -276,7 +272,12 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     }
 
     @Override
-    public void resetMemory(String dataSource, Class<? extends Model> modelClass, boolean count) {
+    public void resetMemory(Class<? extends Model> modelClass) {
+        resetMemory(null, modelClass);
+    }
+
+    @Override
+    public void resetMemory(String dataSource, Class<? extends Model> modelClass) {
         ModelTable modelTable = modelTables.get(modelClass);
         if (modelClass == null) {
             logger.warn(null, "ModelClass不存在！");

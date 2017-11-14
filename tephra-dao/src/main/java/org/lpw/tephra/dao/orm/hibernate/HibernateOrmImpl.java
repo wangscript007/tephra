@@ -56,8 +56,8 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
     @Override
     public <T extends Model> PageList<T> query(HibernateQuery query, Object[] args) {
         PageList<T> models = BeanFactory.getBean(PageList.class);
-        if (query.getSize() > 0)
-            models.setPage(count(query, args), query.getSize(), query.getPage());
+        if (query.getSize() > 0 && query.getPage() > 0)
+            models.setPage(query.isCountable() ? count(query, args) : query.getSize() * query.getPage(), query.getSize(), query.getPage());
         models.setList(createQuery(getDataSource(null, query, null, null), Mode.Read, getQueryHql(query), args, query.isLocked(), models.getSize(), models.getNumber()).list());
 
         return models;
