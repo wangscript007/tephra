@@ -67,7 +67,7 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     @SuppressWarnings("unchecked")
     public <T extends Model> PageList<T> query(LiteQuery query, Object[] args) {
         PageList<T> models = BeanFactory.getBean(PageList.class);
-        if (query.getSize() > 0 && query.getPage() > 0)
+        if (query.getSize() > 0)
             models.setPage(query.isCountable() ? count(query, args) : query.getSize() * query.getPage(), query.getSize(), query.getPage());
         models.setList(new ArrayList<>());
 
