@@ -52,7 +52,6 @@ public class BatchUpdateImpl implements BatchUpdate {
             if (sql.contains(string))
                 return false;
 
-
         tlDataSource.get().add(dataSource);
         tlSql.get().add(sql);
         tlArgs.get().add(args);
