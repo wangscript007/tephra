@@ -58,6 +58,7 @@ abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
             return -1;
 
         try {
+            System.out.println("zzzzzzzzzzzzzzzzzzz");
             long time = System.currentTimeMillis();
             T pstmt = newPreparedStatement(dataSource, Mode.Write, sql);
             setArgs(pstmt, args);
