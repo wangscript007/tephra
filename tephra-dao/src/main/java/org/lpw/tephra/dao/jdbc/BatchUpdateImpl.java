@@ -46,13 +46,10 @@ public class BatchUpdateImpl implements BatchUpdate {
         if (tlDataSource.get() == null)
             return false;
 
-        System.out.println("yyyyyyyyy11:"+tlIgnore.get());
-        System.out.println("yyyyyyyyy22:"+sql);
         for (String string : tlIgnore.get())
             if (sql.contains(string))
                 return false;
 
-        System.out.println("yyyyyyyyy33:"+sql);
         tlDataSource.get().add(dataSource);
         tlSql.get().add(sql);
         tlArgs.get().add(args);
