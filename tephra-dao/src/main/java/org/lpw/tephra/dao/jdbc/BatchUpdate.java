@@ -33,4 +33,9 @@ public interface BatchUpdate {
      * 提交更新。
      */
     void commit();
+
+    /**
+     * 取消。
+     */
+    void cancel();
 }

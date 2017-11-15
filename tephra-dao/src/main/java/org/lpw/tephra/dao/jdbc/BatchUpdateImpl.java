@@ -80,4 +80,12 @@ public class BatchUpdateImpl implements BatchUpdate {
         if (logger.isDebugEnable())
             logger.debug("批量执行收集的SQL[{}:{}]。", size, System.currentTimeMillis() - time);
     }
+
+    @Override
+    public void cancel() {
+        tlIgnore.remove();
+        tlDataSource.remove();
+        tlSql.remove();
+        tlArgs.remove();
+    }
 }
