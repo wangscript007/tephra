@@ -52,6 +52,7 @@ public class BatchUpdateImpl implements BatchUpdate {
             if (sql.contains(string))
                 return false;
 
+        System.out.println("yyyyyyyyy33:"+sql);
         tlDataSource.get().add(dataSource);
         tlSql.get().add(sql);
         tlArgs.get().add(args);
