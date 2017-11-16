@@ -86,9 +86,23 @@ public class BatchUpdateImpl implements BatchUpdate {
 
     @Override
     public void cancel() {
+        if (tlDataSource.get() == null)
+            return;
+
         tlIgnore.remove();
+        List<String> dataSource = tlDataSource.get();
         tlDataSource.remove();
+        List<String> sql = tlSql.get();
         tlSql.remove();
+        List<Object[]> args = tlArgs.get();
         tlArgs.remove();
+
+        if (logger.isInfoEnable()) {
+            int size = dataSource.size();
+            for (int i = 0; i < size; i++)
+                logger.info("回滚批量执行SQL[{}:{}:{}]。", dataSource.get(i), sql.get(i), converter.toString(args.get(i)));
+            logger.info("回滚批量执行收集的SQL[{}:{}]。", size);
+        }
+        this.sql.close();
     }
 }
