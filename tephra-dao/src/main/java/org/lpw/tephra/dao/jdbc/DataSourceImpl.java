@@ -3,7 +3,6 @@ package org.lpw.tephra.dao.jdbc;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.dao.dialect.Dialect;
 import org.lpw.tephra.dao.dialect.DialectFactory;
@@ -140,15 +139,16 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
             return;
 
         for (int i = 0; i < ips.size(); i++) {
-            BasicDataSource dataSource = new BasicDataSource();
+            org.apache.tomcat.jdbc.pool.DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource();
             dataSource.setDriverClassName(dialect.getDriver());
             dataSource.setUrl(dialect.getUrl(ips.getString(i), schema));
             dataSource.setUsername(username);
             dataSource.setPassword(password);
             dataSource.setInitialSize(initialSize);
-            dataSource.setMaxTotal(maxActive);
+            dataSource.setMaxActive(maxActive);
+            dataSource.setMinIdle(maxActive);
             dataSource.setMaxIdle(maxActive);
-            dataSource.setMaxWaitMillis(maxWait);
+            dataSource.setMaxWait(maxWait);
             dataSource.setTestWhileIdle(true);
             dataSource.setTestOnBorrow(false);
             dataSource.setTestOnReturn(false);
@@ -156,8 +156,7 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
             dataSource.setValidationQueryTimeout(maxWait);
             dataSource.setTimeBetweenEvictionRunsMillis(testInterval);
             dataSource.setNumTestsPerEvictionRun(maxActive);
-            dataSource.setRemoveAbandonedOnBorrow(true);
-            dataSource.setRemoveAbandonedOnMaintenance(true);
+            dataSource.setRemoveAbandoned(true);
             dataSource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
             dataSource.setLogAbandoned(true);
 
