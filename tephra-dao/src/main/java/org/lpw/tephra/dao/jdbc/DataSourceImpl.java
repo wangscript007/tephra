@@ -3,7 +3,7 @@ package org.lpw.tephra.dao.jdbc;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.dao.dialect.Dialect;
 import org.lpw.tephra.dao.dialect.DialectFactory;
@@ -146,9 +146,9 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
             dataSource.setUsername(username);
             dataSource.setPassword(password);
             dataSource.setInitialSize(initialSize);
-            dataSource.setMaxActive(maxActive);
+            dataSource.setMaxTotal(maxActive);
             dataSource.setMaxIdle(maxActive);
-            dataSource.setMaxWait(maxWait);
+            dataSource.setMaxWaitMillis(maxWait);
             dataSource.setTestWhileIdle(true);
             dataSource.setTestOnBorrow(false);
             dataSource.setTestOnReturn(false);
@@ -156,7 +156,8 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
             dataSource.setValidationQueryTimeout(maxWait);
             dataSource.setTimeBetweenEvictionRunsMillis(testInterval);
             dataSource.setNumTestsPerEvictionRun(maxActive);
-            dataSource.setRemoveAbandoned(true);
+            dataSource.setRemoveAbandonedOnBorrow(true);
+            dataSource.setRemoveAbandonedOnMaintenance(true);
             dataSource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
             dataSource.setLogAbandoned(true);
 
