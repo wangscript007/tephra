@@ -74,11 +74,14 @@ public class BatchUpdateImpl implements BatchUpdate {
 
         long time = System.currentTimeMillis();
         int size = dataSource.size();
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < size; i++) {
             this.sql.update(dataSource.get(i), sql.get(i), args.get(i));
+            if (logger.isInfoEnable())
+                logger.info("批量执行SQL[{}:{}:{}]。", dataSource.get(i), sql.get(i), converter.toString(args.get(i)));
+        }
         this.sql.close();
-        if (logger.isDebugEnable())
-            logger.debug("批量执行收集的SQL[{}:{}]。", size, System.currentTimeMillis() - time);
+        if (logger.isInfoEnable())
+            logger.info("批量执行收集的SQL[{}:{}]。", size, System.currentTimeMillis() - time);
     }
 
     @Override
