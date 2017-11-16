@@ -43,9 +43,9 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
     private int maxActive;
     @Value("${tephra.dao.database.max-wait:5000}")
     private int maxWait;
-    @Value("${tephra.dao.database.test-interval:600000}")
+    @Value("${tephra.dao.database.test-interval:30000}")
     private int testInterval;
-    @Value("${tephra.dao.database.remove-abandoned-timeout:300}")
+    @Value("${tephra.dao.database.remove-abandoned-timeout:60}")
     private int removeAbandonedTimeout;
     @Value("${tephra.dao.database.config:}")
     private String config;
@@ -146,19 +146,19 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
             dataSource.setPassword(password);
             dataSource.setInitialSize(initialSize);
             dataSource.setMaxActive(maxActive);
-            dataSource.setMinIdle(maxActive);
             dataSource.setMaxIdle(maxActive);
+            dataSource.setMinIdle(initialSize);
             dataSource.setMaxWait(maxWait);
-            dataSource.setTestWhileIdle(true);
-            dataSource.setTestOnBorrow(false);
-            dataSource.setTestOnReturn(false);
+            dataSource.setTestWhileIdle(false);
+            dataSource.setTestOnBorrow(true);
             dataSource.setValidationQuery(dialect.getValidationQuery());
-            dataSource.setValidationQueryTimeout(maxWait);
+            dataSource.setTestOnReturn(false);
+            dataSource.setValidationInterval(testInterval);
             dataSource.setTimeBetweenEvictionRunsMillis(testInterval);
-            dataSource.setNumTestsPerEvictionRun(maxActive);
-            dataSource.setRemoveAbandoned(true);
             dataSource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
+            dataSource.setMinEvictableIdleTimeMillis(testInterval);
             dataSource.setLogAbandoned(true);
+            dataSource.setRemoveAbandoned(true);
 
             if (i == 0)
                 writeables.put(key, dataSource);
