@@ -157,7 +157,6 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
             dataSource.setTimeBetweenEvictionRunsMillis(testInterval);
             dataSource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
             dataSource.setMinEvictableIdleTimeMillis(testInterval);
-            dataSource.setLogAbandoned(true);
             dataSource.setRemoveAbandoned(true);
 
             if (i == 0)
