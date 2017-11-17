@@ -43,8 +43,12 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
             connections = new HashMap<>();
         String key = dataSource + mode.ordinal();
         Connection connection = connections.get(key);
-        if (connection != null)
-            return connection;
+        if (connection != null) {
+            if (isOpen(connection))
+                return connection;
+
+            connections.remove(key);
+        }
 
         try {
             DataSource ds = null;
@@ -73,7 +77,7 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
 
         connections.forEach((key, connection) -> {
             try {
-                if (!connection.isClosed()) {
+                if (isOpen(connection)) {
                     if (!connection.getAutoCommit())
                         connection.rollback();
                     connection.close();
@@ -97,7 +101,7 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
 
         connections.forEach((key, connection) -> {
             try {
-                if (!connection.isClosed()) {
+                if (isOpen(connection)) {
                     if (!connection.getAutoCommit())
                         connection.commit();
                     connection.close();
@@ -115,7 +119,17 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
         remove();
     }
 
-    private void remove(){
+    private boolean isOpen(Connection connection) {
+        try {
+            return !connection.isClosed();
+        } catch (SQLException e) {
+            logger.warn(e, "验证连接是否关闭时发生异常！");
+
+            return false;
+        }
+    }
+
+    private void remove() {
         connections.remove();
         transactional.remove();
     }
