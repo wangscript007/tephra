@@ -74,35 +74,18 @@ public class BatchUpdateImpl implements BatchUpdate {
 
         long time = System.currentTimeMillis();
         int size = dataSource.size();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++)
             this.sql.update(dataSource.get(i), sql.get(i), args.get(i));
-            if (logger.isInfoEnable())
-                logger.info("批量执行SQL[{}:{}:{}]。", dataSource.get(i), sql.get(i), converter.toString(args.get(i)));
-        }
         this.sql.close();
-        if (logger.isInfoEnable())
-            logger.info("批量执行收集的SQL[{}:{}]。", size, System.currentTimeMillis() - time);
+        if (logger.isDebugEnable())
+            logger.debug("批量执行收集的SQL[{}:{}]。", size, System.currentTimeMillis() - time);
     }
 
     @Override
     public void cancel() {
-        if (tlDataSource.get() == null)
-            return;
-
         tlIgnore.remove();
-        List<String> dataSource = tlDataSource.get();
         tlDataSource.remove();
-        List<String> sql = tlSql.get();
         tlSql.remove();
-        List<Object[]> args = tlArgs.get();
         tlArgs.remove();
-
-        if (logger.isInfoEnable()) {
-            int size = dataSource.size();
-            for (int i = 0; i < size; i++)
-                logger.info("回滚批量执行SQL[{}:{}:{}]。", dataSource.get(i), sql.get(i), converter.toString(args.get(i)));
-            logger.info("回滚批量执行收集的SQL[{}:{}]。", size);
-        }
-        this.sql.close();
     }
 }
