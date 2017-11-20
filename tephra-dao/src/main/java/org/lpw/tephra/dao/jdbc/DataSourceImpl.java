@@ -158,6 +158,8 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
             dataSource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
             dataSource.setMinEvictableIdleTimeMillis(testInterval);
             dataSource.setRemoveAbandoned(true);
+            dataSource.setJdbcInterceptors("org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;" +
+                    "org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer");
 
             if (i == 0)
                 writeables.put(key, dataSource);
