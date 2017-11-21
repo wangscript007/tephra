@@ -12,21 +12,29 @@ import org.lpw.tephra.ctrl.socket.context.ResponseAdapterImpl;
 import org.lpw.tephra.ctrl.socket.context.SessionAdapterImpl;
 import org.lpw.tephra.nio.NioHelper;
 import org.lpw.tephra.nio.ServerListener;
+import org.lpw.tephra.scheduler.MinuteJob;
 import org.lpw.tephra.util.Compresser;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.TimeUnit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author lpw
  */
 @Controller("tephra.ctrl.socket.server-listener")
-public class ServerListenerImpl implements ServerListener {
+public class ServerListenerImpl implements ServerListener, MinuteJob {
     @Inject
     private Context context;
     @Inject
@@ -55,6 +63,10 @@ public class ServerListenerImpl implements ServerListener {
     private int port;
     @Value("${tephra.ctrl.socket.max-thread:64}")
     private int maxThread;
+    @Value("${tephra.ctrl.socket.queue:true}")
+    private boolean queue;
+    private Map<String, ExecutorService> queueService = new ConcurrentHashMap<>();
+    private Map<String, Long> queueTime = new ConcurrentHashMap<>();
 
     @Override
     public int getPort() {
@@ -91,7 +103,11 @@ public class ServerListenerImpl implements ServerListener {
                     break;
                 }
 
-                execute(sessionId, object);
+                if (queue)
+                    queueService.computeIfAbsent(sessionId, sid -> Executors.newSingleThreadExecutor())
+                            .submit(() -> execute(sessionId, object));
+                else
+                    execute(sessionId, object);
             }
         } catch (Throwable throwable) {
             nioHelper.close(sessionId);
@@ -145,5 +161,21 @@ public class ServerListenerImpl implements ServerListener {
     @Override
     public void disconnect(String sessionId) {
         socketHelper.unbind(sessionId, null);
+    }
+
+    @Override
+    public void executeMinuteJob() {
+        if (!queue)
+            return;
+
+        Set<String> set = new HashSet<>();
+        queueTime.forEach((key, time) -> {
+            if (System.currentTimeMillis() - time > 30 * TimeUnit.Minute.getTime())
+                set.add(key);
+        });
+        set.forEach(key -> {
+            queueService.remove(key).shutdown();
+            queueTime.remove(key);
+        });
     }
 }
