@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.ctrl.Dispatcher;
+import org.lpw.tephra.ctrl.Handler;
 import org.lpw.tephra.ctrl.context.HeaderAware;
 import org.lpw.tephra.ctrl.context.RequestAware;
 import org.lpw.tephra.ctrl.context.ResponseAware;
@@ -15,7 +16,6 @@ import org.lpw.tephra.ctrl.http.context.ResponseAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.SessionAdapterImpl;
 import org.lpw.tephra.ctrl.http.upload.UploadHelper;
 import org.lpw.tephra.ctrl.status.Status;
-import org.lpw.tephra.scheduler.MinuteJob;
 import org.lpw.tephra.storage.StorageListener;
 import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Context;
@@ -24,7 +24,6 @@ import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.TimeHash;
-import org.lpw.tephra.util.TimeUnit;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -36,19 +35,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author lpw
  */
 @Controller("tephra.ctrl.http.service.helper")
-public class ServiceHelperImpl implements ServiceHelper, StorageListener, MinuteJob {
+public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private static final String ROOT = "/";
     private static final String SESSION_ID = "tephra-session-id";
 
@@ -75,6 +69,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener, Minute
     @Inject
     private ResponseAware responseAware;
     @Inject
+    private Handler handler;
+    @Inject
     private Dispatcher dispatcher;
     @Inject
     private Status status;
@@ -90,16 +86,12 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener, Minute
     private String ignoreNames;
     @Value("${tephra.ctrl.http.ignore.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png}")
     private String ignoreSuffixes;
-    @Value("${tephra.ctrl.http.queue:true}")
-    private boolean queue;
     @Value("${tephra.ctrl.http.cors:/WEB-INF/cors.json}")
     private String cors;
     private int contextPath;
     private String servletContextPath;
     private String[] prefixes;
     private String[] suffixes;
-    private Map<String, ExecutorService> queueService = new ConcurrentHashMap<>();
-    private Map<String, Long> queueTime = new ConcurrentHashMap<>();
     private Set<String> ignoreUris;
     private Set<String> corsOrigins;
     private String corsMethods;
@@ -140,16 +132,11 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener, Minute
         }
 
         String sessionId = getSessionId(request);
-        if (!queue)
-            return service(request, response, uri, sessionId);
-
         try {
-            return queueService.computeIfAbsent(sessionId, sid -> Executors.newSingleThreadExecutor()).submit(() -> {
-                queueTime.put(sessionId, System.currentTimeMillis());
+            return handler.call(sessionId, () -> service(request, response, uri, sessionId));
+        } catch (Exception e) {
+            logger.warn(e, "处理请求[{}]时发生异常！", uri);
 
-                return service(request, response, uri, sessionId);
-            }).get();
-        } catch (InterruptedException | ExecutionException e) {
             return false;
         }
     }
@@ -307,21 +294,5 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener, Minute
             sb.append(',').append(string);
 
         return sb.length() == 0 ? "" : sb.substring(1);
-    }
-
-    @Override
-    public void executeMinuteJob() {
-        if (!queue)
-            return;
-
-        Set<String> set = new HashSet<>();
-        queueTime.forEach((key, time) -> {
-            if (System.currentTimeMillis() - time > 30 * TimeUnit.Minute.getTime())
-                set.add(key);
-        });
-        set.forEach(key -> {
-            queueService.remove(key).shutdown();
-            queueTime.remove(key);
-        });
     }
 }
