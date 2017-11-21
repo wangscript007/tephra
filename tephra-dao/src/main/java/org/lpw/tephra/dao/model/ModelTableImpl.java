@@ -347,6 +347,11 @@ public class ModelTableImpl implements ModelTable {
     }
 
     @Override
+    public boolean containsPropertyName(String propertyName) {
+        return getMethods.containsKey(propertyName);
+    }
+
+    @Override
     public Jsonable getJsonable(String name) {
         for (int i = 0; i < 3; i++) {
             String key = getKey(i, name);

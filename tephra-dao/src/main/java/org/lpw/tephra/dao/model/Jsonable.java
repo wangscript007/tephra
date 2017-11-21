@@ -21,4 +21,11 @@ public @interface Jsonable {
      * @return 数据格式。
      */
     String format() default "";
+
+    /**
+     * 是否为扩展属性。
+     *
+     * @return 是否为扩展属性。
+     */
+    boolean extend() default false;
 }
