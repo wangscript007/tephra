@@ -37,9 +37,9 @@ public class HandlerImpl implements Handler, MinuteJob {
     }
 
     @Override
-    public void run(String key, Runnable runnable) throws Exception {
+    public void run(String key, Runnable runnable) {
         if (queue) {
-            getExecutorService(key).submit(runnable).get();
+            getExecutorService(key).submit(runnable);
             queueTime.put(key, System.currentTimeMillis());
         } else
             runnable.run();
@@ -47,6 +47,14 @@ public class HandlerImpl implements Handler, MinuteJob {
 
     private ExecutorService getExecutorService(String key) {
         return queueService.computeIfAbsent(key, k -> Executors.newSingleThreadExecutor());
+    }
+
+    @Override
+    public void clear(String key) {
+        if (queueService.containsKey(key))
+            queueService.remove(key).shutdown();
+        if (queueTime.containsKey(key))
+            queueTime.remove(key);
     }
 
     @Override
@@ -59,9 +67,6 @@ public class HandlerImpl implements Handler, MinuteJob {
             if (System.currentTimeMillis() - time > maxIdle * TimeUnit.Minute.getTime())
                 set.add(key);
         });
-        set.forEach(key -> {
-            queueService.remove(key).shutdown();
-            queueTime.remove(key);
-        });
+        set.forEach(this::clear);
     }
 }

@@ -94,7 +94,8 @@ public class ServerListenerImpl implements ServerListener {
                     break;
                 }
 
-                handler.run(sessionId, () -> execute(sessionId, object));
+                String tsid = object.getString("tephra-session-id");
+                handler.run(tsid == null ? sessionId : object.getString("tephra-session-id"), () -> execute(sessionId, tsid, object));
             }
         } catch (Throwable throwable) {
             nioHelper.close(sessionId);
@@ -133,15 +134,13 @@ public class ServerListenerImpl implements ServerListener {
         return length;
     }
 
-    private void execute(String sessionId, JSONObject object) {
-        headerAware.set(new HeaderAdapterImpl(object.getJSONObject("header"), nioHelper.getIp(sessionId)));
-        if (object.containsKey("tephra-session-id")) {
-            sessionAware.set(new SessionAdapterImpl(object.getString("tephra-session-id")));
-            socketHelper.bind(sessionId, object.getString("tephra-session-id"));
-        } else
-            sessionAware.set(new SessionAdapterImpl(sessionId));
+    private void execute(String sid, String tsid, JSONObject object) {
+        headerAware.set(new HeaderAdapterImpl(object.getJSONObject("header"), nioHelper.getIp(sid)));
+        sessionAware.set(new SessionAdapterImpl(tsid == null ? sid : tsid));
+        if (tsid != null)
+            socketHelper.bind(sid, tsid);
         requestAware.set(new RequestAdapterImpl(object.getJSONObject("request"), port, object.getString("uri")));
-        responseAware.set(new ResponseAdapterImpl(socketHelper, sessionId));
+        responseAware.set(new ResponseAdapterImpl(socketHelper, sid));
         dispatcher.execute();
     }
 

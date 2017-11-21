@@ -24,7 +24,13 @@ public interface Handler {
      *
      * @param key      队列KEY。
      * @param runnable 处理逻辑。
-     * @throws Exception 执行异常。
      */
-    void run(String key, Runnable runnable) throws Exception;
+    void run(String key, Runnable runnable);
+
+    /**
+     * 清除队列。
+     *
+     * @param key 队列KEY。
+     */
+    void clear(String key);
 }

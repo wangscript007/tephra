@@ -1,5 +1,6 @@
 package org.lpw.tephra.ctrl.socket;
 
+import org.lpw.tephra.ctrl.Handler;
 import org.lpw.tephra.ctrl.context.Session;
 import org.lpw.tephra.nio.NioHelper;
 import org.lpw.tephra.util.Compresser;
@@ -25,6 +26,8 @@ public class SocketHelperImpl implements SocketHelper {
     private Logger logger;
     @Inject
     private NioHelper nioHelper;
+    @Inject
+    private Handler handler;
     @Inject
     private Session session;
     @Value("${tephra.ctrl.socket.zip-size:4096}")
@@ -74,16 +77,21 @@ public class SocketHelperImpl implements SocketHelper {
     public void unbind(String sessionId, String tephraSessionId) {
         if (sessionId != null) {
             String tsid = sids.remove(sessionId);
-            if (tsid != null)
+            if (tsid != null) {
                 tsids.remove(tsid);
+                handler.clear(tsid);
+            }
+            handler.clear(sessionId);
         }
 
         if (tephraSessionId != null) {
             String sid = tsids.remove(tephraSessionId);
             if (sid != null) {
                 sids.remove(sid);
+                handler.clear(sid);
                 nioHelper.close(sid);
             }
+            handler.clear(tephraSessionId);
         }
     }
 }
