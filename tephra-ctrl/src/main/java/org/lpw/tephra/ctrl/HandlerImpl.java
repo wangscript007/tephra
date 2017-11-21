@@ -30,18 +30,23 @@ public class HandlerImpl implements Handler, MinuteJob {
         if (!queue)
             return callable.call();
 
-        T t = queueService.computeIfAbsent(key, k -> Executors.newSingleThreadExecutor()).submit(callable).get();
+        T t = getExecutorService(key).submit(callable).get();
         queueTime.put(key, System.currentTimeMillis());
 
         return t;
     }
 
     @Override
-    public void run(String key, Runnable runnable) {
-        if (queue)
-            queueService.computeIfAbsent(key, k -> Executors.newSingleThreadExecutor()).submit(runnable);
-        else
+    public void run(String key, Runnable runnable) throws Exception {
+        if (queue) {
+            getExecutorService(key).submit(runnable).get();
+            queueTime.put(key, System.currentTimeMillis());
+        } else
             runnable.run();
+    }
+
+    private ExecutorService getExecutorService(String key) {
+        return queueService.computeIfAbsent(key, k -> Executors.newSingleThreadExecutor());
     }
 
     @Override
