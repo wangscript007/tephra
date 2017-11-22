@@ -70,14 +70,18 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     private ThreadLocal<Integer> statusCode = new ThreadLocal<>();
 
     @Override
+    public String get(String url, Map<String, String> headers, Map<String, String> parameters) {
+        return get(url, headers, parameters, null);
+    }
+
+    @Override
     public String get(String url, Map<String, String> headers, Map<String, String> parameters, String charset) {
-        if (validator.isEmpty(parameters))
-            return get(url, headers, "", charset);
+        return get(url, headers, toStringParameters(parameters, charset), charset);
+    }
 
-        StringBuilder sb = new StringBuilder();
-        parameters.forEach((name, value) -> sb.append('&').append(name).append('=').append(converter.encodeUrl(parameters.get(name), charset)));
-
-        return get(url, headers, sb.substring(1), charset);
+    @Override
+    public String get(String url, Map<String, String> headers, String parameters) {
+        return get(url, headers, parameters, null);
     }
 
     @Override
@@ -107,6 +111,11 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     }
 
     @Override
+    public String post(String url, Map<String, String> headers, Map<String, String> parameters) {
+        return post(url, headers, parameters, null);
+    }
+
+    @Override
     public String post(String url, Map<String, String> headers, Map<String, String> parameters, String charset) {
         if (validator.isEmpty(parameters))
             return postByEntity(url, headers, null, charset);
@@ -124,14 +133,25 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     }
 
     @Override
+    public String post(String url, Map<String, String> headers, String content) {
+        return post(url, headers, content, null);
+    }
+
+    @Override
     public String post(String url, Map<String, String> headers, String content, String charset) {
         try {
-            return postByEntity(url, headers, validator.isEmpty(content) ? null : new StringEntity(content, context.getCharset(charset)), charset);
+            return postByEntity(url, headers, validator.isEmpty(content) ? null : new StringEntity(content, context.getCharset(charset)),
+                    charset);
         } catch (Exception e) {
             logger.warn(e, "使用POST访问[{}]时发生异常！", url);
 
             return null;
         }
+    }
+
+    @Override
+    public String upload(String url, Map<String, String> headers, Map<String, String> parameters, Map<String, File> files) {
+        return upload(url, headers, parameters, files, null);
     }
 
     @Override
@@ -173,14 +193,24 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     }
 
     @Override
-    public Map<String, String> download(String url, Map<String, String> headers, Map<String, String> parameters, String charset, String dest) {
+    public Map<String, String> download(String url, Map<String, String> headers, Map<String, String> parameters, String dest) {
+        return download(url, headers, parameters, null, dest);
+    }
+
+    @Override
+    public Map<String, String> download(String url, Map<String, String> headers, Map<String, String> parameters,
+                                        String charset, String dest) {
+        return download(url, headers, toStringParameters(parameters, charset), dest);
+    }
+
+    private String toStringParameters(Map<String, String> parameters, String charset) {
         if (validator.isEmpty(parameters))
-            return download(url, headers, "", dest);
+            return "";
 
         StringBuilder sb = new StringBuilder();
-        parameters.forEach((name, value) -> sb.append('&').append(name).append('=').append(converter.encodeUrl(parameters.get(name), charset)));
+        parameters.forEach((name, value) -> sb.append('&').append(name).append('=').append(converter.encodeUrl(value, charset)));
 
-        return download(url, headers, sb.substring(1), dest);
+        return sb.substring(1);
     }
 
     @Override
