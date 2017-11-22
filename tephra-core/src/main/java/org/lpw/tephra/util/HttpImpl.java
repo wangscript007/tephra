@@ -198,8 +198,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     }
 
     @Override
-    public Map<String, String> download(String url, Map<String, String> headers, Map<String, String> parameters,
-                                        String charset, String dest) {
+    public Map<String, String> download(String url, Map<String, String> headers, Map<String, String> parameters, String charset, String dest) {
         return download(url, headers, toStringParameters(parameters, charset), dest);
     }
 
