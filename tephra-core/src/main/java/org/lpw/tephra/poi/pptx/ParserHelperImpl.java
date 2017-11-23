@@ -75,27 +75,69 @@ public class ParserHelperImpl implements ParserHelper, ContextRefreshedListener 
     }
 
     @Override
-    public byte[] subImage(byte[] data, JSONObject object, String format) throws IOException {
-        if (!object.containsKey("sub"))
+    public byte[] getImage(JSONObject object, String contentType, ByteArrayOutputStream outputStream) throws IOException {
+        byte[] bytes = outputStream.toByteArray();
+        if (json.hasTrue(object, "thumbnail"))
+            return thumbnail(bytes, object, getFormat(contentType));
+
+        if (object.containsKey("subimage"))
+            return subimage(bytes, object.getJSONObject("subimage"), getFormat(contentType));
+
+        return bytes;
+    }
+
+    private String getFormat(String contentType) {
+        switch (contentType) {
+            case "image/jpeg":
+                return "JPEG";
+            case "image/gif":
+                return "GIT";
+            default:
+                return "PNG";
+        }
+    }
+
+    private byte[] subimage(byte[] data, JSONObject object, String format) throws IOException {
+        BufferedImage image = toImage(data);
+        if (image == null)
             return data;
 
+        int x = object.getIntValue("x");
+        int y = object.getIntValue("y");
+        int w = object.getIntValue("width");
+        int h = object.getIntValue("height");
+        int width = image.getWidth();
+        int height = image.getHeight();
+        if (x == 0 && y == 0 && w >= width && h >= height)
+            return data;
+
+        return toBytes(image.getSubimage(x, y, Math.min(w, width - x), Math.min(h, height - y)), format);
+    }
+
+    private byte[] thumbnail(byte[] data, JSONObject object, String format) throws IOException {
+        BufferedImage image = toImage(data);
+        if (image == null)
+            return data;
+
+        int width = object.getIntValue("width");
+        int height = object.getIntValue("height");
+        BufferedImage thumbnail = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        thumbnail.getGraphics().drawImage(image, 0, 0, width, height, null);
+
+        return toBytes(thumbnail, format);
+    }
+
+    private BufferedImage toImage(byte[] data) throws IOException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
         BufferedImage image = ImageIO.read(inputStream);
         inputStream.close();
 
-        int width = image.getWidth();
-        int height = image.getHeight();
-        JSONObject sub = object.getJSONObject("sub");
-        int x = sub.getIntValue("x");
-        int y = sub.getIntValue("y");
-        int w = sub.getIntValue("width");
-        int h = sub.getIntValue("height");
-        if (x == 0 && y == 0 && w >= width && h >= height)
-            return data;
+        return image;
+    }
 
-        BufferedImage subImage = image.getSubimage(x, y, Math.min(w, width - x), Math.min(h, height - y));
+    private byte[] toBytes(BufferedImage image, String format) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(subImage, format, outputStream);
+        ImageIO.write(image, format, outputStream);
         outputStream.close();
 
         return outputStream.toByteArray();
