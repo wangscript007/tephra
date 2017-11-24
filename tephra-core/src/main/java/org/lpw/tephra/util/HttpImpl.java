@@ -53,6 +53,8 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     @Inject
     private Converter converter;
     @Inject
+    private Numeric numeric;
+    @Inject
     private Io io;
     @Inject
     private TimeHash timeHash;
@@ -90,6 +92,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     @Override
     public String get(String url, Map<String, String> requestHeaders, String parameters) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        get(url, requestHeaders, parameters, null, outputStream);
         String content = outputStream.toString();
 
         if (logger.isDebugEnable())
@@ -163,7 +166,8 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     }
 
     @Override
-    public String upload(String url, Map<String, String> requestHeaders, Map<String, String> parameters, Map<String, File> files, String charset) {
+    public String upload(String url, Map<String, String> requestHeaders, Map<String, String> parameters,
+                         Map<String, File> files, String charset) {
         if (validator.isEmpty(files))
             return post(url, requestHeaders, parameters, charset);
 
@@ -222,15 +226,13 @@ public class HttpImpl implements Http, ContextRefreshedListener {
 
     private void execute(HttpUriRequest request, Map<String, String> requestHeaders, Map<String, String> responseHeaders,
                          OutputStream outputStream) {
-        if (!validator.isEmpty(requestHeaders)) {
-            requestHeaders.forEach((name, value) -> {
-                if (!name.toLowerCase().equals("content-length"))
-                    request.addHeader(name, value);
-            });
-        }
-        request.addHeader("time-hash", converter.toString(timeHash.generate()));
+        if (!validator.isEmpty(requestHeaders))
+            requestHeaders.keySet().stream().filter(key -> !key.toLowerCase().equals("content-length"))
+                    .forEach(key -> request.addHeader(key, requestHeaders.get(key)));
+        request.addHeader("time-hash", numeric.toString(timeHash.generate(), "0"));
         try {
-            CloseableHttpResponse response = HttpClients.custom().setConnectionManager(manager).build().execute(request, HttpClientContext.create());
+            CloseableHttpResponse response = HttpClients.custom().setConnectionManager(manager).build()
+                    .execute(request, HttpClientContext.create());
             if (responseHeaders != null)
                 for (Header header : response.getAllHeaders())
                     responseHeaders.put(header.getName(), header.getValue());
@@ -245,9 +247,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
 
     @Override
     public int getStatusCode() {
-        Integer code = statusCode.get();
-
-        return code == null ? 0 : code;
+        return numeric.toInt(statusCode.get());
     }
 
     @Override
