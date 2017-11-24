@@ -64,21 +64,17 @@ public class BatchUpdateImpl implements BatchUpdate {
         if (tlDataSource.get() == null)
             return;
 
-        tlIgnore.remove();
-        List<String> dataSource = tlDataSource.get();
-        tlDataSource.remove();
-        List<String> sql = tlSql.get();
-        tlSql.remove();
-        List<Object[]> args = tlArgs.get();
-        tlArgs.remove();
-
-        long time = System.currentTimeMillis();
-        int size = dataSource.size();
-        for (int i = 0; i < size; i++)
-            this.sql.update(dataSource.get(i), sql.get(i), args.get(i));
-        this.sql.close();
-        if (logger.isDebugEnable())
-            logger.debug("批量执行收集的SQL[{}:{}]。", size, System.currentTimeMillis() - time);
+        List<String> sqls = tlSql.get();
+        try {
+            long time = System.currentTimeMillis();
+            sql.update(tlDataSource.get(), sqls, tlArgs.get());
+            if (logger.isDebugEnable())
+                logger.debug("批量执行收集的SQL[{}:{}]。", converter.toString(sqls), System.currentTimeMillis() - time);
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "批量执行收集的SQL[{}]时发生异常！", converter.toString(sqls));
+        } finally {
+            cancel();
+        }
     }
 
     @Override
