@@ -14,7 +14,7 @@ public interface Handler {
      * @param key      队列KEY。
      * @param callable 处理逻辑。
      * @param <T>      返回值类型。
-     * @return 返回数据。
+     * @return 返回数据类型。
      * @throws Exception 执行异常。
      */
     <T> T call(String key, Callable<T> callable) throws Exception;
