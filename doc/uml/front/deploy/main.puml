@@ -3,19 +3,18 @@
 actor 用户
 用户 --> 前端UI
 前端UI --> 分发器
-分发器 --> 文件群
+分发器 -u-> 文件群
 分发器 --> 服务群API
-服务群API -l-> Hadoop群
-服务群API -r-> 数据中心
+服务群API --> Hadoop群
+服务群API --> 数据中心
 
 package 前端UI {
 node Android
 node iOS
-node Windows10
 node H5
 node Node.js
 
-H5 --> Node.js
+H5 -l-> Node.js
 }
 
 package 分发器 {
@@ -35,6 +34,8 @@ node 服务节点n
 package 文件群 {
 node 文件节点n
 node 文件节点1
+
+文件节点1 <--> 文件节点n
 }
 
 package 数据中心 {
