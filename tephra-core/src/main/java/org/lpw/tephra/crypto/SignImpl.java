@@ -48,7 +48,7 @@ public class SignImpl implements Sign, StorageListener {
         if (map == null)
             return;
 
-        map.put(SIGN_TIME, converter.toString(System.currentTimeMillis(), "0"));
+        map.put(SIGN_TIME, numeric.toString(System.currentTimeMillis(), "0"));
         map.put(SIGN, get(map, name));
     }
 

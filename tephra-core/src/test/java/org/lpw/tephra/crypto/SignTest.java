@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.lpw.tephra.test.CoreTestSupport;
 import org.lpw.tephra.util.Context;
-import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Thread;
@@ -18,8 +17,6 @@ import java.util.Map;
  * @author lpw
  */
 public class SignTest extends CoreTestSupport {
-    @Inject
-    private Converter converter;
     @Inject
     private Numeric numeric;
     @Inject
@@ -147,13 +144,13 @@ public class SignTest extends CoreTestSupport {
         Assert.assertFalse(sign.verify(map, null));
         map.put("sign-time", "123456");
         Assert.assertFalse(sign.verify(map, null));
-        map.put("sign-time", converter.toString(System.currentTimeMillis() - 12 * TimeUnit.Second.getTime(), "0"));
+        map.put("sign-time", numeric.toString(System.currentTimeMillis() - 12 * TimeUnit.Second.getTime(), "0"));
         Assert.assertFalse(sign.verify(map, null));
-        map.put("sign-time", converter.toString(System.currentTimeMillis() - 5 * TimeUnit.Second.getTime(), "0"));
+        map.put("sign-time", numeric.toString(System.currentTimeMillis() - 5 * TimeUnit.Second.getTime(), "0"));
         Assert.assertFalse(sign.verify(map, null));
         map.put("sign", digest.md5(sb.append("sign-time=").toString() + map.get("sign-time") + "&default key"));
         Assert.assertTrue(sign.verify(map, null));
-        map.put("sign-time", converter.toString(System.currentTimeMillis(), "0"));
+        map.put("sign-time", numeric.toString(System.currentTimeMillis(), "0"));
         map.put("sign", digest.md5(sb.toString() + map.get("sign-time") + "&sign key"));
         Assert.assertTrue(sign.verify(map, "key"));
         map.put("sign", digest.md5(sb.toString() + map.get("sign-time") + "&default key"));

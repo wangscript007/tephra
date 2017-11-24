@@ -5,8 +5,8 @@ import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.poi.Pptx;
+import org.lpw.tephra.util.Coder;
 import org.lpw.tephra.util.Context;
-import org.lpw.tephra.util.Converter;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
@@ -21,7 +21,7 @@ public class TemplateImpl extends TemplateSupport {
     @Inject
     private Context context;
     @Inject
-    private Converter converter;
+    private Coder coder;
     @Inject
     private Pptx pptx;
     @Inject
@@ -44,7 +44,8 @@ public class TemplateImpl extends TemplateSupport {
 
         JSONObject object = (JSONObject) data;
         if (object.containsKey("filename"))
-            response.setHeader("Content-Disposition", "attachment; filename*=" + context.getCharset(null) + "''" + converter.encodeUrl(object.getString("filename"), null) + ".pptx");
+            response.setHeader("Content-Disposition", "attachment; filename*=" + context.getCharset(null)
+                    + "''" + coder.encodeUrl(object.getString("filename"), null) + ".pptx");
         pptx.write(object, outputStream);
     }
 }
