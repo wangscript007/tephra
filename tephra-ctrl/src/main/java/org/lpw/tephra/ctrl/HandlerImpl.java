@@ -85,8 +85,10 @@ public class HandlerImpl implements Handler, MinuteJob {
 
             Set<Future<?>> dones = new HashSet<>();
             list.stream().filter(Future::isDone).forEach(dones::add);
-            if (!dones.isEmpty())
-                list.removeAll(dones);
+            if (dones.isEmpty())
+                return;
+
+            list.removeAll(dones);
             if (list.isEmpty())
                 times.put(key, System.currentTimeMillis());
         });
