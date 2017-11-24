@@ -67,15 +67,4 @@ public interface Jdbc extends Atomicable {
      * @return 影响记录数。
      */
     int update(String dataSource, String sql, Object[] args);
-
-    /**
-     * 执行批量更新操作。通过设置保存点来确保事务。
-     * 执行完毕将自动提交事务；如果执行异常将自动回滚。
-     *
-     * @param dataSources 数据源名称集。
-     * @param sqls        SQL集。
-     * @param args        参数集。
-     * @return 影响记录数。
-     */
-    int[] update(List<String> dataSources, List<String> sqls, List<Object[]> args);
 }

@@ -2,6 +2,7 @@ package org.lpw.tephra.dao.jdbc;
 
 import org.lpw.tephra.dao.ConnectionSupport;
 import org.lpw.tephra.dao.Mode;
+import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,10 +23,13 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
     @Inject
     private Validator validator;
     @Inject
+    private Converter converter;
+    @Inject
     private Logger logger;
     @Inject
     private org.lpw.tephra.dao.jdbc.DataSource dataSource;
     private ThreadLocal<Map<String, Connection>> connections = new ThreadLocal<>();
+    private ThreadLocal<Map<String, Savepoint>> savepoints = new ThreadLocal<>();
     private ThreadLocal<Boolean> transactional = new ThreadLocal<>();
 
     @Override
@@ -39,18 +44,21 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
         if ((transactional.get() != null && transactional.get()) || !this.dataSource.hasReadonly(dataSource))
             mode = Mode.Write;
         Map<String, Connection> connections = this.connections.get();
-        if (connections == null)
+        if (connections == null) {
             connections = new HashMap<>();
+            savepoints.set(new HashMap<>());
+        }
         String key = dataSource + mode.ordinal();
         Connection connection = connections.get(key);
-        if (connection != null) {
-            if (isOpen(connection))
-                return connection;
-
-            connections.remove(key);
-        }
-
         try {
+            if (connection != null) {
+                if (isOpen(connection))
+                    return connection;
+
+                connections.remove(key);
+                savepoints.get().remove(key);
+            }
+
             DataSource ds = null;
             if (mode == Mode.Read)
                 ds = this.dataSource.getReadonly(dataSource);
@@ -58,6 +66,7 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
                 ds = this.dataSource.getWriteable(dataSource);
             connection = ds.getConnection();
             connection.setAutoCommit(mode == Mode.Read);
+            savepoints.get().put(key, connection.setSavepoint());
             connections.put(key, connection);
             this.connections.set(connections);
 
@@ -75,15 +84,13 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
         if (connections != null) {
             connections.forEach((key, connection) -> {
                 try {
-                    if (isOpen(connection)) {
-                        if (!connection.getAutoCommit())
-                            connection.rollback();
-                        connection.close();
-                    }
+                    if (isOpen(connection) && !connection.getAutoCommit())
+                        connection.rollback(savepoints.get().get(key));
                 } catch (SQLException e) {
                     logger.warn(e, "回滚数据库连接时发生异常！");
                 }
             });
+            close(connections);
 
             if (logger.isDebugEnable())
                 logger.debug("回滚[{}]个数据库连接！", connections.size());
@@ -95,19 +102,8 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
     public void close() {
         Map<String, Connection> connections = this.connections.get();
         if (connections != null) {
-            connections.forEach((key, connection) -> {
-                try {
-                    if (isOpen(connection)) {
-                        if (!connection.getAutoCommit())
-                            connection.commit();
-                        connection.close();
-                    }
-                } catch (SQLException e) {
-                    logger.warn(e, "关闭数据库连接时发生异常！");
-
-                    fail(e);
-                }
-            });
+            commit(connections);
+            close(connections);
 
             if (logger.isDebugEnable())
                 logger.debug("关闭[{}]个数据库连接！", connections.size());
@@ -115,18 +111,38 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
         remove();
     }
 
-    private boolean isOpen(Connection connection) {
+    private void commit(Map<String, Connection> connections) {
         try {
-            return !connection.isClosed();
+            for (Connection connection : connections.values())
+                if (isOpen(connection) && !connection.getAutoCommit())
+                    connection.commit();
         } catch (SQLException e) {
-            logger.warn(e, "验证连接是否关闭时发生异常！");
+            logger.warn(e, "提交数据库[{}]事务时发生异常！", converter.toString(connections));
 
-            return false;
+            fail(e);
         }
+    }
+
+    private boolean isOpen(Connection connection) throws SQLException {
+        return !connection.isClosed();
+    }
+
+    private void close(Map<String, Connection> connections) {
+        connections.forEach((key, connection) -> {
+            try {
+                connection.releaseSavepoint(savepoints.get().get(key));
+                connection.close();
+            } catch (SQLException e) {
+                logger.warn(e, "关闭数据库[{}]事务时发生异常！", key);
+
+                fail(e);
+            }
+        });
     }
 
     private void remove() {
         connections.remove();
+        savepoints.remove();
         transactional.remove();
     }
 }

@@ -80,7 +80,10 @@ abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
 
         try {
             long time = System.currentTimeMillis();
-            int n = update(getConnection(dataSource, Mode.Write), sql, args);
+            T pstmt = newPreparedStatement(getConnection(dataSource,Mode.Write), sql);
+            setArgs(pstmt, args);
+            int n = pstmt.executeUpdate();
+            pstmt.close();
 
             if (logger.isDebugEnable())
                 logger.debug("执行SQL[{}:{}:{}:{}]更新操作。", dataSource, sql, converter.toString(args),
@@ -92,84 +95,6 @@ abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
 
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public int[] update(List<String> dataSources, List<String> sqls, List<Object[]> args) {
-        if (validator.isEmpty(dataSources) || validator.isEmpty(sqls) || validator.isEmpty(args)
-                || dataSources.size() != sqls.size() || sqls.size() != args.size())
-            return null;
-
-        Map<String, java.sql.Connection> connections = new HashMap<>();
-        Map<String, Savepoint> savepoints = new HashMap<>();
-        try {
-            long time = System.currentTimeMillis();
-            int[] ns = new int[dataSources.size()];
-            for (int i = 0; i < ns.length; i++) {
-                String dataSource = this.dataSource.getKey(dataSources.get(i));
-                java.sql.Connection connection = connections.get(dataSource);
-                if (connection == null) {
-                    connection = getConnection(dataSource, Mode.Write);
-                    connections.put(dataSource, connection);
-                    savepoints.put(dataSource, connection.setSavepoint());
-                }
-                ns[i] = update(connection, sqls.get(i), args.get(i));
-            }
-            for (String key : connections.keySet())
-                connections.get(key).commit();
-            for (String key : connections.keySet())
-                connections.get(key).releaseSavepoint(savepoints.get(key));
-
-            if (logger.isDebugEnable())
-                logger.debug("执行SQL[{}:{}:{}:{}]更新操作。", converter.toString(dataSources),
-                        converter.toString(sqls), converter.toString(args), System.currentTimeMillis() - time);
-
-            return ns;
-        } catch (SQLException e) {
-            rollback(connections, savepoints);
-
-            logger.warn(e, "执行SQL[{}:{}:{}]更新时发生异常！", converter.toString(dataSources),
-                    converter.toString(sqls), converter.toString(args));
-
-            throw new RuntimeException(e);
-        } finally {
-            close(connections);
-        }
-    }
-
-    private void rollback(Map<String, java.sql.Connection> connections, Map<String, Savepoint> savepoints) {
-        if (connections.isEmpty() || savepoints.isEmpty())
-            return;
-
-        connections.forEach((key, connection) -> {
-            try {
-                connection.rollback(savepoints.get(key));
-            } catch (SQLException e) {
-                logger.warn(e, "回滚数据库连接[{}]时发生异常！", key);
-            }
-        });
-    }
-
-    private void close(Map<String, java.sql.Connection> connections) {
-        if (connections.isEmpty())
-            return;
-
-        connections.forEach((key, connection) -> {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                logger.warn(e, "关闭数据库连接[{}]时发生异常！", key);
-            }
-        });
-    }
-
-    private int update(java.sql.Connection connection, String sql, Object[] args) throws SQLException {
-        T pstmt = newPreparedStatement(connection, sql);
-        setArgs(pstmt, args);
-        int n = pstmt.executeUpdate();
-        pstmt.close();
-
-        return n;
     }
 
     T newPreparedStatement(String dataSource, Mode mode, String sql) throws SQLException {
