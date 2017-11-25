@@ -134,7 +134,7 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
     private void close(Map<String, Connection> connections) {
         connections.forEach((key, connection) -> {
             try {
-//                connection.releaseSavepoint(savepoints.get().get(key));
+                connection.releaseSavepoint(savepoints.get().get(key));
                 connection.close();
             } catch (SQLException e) {
                 logger.warn(e, "关闭数据库[{}]事务时发生异常！", key);
