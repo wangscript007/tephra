@@ -82,14 +82,7 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
     public void fail(Throwable throwable) {
         Map<String, Connection> connections = this.connections.get();
         if (connections != null) {
-            connections.forEach((key, connection) -> {
-                try {
-                    if (isOpen(connection) && !connection.getAutoCommit())
-                        connection.rollback(savepoints.get().get(key));
-                } catch (SQLException e) {
-                    logger.warn(e, "回滚数据库连接时发生异常！");
-                }
-            });
+            rollback(connections);
             close(connections);
 
             if (logger.isDebugEnable())
@@ -123,6 +116,17 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
         }
     }
 
+    private void rollback(Map<String, Connection> connections) {
+        connections.forEach((key, connection) -> {
+            try {
+                if (isOpen(connection) && !connection.getAutoCommit())
+                    connection.rollback(savepoints.get().get(key));
+            } catch (SQLException e) {
+                logger.warn(e, "回滚数据库连接时发生异常！");
+            }
+        });
+    }
+
     private boolean isOpen(Connection connection) throws SQLException {
         return !connection.isClosed();
     }
@@ -130,7 +134,7 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
     private void close(Map<String, Connection> connections) {
         connections.forEach((key, connection) -> {
             try {
-                connection.releaseSavepoint(savepoints.get().get(key));
+//                connection.releaseSavepoint(savepoints.get().get(key));
                 connection.close();
             } catch (SQLException e) {
                 logger.warn(e, "关闭数据库[{}]事务时发生异常！", key);
