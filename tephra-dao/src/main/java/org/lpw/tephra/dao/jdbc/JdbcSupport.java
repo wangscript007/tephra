@@ -12,10 +12,6 @@ import javax.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Savepoint;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author lpw
@@ -70,7 +66,7 @@ abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
 
     @Override
     public int update(String sql, Object[] args) {
-        return update((String) null, sql, args);
+        return update(null, sql, args);
     }
 
     @Override
@@ -80,7 +76,7 @@ abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
 
         try {
             long time = System.currentTimeMillis();
-            T pstmt = newPreparedStatement(getConnection(dataSource,Mode.Write), sql);
+            T pstmt = newPreparedStatement(dataSource, Mode.Write, sql);
             setArgs(pstmt, args);
             int n = pstmt.executeUpdate();
             pstmt.close();

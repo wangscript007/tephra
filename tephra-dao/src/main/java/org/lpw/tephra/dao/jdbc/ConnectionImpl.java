@@ -44,10 +44,8 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
         if ((transactional.get() != null && transactional.get()) || !this.dataSource.hasReadonly(dataSource))
             mode = Mode.Write;
         Map<String, Connection> connections = this.connections.get();
-        if (connections == null) {
+        if (connections == null)
             connections = new HashMap<>();
-            savepoints.set(new HashMap<>());
-        }
         String key = dataSource + mode.ordinal();
         Connection connection = connections.get(key);
         try {
@@ -66,6 +64,8 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
                 ds = this.dataSource.getWriteable(dataSource);
             connection = ds.getConnection();
             connection.setAutoCommit(mode == Mode.Read);
+            if (savepoints.get() == null)
+                savepoints.set(new HashMap<>());
             savepoints.get().put(key, connection.setSavepoint());
             connections.put(key, connection);
             this.connections.set(connections);

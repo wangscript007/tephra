@@ -67,6 +67,7 @@ public class BatchUpdateImpl implements BatchUpdate {
         List<String> dataSources = tlDataSource.get();
         List<String> sqls = tlSql.get();
         List<Object[]> args = tlArgs.get();
+        clear();
         try {
             long time = System.currentTimeMillis();
             for (int i = 0, size = dataSources.size(); i < size; i++)
@@ -78,13 +79,11 @@ public class BatchUpdateImpl implements BatchUpdate {
         } catch (Throwable throwable) {
             logger.warn(throwable, "批量执行收集的SQL[{}:{}:{}]时发生异常！", converter.toString(dataSources),
                     converter.toString(sqls), converter.toString(args));
-        } finally {
-            cancel();
         }
     }
 
     @Override
-    public void cancel() {
+    public void clear() {
         tlIgnore.remove();
         tlDataSource.remove();
         tlSql.remove();
