@@ -124,8 +124,8 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
         sql.append(" FROM ").append(getFrom(query, modelTable));
         if (!validator.isEmpty(query.getIndexes()))
             for (Index index : query.getIndexes())
-                sql.append(getIndexType(index.getType())).append(index.getKey() == Index.Key.Index ? "INDEX " : "KEY ")
-                        .append(index.getName()).append(getIndexFor(index.getFor()));
+                sql.append(getIndexType(index.getType())).append(index.getKey() == Index.Key.Index ? "INDEX" : "KEY")
+                        .append('(').append(index.getName()).append(')').append(getIndexFor(index.getFor()));
         if (!validator.isEmpty(query.getWhere()))
             sql.append(" WHERE ").append(query.getWhere());
         if (!validator.isEmpty(query.getGroup()))

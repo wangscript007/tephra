@@ -4,11 +4,11 @@ package org.lpw.tephra.dao.orm.lite;
  * @author lpw
  */
 public class Index {
-    enum Type {Use, Ignore, Force}
+    public enum Type {Use, Ignore, Force}
 
-    enum Key {Key, Index}
+    public enum Key {Key, Index}
 
-    enum For {Null, Join, Order, Group}
+    public enum For {Null, Join, Order, Group}
 
     private Type type;
     private Key key;
