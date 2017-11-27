@@ -57,7 +57,6 @@ public class TextParserImpl implements Parser {
             return newParagraph(xslfTextBox, object);
 
         XSLFTextRun xslfTextRun = xslfTextParagraph.addNewTextRun();
-        xslfTextRun.setText(text);
         font(xslfTextParagraph, xslfTextRun, object, child);
         color(xslfTextRun, object, child);
         if (json.hasTrue(object, "bold") || json.hasTrue(child, "bold"))
@@ -68,6 +67,7 @@ public class TextParserImpl implements Parser {
             xslfTextRun.setItalic(true);
         if (object.containsKey("spacing") || child.containsKey("spacing"))
             xslfTextRun.setCharacterSpacing((child.containsKey("spacing") ? child : object).getDoubleValue("spacing"));
+        xslfTextRun.setText(text);
 
         return xslfTextParagraph;
     }
