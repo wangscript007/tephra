@@ -105,17 +105,11 @@ public class TextParserImpl implements Parser {
 
         JSONObject font = (child.containsKey("font") ? child : object).getJSONObject("font");
         if (font.containsKey("family"))
-            xslfTextRun.setFontFamily(font.getString("family"),FontGroup.LATIN);
-        if (font.containsKey("size")) {
-            double height = 0.0D;
-            if (font.containsKey("height"))
-                height = Math.max(0.0D, font.getDoubleValue("height") - 1);
-            double size = numeric.toDouble(font.getDoubleValue("size"));
-            double space = size * height / 2;
-            xslfTextParagraph.setSpaceBefore(space);
-            xslfTextParagraph.setSpaceAfter(space);
-            xslfTextRun.setFontSize(size);
-        }
+            xslfTextRun.setFontFamily(font.getString("family"), FontGroup.LATIN);
+        if (font.containsKey("size"))
+            xslfTextRun.setFontSize(font.getDoubleValue("size"));
+        if (font.containsKey("height"))
+            xslfTextParagraph.setLineSpacing(font.getDoubleValue("height") * 100);
     }
 
     private void color(XSLFTextRun xslfTextRun, JSONObject object, JSONObject child) {
