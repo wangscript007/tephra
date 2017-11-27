@@ -1,11 +1,9 @@
 package org.lpw.tephra.dao.orm.lite;
 
+import org.lpw.tephra.dao.jdbc.IndexBuilder;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.orm.Query;
 import org.lpw.tephra.dao.orm.QuerySupport;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Lite检索构造器。用于构造非级联ORM检索语句。
@@ -15,7 +13,7 @@ import java.util.List;
 public class LiteQuery extends QuerySupport implements Query {
     private String select;
     private String from;
-    private List<Index> indexes;
+    private IndexBuilder indexBuilder;
 
     /**
      * 检索构造器。
@@ -69,16 +67,31 @@ public class LiteQuery extends QuerySupport implements Query {
     /**
      * 设置使用、忽略索引。
      *
+     * @param type 索引类型。
+     * @param name 索引名称。
+     * @return 当前Query实例。
+     */
+    public LiteQuery index(IndexBuilder.Type type, String name) {
+        if (indexBuilder == null)
+            indexBuilder = new IndexBuilder();
+        indexBuilder.append(type, name);
+
+        return this;
+    }
+
+    /**
+     * 设置使用、忽略索引。
+     *
      * @param type     索引类型。
      * @param key      索引关键字。
      * @param name     索引名称。
      * @param indexFor 指向。
      * @return 当前Query实例。
      */
-    public LiteQuery index(Index.Type type, Index.Key key, String name, Index.For indexFor) {
-        if (indexes == null)
-            indexes = new ArrayList<>();
-        indexes.add(new Index(type, key, name, indexFor));
+    public LiteQuery index(IndexBuilder.Type type, IndexBuilder.Key key, String name, IndexBuilder.For indexFor) {
+        if (indexBuilder == null)
+            indexBuilder = new IndexBuilder();
+        indexBuilder.append(type, key, name, indexFor);
 
         return this;
     }
@@ -201,7 +214,7 @@ public class LiteQuery extends QuerySupport implements Query {
      *
      * @return 索引设置集。
      */
-    public List<Index> getIndexes() {
-        return indexes;
+    public IndexBuilder getIndex() {
+        return indexBuilder;
     }
 }

@@ -122,10 +122,8 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
 
     private void append(LiteQuery query, StringBuilder sql, ModelTable modelTable) {
         sql.append(" FROM ").append(getFrom(query, modelTable));
-        if (!validator.isEmpty(query.getIndexes()))
-            for (Index index : query.getIndexes())
-                sql.append(getIndexType(index.getType())).append(index.getKey() == Index.Key.Index ? "INDEX" : "KEY")
-                        .append('(').append(index.getName()).append(')').append(getIndexFor(index.getFor()));
+        if (query.getIndex() != null)
+            sql.append(query.getIndex().get());
         if (!validator.isEmpty(query.getWhere()))
             sql.append(" WHERE ").append(query.getWhere());
         if (!validator.isEmpty(query.getGroup()))
@@ -140,30 +138,6 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
             return modelTable.getMemoryName();
 
         return modelTable.getTableName();
-    }
-
-    private String getIndexType(Index.Type type) {
-        switch (type) {
-            case Ignore:
-                return " IGNORE ";
-            case Force:
-                return " FORCE ";
-            default:
-                return " USE ";
-        }
-    }
-
-    private String getIndexFor(Index.For f) {
-        switch (f) {
-            case Join:
-                return " FOR JOIN";
-            case Group:
-                return " FOR GROUP BY";
-            case Order:
-                return " FOR ORDER BY";
-            default:
-                return "";
-        }
     }
 
     @Override
