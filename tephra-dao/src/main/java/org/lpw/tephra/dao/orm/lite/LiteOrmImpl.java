@@ -94,18 +94,15 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
 
     private String getQuerySql(LiteQuery query, ModelTable modelTable, int size, int page) {
         StringBuilder querySql = new StringBuilder().append("SELECT ").append(validator.isEmpty(query.getSelect()) ? "*" : query.getSelect());
-        querySql.append(" FROM ").append(getFrom(query, modelTable));
-        if (!validator.isEmpty(query.getWhere()))
-            querySql.append(" WHERE ").append(query.getWhere());
-        if (!validator.isEmpty(query.getGroup()))
-            querySql.append(" GROUP BY ").append(query.getGroup());
+        append(query, querySql, modelTable);
         if (!validator.isEmpty(query.getOrder()))
             querySql.append(" ORDER BY ").append(query.getOrder());
         if (query.isLocked()) {
             connection.beginTransaction();
             querySql.append(" FOR UPDATE");
         } else if (size > 0)
-            dataSource.getDialects().get(getDataSource(null, query, modelTable, null)).appendPagination(querySql, size, page < 1 ? 1 : page);
+            dataSource.getDialects().get(getDataSource(null, query, modelTable, null))
+                    .appendPagination(querySql, size, page < 1 ? 1 : page);
 
         return querySql.toString();
     }
@@ -114,17 +111,25 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     public int count(LiteQuery query, Object[] args) {
         StringBuilder querySql = new StringBuilder().append("SELECT COUNT(*)");
         ModelTable modelTable = modelTables.get(query.getModelClass());
-        querySql.append(" FROM ").append(getFrom(query, modelTable));
-        if (!validator.isEmpty(query.getWhere()))
-            querySql.append(" WHERE ").append(query.getWhere());
-        if (!validator.isEmpty(query.getGroup()))
-            querySql.append(" GROUP BY ").append(query.getGroup());
+        append(query, querySql, modelTable);
 
         SqlTable sqlTable = sql.query(getDataSource(null, query, modelTable, null), querySql.toString(), args);
         if (sqlTable.getRowCount() == 0)
             return 0;
 
         return numeric.toInt(sqlTable.get(0, 0));
+    }
+
+    private void append(LiteQuery query, StringBuilder sql, ModelTable modelTable) {
+        sql.append(" FROM ").append(getFrom(query, modelTable));
+        if (!validator.isEmpty(query.getIndexes()))
+            for (Index index : query.getIndexes())
+                sql.append(getIndexType(index.getType())).append(index.getKey() == Index.Key.Index ? "INDEX " : "KEY ")
+                        .append(index.getName()).append(getIndexFor(index.getFor()));
+        if (!validator.isEmpty(query.getWhere()))
+            sql.append(" WHERE ").append(query.getWhere());
+        if (!validator.isEmpty(query.getGroup()))
+            sql.append(" GROUP BY ").append(query.getGroup());
     }
 
     private String getFrom(LiteQuery query, ModelTable modelTable) {
@@ -135,6 +140,30 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
             return modelTable.getMemoryName();
 
         return modelTable.getTableName();
+    }
+
+    private String getIndexType(Index.Type type) {
+        switch (type) {
+            case Ignore:
+                return " IGNORE ";
+            case Force:
+                return " FORCE ";
+            default:
+                return " USE ";
+        }
+    }
+
+    private String getIndexFor(Index.For f) {
+        switch (f) {
+            case Join:
+                return " FOR JOIN";
+            case Group:
+                return " FOR GROUP BY";
+            case Order:
+                return " FOR ORDER BY";
+            default:
+                return "";
+        }
     }
 
     @Override
@@ -253,7 +282,8 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     public <T extends Model> boolean delete(String dataSource, T model) {
         return model != null
                 && !validator.isEmpty(model.getId())
-                && delete(new LiteQuery(model.getClass()).dataSource(dataSource).where(modelTables.get(model.getClass()).getIdColumnName() + "=?"), new Object[]{model.getId()});
+                && delete(new LiteQuery(model.getClass()).dataSource(dataSource)
+                .where(modelTables.get(model.getClass()).getIdColumnName() + "=?"), new Object[]{model.getId()});
     }
 
     @Override
@@ -268,7 +298,8 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
 
     @Override
     public <T extends Model> boolean deleteById(String dataSource, Class<T> modelClass, String id) {
-        return delete(new LiteQuery(modelClass).dataSource(dataSource).where(modelTables.get(modelClass).getIdColumnName() + "=?"), new Object[]{id});
+        return delete(new LiteQuery(modelClass).dataSource(dataSource).where(modelTables.get(modelClass).getIdColumnName() + "=?"),
+                new Object[]{id});
     }
 
     @Override
@@ -291,7 +322,8 @@ public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
             return;
         }
 
-        sql.update(dataSource = getDataSource(dataSource, null, modelTable, null), "DELETE FROM " + modelTable.getMemoryName(), new Object[0]);
+        sql.update(dataSource = getDataSource(dataSource, null, modelTable, null), "DELETE FROM "
+                + modelTable.getMemoryName(), new Object[0]);
         sql.update(dataSource, "INSERT INTO " + modelTable.getMemoryName() + " SELECT * FROM " + modelTable.getTableName(), new Object[0]);
 
         if (logger.isDebugEnable())

@@ -4,6 +4,9 @@ import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.orm.Query;
 import org.lpw.tephra.dao.orm.QuerySupport;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Lite检索构造器。用于构造非级联ORM检索语句。
  *
@@ -12,6 +15,7 @@ import org.lpw.tephra.dao.orm.QuerySupport;
 public class LiteQuery extends QuerySupport implements Query {
     private String select;
     private String from;
+    private List<Index> indexes;
 
     /**
      * 检索构造器。
@@ -58,6 +62,23 @@ public class LiteQuery extends QuerySupport implements Query {
      */
     public LiteQuery from(String from) {
         this.from = from;
+
+        return this;
+    }
+
+    /**
+     * 设置使用、忽略索引。
+     *
+     * @param type     索引类型。
+     * @param key      索引关键字。
+     * @param name     索引名称。
+     * @param indexFor 指向。
+     * @return 当前Query实例。
+     */
+    public LiteQuery index(Index.Type type, Index.Key key, String name, Index.For indexFor) {
+        if (indexes == null)
+            indexes = new ArrayList<>();
+        indexes.add(new Index(type, key, name, indexFor));
 
         return this;
     }
@@ -173,5 +194,14 @@ public class LiteQuery extends QuerySupport implements Query {
      */
     public String getFrom() {
         return from;
+    }
+
+    /**
+     * 获取索引设置集。
+     *
+     * @return 索引设置集。
+     */
+    public List<Index> getIndexes() {
+        return indexes;
     }
 }
