@@ -79,7 +79,7 @@ public class HandlerImpl implements Handler, MinuteJob {
     }
 
     private Integer getKey(String key) {
-        return (key.hashCode() & Integer.MAX_VALUE) % counter.max();
+        return key == null ? 0 : (key.hashCode() & Integer.MAX_VALUE) % counter.max();
     }
 
     @Override
