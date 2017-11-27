@@ -2,6 +2,7 @@ package org.lpw.tephra.poi.pptx;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -104,7 +105,7 @@ public class TextParserImpl implements Parser {
 
         JSONObject font = (child.containsKey("font") ? child : object).getJSONObject("font");
         if (font.containsKey("family"))
-            xslfTextRun.setFontFamily(font.getString("family"));
+            xslfTextRun.setFontFamily(font.getString("family"),FontGroup.LATIN);
         if (font.containsKey("size")) {
             double height = 0.0D;
             if (font.containsKey("height"))
