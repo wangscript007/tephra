@@ -14,17 +14,15 @@ import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Generator;
+import org.lpw.tephra.util.Image;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.OutputStream;
@@ -46,6 +44,8 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     private Converter converter;
     @Inject
     private DateTime dateTime;
+    @Inject
+    private Image image;
     @Inject
     private Logger logger;
     @Inject
@@ -155,29 +155,17 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
             return null;
 
         try {
-            Image image = ImageIO.read(item.getInputStream());
-            int width = image.getWidth(null);
-            int height = image.getHeight(null);
-            if (size[0] > 0 && width > size[0]) {
-                height = height * size[0] / width;
-                width = size[0];
-            }
-            if (size[1] > 0 && height > size[1]) {
-                width = width * size[1] / height;
-                height = size[1];
-            }
-            if (width <= 0 || height <= 0)
+            BufferedImage image = this.image.read(item.getInputStream());
+            if (image == null)
                 return null;
 
-            BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            Graphics graphics = bufferedImage.getGraphics();
-            graphics.drawImage(image, 0, 0, width, height, null);
-            graphics.dispose();
+            image = this.image.thumbnail(image, size[0], size[1]);
+            if (image == null)
+                return null;
+
             int indexOf = path.lastIndexOf('.');
             String thumbnail = path.substring(0, indexOf) + ".thumbnail" + path.substring(indexOf);
-            OutputStream outputStream = storage.getOutputStream(thumbnail);
-            ImageIO.write(bufferedImage, contentType.substring(contentType.indexOf('/') + 1), outputStream);
-            outputStream.close();
+            this.image.write(image, this.image.formatFromContentType(contentType), storage.getOutputStream(thumbnail));
 
             return thumbnail;
         } catch (Exception e) {
