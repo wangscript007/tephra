@@ -67,18 +67,15 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     @Override
     public void upload(HttpServletRequest request, HttpServletResponse response) {
         try {
-            Map<String, String> parameters = new HashMap<>();
             List<FileItem> items = new ArrayList<>();
             getUpload(request).parseRequest(request).forEach(item -> {
                 if (item.isFormField())
-                    parameters.put(item.getFieldName(), item.getString());
-                else
-                    items.add(item);
+                    return;
+
+                items.add(item);
             });
 
-            if (logger.isDebugEnable())
-                logger.debug("处理文件[{}]上传请求[{}]。", items.size(), converter.toString(parameters));
-
+            OutputStream outputStream = serviceHelper.setContext(request, response, URI);
             StringBuilder sb = new StringBuilder();
             for (FileItem item : items) {
                 String result = save(item);
@@ -86,12 +83,10 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
                     sb.append(';').append(result);
             }
 
-            if (sb.length() > 0) {
-                OutputStream outputStream = serviceHelper.setContext(request, response, URI);
+            if (sb.length() > 0)
                 outputStream.write(sb.substring(1).getBytes(context.getCharset(null)));
-                outputStream.flush();
-                outputStream.close();
-            }
+            outputStream.flush();
+            outputStream.close();
         } catch (Throwable e) {
             logger.warn(e, "处理文件上传时发生异常！");
         } finally {
