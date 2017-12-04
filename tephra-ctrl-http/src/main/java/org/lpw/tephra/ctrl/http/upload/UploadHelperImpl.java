@@ -25,8 +25,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,48 +67,31 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     @Override
     public void upload(HttpServletRequest request, HttpServletResponse response) {
         try {
-            OutputStream outputStream = serviceHelper.setContext(request, response, URI);
+            Map<String, String> parameters = new HashMap<>();
+            List<FileItem> items = new ArrayList<>();
             getUpload(request).parseRequest(request).forEach(item -> {
                 if (item.isFormField())
-                    return;
-
-                String key = item.getFieldName();
-                UploadListener listener = getListener(key);
-                if (listener == null)
-                    return;
-
-                String contentType = listener.getContentType(key, item.getContentType(), item.getName());
-                if (!listener.isUploadEnable(key, contentType, item.getName())) {
-                    logger.warn(null, "无法处理文件上传请求[key={}&content-type={}&name={}]！", key, contentType, item.getName());
-
-                    return;
-                }
-
-                Storage storage = storages.get(listener.getStorage());
-                if (storage == null) {
-                    logger.warn(null, "无法获得存储处理器[{}]，文件上传失败！", listener.getStorage());
-
-                    return;
-                }
-
-                try {
-                    String path = getPath(listener, item, contentType);
-                    storage.write(path, item.getInputStream());
-                    String thumbnail = thumbnail(item, listener.getImageSize(key), storage, contentType, path);
-                    String result = listener.upload(key, item.getName(), converter.toBitSize(item.getSize()), thumbnail == null ? path : (path + "," + thumbnail));
-                    item.delete();
-
-                    if (!validator.isEmpty(result))
-                        outputStream.write(result.getBytes(context.getCharset(null)));
-
-                    if (logger.isDebugEnable())
-                        logger.debug("保存上传[{}:{}]的文件[{}:{}:{}]。", item.getFieldName(), item.getName(), path, thumbnail, converter.toBitSize(item.getSize()));
-                } catch (Exception e) {
-                    logger.warn(e, "保存上传文件时发生异常！");
-                }
+                    parameters.put(item.getFieldName(), item.getString());
+                else
+                    items.add(item);
             });
-            outputStream.flush();
-            outputStream.close();
+
+            if (logger.isDebugEnable())
+                logger.debug("处理文件[{}]上传请求[{}]。", items.size(), converter.toString(parameters));
+
+            StringBuilder sb = new StringBuilder();
+            for (FileItem item : items) {
+                String result = save(item);
+                if (!validator.isEmpty(result))
+                    sb.append(';').append(result);
+            }
+
+            if (sb.length() > 0) {
+                OutputStream outputStream = serviceHelper.setContext(request, response, URI);
+                outputStream.write(sb.substring(1).getBytes(context.getCharset(null)));
+                outputStream.flush();
+                outputStream.close();
+            }
         } catch (Throwable e) {
             logger.warn(e, "处理文件上传时发生异常！");
         } finally {
@@ -115,13 +101,51 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
 
     private ServletFileUpload getUpload(HttpServletRequest request) {
         if (upload == null) {
-            DiskFileItemFactory factory = new DiskFileItemFactory();
-            factory.setRepository((File) request.getServletContext().getAttribute("javax.servlet.context.tempdir"));
-            upload = new ServletFileUpload(factory);
-            upload.setSizeMax(converter.toBitSize(maxSize));
+            synchronized (this) {
+                if (upload == null) {
+                    DiskFileItemFactory factory = new DiskFileItemFactory();
+                    factory.setRepository((File) request.getServletContext().getAttribute("javax.servlet.context.tempdir"));
+                    upload = new ServletFileUpload(factory);
+                    upload.setSizeMax(converter.toBitSize(maxSize));
+                }
+            }
         }
 
         return upload;
+    }
+
+    private String save(FileItem item) throws IOException {
+        String key = item.getFieldName();
+        UploadListener listener = getListener(key);
+        if (listener == null)
+            return null;
+
+        String contentType = listener.getContentType(key, item.getContentType(), item.getName());
+        if (!listener.isUploadEnable(key, contentType, item.getName())) {
+            logger.warn(null, "无法处理文件上传请求[key={}&content-type={}&name={}]！",
+                    key, contentType, item.getName());
+
+            return null;
+        }
+
+        Storage storage = storages.get(listener.getStorage());
+        if (storage == null) {
+            logger.warn(null, "无法获得存储处理器[{}]，文件上传失败！", listener.getStorage());
+
+            return null;
+        }
+        String path = getPath(listener, item, contentType);
+        storage.write(path, item.getInputStream());
+        String thumbnail = thumbnail(listener.getImageSize(key), storage, contentType, path);
+        String result = listener.upload(key, item.getName(), converter.toBitSize(item.getSize()),
+                thumbnail == null ? path : (path + "," + thumbnail));
+        item.delete();
+
+        if (logger.isDebugEnable())
+            logger.debug("保存上传[{}:{}]的文件[{}:{}:{}]。", item.getFieldName(), item.getName(), path,
+                    thumbnail, converter.toBitSize(item.getSize()));
+
+        return result;
     }
 
     private UploadListener getListener(String key) {
@@ -150,12 +174,12 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
         return path.toString().replaceAll("[/]+", "/");
     }
 
-    private String thumbnail(FileItem item, int[] size, Storage storage, String contentType, String path) {
+    private String thumbnail(int[] size, Storage storage, String contentType, String path) {
         if (size == null || size.length != 2 || (size[0] <= 0 && size[1] <= 0))
             return null;
 
         try {
-            BufferedImage image = this.image.read(item.getInputStream());
+            BufferedImage image = this.image.read(storage.getInputStream(path));
             if (image == null)
                 return null;
 
