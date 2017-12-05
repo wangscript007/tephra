@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author lpw
  */
-@Service("tephra.ctrl.http.upload.json-configs")
+@Service(UploadHelper.PREFIX + "json-configs")
 public class JsonConfigsImpl implements JsonConfigs, MinuteJob {
     @Inject
     private Context context;
@@ -25,7 +25,7 @@ public class JsonConfigsImpl implements JsonConfigs, MinuteJob {
     private Io io;
     @Inject
     private Json json;
-    @Value("${tephra.ctrl.http.upload.json-configs:/WEB-INF/upload}")
+    @Value("${" + UploadHelper.PREFIX + "json-configs:/WEB-INF/upload}")
     private String configs;
     private Map<String, JsonConfig> map;
 
