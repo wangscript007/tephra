@@ -3,11 +3,14 @@ package org.lpw.tephra.cache.lr;
 import org.lpw.tephra.scheduler.MinuteJob;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryUsage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,6 +28,8 @@ public class LocalImpl implements Local, MinuteJob {
     private Validator validator;
     @Inject
     private Converter converter;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Logger logger;
     @Value("${tephra.cache.alive-time:30}")
@@ -75,24 +80,16 @@ public class LocalImpl implements Local, MinuteJob {
         if (obsoletes.isEmpty())
             return;
 
-        if (logger.isInfoEnable())
-            logger.info("开始清理内存【可用/总】=[{}/{}]。", converter.toBitSize(Runtime.getRuntime().freeMemory()),
-                    converter.toBitSize(Runtime.getRuntime().totalMemory()));
-
+        MemoryUsage usage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+        log("开始清理内存", usage);
         if (logger.isInfoEnable())
             logger.info("开始移除{}个本地缓存对象。", obsoletes.size());
-
         obsoletes.forEach(map::remove);
-
         if (logger.isInfoEnable())
             logger.info("移除{}个本地缓存对象。", obsoletes.size());
-
         obsoletes.clear();
         System.gc();
-
-        if (logger.isInfoEnable())
-            logger.info("内存清理完毕【可用/总】=[{}/{}]。", converter.toBitSize(Runtime.getRuntime().freeMemory()),
-                    converter.toBitSize(Runtime.getRuntime().totalMemory()));
+        log("内存清理完毕", usage);
     }
 
     private void clearByAliveTime(List<Element> elements, Set<String> obsoletes) {
@@ -116,5 +113,13 @@ public class LocalImpl implements Local, MinuteJob {
         for (int i = 0, max = elements.size() / 4; i < max; i++)
             if (!elements.get(i).isResident())
                 obsoletes.add(elements.get(i).getKey());
+    }
+
+    private void log(String prefix, MemoryUsage usage) {
+        if (!logger.isInfoEnable())
+            return;
+
+        logger.info("{}[used/max]=[{}/{}={}%]。", prefix, converter.toBitSize(usage.getUsed()),
+                converter.toBitSize(usage.getMax()), numeric.toString(100.0D * usage.getUsed() / usage.getMax(), "0.00"));
     }
 }
