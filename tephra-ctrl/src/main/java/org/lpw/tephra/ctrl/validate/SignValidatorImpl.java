@@ -37,7 +37,7 @@ public class SignValidatorImpl extends ValidatorSupport implements SignValidator
         if (validator.isEmpty(signKey))
             signKey = "";
 
-        return signKey.equals(parameter) && sign.verify(request.getMap(), signKey);
+        return signKey.equals(validator.isEmpty(validate.getString()) ? "" : validate.getString()[0]) && sign.verify(request.getMap(), signKey);
     }
 
     private boolean enable() {
