@@ -16,24 +16,34 @@ sign文件：
 ```
 > sign文件在被修改后会自动重载，无需重启服务。
 
-2、在请求端，可通过request添加签名：
+2、在请求端，可通过Sign添加签名：
 ```java
-package org.lpw.tephra.ctrl.context;
+package org.lpw.tephra.crypto;
 
 import java.util.Map;
 
 /**
- * 请求。
+ * 签名。
  *
  * @author lpw
  */
-public interface Request {
+public interface Sign {
     /**
-     * 添加请求消息摘要验证串。
+     * 添加签名到Map集合中。
      *
-     * @param map 参数集。
+     * @param map  要添加签名的Map集合。
+     * @param name 密钥名。
      */
-    void putSign(Map<String, String> map);
+    void put(Map<String, String> map, String name);
+
+    /**
+     * 验证签名。
+     *
+     * @param map  签名数据集。
+     * @param name 密钥名。
+     * @return 如果验证通过则返回true；否则返回false。
+     */
+    boolean verify(Map<String, String> map, String name);
 }
 ```
 > 将往map参数添加sign-time、sign两个参数，分别为签名时间和签名摘要。
@@ -41,9 +51,11 @@ public interface Request {
 3、在服务端，可通过Validators.SIGN验证器进行验证：
 ```java
     @Execute(name = "query", validates = {
-            @Validate(validator = Validators.SIGN)
+            @Validate(validator = Validators.SIGN, string={"key name"})
     })
 ```
+> 如果string不为空，则使用指定密钥名的密钥进行签名。
+
 > 如果请求方IP在服务端的[IP白名单](trustful-ip.md)中，则不验证签名直接认证通过。
 
 4、签名算法：
