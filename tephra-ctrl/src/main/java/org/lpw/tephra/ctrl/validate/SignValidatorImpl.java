@@ -3,7 +3,6 @@ package org.lpw.tephra.ctrl.validate;
 import org.lpw.tephra.crypto.Sign;
 import org.lpw.tephra.ctrl.context.Header;
 import org.lpw.tephra.ctrl.security.TrustfulIp;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
@@ -19,8 +18,6 @@ public class SignValidatorImpl extends ValidatorSupport implements SignValidator
     private Header header;
     @Inject
     private TrustfulIp trustfulIp;
-    @Value("${tephra.ctrl.validate.sign:tephra-ctrl-sign}")
-    private String signKey;
     private ThreadLocal<Boolean> threadLocal = new ThreadLocal<>();
 
     @Override
@@ -30,14 +27,8 @@ public class SignValidatorImpl extends ValidatorSupport implements SignValidator
 
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
-        if (!enable() || trustfulIp.contains(header.getIp()))
-            return true;
-
-        String signKey = request.get(this.signKey);
-        if (validator.isEmpty(signKey))
-            signKey = "";
-
-        return signKey.equals(validator.isEmpty(validate.getString()) ? "" : validate.getString()[0]) && sign.verify(request.getMap(), signKey);
+        return !enable() || trustfulIp.contains(header.getIp())
+                || sign.verify(request.getMap(), validator.isEmpty(validate.getString()) ? null : validate.getString()[0]);
     }
 
     private boolean enable() {
