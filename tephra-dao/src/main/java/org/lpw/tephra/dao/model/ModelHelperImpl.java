@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -194,6 +195,18 @@ public class ModelHelperImpl implements ModelHelper {
         json.forEach((key, value) -> modelTable.set(model, key, value));
 
         return model;
+    }
+
+    @Override
+    public <T extends Model> JSONObject getExtend(Class<T> modelClass, Map<String, String> map) {
+        JSONObject object = new JSONObject();
+        if (validator.isEmpty(map))
+            return object;
+
+        ModelTable modelTable = modelTables.get(modelClass);
+        map.keySet().stream().filter(key -> !modelTable.containsPropertyName(key)).forEach(key -> object.put(key, map.get(key)));
+
+        return object;
     }
 
     @Override
