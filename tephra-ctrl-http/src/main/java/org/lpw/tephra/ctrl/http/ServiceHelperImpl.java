@@ -84,7 +84,7 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private String ignorePrefixes;
     @Value("${tephra.ctrl.http.ignore.names:}")
     private String ignoreNames;
-    @Value("${tephra.ctrl.http.ignore.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png,.svg}")
+    @Value("${tephra.ctrl.http.ignore.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png,.svg,.eot,.woff,.ttf}")
     private String ignoreSuffixes;
     @Value("${tephra.ctrl.http.cors:/WEB-INF/cors.json}")
     private String cors;
