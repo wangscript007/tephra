@@ -1,9 +1,7 @@
 package org.lpw.tephra.freemarker;
 
-import freemarker.core.Environment;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
-import freemarker.template.TemplateException;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Logger;
@@ -16,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 
 /**
  * @author lpw
@@ -51,7 +48,8 @@ public class FreemarkerImpl implements Freemarker {
     @Override
     public void process(String name, Object data, OutputStream output) {
         try {
-            getConfiguration().getTemplate(name + suffix).process(BeanFactory.getBean(Model.class).setData(data), new OutputStreamWriter(output));
+            getConfiguration().getTemplate(name + suffix).process(BeanFactory.getBean(Model.class).setData(data),
+                    new OutputStreamWriter(output));
         } catch (Exception e) {
             logger.warn(e, "解析模版[{}]时发生异常！", name);
         }
@@ -59,10 +57,10 @@ public class FreemarkerImpl implements Freemarker {
 
     private synchronized Configuration getConfiguration() throws IOException {
         if (configuration == null) {
-            configuration = new Configuration(Configuration.VERSION_2_3_25);
+            configuration = new Configuration(Configuration.VERSION_2_3_27);
             configuration.setDirectoryForTemplateLoading(new File(context.getAbsolutePath(root)));
-            configuration.setObjectWrapper(new DefaultObjectWrapper(Configuration.VERSION_2_3_25));
-            configuration.setTemplateExceptionHandler((TemplateException te, Environment env, Writer out) -> logger.warn(te, "解析FreeMarker模板时发生异常！"));
+            configuration.setObjectWrapper(new DefaultObjectWrapper(Configuration.VERSION_2_3_27));
+            configuration.setTemplateExceptionHandler((e, env, out) -> logger.warn(e, "解析FreeMarker模板时发生异常！"));
         }
 
         return configuration;
