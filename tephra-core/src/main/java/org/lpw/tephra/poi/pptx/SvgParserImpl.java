@@ -9,6 +9,7 @@ import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
@@ -63,5 +64,10 @@ public class SvgParserImpl implements Parser {
         outputStream.close();
 
         return outputStream;
+    }
+
+    @Override
+    public boolean parse(JSONObject object, XSLFShape xslfShape) {
+        return false;
     }
 }

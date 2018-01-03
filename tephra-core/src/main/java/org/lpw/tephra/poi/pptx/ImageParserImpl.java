@@ -5,6 +5,7 @@ import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Json;
@@ -72,5 +73,10 @@ public class ImageParserImpl implements Parser {
                     logger.warn(null, "未处理图片类型[{}:{}]！", url, contentType);
                 return PictureData.PictureType.PNG;
         }
+    }
+
+    @Override
+    public boolean parse(JSONObject object, XSLFShape xslfShape) {
+        return false;
     }
 }

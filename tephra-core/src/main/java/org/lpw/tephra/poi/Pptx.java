@@ -2,6 +2,7 @@ package org.lpw.tephra.poi;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -17,4 +18,12 @@ public interface Pptx {
      * @param outputStream 输出流。
      */
     void write(JSONObject object, OutputStream outputStream);
+
+    /**
+     * 读取并解析PPTx数据。
+     *
+     * @param inputStream 输入流。
+     * @return 数据。
+     */
+    JSONObject read(InputStream inputStream);
 }
