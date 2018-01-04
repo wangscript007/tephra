@@ -11,6 +11,7 @@ import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.lpw.tephra.poi.StreamWriter;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
@@ -35,7 +36,7 @@ public class SvgParserImpl implements Parser {
 
     @Override
     public String getType() {
-        return "svg";
+        return TYPE_SVG;
     }
 
     @Override
@@ -67,7 +68,7 @@ public class SvgParserImpl implements Parser {
     }
 
     @Override
-    public boolean parse(JSONObject object, XSLFShape xslfShape) {
+    public boolean parse(JSONObject object, XSLFShape xslfShape, StreamWriter writer) {
         return false;
     }
 }

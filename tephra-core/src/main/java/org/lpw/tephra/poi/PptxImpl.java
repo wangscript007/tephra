@@ -3,9 +3,11 @@ package org.lpw.tephra.poi;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFTextBox;
 import org.lpw.tephra.poi.pptx.Parser;
 import org.lpw.tephra.poi.pptx.ParserHelper;
 import org.lpw.tephra.util.Logger;
@@ -77,7 +79,7 @@ public class PptxImpl implements Pptx {
     }
 
     @Override
-    public JSONObject read(InputStream inputStream) {
+    public JSONObject read(InputStream inputStream, StreamWriter streamWriter) {
         JSONObject object = new JSONObject();
         try {
             XMLSlideShow xmlSlideShow = new XMLSlideShow(inputStream);
@@ -87,7 +89,7 @@ public class PptxImpl implements Pptx {
             object.put("size", size);
 
             JSONArray slides = new JSONArray();
-            slides(slides, xmlSlideShow.getSlides());
+            slides(slides, xmlSlideShow.getSlides(), streamWriter);
             object.put("slides", slides);
             xmlSlideShow.close();
         } catch (IOException e) {
@@ -97,7 +99,7 @@ public class PptxImpl implements Pptx {
         return object;
     }
 
-    private void slides(JSONArray slides, List<XSLFSlide> xslfSlides) {
+    private void slides(JSONArray slides, List<XSLFSlide> xslfSlides, StreamWriter streamWriter) {
         JSONObject slide = new JSONObject();
         xslfSlides.forEach(xslfSlide -> {
             JSONArray elements = new JSONArray();
@@ -106,6 +108,10 @@ public class PptxImpl implements Pptx {
                 getAnchor(element, xslfShape);
                 if (xslfShape instanceof XSLFSimpleShape)
                     getRotation(element, (XSLFSimpleShape) xslfShape);
+                if (xslfShape instanceof XSLFTextBox)
+                    parserHelper.get(Parser.TYPE_TEXT).parse(element, xslfShape, streamWriter);
+                else if (xslfShape instanceof XSLFPictureShape)
+                    parserHelper.get(Parser.TYPE_IMAGE).parse(element, xslfShape, streamWriter);
                 elements.add(element);
             });
             slide.put("elements", elements);

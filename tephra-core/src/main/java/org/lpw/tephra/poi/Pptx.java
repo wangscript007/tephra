@@ -22,8 +22,9 @@ public interface Pptx {
     /**
      * 读取并解析PPTx数据。
      *
-     * @param inputStream 输入流。
+     * @param inputStream  输入流。
+     * @param streamWriter 流数据写入器。
      * @return 数据。
      */
-    JSONObject read(InputStream inputStream);
+    JSONObject read(InputStream inputStream, StreamWriter streamWriter);
 }

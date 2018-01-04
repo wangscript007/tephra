@@ -7,6 +7,7 @@ import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.lpw.tephra.poi.StreamWriter;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
@@ -34,12 +35,12 @@ public class ImageParserImpl implements Parser {
 
     @Override
     public String getType() {
-        return "image";
+        return TYPE_IMAGE;
     }
 
     @Override
     public boolean parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
-        String image = object.getString("image");
+        String image = object.getString(getType());
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Map<String, String> map = new HashMap<>();
         http.get(image, null, null, map, outputStream);
@@ -76,7 +77,15 @@ public class ImageParserImpl implements Parser {
     }
 
     @Override
-    public boolean parse(JSONObject object, XSLFShape xslfShape) {
-        return false;
+    public boolean parse(JSONObject object, XSLFShape xslfShape, StreamWriter streamWriter) {
+        XSLFPictureData xslfPictureData = ((XSLFPictureShape) xslfShape).getPictureData();
+        try {
+            object.put(getType(), streamWriter.write(xslfPictureData.getContentType(), xslfPictureData.getFileName(),
+                    xslfPictureData.getInputStream()));
+        } catch (IOException e) {
+            logger.warn(e, "保存图片[{}:{}]流数据时发生异常！", xslfPictureData.getContentType(), xslfPictureData.getFileName());
+        }
+
+        return true;
     }
 }

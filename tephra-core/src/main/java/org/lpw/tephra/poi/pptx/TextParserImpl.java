@@ -10,6 +10,7 @@ import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTextBox;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.lpw.tephra.poi.StreamWriter;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
@@ -34,7 +35,7 @@ public class TextParserImpl implements Parser {
 
     @Override
     public String getType() {
-        return "text";
+        return TYPE_TEXT;
     }
 
     @Override
@@ -48,14 +49,14 @@ public class TextParserImpl implements Parser {
             JSONArray texts = object.getJSONArray("texts");
             for (int i = 0, size = texts.size(); i < size; i++)
                 xslfTextParagraph = add(xslfTextBox, xslfTextParagraph, object, texts.getJSONObject(i));
-        } else if (object.containsKey("text"))
+        } else if (object.containsKey(getType()))
             add(xslfTextBox, xslfTextParagraph, object, new JSONObject());
 
         return true;
     }
 
     private XSLFTextParagraph add(XSLFTextBox xslfTextBox, XSLFTextParagraph xslfTextParagraph, JSONObject object, JSONObject child) {
-        String text = child.containsKey("text") ? child.getString("text") : object.getString("text");
+        String text = child.containsKey(getType()) ? child.getString(getType()) : object.getString(getType());
         boolean empty = text.equals("\n");
         if (empty)
             xslfTextParagraph = newParagraph(xslfTextBox, object);
@@ -130,7 +131,7 @@ public class TextParserImpl implements Parser {
     }
 
     @Override
-    public boolean parse(JSONObject object, XSLFShape xslfShape) {
+    public boolean parse(JSONObject object, XSLFShape xslfShape, StreamWriter writer) {
         object.put("type", getType());
         JSONArray texts = new JSONArray();
         ((XSLFTextBox) xslfShape).getTextParagraphs().forEach(xslfTextParagraph -> {
