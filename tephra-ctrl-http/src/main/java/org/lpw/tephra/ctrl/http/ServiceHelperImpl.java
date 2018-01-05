@@ -203,7 +203,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         return false;
     }
 
-    private void setCors(HttpServletRequest request, HttpServletResponse response) {
+    @Override
+    public void setCors(HttpServletRequest request, HttpServletResponse response) {
         if (validator.isEmpty(corsOrigins))
             return;
 

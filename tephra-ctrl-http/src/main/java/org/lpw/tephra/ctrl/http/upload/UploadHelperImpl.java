@@ -73,6 +73,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     @Override
     public void upload(HttpServletRequest request, HttpServletResponse response) {
         try {
+            serviceHelper.setCors(request, response);
             OutputStream outputStream = serviceHelper.setContext(request, response, URI);
             JSONArray array = new JSONArray();
             for (FileItem item : getUpload(request).parseRequest(request))

@@ -101,7 +101,6 @@ public class PptxImpl implements Pptx {
     }
 
     private void slides(JSONArray slides, List<XSLFSlide> xslfSlides, StreamWriter streamWriter) {
-        JSONObject slide = new JSONObject();
         xslfSlides.forEach(xslfSlide -> {
             JSONArray elements = new JSONArray();
             xslfSlide.getShapes().forEach(xslfShape -> {
@@ -115,9 +114,11 @@ public class PptxImpl implements Pptx {
                     parserHelper.get(Parser.TYPE_IMAGE).parse(element, xslfShape, streamWriter);
                 elements.add(element);
             });
+
+            JSONObject slide = new JSONObject();
             slide.put("elements", elements);
+            slides.add(slide);
         });
-        slides.add(slide);
     }
 
     private void getAnchor(JSONObject object, XSLFShape xslfShape) {
