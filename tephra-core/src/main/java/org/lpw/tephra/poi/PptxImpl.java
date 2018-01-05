@@ -92,6 +92,7 @@ public class PptxImpl implements Pptx {
             slides(slides, xmlSlideShow.getSlides(), streamWriter);
             object.put("slides", slides);
             xmlSlideShow.close();
+            inputStream.close();
         } catch (IOException e) {
             logger.warn(e, "解析PPTx数据时发生异常！");
         }
