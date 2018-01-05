@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,8 +81,9 @@ public class ImageParserImpl implements Parser {
     public boolean parse(JSONObject object, XSLFShape xslfShape, StreamWriter streamWriter) {
         XSLFPictureData xslfPictureData = ((XSLFPictureShape) xslfShape).getPictureData();
         try {
-            object.put(getType(), streamWriter.write(xslfPictureData.getContentType(), xslfPictureData.getFileName(),
-                    xslfPictureData.getInputStream()));
+            InputStream inputStream = xslfPictureData.getInputStream();
+            object.put(getType(), streamWriter.write(xslfPictureData.getContentType(), xslfPictureData.getFileName(), inputStream));
+            inputStream.close();
         } catch (IOException e) {
             logger.warn(e, "保存图片[{}:{}]流数据时发生异常！", xslfPictureData.getContentType(), xslfPictureData.getFileName());
         }
