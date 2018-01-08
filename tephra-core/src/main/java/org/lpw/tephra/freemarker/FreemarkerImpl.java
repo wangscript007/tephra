@@ -36,6 +36,11 @@ public class FreemarkerImpl implements Freemarker {
     private StringTemplateLoader stringTemplateLoader;
 
     @Override
+    public boolean containsStringTemplate(String name) {
+        return stringTemplateLoader != null && stringTemplateLoader.findTemplateSource(name + suffix) != null;
+    }
+
+    @Override
     public void putStringTemplate(String name, String template) {
         try {
             if (stringTemplateLoader == null)

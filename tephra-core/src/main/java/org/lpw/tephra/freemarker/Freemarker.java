@@ -9,6 +9,14 @@ import java.io.OutputStream;
  */
 public interface Freemarker {
     /**
+     * 是否存在字符串模板。
+     *
+     * @param name 模板名称。
+     * @return 如果存在则返回true；否则返回false。
+     */
+    boolean containsStringTemplate(String name);
+
+    /**
      * 设置字符串模板。
      *
      * @param name     模板名称。

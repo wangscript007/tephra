@@ -1,11 +1,14 @@
 package org.lpw.tephra.ctrl.context;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Coder;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelTable;
 import org.lpw.tephra.dao.model.ModelTables;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.DateTime;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
@@ -29,6 +32,8 @@ public class RequestImpl implements Request, RequestAware {
     private Numeric numeric;
     @Inject
     private DateTime dateTime;
+    @Inject
+    private Json json;
     @Inject
     private Logger logger;
     @Inject
@@ -87,6 +92,16 @@ public class RequestImpl implements Request, RequestAware {
         String[] array = adapter.get().getAsArray(name);
 
         return array == null ? converter.toArray(get(name), ",") : array;
+    }
+
+    @Override
+    public JSONObject getAsJsonObject(String name) {
+        return json.toObject(name);
+    }
+
+    @Override
+    public JSONArray getAsJsonArray(String name) {
+        return json.toArray(name);
     }
 
     @Override
