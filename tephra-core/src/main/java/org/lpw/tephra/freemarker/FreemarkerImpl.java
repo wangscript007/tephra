@@ -1,5 +1,9 @@
 package org.lpw.tephra.freemarker;
 
+import freemarker.cache.FileTemplateLoader;
+import freemarker.cache.MultiTemplateLoader;
+import freemarker.cache.StringTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import org.lpw.tephra.bean.BeanFactory;
@@ -29,6 +33,33 @@ public class FreemarkerImpl implements Freemarker {
     @Value("${tephra.freemarker.suffix:.ftl}")
     private String suffix;
     private Configuration configuration;
+    private StringTemplateLoader stringTemplateLoader;
+
+    @Override
+    public void putStringTemplate(String name, String template) {
+        try {
+            if (stringTemplateLoader == null)
+                getConfiguration();
+
+            stringTemplateLoader.putTemplate(name + suffix, template);
+            getConfiguration().removeTemplateFromCache(name + suffix);
+        } catch (IOException e) {
+            logger.warn(e, "设置字符串模板[{}:{}]时发生异常！", name, template);
+        }
+    }
+
+    @Override
+    public void removeStringTemplate(String name) {
+        try {
+            if (stringTemplateLoader == null)
+                getConfiguration();
+
+            stringTemplateLoader.removeTemplate(name + suffix);
+            getConfiguration().removeTemplateFromCache(name + suffix);
+        } catch (IOException e) {
+            logger.warn(e, "移除字符串模板[{}]时发生异常！", name);
+        }
+    }
 
     @Override
     public String process(String name, Object data) {
@@ -48,8 +79,9 @@ public class FreemarkerImpl implements Freemarker {
     @Override
     public void process(String name, Object data, OutputStream output) {
         try {
-            getConfiguration().getTemplate(name + suffix).process(BeanFactory.getBean(Model.class).setData(data),
-                    new OutputStreamWriter(output));
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(output);
+            getConfiguration().getTemplate(name + suffix).process(BeanFactory.getBean(Model.class).setData(data), outputStreamWriter);
+            output.close();
         } catch (Exception e) {
             logger.warn(e, "解析模版[{}]时发生异常！", name);
         }
@@ -58,7 +90,10 @@ public class FreemarkerImpl implements Freemarker {
     private synchronized Configuration getConfiguration() throws IOException {
         if (configuration == null) {
             configuration = new Configuration(Configuration.VERSION_2_3_27);
-            configuration.setDirectoryForTemplateLoading(new File(context.getAbsolutePath(root)));
+            configuration.setTemplateLoader(new MultiTemplateLoader(new TemplateLoader[]{
+                    new FileTemplateLoader(new File(context.getAbsolutePath(root))),
+                    stringTemplateLoader = new StringTemplateLoader()
+            }));
             configuration.setObjectWrapper(new DefaultObjectWrapper(Configuration.VERSION_2_3_27));
             configuration.setTemplateExceptionHandler((e, env, out) -> logger.warn(e, "解析FreeMarker模板时发生异常！"));
         }

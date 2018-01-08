@@ -9,6 +9,21 @@ import java.io.OutputStream;
  */
 public interface Freemarker {
     /**
+     * 设置字符串模板。
+     *
+     * @param name     模板名称。
+     * @param template 模板内容。
+     */
+    void putStringTemplate(String name, String template);
+
+    /**
+     * 移除字符串模板。
+     *
+     * @param name 模板名称。
+     */
+    void removeStringTemplate(String name);
+
+    /**
      * 解析模板并输出为字符串。
      *
      * @param name 模板文件名称。
