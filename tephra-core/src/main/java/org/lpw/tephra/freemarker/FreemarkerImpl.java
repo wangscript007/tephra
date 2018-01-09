@@ -55,10 +55,10 @@ public class FreemarkerImpl implements Freemarker {
 
     @Override
     public void removeStringTemplate(String name) {
-        try {
-            if (stringTemplateLoader == null)
-                getConfiguration();
+        if (stringTemplateLoader == null)
+            return;
 
+        try {
             stringTemplateLoader.removeTemplate(name + suffix);
             getConfiguration().removeTemplateFromCache(name + suffix);
         } catch (IOException e) {
@@ -92,15 +92,19 @@ public class FreemarkerImpl implements Freemarker {
         }
     }
 
-    private synchronized Configuration getConfiguration() throws IOException {
+    private Configuration getConfiguration() throws IOException {
         if (configuration == null) {
-            configuration = new Configuration(Configuration.VERSION_2_3_27);
-            configuration.setTemplateLoader(new MultiTemplateLoader(new TemplateLoader[]{
-                    new FileTemplateLoader(new File(context.getAbsolutePath(root))),
-                    stringTemplateLoader = new StringTemplateLoader()
-            }));
-            configuration.setObjectWrapper(new DefaultObjectWrapper(Configuration.VERSION_2_3_27));
-            configuration.setTemplateExceptionHandler((e, env, out) -> logger.warn(e, "解析FreeMarker模板时发生异常！"));
+            synchronized (this) {
+                if (configuration == null) {
+                    configuration = new Configuration(Configuration.VERSION_2_3_27);
+                    configuration.setTemplateLoader(new MultiTemplateLoader(new TemplateLoader[]{
+                            new FileTemplateLoader(new File(context.getAbsolutePath(root))),
+                            stringTemplateLoader = new StringTemplateLoader()
+                    }));
+                    configuration.setObjectWrapper(new DefaultObjectWrapper(Configuration.VERSION_2_3_27));
+                    configuration.setTemplateExceptionHandler((e, env, out) -> logger.warn(e, "解析FreeMarker模板时发生异常！"));
+                }
+            }
         }
 
         return configuration;
