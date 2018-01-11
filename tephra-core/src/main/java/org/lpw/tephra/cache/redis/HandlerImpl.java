@@ -3,6 +3,7 @@ package org.lpw.tephra.cache.redis;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.cache.Handler;
 import org.lpw.tephra.util.Serializer;
+import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
@@ -18,10 +19,14 @@ import javax.inject.Inject;
 public class HandlerImpl implements Handler, ContextRefreshedListener {
     @Inject
     private Serializer serializer;
-    @Value("${tephra.cache.name:}")
-    private String name;
-    @Value("${tephra.cache.redis.host:localhost}")
+    @Inject
+    private Validator validator;
+    @Value("${tephra.cache.redis.host:}")
     private String host;
+    @Value("${tephra.cache.redis.port:6379}")
+    private int port;
+    @Value("${tephra.cache.redis.password:}")
+    private String password;
     @Value("${tephra.cache.redis.max-total:500}")
     private int total;
     @Value("${tephra.cache.redis.max-idle:5}")
@@ -71,7 +76,7 @@ public class HandlerImpl implements Handler, ContextRefreshedListener {
 
     @Override
     public void onContextRefreshed() {
-        if (!getName().equals(name))
+        if (validator.isEmpty(host))
             return;
 
         JedisPoolConfig config = new JedisPoolConfig();
@@ -79,6 +84,9 @@ public class HandlerImpl implements Handler, ContextRefreshedListener {
         config.setMaxIdle(idle);
         config.setMaxWaitMillis(wait);
         config.setTestOnBorrow(true);
-        pool = new JedisPool(config, host);
+        if (validator.isEmpty(password))
+            pool = new JedisPool(config, host, port);
+        else
+            pool = new JedisPool(config, host, port, 2000, password);
     }
 }
