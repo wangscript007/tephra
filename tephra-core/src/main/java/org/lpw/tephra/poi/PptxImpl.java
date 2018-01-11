@@ -2,7 +2,9 @@ package org.lpw.tephra.poi;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
@@ -11,6 +13,7 @@ import org.apache.poi.xslf.usermodel.XSLFTextBox;
 import org.lpw.tephra.poi.pptx.Parser;
 import org.lpw.tephra.poi.pptx.ParserHelper;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +32,8 @@ import java.util.List;
 public class PptxImpl implements Pptx {
     @Inject
     private Validator validator;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Logger logger;
     @Inject
@@ -112,6 +117,8 @@ public class PptxImpl implements Pptx {
                     parserHelper.get(Parser.TYPE_TEXT).parse(element, xslfShape, streamWriter);
                 else if (xslfShape instanceof XSLFPictureShape)
                     parserHelper.get(Parser.TYPE_IMAGE).parse(element, xslfShape, streamWriter);
+                else if (xslfShape instanceof XSLFAutoShape)
+                    background(element, xslfShape, streamWriter);
                 elements.add(element);
             });
 
@@ -123,18 +130,33 @@ public class PptxImpl implements Pptx {
 
     private void getAnchor(JSONObject object, XSLFShape xslfShape) {
         Rectangle2D rectangle2D = xslfShape.getAnchor();
-        object.put("x", rectangle2D.getX());
-        object.put("y", rectangle2D.getY());
-        object.put("width", rectangle2D.getWidth());
-        object.put("height", rectangle2D.getHeight());
+        object.put("x", numeric.toInt(rectangle2D.getX()));
+        object.put("y", numeric.toInt(rectangle2D.getY()));
+        object.put("width", numeric.toInt(rectangle2D.getWidth()));
+        object.put("height", numeric.toInt(rectangle2D.getHeight()));
     }
 
     private void getRotation(JSONObject object, XSLFSimpleShape xslfSimpleShape) {
         if (xslfSimpleShape.getRotation() != 0.0D)
-            object.put("rotation", xslfSimpleShape.getRotation());
+            object.put("rotation", numeric.toInt(xslfSimpleShape.getRotation()));
         if (xslfSimpleShape.getFlipVertical())
             object.put("rotationX", true);
         if (xslfSimpleShape.getFlipHorizontal())
             object.put("rotationY", true);
+    }
+
+    private void background(JSONObject object, XSLFShape xslfShape, StreamWriter streamWriter) {
+        XSLFAutoShape xslfAutoShape = (XSLFAutoShape) xslfShape;
+        if (!(xslfAutoShape.getFillStyle().getPaint() instanceof PaintStyle.TexturePaint))
+            return;
+
+        PaintStyle.TexturePaint texturePaint = (PaintStyle.TexturePaint) xslfAutoShape.getFillStyle().getPaint();
+        try {
+            InputStream inputStream = texturePaint.getImageData();
+            object.put(Parser.TYPE_IMAGE, streamWriter.write(texturePaint.getContentType(), "", inputStream));
+            inputStream.close();
+        } catch (IOException e) {
+            logger.warn(e, "保存图片[{}]流数据时发生异常！", texturePaint.getContentType());
+        }
     }
 }
