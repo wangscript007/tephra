@@ -133,6 +133,8 @@ public class RequestImpl implements Request, RequestAware {
             for (String name : map.keySet()) {
                 if ("id".equals(name)) {
                     model.setId(map.get(name));
+                    if (validator.isEmpty(model.getId()))
+                        model.setId(null);
 
                     continue;
                 }
