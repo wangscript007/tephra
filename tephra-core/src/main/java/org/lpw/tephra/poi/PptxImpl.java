@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFAutoShape;
+import org.apache.poi.xslf.usermodel.XSLFGroupShape;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
@@ -17,9 +18,13 @@ import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -108,23 +113,30 @@ public class PptxImpl implements Pptx {
     private void slides(JSONArray slides, List<XSLFSlide> xslfSlides, StreamWriter streamWriter) {
         xslfSlides.forEach(xslfSlide -> {
             JSONArray elements = new JSONArray();
-            xslfSlide.getShapes().forEach(xslfShape -> {
-                JSONObject element = new JSONObject();
-                getAnchor(element, xslfShape);
-                if (xslfShape instanceof XSLFSimpleShape)
-                    getRotation(element, (XSLFSimpleShape) xslfShape);
-                if (xslfShape instanceof XSLFTextBox)
-                    parserHelper.get(Parser.TYPE_TEXT).parse(element, xslfShape, streamWriter);
-                else if (xslfShape instanceof XSLFPictureShape)
-                    parserHelper.get(Parser.TYPE_IMAGE).parse(element, xslfShape, streamWriter);
-                else if (xslfShape instanceof XSLFAutoShape)
-                    background(element, xslfShape, streamWriter);
-                elements.add(element);
-            });
-
+            shapes(elements, xslfSlide.getShapes(), streamWriter);
             JSONObject slide = new JSONObject();
             slide.put("elements", elements);
             slides.add(slide);
+        });
+    }
+
+    private void shapes(JSONArray elements, List<XSLFShape> shapes, StreamWriter streamWriter) {
+        shapes.forEach(xslfShape -> {
+            JSONObject element = new JSONObject();
+            getAnchor(element, xslfShape);
+            if (xslfShape instanceof XSLFSimpleShape)
+                getRotation(element, (XSLFSimpleShape) xslfShape);
+            if (xslfShape instanceof XSLFTextBox)
+                parserHelper.get(Parser.TYPE_TEXT).parse(element, xslfShape, streamWriter);
+            else if (xslfShape instanceof XSLFPictureShape)
+                parserHelper.get(Parser.TYPE_IMAGE).parse(element, xslfShape, streamWriter);
+            else if (xslfShape instanceof XSLFAutoShape)
+                background(element, xslfShape, streamWriter);
+            else if (xslfShape instanceof XSLFGroupShape)
+                shapes(elements, ((XSLFGroupShape) xslfShape).getShapes(), streamWriter);
+            else
+                screenshot(element, xslfShape, streamWriter);
+            elements.add(element);
         });
     }
 
@@ -157,6 +169,30 @@ public class PptxImpl implements Pptx {
             inputStream.close();
         } catch (IOException e) {
             logger.warn(e, "保存图片[{}]流数据时发生异常！", texturePaint.getContentType());
+        }
+    }
+
+    private void screenshot(JSONObject object, XSLFShape xslfShape, StreamWriter streamWriter) {
+        if (logger.isInfoEnable())
+            logger.info("无法解析PPTx元素[{}]。", xslfShape);
+
+        int width = object.getIntValue("width");
+        int height = object.getIntValue("height");
+        if (width <= 0 || height <= 0)
+            return;
+
+        try {
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            xslfShape.draw(image.createGraphics(), new Rectangle2D.Double(0, 0, width, height));
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, "PNG", outputStream);
+            outputStream.close();
+
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+            object.put(Parser.TYPE_IMAGE, streamWriter.write("image/png", "", inputStream));
+            inputStream.close();
+        } catch (Exception e) {
+            logger.warn(e, "截取PPTx形状为图片时发生异常！");
         }
     }
 }
