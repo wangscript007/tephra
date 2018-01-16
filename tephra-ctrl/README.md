@@ -40,6 +40,8 @@ Ctrl接口图：
 
 [验证错误编码管理](doc/failure-code.md)
 
+[上传文件](doc/upload.md)
+
 [导出Excel](doc/excel.md)
 
 [配置参数](src/main/resources/ctrl.tephra.config)

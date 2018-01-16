@@ -1,4 +1,4 @@
-package org.lpw.tephra.ctrl.http.upload;
+package org.lpw.tephra.ctrl.upload;
 
 /**
  * @author lpw

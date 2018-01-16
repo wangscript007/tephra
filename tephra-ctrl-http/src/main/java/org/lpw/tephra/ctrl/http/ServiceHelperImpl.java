@@ -14,8 +14,8 @@ import org.lpw.tephra.ctrl.http.context.HeaderAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.RequestAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.ResponseAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.SessionAdapterImpl;
-import org.lpw.tephra.ctrl.http.upload.UploadHelper;
 import org.lpw.tephra.ctrl.status.Status;
+import org.lpw.tephra.ctrl.upload.UploadService;
 import org.lpw.tephra.storage.StorageListener;
 import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Context;
@@ -121,8 +121,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
 
         String uri = getUri(request);
         String lowerCaseUri = uri.toLowerCase();
-        if (lowerCaseUri.startsWith(UploadHelper.ROOT)) {
-            if (!lowerCaseUri.startsWith(UploadHelper.ROOT + "image/"))
+        if (lowerCaseUri.startsWith(UploadService.ROOT)) {
+            if (!lowerCaseUri.startsWith(UploadService.ROOT + "image/"))
                 response.setHeader("Content-Disposition", "attachment;filename=" + uri.substring(uri.lastIndexOf('/') + 1));
 
             if (logger.isDebugEnable())
