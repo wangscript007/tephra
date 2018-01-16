@@ -8,7 +8,7 @@ CtrlHttp提供了文件上传实现。
 #tephra.ctrl.http.upload.max-size = 1m
 ```
 
-2、实现UploadListener或配置JSON，具体参考[Ctrl模块上传](../../tephra/tephra-ctrl/doc/upload.md)说明。
+2、实现UploadListener或配置JSON，具体参考[Ctrl模块上传](../../tephra-ctrl/doc/upload.md)说明。
 
 3、客户端上传文件。
 ```html
