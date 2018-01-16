@@ -96,12 +96,12 @@ public class RequestImpl implements Request, RequestAware {
 
     @Override
     public JSONObject getAsJsonObject(String name) {
-        return json.toObject(name);
+        return json.toObject(get(name));
     }
 
     @Override
     public JSONArray getAsJsonArray(String name) {
-        return json.toArray(name);
+        return json.toArray(get(name));
     }
 
     @Override
