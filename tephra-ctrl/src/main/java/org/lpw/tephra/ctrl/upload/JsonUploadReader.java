@@ -5,7 +5,9 @@ import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.storage.Storage;
 import org.lpw.tephra.util.Coder;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author lpw
@@ -41,19 +43,25 @@ public class JsonUploadReader implements UploadReader {
 
     @Override
     public long getSize() {
-        return getBytes().length;
+        return getByteArray().length;
     }
 
     @Override
-    public void write(Storage storage, String path) throws IOException {
-        storage.write(path, getBytes());
+    public InputStream getInputStream() {
+        return new ByteArrayInputStream(getByteArray());
     }
 
-    private byte[] getBytes() {
+    @Override
+    public byte[] getByteArray() {
         if (bytes == null)
             bytes = BeanFactory.getBean(Coder.class).decodeBase64(base64);
 
         return bytes;
+    }
+
+    @Override
+    public void write(Storage storage, String path) throws IOException {
+        storage.write(path, getByteArray());
     }
 
     @Override

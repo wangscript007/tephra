@@ -1,44 +1,71 @@
 package org.lpw.tephra.ctrl.http.upload;
 
 import org.apache.commons.fileupload.FileItem;
+import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.ctrl.upload.UploadReader;
 import org.lpw.tephra.storage.Storage;
+import org.lpw.tephra.util.Io;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author lpw
  */
 public class HttpUploadReader implements UploadReader {
     private FileItem item;
+    private String fieldName;
+    private String fileName;
+    private String contentType;
+    private long size;
+    private InputStream inputStream;
+    private byte[] bytes;
 
-    public HttpUploadReader(FileItem item) {
+    HttpUploadReader(FileItem item) throws IOException {
         this.item = item;
+        fieldName = item.getFieldName();
+        fileName = item.getName();
+        contentType = item.getContentType();
+        size = item.getSize();
+        inputStream = item.getInputStream();
     }
 
     @Override
     public String getFieldName() {
-        return item.getFieldName();
+        return fieldName;
     }
 
     @Override
     public String getFileName() {
-        return item.getName();
+        return fileName;
     }
 
     @Override
     public String getContentType() {
-        return item.getContentType();
+        return contentType;
     }
 
     @Override
     public long getSize() {
-        return item.getSize();
+        return size;
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
+    @Override
+    public byte[] getByteArray() {
+        if (bytes == null)
+            bytes = BeanFactory.getBean(Io.class).read(inputStream);
+
+        return bytes;
     }
 
     @Override
     public void write(Storage storage, String path) throws IOException {
-        storage.write(path, item.getInputStream());
+        storage.write(path, inputStream);
     }
 
     @Override
