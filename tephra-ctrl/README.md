@@ -42,6 +42,8 @@ Ctrl接口图：
 
 [上传文件](doc/upload.md)
 
+[上传多文件](doc/uploads.md)
+
 [导出Excel](doc/excel.md)
 
 [配置参数](src/main/resources/ctrl.tephra.config)
