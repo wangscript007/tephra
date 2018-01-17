@@ -10,9 +10,9 @@ import java.io.InputStream;
  */
 public interface UploadReader {
     /**
-     * 获取监听器KEY。
+     * 获取域名称[监听器KEY]。
      *
-     * @return 监听器KEY。
+     * @return 域名称[监听器KEY]。
      */
     String getFieldName();
 

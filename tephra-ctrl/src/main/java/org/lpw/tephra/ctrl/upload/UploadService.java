@@ -1,6 +1,7 @@
 package org.lpw.tephra.ctrl.upload;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,12 +21,23 @@ public interface UploadService {
     String ROOT = "/upload/";
 
     /**
-     * 处理上传请求。
+     * 处理多文件上传请求。
      *
      * @param content 上传数据。
      * @return 处理结果。
      */
-    JSONArray upload(String content);
+    JSONArray uploads(String content);
+
+    /**
+     * 处理单个文件上传请求。
+     *
+     * @param fieldName   域名称[监听器KEY]。
+     * @param fileName    文件名。
+     * @param contentType 文件类型。
+     * @param base64      Base64编码的文件数据。
+     * @return 处理结果。
+     */
+    JSONObject upload(String fieldName, String fileName, String contentType, String base64);
 
     /**
      * 处理上传请求。
@@ -34,7 +46,7 @@ public interface UploadService {
      * @return 处理结果。
      * @throws IOException IO异常。
      */
-    JSONArray upload(List<UploadReader> readers) throws IOException;
+    JSONArray uploads(List<UploadReader> readers) throws IOException;
 
     /**
      * 删除上传的文件。

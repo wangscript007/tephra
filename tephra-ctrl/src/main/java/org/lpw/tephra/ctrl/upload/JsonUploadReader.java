@@ -19,11 +19,16 @@ public class JsonUploadReader implements UploadReader {
     private String base64;
     private byte[] bytes;
 
-    public JsonUploadReader(JSONObject object) {
-        fieldName = object.getString("fieldName");
-        fileName = object.getString("fileName");
-        contentType = object.getString("contentType");
-        base64 = object.getString("base64");
+    JsonUploadReader(JSONObject object) {
+        this(object.getString("fieldName"), object.getString("fileName"), object.getString("contentType"),
+                object.getString("base64"));
+    }
+
+    JsonUploadReader(String fieldName, String fileName, String contentType, String base64) {
+        this.fieldName = fieldName;
+        this.fileName = fileName;
+        this.contentType = contentType;
+        this.base64 = base64;
     }
 
     @Override

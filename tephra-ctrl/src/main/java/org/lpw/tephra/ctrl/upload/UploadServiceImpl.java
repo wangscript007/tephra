@@ -52,7 +52,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
     private Map<String, UploadListener> listeners;
 
     @Override
-    public JSONArray upload(String content) {
+    public JSONArray uploads(String content) {
         if (validator.isEmpty(content))
             return new JSONArray();
 
@@ -65,7 +65,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
             readers.add(new JsonUploadReader(uploads.getJSONObject(i)));
 
         try {
-            return upload(readers);
+            return uploads(readers);
         } catch (IOException e) {
             logger.warn(e, "处理JSON方式上传文件时发生异常！");
 
@@ -74,12 +74,23 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
     }
 
     @Override
-    public JSONArray upload(List<UploadReader> readers) throws IOException {
+    public JSONArray uploads(List<UploadReader> readers) throws IOException {
         JSONArray array = new JSONArray();
         for (UploadReader reader : readers)
             array.add(upload(reader));
 
         return array;
+    }
+
+    @Override
+    public JSONObject upload(String fieldName, String fileName, String contentType, String base64) {
+        try {
+            return upload(new JsonUploadReader(fieldName, fileName, contentType, base64));
+        } catch (IOException e) {
+            logger.warn(e, "处理文件[{}:{}:{}]上传时发生异常！", fieldName, fileName, contentType);
+
+            return new JSONObject();
+        }
     }
 
     private JSONObject upload(UploadReader reader) throws IOException {

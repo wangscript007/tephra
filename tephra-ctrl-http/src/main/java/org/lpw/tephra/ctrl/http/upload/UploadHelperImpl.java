@@ -52,7 +52,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri {
             for (FileItem item : getUpload(request).parseRequest(request))
                 if (!item.isFormField())
                     readers.add(new HttpUploadReader(item));
-            outputStream.write(json.toBytes(uploadService.upload(readers)));
+            outputStream.write(json.toBytes(uploadService.uploads(readers)));
             outputStream.flush();
             outputStream.close();
         } catch (Throwable e) {

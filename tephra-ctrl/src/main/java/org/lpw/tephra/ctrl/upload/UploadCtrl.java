@@ -17,8 +17,13 @@ public class UploadCtrl {
     @Inject
     private UploadService uploadService;
 
+    @Execute(name = "uploads")
+    public Object uploads() {
+        return uploadService.uploads(request.getFromInputStream());
+    }
+
     @Execute(name = "upload")
     public Object upload() {
-        return null;
+        return uploadService.upload(request.get("fieldName"), request.get("fileName"), request.get("contentType"), request.get("base64"));
     }
 }
