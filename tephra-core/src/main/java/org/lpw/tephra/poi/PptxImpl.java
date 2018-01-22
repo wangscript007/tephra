@@ -18,14 +18,9 @@ import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
-import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -185,28 +180,29 @@ public class PptxImpl implements Pptx {
     }
 
     private void screenshot(JSONObject object, XSLFShape xslfShape, StreamWriter streamWriter) {
-        if (logger.isInfoEnable())
-            logger.info("无法解析PPTx元素[{}]。", xslfShape);
-
-        int width = object.getIntValue("width");
-        int height = object.getIntValue("height");
-        if (width <= 0 || height <= 0)
-            return;
-
-        try {
-            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
-            Graphics2D graphics2D = image.createGraphics();
-            xslfShape.draw(graphics2D, new Rectangle2D.Double(0, 0, width, height));
-            graphics2D.dispose();
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(image, "PNG", outputStream);
-            outputStream.close();
-
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-            object.put(Parser.TYPE_IMAGE, streamWriter.write("image/png", "", inputStream));
-            inputStream.close();
-        } catch (Exception e) {
-            logger.warn(e, "截取PPTx形状为图片时发生异常！");
-        }
+        System.out.println("pptx:" + xslfShape);
+//        if (logger.isInfoEnable())
+//            logger.info("无法解析PPTx元素[{}]。", xslfShape);
+//
+//        int width = object.getIntValue("width");
+//        int height = object.getIntValue("height");
+//        if (width <= 0 || height <= 0)
+//            return;
+//
+//        try {
+//            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+//            Graphics2D graphics2D = image.createGraphics();
+//            xslfShape.draw(graphics2D, new Rectangle2D.Double(0, 0, width, height));
+//            graphics2D.dispose();
+//            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//            ImageIO.write(image, "PNG", outputStream);
+//            outputStream.close();
+//
+//            ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+//            object.put(Parser.TYPE_IMAGE, streamWriter.write("image/png", "", inputStream));
+//            inputStream.close();
+//        } catch (Exception e) {
+//            logger.warn(e, "截取PPTx形状为图片时发生异常！");
+//        }
     }
 }

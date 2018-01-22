@@ -188,7 +188,7 @@ public class TextParserImpl implements Parser {
         font.put("family", validator.isEmpty(xslfTextRun.getFontFamily()) ? fontFamily : xslfTextRun.getFontFamily());
         Double size = xslfTextRun.getFontSize() == null ? fontSize : xslfTextRun.getFontSize();
         if (size != null)
-            font.put("size", size);
+            font.put("size", size * 96 / 72);
 
         return font;
     }
