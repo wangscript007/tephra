@@ -146,7 +146,12 @@ public class JsonImpl implements Json {
     }
 
     @Override
+    public boolean containsKey(JSONObject object, String key) {
+        return object != null && key != null && object.containsKey(key);
+    }
+
+    @Override
     public boolean hasTrue(JSONObject object, String key) {
-        return object.containsKey(key) && object.getBooleanValue(key);
+        return containsKey(object, key) && object.getBooleanValue(key);
     }
 }
