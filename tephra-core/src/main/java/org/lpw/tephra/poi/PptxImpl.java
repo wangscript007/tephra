@@ -22,11 +22,8 @@ import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -162,7 +159,10 @@ public class PptxImpl implements Pptx {
             if (xslfShape instanceof XSLFSimpleShape) {
                 XSLFSimpleShape xslfSimpleShape = (XSLFSimpleShape) xslfShape;
                 getRotation(element, xslfSimpleShape);
+                if (xslfSimpleShape.getShapeType() != null)
+                    element.put("shape", xslfSimpleShape.getShapeType().getOoxmlName());
                 fillStyle(elements, element, xslfSimpleShape.getFillStyle(), false, streamWriter);
+                getBorder(elements, element, xslfSimpleShape);
             }
             if (xslfShape instanceof XSLFTextShape)
                 parserHelper.get(Parser.TYPE_TEXT).parse(element, xslfShape, streamWriter);
@@ -202,34 +202,21 @@ public class PptxImpl implements Pptx {
             return;
 
         if (paintStyle instanceof PaintStyle.SolidPaint)
-            fillColor(elements, element, ((PaintStyle.SolidPaint) paintStyle).getSolidColor().getColor(), ignoreWhite, streamWriter);
+            fillColor(elements, element, paintStyle, ignoreWhite);
         else if (paintStyle instanceof PaintStyle.TexturePaint)
             fillTexture(elements, element, paintStyle, streamWriter);
     }
 
-    private void fillColor(JSONArray elements, JSONObject element, Color color, boolean ignoreWhite, StreamWriter streamWriter) {
-        if (color == null || (ignoreWhite && color.getRGB() == -1))
+    private void fillColor(JSONArray elements, JSONObject element, PaintStyle paintStyle, boolean ignoreWhite) {
+        String color = parserHelper.getHexColor(paintStyle, ignoreWhite);
+        if (color == null)
             return;
 
-        int width = element.getIntValue("width");
-        int height = element.getIntValue("height");
-        if (width <= 0 || height <= 0)
-            return;
-
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics2D = bufferedImage.createGraphics();
-        graphics2D.setColor(color);
-        graphics2D.fillRect(0, 0, width, height);
-        graphics2D.dispose();
-        try {
-            JSONObject object = new JSONObject();
-            object.putAll(element);
-            object.put(Parser.TYPE_IMAGE, streamWriter.write("image/png", "",
-                    image.write(bufferedImage, Image.Format.Png)));
-            elements.add(object);
-        } catch (IOException e) {
-            logger.warn(e, "填充背景色[{}]时发生异常！", color);
-        }
+        JSONObject object = new JSONObject();
+        object.putAll(element);
+        object.put("type", "bgcolor");
+        object.put("bgcolor", color);
+        elements.add(object);
     }
 
     private void fillTexture(JSONArray elements, JSONObject element, PaintStyle paintStyle, StreamWriter streamWriter) {
@@ -244,6 +231,22 @@ public class PptxImpl implements Pptx {
         } catch (IOException e) {
             logger.warn(e, "保存图片[{}]流数据时发生异常！", texturePaint.getContentType());
         }
+    }
+
+    private void getBorder(JSONArray elements, JSONObject element, XSLFSimpleShape xslfSimpleShape) {
+        if (xslfSimpleShape.getLineDash() == null)
+            return;
+
+        int width = numeric.toInt(xslfSimpleShape.getLineWidth() * 96 / 72);
+        if (width <= 0)
+            return;
+
+        JSONObject object = new JSONObject();
+        object.putAll(element);
+        object.put("type", "border");
+        object.put("color", parserHelper.toHex(xslfSimpleShape.getLineColor()));
+        object.put("dash", xslfSimpleShape.getLineDash().name().toLowerCase());
+        elements.add(object);
     }
 
     private void screenshot(JSONObject object, XSLFShape xslfShape, StreamWriter streamWriter) {

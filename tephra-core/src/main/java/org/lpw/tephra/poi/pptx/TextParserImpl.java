@@ -3,7 +3,6 @@ package org.lpw.tephra.poi.pptx;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.common.usermodel.fonts.FontGroup;
-import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFShape;
@@ -136,7 +135,9 @@ public class TextParserImpl implements Parser {
     public boolean parse(JSONObject object, XSLFShape xslfShape, StreamWriter writer) {
         object.put("type", getType());
         JSONArray texts = new JSONArray();
-        ((XSLFTextShape) xslfShape).getTextParagraphs().forEach(xslfTextParagraph -> {
+        XSLFTextShape xslfTextShape = (XSLFTextShape) xslfShape;
+        object.put("verticalAlign", getVerticalAlign(xslfTextShape));
+        xslfTextShape.getTextParagraphs().forEach(xslfTextParagraph -> {
             JSONObject paragraph = new JSONObject();
             paragraph.put("type", getType());
             paragraph.put("align", getTextAlign(xslfTextParagraph));
@@ -164,7 +165,7 @@ public class TextParserImpl implements Parser {
                 if (xslfTextRun.isStrikethrough())
                     text.put("strikethrough", true);
                 text.put("font", getFont(fontFamily, fontSize, xslfTextRun));
-                text.put("color", color(xslfTextRun.getFontColor()));
+                text.put("color", parserHelper.getHexColor(xslfTextRun.getFontColor(), false));
                 texts.add(text);
             });
         });
@@ -177,6 +178,17 @@ public class TextParserImpl implements Parser {
             object.put("texts", texts);
 
         return true;
+    }
+
+    private String getVerticalAlign(XSLFTextShape xslfTextShape) {
+        switch (xslfTextShape.getVerticalAlignment()) {
+            case MIDDLE:
+                return "middle";
+            case BOTTOM:
+                return "bottom";
+            default:
+                return null;
+        }
     }
 
     private String getTextAlign(XSLFTextParagraph xslfTextParagraph) {
@@ -200,20 +212,5 @@ public class TextParserImpl implements Parser {
             font.put("size", numeric.toInt(size * 96 / 72));
 
         return font;
-    }
-
-    private String color(PaintStyle paintStyle) {
-        if (!(paintStyle instanceof PaintStyle.SolidPaint))
-            return null;
-
-        Color color = ((PaintStyle.SolidPaint) paintStyle).getSolidColor().getColor();
-
-        return "#" + hex(color.getRed()) + hex(color.getGreen()) + hex(color.getBlue());
-    }
-
-    private String hex(int n) {
-        String hex = Integer.toHexString(n);
-
-        return hex.length() == 1 ? ("0" + hex) : hex;
     }
 }
