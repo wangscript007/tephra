@@ -246,6 +246,7 @@ public class PptxImpl implements Pptx {
         object.put("type", "border");
         object.put("color", parserHelper.toHex(xslfSimpleShape.getLineColor()));
         object.put("dash", xslfSimpleShape.getLineDash().name().toLowerCase());
+        object.put("border", width);
         elements.add(object);
     }
 
