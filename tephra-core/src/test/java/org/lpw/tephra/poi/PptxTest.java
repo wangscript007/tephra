@@ -14,7 +14,7 @@ import java.io.InputStream;
 /**
  * @author lpw
  */
-public class PptxTest extends CoreTestSupport {
+public class PptxTest extends CoreTestSupport implements StreamWriter {
     @Inject
     private Io io;
     @Inject
@@ -22,16 +22,21 @@ public class PptxTest extends CoreTestSupport {
     @Inject
     private Pptx pptx;
 
-    @Test
+//    @Test
     public void read() throws IOException {
-        InputStream inputStream = new FileInputStream("/mnt/hgfs/share/ppt/001.pptx");
-        JSONObject object = pptx.read(inputStream, new StreamWriter() {
-            @Override
-            public String write(String contentType, String filename, InputStream inputStream) throws IOException {
-                return "data:" + contentType + ";base64," + coder.encodeBase64(io.read(inputStream));
-            }
-        });
-        inputStream.close();
+        InputStream fileInputStream = new FileInputStream("/mnt/hgfs/share/ppt/011.pptx");
+        JSONObject object = pptx.read(fileInputStream, this);
+        fileInputStream.close();
         io.write("/mnt/hgfs/share/ppt/import.json", object.toJSONString().getBytes());
+    }
+
+    @Override
+    public String write(String contentType, String filename, InputStream inputStream) throws IOException {
+        return "data:" + contentType + ";base64," + coder.encodeBase64(io.read(inputStream));
+    }
+
+    @Override
+    public String write(String contentType, String filename, byte[] bytes) throws IOException {
+        return "data:" + contentType + ";base64," + coder.encodeBase64(bytes);
     }
 }

@@ -11,6 +11,7 @@ import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTextBox;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.lpw.tephra.poi.StreamWriter;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Numeric;
@@ -135,10 +136,18 @@ public class TextParserImpl implements Parser {
     public boolean parse(JSONObject object, XSLFShape xslfShape, StreamWriter writer) {
         object.put("type", getType());
         JSONArray texts = new JSONArray();
-        ((XSLFTextBox) xslfShape).getTextParagraphs().forEach(xslfTextParagraph -> {
+        ((XSLFTextShape) xslfShape).getTextParagraphs().forEach(xslfTextParagraph -> {
             JSONObject paragraph = new JSONObject();
             paragraph.put("type", getType());
             paragraph.put("align", getTextAlign(xslfTextParagraph));
+
+            if (!texts.isEmpty()) {
+                JSONObject text = new JSONObject();
+                text.putAll(paragraph);
+                text.put(getType(), "\n");
+                texts.add(text);
+            }
+
             String fontFamily = xslfTextParagraph.getDefaultFontFamily();
             Double fontSize = xslfTextParagraph.getDefaultFontSize();
             xslfTextParagraph.getTextRuns().forEach(xslfTextRun -> {
@@ -155,7 +164,7 @@ public class TextParserImpl implements Parser {
                 if (xslfTextRun.isStrikethrough())
                     text.put("strikethrough", true);
                 text.put("font", getFont(fontFamily, fontSize, xslfTextRun));
-                text.put("color", color((PaintStyle.SolidPaint) xslfTextRun.getFontColor()));
+                text.put("color", color(xslfTextRun.getFontColor()));
                 texts.add(text);
             });
         });
@@ -188,13 +197,16 @@ public class TextParserImpl implements Parser {
         font.put("family", validator.isEmpty(xslfTextRun.getFontFamily()) ? fontFamily : xslfTextRun.getFontFamily());
         Double size = xslfTextRun.getFontSize() == null ? fontSize : xslfTextRun.getFontSize();
         if (size != null)
-            font.put("size", size * 96 / 72);
+            font.put("size", numeric.toInt(size * 96 / 72));
 
         return font;
     }
 
-    private String color(PaintStyle.SolidPaint solidPaint) {
-        Color color = solidPaint.getSolidColor().getColor();
+    private String color(PaintStyle paintStyle) {
+        if (!(paintStyle instanceof PaintStyle.SolidPaint))
+            return null;
+
+        Color color = ((PaintStyle.SolidPaint) paintStyle).getSolidColor().getColor();
 
         return "#" + hex(color.getRed()) + hex(color.getGreen()) + hex(color.getBlue());
     }
