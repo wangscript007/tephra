@@ -14,13 +14,18 @@ public interface UploadHelper {
     /**
      * 上传Servlet URI地址。
      */
-    String URI = "/tephra/ctrl-http/upload";
+    String UPLOAD = "/tephra/ctrl-http/upload";
+    /**
+     * 上传Servlet URI地址。
+     */
+    String UPLOAD_PATH = "/tephra/ctrl-http/upload-path";
 
     /**
      * 上传文件。
      *
      * @param request  请求HttpServletRequest信息。
      * @param response 输出HttpServletResponse信息。
+     * @param uploader 上传器名称。
      */
-    void upload(HttpServletRequest request, HttpServletResponse response);
+    void upload(HttpServletRequest request, HttpServletResponse response, String uploader);
 }

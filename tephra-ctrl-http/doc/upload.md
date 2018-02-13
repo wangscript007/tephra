@@ -18,3 +18,12 @@ CtrlHttp提供了文件上传实现。
 </form>
 ```
 > ${key}为上传处理器UploadListener.getKey的值。
+
+4、仅返回文件路径。
+如果希望上传返回结果仅为文件路径，则使用`upload-path`：
+```html
+<form action="/tephra/ctrl-http/upload-path" enctype="multipart/form-data">
+    <input type="file" name="${key}">
+    <button type="submit">提交</button>
+</form>
+```

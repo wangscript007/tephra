@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * 上传读取器。
+ *
  * @author lpw
  */
 public interface UploadReader {
@@ -36,20 +38,6 @@ public interface UploadReader {
      * @return 文件大小。
      */
     long getSize();
-
-    /**
-     * 获取输入流。
-     *
-     * @return 输入流。
-     */
-    InputStream getInputStream();
-
-    /**
-     * 获取数据。
-     *
-     * @return 数据。
-     */
-    byte[] getByteArray();
 
     /**
      * 将上传文件写入存储器。

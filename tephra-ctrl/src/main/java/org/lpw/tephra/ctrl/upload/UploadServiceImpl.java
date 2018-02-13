@@ -93,7 +93,8 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         }
     }
 
-    private JSONObject upload(UploadReader reader) throws IOException {
+    @Override
+    public JSONObject upload(UploadReader reader) throws IOException {
         String fieldName = reader.getFieldName();
         UploadListener listener = getListener(fieldName);
         if (listener == null)

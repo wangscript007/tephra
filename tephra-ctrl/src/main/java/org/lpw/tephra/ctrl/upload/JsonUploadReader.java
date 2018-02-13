@@ -52,21 +52,15 @@ public class JsonUploadReader implements UploadReader {
     }
 
     @Override
-    public InputStream getInputStream() {
-        return new ByteArrayInputStream(getByteArray());
+    public void write(Storage storage, String path) throws IOException {
+        storage.write(path, getByteArray());
     }
 
-    @Override
-    public byte[] getByteArray() {
+    private byte[] getByteArray() {
         if (bytes == null)
             bytes = BeanFactory.getBean(Coder.class).decodeBase64(base64);
 
         return bytes;
-    }
-
-    @Override
-    public void write(Storage storage, String path) throws IOException {
-        storage.write(path, getByteArray());
     }
 
     @Override
