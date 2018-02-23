@@ -48,15 +48,21 @@ public class JsonUploadReader implements UploadReader {
 
     @Override
     public long getSize() {
-        return getByteArray().length;
+        return getBytes().length;
     }
 
     @Override
     public void write(Storage storage, String path) throws IOException {
-        storage.write(path, getByteArray());
+        storage.write(path, getBytes());
     }
 
-    private byte[] getByteArray() {
+    @Override
+    public InputStream getInputStream() {
+        return new ByteArrayInputStream(getBytes());
+    }
+
+    @Override
+    public byte[] getBytes() {
         if (bytes == null)
             bytes = BeanFactory.getBean(Coder.class).decodeBase64(base64);
 

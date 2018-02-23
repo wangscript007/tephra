@@ -40,6 +40,20 @@ public interface UploadReader {
     long getSize();
 
     /**
+     * 获取输入流。
+     *
+     * @return 输入流。
+     */
+    InputStream getInputStream();
+
+    /**
+     * 获取数据。
+     *
+     * @return 数据。
+     */
+    byte[] getBytes();
+
+    /**
      * 将上传文件写入存储器。
      *
      * @param storage 存储器。

@@ -56,6 +56,19 @@ public class HttpUploadReader implements UploadReader {
     }
 
     @Override
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
+    @Override
+    public byte[] getBytes() {
+        if (bytes == null)
+            bytes = BeanFactory.getBean(Io.class).read(inputStream);
+
+        return bytes;
+    }
+
+    @Override
     public void delete() throws IOException {
         item.delete();
     }
