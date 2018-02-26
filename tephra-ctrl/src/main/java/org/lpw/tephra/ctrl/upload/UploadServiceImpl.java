@@ -112,6 +112,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         if (object == null)
             object = save(reader.getFieldName(), listener, reader, contentType);
         reader.delete();
+        listener.complete(object);
 
         return object;
     }
@@ -144,11 +145,11 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         object.put("fieldName", reader.getFieldName());
         object.put("fileName", reader.getFileName());
         String path = getPath(listener, reader, contentType);
-        object.put("path", listener.upload(key, reader.getFileName(), converter.toBitSize(reader.getSize()), path));
+        object.put("path", path);
         reader.write(storage, path);
         String thumbnail = thumbnail(listener.getImageSize(key), storage, contentType, path);
         if (thumbnail != null)
-            object.put("thumbnail", listener.upload(key, reader.getFileName(), converter.toBitSize(reader.getSize()), thumbnail));
+            object.put("thumbnail", thumbnail);
 
         if (logger.isDebugEnable())
             logger.debug("保存上传[{}:{}]的文件[{}:{}:{}]。", reader.getFieldName(), reader.getFileName(), path,
