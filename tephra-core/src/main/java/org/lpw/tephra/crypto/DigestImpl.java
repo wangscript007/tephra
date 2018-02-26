@@ -1,6 +1,6 @@
 package org.lpw.tephra.crypto;
 
-import org.apache.commons.codec.binary.Hex;
+import org.lpw.tephra.util.Coder;
 import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
 
@@ -15,36 +15,65 @@ import java.security.NoSuchAlgorithmException;
 public class DigestImpl implements Digest {
     private static final String MD5 = "MD5";
     private static final String SHA1 = "SHA1";
+    private static final String SHA_256 = "SHA-256";
+    private static final String SHA_512 = "SHA-512";
 
+    @Inject
+    private Coder coder;
     @Inject
     private Logger logger;
 
     @Override
     public String md5(String text) {
-        return text == null ? null : digest(MD5, text.getBytes());
+        return text == null ? null : digestHex(MD5, text.getBytes());
     }
 
     @Override
-    public String md5(byte[] text) {
-        return digest(MD5, text);
+    public String md5(byte[] bytes) {
+        return digestHex(MD5, bytes);
     }
 
     @Override
     public String sha1(String text) {
-        return text == null ? null : digest(SHA1, text.getBytes());
+        return text == null ? null : digestHex(SHA1, text.getBytes());
     }
 
     @Override
-    public String sha1(byte[] text) {
-        return digest(SHA1, text);
+    public String sha1(byte[] bytes) {
+        return digestHex(SHA1, bytes);
     }
 
-    private String digest(String algorithm, byte[] input) {
-        if (input == null)
+    @Override
+    public String sha256(String text) {
+        return text == null ? null : digestHex(SHA_256, text.getBytes());
+    }
+
+    @Override
+    public String sha256(byte[] bytes) {
+        return digestHex(SHA_256, bytes);
+    }
+
+    @Override
+    public String sha512(String text) {
+        return text == null ? null : digestHex(SHA_512, text.getBytes());
+    }
+
+    @Override
+    public String sha512(byte[] bytes) {
+        return digestHex(SHA_512, bytes);
+    }
+
+    private String digestHex(String algorithm, byte[] bytes) {
+        return bytes == null ? null : coder.hex(digest(algorithm, bytes));
+    }
+
+    @Override
+    public byte[] digest(String algorithm, byte[] bytes) {
+        if (bytes == null)
             return null;
 
         try {
-            return Hex.encodeHexString(MessageDigest.getInstance(algorithm).digest(input));
+            return MessageDigest.getInstance(algorithm).digest(bytes);
         } catch (NoSuchAlgorithmException e) {
             logger.warn(e, "取消息摘要[{}]时发生异常！", algorithm);
 
