@@ -49,7 +49,7 @@ public class SvgParserImpl implements Parser {
             parserHelper.rotate(xslfPictureShape, object);
 
             return true;
-        } catch (IOException | TranscoderException e) {
+        } catch (Throwable e) {
             logger.warn(e, "解析SVG图片[{}]时发生异常！", object.toJSONString());
 
             return false;

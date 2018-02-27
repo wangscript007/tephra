@@ -3,6 +3,7 @@ package org.lpw.tephra.poi.pptx;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.common.usermodel.fonts.FontGroup;
+import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFShape;
@@ -43,6 +44,7 @@ public class TextParserImpl implements Parser {
     public boolean parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
         XSLFTextBox xslfTextBox = xslfSlide.createTextBox();
         xslfTextBox.clearText();
+        xslfTextBox.setInsets(new Insets2D(0.0D, 0.0D, 0.0D, 0.0D));
         xslfTextBox.setAnchor(parserHelper.getRectangle(object));
         parserHelper.rotate(xslfTextBox, object);
         XSLFTextParagraph xslfTextParagraph = newParagraph(xslfTextBox, object);
