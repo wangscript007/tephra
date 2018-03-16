@@ -17,6 +17,7 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -33,6 +34,7 @@ import javax.net.ssl.X509TrustManager;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.cert.CertificateException;
@@ -127,13 +129,13 @@ public class HttpImpl implements Http, ContextRefreshedListener {
 
     @Override
     public String post(String url, Map<String, String> requestHeaders, Map<String, String> parameters, String charset) {
-        return post(url, requestHeaders, toEntiry(parameters, charset));
+        return post(url, requestHeaders, toEntity(parameters, charset));
     }
 
     @Override
     public void post(String url, Map<String, String> requestHeaders, Map<String, String> parameters, String charset,
                      Map<String, String> responseHeaders, OutputStream outputStream) {
-        postByEntity(url, requestHeaders, toEntiry(parameters, charset), responseHeaders, outputStream);
+        postByEntity(url, requestHeaders, toEntity(parameters, charset), responseHeaders, outputStream);
     }
 
     @Override
@@ -143,7 +145,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
 
     @Override
     public String post(String url, Map<String, String> requestHeaders, String content, String charset) {
-        return post(url, requestHeaders, toEntiry(content, charset));
+        return post(url, requestHeaders, toEntity(content, charset));
     }
 
     private String post(String url, Map<String, String> requestHeaders, HttpEntity entity) {
@@ -159,7 +161,28 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     @Override
     public void post(String url, Map<String, String> requestHeaders, String content, String charset,
                      Map<String, String> responseHeaders, OutputStream outputStream) {
-        postByEntity(url, requestHeaders, toEntiry(content, charset), responseHeaders, outputStream);
+        postByEntity(url, requestHeaders, toEntity(content, charset), responseHeaders, outputStream);
+    }
+
+    @Override
+    public String post(String url, Map<String, String> requestHeaders, InputStream inputStream) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        postByEntity(url, requestHeaders, toEntity(inputStream), null, outputStream);
+        String content = outputStream.toString();
+        if (logger.isDebugEnable())
+            logger.debug("使用POST访问[{}]结果[{}]。", url, content);
+
+        return content;
+    }
+
+    @Override
+    public void post(String url, Map<String, String> requestHeaders, InputStream inputStream,
+                     Map<String, String> responseHeaders, OutputStream outputStream) {
+        postByEntity(url, requestHeaders, toEntity(inputStream), responseHeaders, outputStream);
+    }
+
+    private HttpEntity toEntity(InputStream inputStream) {
+        return inputStream == null ? null : new InputStreamEntity(inputStream);
     }
 
     @Override
@@ -184,14 +207,14 @@ public class HttpImpl implements Http, ContextRefreshedListener {
         return outputStream.toString();
     }
 
-    private HttpEntity toEntiry(String parameters, String charset) {
+    private HttpEntity toEntity(String parameters, String charset) {
         if (validator.isEmpty(parameters))
             return null;
 
         return new StringEntity(parameters, context.getCharset(charset));
     }
 
-    private HttpEntity toEntiry(Map<String, String> map, String charset) {
+    private HttpEntity toEntity(Map<String, String> map, String charset) {
         if (validator.isEmpty(map))
             return null;
 

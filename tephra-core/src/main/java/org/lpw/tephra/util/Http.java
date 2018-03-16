@@ -1,6 +1,7 @@
 package org.lpw.tephra.util;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
@@ -119,6 +120,28 @@ public interface Http {
      * @param outputStream    HTTP返回数据输出流。
      */
     void post(String url, Map<String, String> requestHeaders, String content, String charset,
+              Map<String, String> responseHeaders, OutputStream outputStream);
+
+    /**
+     * 通过POST方式获取远程页面数据。
+     *
+     * @param url            目标URL地址。
+     * @param requestHeaders HTTP头信息集。
+     * @param inputStream    输入流。
+     * @return 如果成功则返回页面数据；否则返回null。
+     */
+    String post(String url, Map<String, String> requestHeaders, InputStream inputStream);
+
+    /**
+     * 通过POST方式获取远程页面数据。
+     *
+     * @param url             目标URL地址。
+     * @param requestHeaders  HTTP请求头信息集。
+     * @param inputStream     输入流。
+     * @param responseHeaders HTTP返回头信息集，用于接收返回的头信息。
+     * @param outputStream    HTTP返回数据输出流。
+     */
+    void post(String url, Map<String, String> requestHeaders, InputStream inputStream,
               Map<String, String> responseHeaders, OutputStream outputStream);
 
     /**
