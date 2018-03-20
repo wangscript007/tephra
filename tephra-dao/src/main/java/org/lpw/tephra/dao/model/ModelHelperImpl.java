@@ -192,9 +192,8 @@ public class ModelHelperImpl implements ModelHelper {
         T model = BeanFactory.getBean(modelClass);
         if (json.containsKey("id"))
             model.setId(json.getString("id"));
-        json.forEach((key, value) -> modelTable.set(model, key, value));
 
-        return model;
+        return toModel(modelTable, model, json);
     }
 
     @Override
@@ -212,6 +211,11 @@ public class ModelHelperImpl implements ModelHelper {
 
         if (map.containsKey("id"))
             model.setId(map.get("id"));
+
+        return toModel(modelTable, model, map);
+    }
+
+    private <T extends Model> T toModel(ModelTable modelTable, T model, Map<String, ?> map) {
         JSONObject extend = new JSONObject();
         map.forEach((key, value) -> {
             if (key.equals("id"))
