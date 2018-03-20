@@ -1,5 +1,7 @@
 package org.lpw.tephra.dao.model;
 
+import com.alibaba.fastjson.JSONObject;
+
 import javax.persistence.Column;
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -123,9 +125,10 @@ public interface ModelTable {
      *
      * @param model Model实例。
      * @param name  属性名称。可以是属性名，也可以是字段名。
+     * @param <T>   Model类。
      * @return 属性值。如果不存在则返回null。
      */
-    Object get(Model model, String name);
+    <T extends Model> Object get(T model, String name);
 
     /**
      * 获取属性值，并转化为属性所定义的类型。
@@ -142,8 +145,18 @@ public interface ModelTable {
      * @param model Model实例。
      * @param name  属性名称。可以是属性名，也可以是字段名。
      * @param value 属性值。
+     * @param <T>   Model类。
      */
-    void set(Model model, String name, Object value);
+    <T extends Model> void set(T model, String name, Object value);
+
+    /**
+     * 设置扩展属性值。
+     *
+     * @param model  Model实例。
+     * @param extend 扩展属性集。
+     * @param <T>    Model类。
+     */
+    <T extends Model> void setExtend(T model, JSONObject extend);
 
     /**
      * 获取字段名称集。

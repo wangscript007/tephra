@@ -19,9 +19,10 @@ public interface ModelHelper {
      *
      * @param model Model实例。
      * @param name  属性名称。可以是属性名，也可以是字段名。
+     * @param <T>   Model类。
      * @return 属性值。如果不存在则返回null。
      */
-    Object get(Model model, String name);
+    <T extends Model> Object get(T model, String name);
 
     /**
      * 设置属性值。
@@ -29,8 +30,9 @@ public interface ModelHelper {
      * @param model Model实例。
      * @param name  属性名称。可以是属性名，也可以是字段名。
      * @param value 属性值。
+     * @param <T>   Model类。
      */
-    void set(Model model, String name, Object value);
+    <T extends Model> void set(T model, String name, Object value);
 
     /**
      * 将Model转化为JSON格式的数据。
@@ -93,6 +95,16 @@ public interface ModelHelper {
      * @return Model对象集；如果转化失败则返回null。
      */
     <T extends Model> List<T> fromJson(JSONArray array, Class<T> modelClass);
+
+    /**
+     * 将属性集转化为Model对象。
+     *
+     * @param map        属性集。
+     * @param modelClass Model类。
+     * @param <T>        Model类型。
+     * @return Model对象；如果转化失败则返回null。
+     */
+    <T extends Model> T fromMap(Map<String, String> map, Class<T> modelClass);
 
     /**
      * 获取扩展属性集。

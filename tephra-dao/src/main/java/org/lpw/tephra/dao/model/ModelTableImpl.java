@@ -165,7 +165,7 @@ public class ModelTableImpl implements ModelTable {
     }
 
     @Override
-    public Object get(Model model, String name) {
+    public <T extends Model> Object get(T model, String name) {
         if (model == null || validator.isEmpty(name))
             return null;
 
@@ -219,7 +219,7 @@ public class ModelTableImpl implements ModelTable {
     }
 
     @Override
-    public void set(Model model, String name, Object value) {
+    public <T extends Model> void set(T model, String name, Object value) {
         if (model == null || validator.isEmpty(name))
             return;
 
@@ -334,6 +334,14 @@ public class ModelTableImpl implements ModelTable {
             return json.toArray(value);
 
         return null;
+    }
+
+    @Override
+    public <T extends Model> void setExtend(T model, JSONObject extend) {
+        jsonables.forEach((name, jsonable) -> {
+            if (jsonable.extend())
+                set(model, name, extend.toJSONString());
+        });
     }
 
     @Override

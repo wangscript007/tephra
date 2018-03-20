@@ -1,5 +1,6 @@
 package org.lpw.tephra.poi;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.junit.Test;
 import org.lpw.tephra.test.CoreTestSupport;
@@ -24,15 +25,17 @@ public class PptxTest extends CoreTestSupport implements StreamWriter {
 
 //    @Test
     public void read() throws IOException {
-        InputStream fileInputStream = new FileInputStream("/mnt/hgfs/share/ppt/011.pptx");
+        InputStream fileInputStream = new FileInputStream("/mnt/hgfs/share/ppt/6635.pptx");
         JSONObject object = pptx.read(fileInputStream, this);
         fileInputStream.close();
-        io.write("/mnt/hgfs/share/ppt/import.json", object.toJSONString().getBytes());
+        JSONArray array=new JSONArray();
+        array.add(object);
+        io.write("/mnt/hgfs/share/ppt/import.json", array.toJSONString().getBytes());
     }
 
     @Override
     public String write(String contentType, String filename, InputStream inputStream) throws IOException {
-        return "data:" + contentType + ";base64," + coder.encodeBase64(io.read(inputStream));
+        return write(contentType, filename, io.read(inputStream));
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Coder;
 import org.lpw.tephra.dao.model.Model;
-import org.lpw.tephra.dao.model.ModelTable;
+import org.lpw.tephra.dao.model.ModelHelper;
 import org.lpw.tephra.dao.model.ModelTables;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.DateTime;
@@ -37,7 +37,7 @@ public class RequestImpl implements Request, RequestAware {
     @Inject
     private Logger logger;
     @Inject
-    private ModelTables modelTables;
+    private ModelHelper modelHelper;
     @Inject
     private Optional<Coder> coder;
     private ThreadLocal<RequestAdapter> adapter = new ThreadLocal<>();
@@ -120,46 +120,8 @@ public class RequestImpl implements Request, RequestAware {
     }
 
     @Override
-    public <T extends Model> T setToModel(T model) {
-        if (adapter.get() == null)
-            return model;
-
-        Map<String, String> map = getMap();
-        if (validator.isEmpty(map))
-            return model;
-
-        ModelTable modelTable = modelTables.get(model.getClass());
-        try {
-            for (String name : map.keySet()) {
-                if ("id".equals(name)) {
-                    model.setId(map.get(name));
-                    if (validator.isEmpty(model.getId()))
-                        model.setId(null);
-
-                    continue;
-                }
-
-                fillToModel(modelTable, model, name, map.get(name));
-            }
-        } catch (Exception e) {
-            logger.warn(e, "设置参数到Model时发生异常！");
-        }
-
-        return model;
-    }
-
-    private <T extends Model> void fillToModel(ModelTable modelTable, T model, String name, String value) throws SecurityException {
-        if ((name.endsWith("[id]") || name.endsWith(".id")) && name.indexOf('[') == name.lastIndexOf('[')
-                && name.indexOf('.') == name.lastIndexOf('.')) {
-            modelTable.set(model, name.substring(0, name.indexOf('[') + name.indexOf('.') + 1), value);
-
-            return;
-        }
-
-        if (!validator.isMatchRegex("[a-z0-9A-Z]+", name) || value == null)
-            return;
-
-        modelTable.set(model, name, value);
+    public <T extends Model> T setToModel(Class<T> modelClass) {
+        return adapter.get() == null ? null : modelHelper.fromMap(getMap(), modelClass);
     }
 
     @Override

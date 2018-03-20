@@ -121,10 +121,11 @@ public interface Request {
     /**
      * 将请求参数集保存到Model实例中。
      *
-     * @param model Model实例。
-     * @return Model实例。
+     * @param modelClass Model类。
+     * @param <T>        Model类。
+     * @return Model实例；如果保存失败则返回null。
      */
-    <T extends Model> T setToModel(T model);
+    <T extends Model> T setToModel(Class<T> modelClass);
 
     /**
      * 获取服务器名。

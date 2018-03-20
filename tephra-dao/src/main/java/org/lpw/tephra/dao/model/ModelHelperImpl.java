@@ -39,12 +39,12 @@ public class ModelHelperImpl implements ModelHelper {
     private ModelTables modelTables;
 
     @Override
-    public Object get(Model model, String name) {
+    public <T extends Model> Object get(T model, String name) {
         return modelTables.get(getModelClass(model.getClass())).get(model, name);
     }
 
     @Override
-    public void set(Model model, String name, Object value) {
+    public <T extends Model> void set(T model, String name, Object value) {
         modelTables.get(getModelClass(model.getClass())).set(model, name, value);
     }
 
@@ -193,6 +193,37 @@ public class ModelHelperImpl implements ModelHelper {
         if (json.containsKey("id"))
             model.setId(json.getString("id"));
         json.forEach((key, value) -> modelTable.set(model, key, value));
+
+        return model;
+    }
+
+    @Override
+    public <T extends Model> T fromMap(Map<String, String> map, Class<T> modelClass) {
+        if (map == null || modelClass == null)
+            return null;
+
+        ModelTable modelTable = modelTables.get(modelClass);
+        if (modelTable == null)
+            return null;
+
+        T model = BeanFactory.getBean(modelClass);
+        if (map.isEmpty())
+            return model;
+
+        if (map.containsKey("id"))
+            model.setId(map.get("id"));
+        JSONObject extend = new JSONObject();
+        map.forEach((key, value) -> {
+            if (key.equals("id"))
+                return;
+
+            if (modelTable.containsPropertyName(key))
+                modelTable.set(model, key, value);
+            else
+                extend.put(key, value);
+        });
+        if (!extend.isEmpty())
+            modelTable.setExtend(model, extend);
 
         return model;
     }
