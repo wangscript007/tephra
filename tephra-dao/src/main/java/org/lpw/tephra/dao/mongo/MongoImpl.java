@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -13,6 +14,7 @@ import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelTables;
 import org.lpw.tephra.util.Generator;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +35,8 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     private Validator validator;
     @Inject
     private Generator generator;
+    @Inject
+    private Json json;
     @Inject
     private Logger logger;
     @Inject
@@ -226,18 +230,34 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
     }
 
     @Override
+    public JSONArray find(String key, Class<? extends Model> modelClass, JSONObject where, int limit, int skip) {
+        return find(key, getCollectionName(modelClass), where, limit, skip);
+    }
+
+    @Override
     public JSONArray find(String collection, JSONObject where) {
         return find(null, collection, where);
     }
 
     @Override
     public JSONArray find(String key, String collection, JSONObject where) {
+        return find(key, collection, where, 0, 0);
+    }
+
+    @Override
+    public JSONArray find(String key, String collection, JSONObject where, int limit, int skip) {
         MongoCollection<Document> mc = getCollection(key, collection);
         if (mc == null)
             return new JSONArray();
 
+        FindIterable<Document> fi = mc.find(toDocument(where));
+        if (limit > 0)
+            fi.limit(limit);
+        if (skip > 0)
+            fi.skip(skip);
+
         JSONArray array = new JSONArray();
-        for (Document document : mc.find(toDocument(where)))
+        for (Document document : fi)
             array.add(JSON.parseObject(document.toJson()));
 
         return array;
@@ -267,10 +287,12 @@ public class MongoImpl implements Mongo, ContextRefreshedListener {
 
         String username = config.getString("username");
         String password = config.getString("password");
+        boolean ssl = json.hasTrue(config, "ssl");
         MongoClientOptions.Builder builder = MongoClientOptions.builder().connectionsPerHost(maxActive).maxWaitTime(maxWait);
         List<MongoClient> list = new ArrayList<>();
         for (int i = 0; i < array.size(); i++)
-            list.add(new MongoClient(new MongoClientURI("mongodb://" + username + ":" + password + "@" + array.getString(i) + "/" + schema, builder)));
+            list.add(new MongoClient(new MongoClientURI("mongodb://" + username + ":" + password + "@" + array.getString(i)
+                    + "/" + schema + (ssl ? "?ssl=true" : ""), builder)));
         schemas.put(key, schema);
         mongos.put(key, list);
 

@@ -262,6 +262,18 @@ public interface Mongo {
     /**
      * 检索数据集。
      *
+     * @param key        配置key。
+     * @param modelClass 类名。
+     * @param where      条件。
+     * @param limit      最大数据量。
+     * @param skip       跳过数据数。
+     * @return 数据；如果不存在则返回[]。
+     */
+    JSONArray find(String key, Class<? extends Model> modelClass, JSONObject where, int limit, int skip);
+
+    /**
+     * 检索数据集。
+     *
      * @param collection 文档名。
      * @param where      条件。
      * @return 数据；如果不存在则返回[]。
@@ -277,6 +289,18 @@ public interface Mongo {
      * @return 数据；如果不存在则返回[]。
      */
     JSONArray find(String key, String collection, JSONObject where);
+
+    /**
+     * 检索数据集。
+     *
+     * @param key        配置key。
+     * @param collection 文档名。
+     * @param where      条件。
+     * @param limit      最大数据量。
+     * @param skip       跳过数据数。
+     * @return 数据；如果不存在则返回[]。
+     */
+    JSONArray find(String key, String collection, JSONObject where, int limit, int skip);
 
     /**
      * 创建连接。
