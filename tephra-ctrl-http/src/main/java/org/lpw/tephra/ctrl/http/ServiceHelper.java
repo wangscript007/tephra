@@ -23,8 +23,9 @@ public interface ServiceHelper {
      * @param request  请求HttpServletRequest信息。
      * @param response 输出HttpServletResponse信息。
      * @return 处理结果。如果处理成功则返回true；否则返回false。
+     * @throws IOException IO异常。
      */
-    boolean service(HttpServletRequest request, HttpServletResponse response);
+    boolean service(HttpServletRequest request, HttpServletResponse response) throws IOException;
 
     /**
      * 处理CORS请求。

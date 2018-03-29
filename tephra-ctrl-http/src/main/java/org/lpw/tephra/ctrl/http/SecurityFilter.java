@@ -18,7 +18,7 @@ import java.io.IOException;
  * @author lpw
  */
 public class SecurityFilter implements Filter {
-    protected SecurityHelper securityHelper;
+    private SecurityHelper securityHelper;
 
     @Override
     public void init(FilterConfig config) throws ServletException {
@@ -30,7 +30,7 @@ public class SecurityFilter implements Filter {
         filter((HttpServletRequest) request, (HttpServletResponse) response, chain);
     }
 
-    protected void filter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    private void filter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (securityHelper.isEnable(request))
             chain.doFilter(request, response);
         else
