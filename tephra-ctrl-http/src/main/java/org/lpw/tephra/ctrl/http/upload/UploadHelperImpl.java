@@ -69,7 +69,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri {
         }
     }
 
-    private ServletFileUpload getUpload(HttpServletRequest request) {
+    private synchronized ServletFileUpload getUpload(HttpServletRequest request) {
         if (upload == null) {
             synchronized (this) {
                 if (upload == null) {
