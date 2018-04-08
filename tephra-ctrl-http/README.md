@@ -43,4 +43,6 @@ Ctrl-Http模块自动对静态资源进行最后更新时间的判断，如果�
 
 [时间哈希验证](doc/time-hash.md)
 
+[转发请求](doc/redirect.md)
+
 [配置参数](src/main/resources/http.ctrl.tephra.config)

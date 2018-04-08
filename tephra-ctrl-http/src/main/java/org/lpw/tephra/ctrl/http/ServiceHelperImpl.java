@@ -146,8 +146,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
             return false;
         }
 
-        if (lowerCaseUri.equals("/redirect")) {
-            redirect(request, response);
+        if (lowerCaseUri.startsWith("/redirect")) {
+            redirect(request, uri, response);
 
             return true;
         }
@@ -170,7 +170,7 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         return uri;
     }
 
-    private void redirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void redirect(HttpServletRequest request, String uri, HttpServletResponse response) throws IOException {
         String key = request.getParameter("key");
         if (!redirectMap.containsKey(key)) {
             response.sendError(404);
@@ -179,6 +179,14 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         }
 
         String url = redirectMap.get(key);
+        if (uri.length() > 9) {
+            String suffix = uri.substring(9);
+            int indexOf = url.indexOf('?');
+            if (indexOf == -1)
+                url = url + suffix;
+            else
+                url = url.substring(0, indexOf) + suffix + url.substring(indexOf);
+        }
         response.sendRedirect(url + (url.indexOf('?') == -1 ? "?" : "&") + request.getQueryString());
     }
 
