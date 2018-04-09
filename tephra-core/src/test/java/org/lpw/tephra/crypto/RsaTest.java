@@ -36,7 +36,7 @@ public class RsaTest extends CoreTestSupport {
         rsa.generate(publicKeyDer, null, null);
         ByteArrayOutputStream publicKeyX509 = new ByteArrayOutputStream();
         rsa.generate(publicKeyDer, publicKeyX509, null);
-        File[] files = new File(context.getAbsolutePath("/WEB-INF/rsa")).listFiles();
+        File[] files = new File(context.getAbsolutePath("/WEB-INF/security/rsa")).listFiles();
         Assert.assertEquals(4, files.length);
         int count = 0;
         for (File file : files) {
@@ -55,7 +55,7 @@ public class RsaTest extends CoreTestSupport {
         ByteArrayOutputStream privateKey = new ByteArrayOutputStream();
         rsa.generate(publicKeyDer, publicKeyX509, privateKey);
         thread.sleep(1, TimeUnit.Second);
-        files = new File(context.getAbsolutePath("/WEB-INF/rsa")).listFiles();
+        files = new File(context.getAbsolutePath("/WEB-INF/security/rsa")).listFiles();
         Assert.assertEquals(1, files.length);
         Assert.assertEquals("generate.sh", files[0].getName());
 

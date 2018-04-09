@@ -37,7 +37,7 @@ public class RsaImpl implements Rsa {
     private Io io;
     @Inject
     private Logger logger;
-    @Value("${tephra.crypto.rsa.path:/WEB-INF/rsa}")
+    @Value("${tephra.crypto.rsa.path:/WEB-INF/security/rsa}")
     private String path;
     private String absolutePath;
 
@@ -107,7 +107,7 @@ public class RsaImpl implements Rsa {
             cipher.init(mode, getKey(type, key));
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            int len = mode == Cipher.ENCRYPT_MODE ? 245 : 256;
+            int len = cipher.getOutputSize(message.length) - (mode == Cipher.ENCRYPT_MODE ? 11 : 0);
             byte[] bytes = new byte[Math.min(len, message.length)];
             for (int i = 0, last = message.length - 1; i < message.length; i++) {
                 bytes[i % len] = message[i];
