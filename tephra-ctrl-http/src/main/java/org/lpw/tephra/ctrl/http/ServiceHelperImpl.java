@@ -178,16 +178,25 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
             return;
         }
 
+        String suffix = uri.length() > 9 ? uri.substring(9) : "";
         String url = redirectMap.get(key);
-        if (uri.length() > 9) {
-            String suffix = uri.substring(9);
-            int indexOf = url.indexOf('?');
-            if (indexOf == -1)
-                url = url + suffix;
-            else
-                url = url.substring(0, indexOf) + suffix + url.substring(indexOf);
+        String spa = null;
+        int indexOf = url.indexOf('#');
+        if (indexOf > -1) {
+            spa = url.substring(indexOf);
+            url = url.substring(0, indexOf);
         }
-        response.sendRedirect(url + (url.indexOf('?') == -1 ? "?" : "&") + request.getQueryString());
+        String arg = "";
+        if ((indexOf = url.indexOf('?')) > -1) {
+            arg = url.substring(indexOf);
+            url = url.substring(0, indexOf);
+        }
+        arg = (indexOf == -1 ? "?" : (arg + "&")) + request.getQueryString();
+        if (spa == null)
+            url = url + suffix + arg;
+        else
+            url = url + arg + spa + suffix;
+        response.sendRedirect(url);
     }
 
     private boolean service(HttpServletRequest request, HttpServletResponse response, String uri, String sessionId) throws IOException {
