@@ -7,17 +7,23 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tephra-weixin</artifactId>
+    <artifactId>tephra-wormhole</artifactId>
     <packaging>jar</packaging>
 
-    <name>tephra-weixin</name>
+    <name>tephra-wormhole</name>
     <url>http://maven.apache.org</url>
 
     <dependencies>
         <dependency>
             <groupId>org.lpw.tephra</groupId>
-            <artifactId>tephra-ctrl</artifactId>
+            <artifactId>tephra-core</artifactId>
             <version>${version.tephra}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.lpw.tephra</groupId>
+            <artifactId>tephra-core-test</artifactId>
+            <version>${version.tephra}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

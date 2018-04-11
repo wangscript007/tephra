@@ -42,6 +42,7 @@ Tephra旨在构建一个稳定、高效、易于集群、快速扩展的JavaEE�
 - [ctrl-http](tephra-ctrl-http/)——HTTP(S)模块。
 - [ctrl-socket](tephra-ctrl-socket/)——Socket模块。
 - [script](tephra-script/)——脚本（JavaScript）模块。
+- [wormhole](tephra-wormhole/)——Wormhole访问支持。
 - [carousel](tephra-carousel/)——Carousel访问支持。
 - [hadoop](tephra-hadoop/)——Hadoop访问支持。
 - [*test](tephra-test/)——单元测试支持。
