@@ -16,12 +16,12 @@
     <dependencies>
         <dependency>
             <groupId>org.lpw.tephra</groupId>
-            <artifactId>tephra-core</artifactId>
+            <artifactId>tephra-ctrl</artifactId>
             <version>${version.tephra}</version>
         </dependency>
         <dependency>
             <groupId>org.lpw.tephra</groupId>
-            <artifactId>tephra-core-test</artifactId>
+            <artifactId>tephra-ctrl-test</artifactId>
             <version>${version.tephra}</version>
             <scope>test</scope>
         </dependency>
