@@ -1,5 +1,6 @@
 package org.lpw.tephra.wormhole;
 
+import org.lpw.tephra.crypto.Sign;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,8 @@ public class WormholeHelperImpl implements WormholeHelper {
     @Inject
     private Validator validator;
     @Inject
+    private Sign sign;
+    @Inject
     private Http http;
     @Value("${tephra.wormhole.image.url:}")
     private String imageUrl;
@@ -32,9 +35,13 @@ public class WormholeHelperImpl implements WormholeHelper {
             headers.put("path", path);
         if (!validator.isEmpty(name))
             headers.put("name", name);
+
+        Map<String, String> parameters = new HashMap<>();
+        sign.put(parameters, null);
+
         Map<String, File> files = new HashMap<>();
         files.put("file", file);
 
-        return http.upload(imageUrl, headers, null, files);
+        return http.upload(imageUrl, headers, parameters, files);
     }
 }
