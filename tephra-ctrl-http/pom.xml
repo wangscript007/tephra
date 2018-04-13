@@ -32,11 +32,6 @@
             <version>LATEST</version>
         </dependency>
         <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>LATEST</version>
-        </dependency>
-        <dependency>
             <groupId>org.lpw.tephra</groupId>
             <artifactId>tephra-ctrl</artifactId>
             <version>${version.tephra}</version>

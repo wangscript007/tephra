@@ -95,22 +95,22 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
 
     @Override
     public JSONObject upload(UploadReader reader) throws IOException {
-        String fieldName = reader.getFieldName();
-        UploadListener listener = getListener(fieldName);
+        String name = reader.getName();
+        UploadListener listener = getListener(name);
         if (listener == null)
-            return failure(reader, message.get(PREFIX + "listener.not-exists"));
+            return failure(reader, message.get(PREFIX + "listener.not-exists",name));
 
-        String contentType = listener.getContentType(reader.getFieldName(), reader.getContentType(), reader.getFileName());
-        if (!listener.isUploadEnable(reader.getFieldName(), contentType, reader.getFileName())) {
+        String contentType = listener.getContentType(name, reader.getContentType(), reader.getFileName());
+        if (!listener.isUploadEnable(name, contentType, reader.getFileName())) {
             logger.warn(null, "无法处理文件上传请求[key={}&content-type={}&name={}]！",
-                    reader.getFieldName(), contentType, reader.getFileName());
+                    name, contentType, reader.getFileName());
 
-            return failure(reader, message.get(PREFIX + "disable", reader.getFieldName(), contentType, reader.getFileName()));
+            return failure(reader, message.get(PREFIX + "disable", name, contentType, reader.getFileName()));
         }
 
         JSONObject object = listener.settle(reader);
         if (object == null)
-            object = save(reader.getFieldName(), listener, reader, contentType);
+            object = save(name, listener, reader, contentType);
         reader.delete();
         listener.complete(object);
 
@@ -142,7 +142,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
 
         JSONObject object = new JSONObject();
         object.put("success", true);
-        object.put("fieldName", reader.getFieldName());
+        object.put("name", reader.getName());
         object.put("fileName", reader.getFileName());
         String path = getPath(listener, reader, contentType);
         object.put("path", path);
@@ -152,7 +152,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
             object.put("thumbnail", thumbnail);
 
         if (logger.isDebugEnable())
-            logger.debug("保存上传[{}:{}]的文件[{}:{}:{}]。", reader.getFieldName(), reader.getFileName(), path,
+            logger.debug("保存上传[{}:{}]的文件[{}:{}:{}]。", reader.getName(), reader.getFileName(), path,
                     thumbnail, converter.toBitSize(reader.getSize()));
 
         return object;
@@ -161,7 +161,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
     private String getPath(UploadListener listener, UploadReader reader, String contentType) {
         String name = reader.getFileName();
         StringBuilder path = new StringBuilder(ROOT).append(contentType).append('/')
-                .append(listener.getPath(reader.getFieldName(), contentType, name)).append('/')
+                .append(listener.getPath(reader.getName(), contentType, name)).append('/')
                 .append(dateTime.toString(dateTime.today(), "yyyyMMdd")).append('/').append(generator.random(32));
         String suffix = listener.getSuffix(listener.getKey(), contentType, name);
         path.append(validator.isEmpty(suffix) ? name.substring(name.lastIndexOf('.')) : suffix);
@@ -197,7 +197,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
     private JSONObject failure(UploadReader uploadReader, String message) {
         JSONObject object = new JSONObject();
         object.put("success", false);
-        object.put("fieldName", uploadReader.getFieldName());
+        object.put("fieldName", uploadReader.getName());
         object.put("fileName", uploadReader.getFileName());
         object.put("message", message);
 

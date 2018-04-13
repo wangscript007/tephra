@@ -4,6 +4,7 @@ import org.lpw.tephra.bean.BeanFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import java.io.IOException;
 /**
  * @author lpw
  */
+@MultipartConfig
 @WebServlet(name = "UploadPathServlet", urlPatterns = {UploadHelper.UPLOAD_PATH})
 public class UploadPathServlet extends HttpServlet {
     private UploadHelper uploadHelper;

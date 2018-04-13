@@ -12,11 +12,11 @@ import java.io.InputStream;
  */
 public interface UploadReader {
     /**
-     * 获取域名称[监听器KEY]。
+     * 获取名称[监听器KEY]。
      *
-     * @return 域名称[监听器KEY]。
+     * @return 名称[监听器KEY]。
      */
-    String getFieldName();
+    String getName();
 
     /**
      * 获取文件名。

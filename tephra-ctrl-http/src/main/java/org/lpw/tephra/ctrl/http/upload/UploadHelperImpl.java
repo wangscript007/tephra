@@ -1,10 +1,8 @@
 package org.lpw.tephra.ctrl.http.upload;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.lpw.tephra.atomic.Closables;
 import org.lpw.tephra.bean.BeanFactory;
+import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.ctrl.http.IgnoreUri;
 import org.lpw.tephra.ctrl.http.ServiceHelper;
 import org.lpw.tephra.ctrl.upload.UploadReader;
@@ -18,7 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import javax.servlet.http.Part;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +27,7 @@ import java.util.Map;
  * @author lpw
  */
 @Service(UploadHelper.PREFIX + "helper")
-public class UploadHelperImpl implements UploadHelper, IgnoreUri {
+public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefreshedListener {
     @Inject
     private Converter converter;
     @Inject
@@ -44,8 +42,8 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri {
     private ServiceHelper serviceHelper;
     @Value("${" + UploadHelper.PREFIX + "max-size:1m}")
     private String maxSize;
-    private ServletFileUpload upload;
     private Map<String, Uploader> uploaders;
+    private long maxFileSize;
 
     @Override
     public void upload(HttpServletRequest request, HttpServletResponse response, String uploader) {
@@ -53,9 +51,9 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri {
             serviceHelper.setCors(request, response);
             OutputStream outputStream = serviceHelper.setContext(request, response, UPLOAD);
             List<UploadReader> readers = new ArrayList<>();
-            for (FileItem item : getUpload(request).parseRequest(request))
-                if (!item.isFormField())
-                    readers.add(new HttpUploadReader(item));
+            for (Part part : request.getParts())
+                if (part.getSize() <= maxFileSize)
+                    readers.add(new HttpUploadReader(part));
             if (readers.isEmpty())
                 return;
 
@@ -69,28 +67,20 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri {
         }
     }
 
-    private synchronized ServletFileUpload getUpload(HttpServletRequest request) {
-        if (upload == null) {
-            synchronized (this) {
-                if (upload == null) {
-                    DiskFileItemFactory factory = new DiskFileItemFactory();
-                    factory.setRepository((File) request.getServletContext().getAttribute("javax.servlet.context.tempdir"));
-                    upload = new ServletFileUpload(factory);
-                    upload.setSizeMax(converter.toBitSize(maxSize));
-                }
-                if (uploaders == null) {
-                    uploaders = new HashMap<>();
-                    BeanFactory.getBeans(Uploader.class).forEach(uploader -> uploaders.put(uploader.getName(), uploader));
-                }
-            }
-
-        }
-
-        return upload;
-    }
-
     @Override
     public String[] getIgnoreUris() {
         return new String[]{UPLOAD, UPLOAD_PATH};
+    }
+
+    @Override
+    public int getContextRefreshedSort() {
+        return 9;
+    }
+
+    @Override
+    public void onContextRefreshed() {
+        uploaders = new HashMap<>();
+        BeanFactory.getBeans(Uploader.class).forEach(uploader -> uploaders.put(uploader.getName(), uploader));
+        maxFileSize = converter.toBitSize(maxSize);
     }
 }

@@ -1,11 +1,11 @@
 package org.lpw.tephra.ctrl.http.upload;
 
-import org.apache.commons.fileupload.FileItem;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.ctrl.upload.UploadReader;
 import org.lpw.tephra.storage.Storage;
 import org.lpw.tephra.util.Io;
 
+import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -13,26 +13,26 @@ import java.io.InputStream;
  * @author lpw
  */
 public class HttpUploadReader implements UploadReader {
-    private FileItem item;
-    private String fieldName;
+    private Part part;
+    private String name;
     private String fileName;
     private String contentType;
     private long size;
     private InputStream inputStream;
     private byte[] bytes;
 
-    HttpUploadReader(FileItem item) throws IOException {
-        this.item = item;
-        fieldName = item.getFieldName();
-        fileName = item.getName();
-        contentType = item.getContentType();
-        size = item.getSize();
-        inputStream = item.getInputStream();
+    HttpUploadReader(Part part) throws IOException {
+        this.part = part;
+        name = part.getName();
+        fileName = part.getSubmittedFileName();
+        contentType = part.getContentType();
+        size = part.getSize();
+        inputStream = part.getInputStream();
     }
 
     @Override
-    public String getFieldName() {
-        return fieldName;
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -70,6 +70,6 @@ public class HttpUploadReader implements UploadReader {
 
     @Override
     public void delete() throws IOException {
-        item.delete();
+        part.delete();
     }
 }

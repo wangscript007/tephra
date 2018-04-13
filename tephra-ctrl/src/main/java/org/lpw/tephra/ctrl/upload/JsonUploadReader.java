@@ -13,7 +13,7 @@ import java.io.InputStream;
  * @author lpw
  */
 public class JsonUploadReader implements UploadReader {
-    private String fieldName;
+    private String name;
     private String fileName;
     private String contentType;
     private String base64;
@@ -24,16 +24,16 @@ public class JsonUploadReader implements UploadReader {
                 object.getString("base64"));
     }
 
-    JsonUploadReader(String fieldName, String fileName, String contentType, String base64) {
-        this.fieldName = fieldName;
+    JsonUploadReader(String name, String fileName, String contentType, String base64) {
+        this.name = name;
         this.fileName = fileName;
         this.contentType = contentType;
         this.base64 = base64;
     }
 
     @Override
-    public String getFieldName() {
-        return fieldName;
+    public String getName() {
+        return name;
     }
 
     @Override
