@@ -26,22 +26,22 @@ public class WormholeHelperImpl implements WormholeHelper {
     private String imageUrl;
 
     @Override
-    public String saveImage(String path, String name, File file) {
+    public String saveImage(String path, String name, String sign, File file) {
         if (validator.isEmpty(imageUrl))
             return null;
 
-        Map<String, String> headers = new HashMap<>();
-        if (!validator.isEmpty(path))
-            headers.put("path", path);
-        if (!validator.isEmpty(name))
-            headers.put("name", name);
-
         Map<String, String> parameters = new HashMap<>();
-        sign.put(parameters, null);
+        if (!validator.isEmpty(path))
+            parameters.put("path", path);
+        if (!validator.isEmpty(name))
+            parameters.put("name", name);
+        if (!validator.isEmpty(sign))
+            parameters.put("sign-name", sign);
+        this.sign.put(parameters, sign);
 
         Map<String, File> files = new HashMap<>();
         files.put("file", file);
 
-        return http.upload(imageUrl, headers, parameters, files);
+        return http.upload(imageUrl, null, parameters, files);
     }
 }
