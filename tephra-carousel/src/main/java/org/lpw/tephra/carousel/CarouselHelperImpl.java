@@ -7,7 +7,6 @@ import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.cache.Cache;
 import org.lpw.tephra.crypto.Sign;
 import org.lpw.tephra.ctrl.context.Header;
-import org.lpw.tephra.ctrl.context.Session;
 import org.lpw.tephra.ctrl.execute.Execute;
 import org.lpw.tephra.ctrl.execute.ExecuteListener;
 import org.lpw.tephra.ctrl.execute.Executor;
@@ -56,8 +55,6 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     private Status status;
     @Inject
     private Header header;
-    @Inject
-    private Session session;
     @Inject
     private Optional<Set<CarouselRegister>> registers;
     @Value("${tephra.carousel.url:}")
@@ -141,7 +138,7 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
                 if (logger.isDebugEnable())
                     logger.debug("使用本地微服务[{}:{}]。", key, services.get(key));
                 Future<String> future = executorService.submit(BeanFactory.getBean(LocalService.class)
-                        .build(services.get(key), null, session.getId(), header, parameter));
+                        .build(services.get(key), null, header, parameter));
 
                 return future.get();
             } catch (Throwable e) {

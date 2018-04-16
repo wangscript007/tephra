@@ -9,6 +9,7 @@ import org.lpw.tephra.ctrl.context.LocalSessionAdapter;
 import org.lpw.tephra.ctrl.context.RequestAware;
 import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.ctrl.context.ResponseAware;
+import org.lpw.tephra.ctrl.context.Session;
 import org.lpw.tephra.ctrl.context.SessionAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -23,12 +24,16 @@ import java.util.Map;
 @Component("tephra.carousel.local-service")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class LocalServiceImpl implements LocalService {
+    private static final String SESSION_ID = "tephra-session-id";
+
     @Inject
     private HeaderAware headerAware;
     @Inject
     private RequestAware requestAware;
     @Inject
     private SessionAware sessionAware;
+    @Inject
+    private Session session;
     @Inject
     private ResponseAware responseAware;
     @Inject
@@ -37,15 +42,13 @@ public class LocalServiceImpl implements LocalService {
     private Response response;
     private String uri;
     private String ip;
-    private String sessionId;
     private Map<String, String> header;
     private Map<String, String> parameter;
 
     @Override
-    public LocalService build(String uri, String ip, String sessionId, Map<String, String> header, Map<String, String> parameter) {
+    public LocalService build(String uri, String ip, Map<String, String> header, Map<String, String> parameter) {
         this.uri = uri;
         this.ip = ip;
-        this.sessionId = sessionId;
         this.header = header;
         this.parameter = parameter;
 
@@ -56,7 +59,7 @@ public class LocalServiceImpl implements LocalService {
     public String call() throws Exception {
         headerAware.set(new LocalHeaderAdapter(ip, header));
         requestAware.set(new LocalRequestAdapter(uri, parameter));
-        sessionAware.set(new LocalSessionAdapter(sessionId));
+        sessionAware.set(new LocalSessionAdapter(header != null && header.containsKey(SESSION_ID) ? header.get(SESSION_ID) : session.getId()));
         responseAware.set(new LocalResponseAdapter());
         dispatcher.execute();
         response.getOutputStream().flush();

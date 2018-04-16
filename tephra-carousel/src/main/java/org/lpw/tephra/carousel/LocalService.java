@@ -14,10 +14,9 @@ public interface LocalService extends Callable<String> {
      *
      * @param uri       URI地址。
      * @param ip        IP地址。
-     * @param sessionId Session ID。
      * @param header    头信息集。
      * @param parameter 参数集。
      * @return 当前实例。
      */
-    LocalService build(String uri, String ip, String sessionId, Map<String, String> header, Map<String, String> parameter);
+    LocalService build(String uri, String ip, Map<String, String> header, Map<String, String> parameter);
 }
