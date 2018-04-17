@@ -89,7 +89,7 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private String ignorePrefixes;
     @Value("${tephra.ctrl.http.ignore.names:}")
     private String ignoreNames;
-    @Value("${tephra.ctrl.http.ignore.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png,.svg,.eot,.woff,.ttf}")
+    @Value("${tephra.ctrl.http.ignore.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png,.svg,.eot,.woff,.ttf,.txt}")
     private String ignoreSuffixes;
     @Value("${tephra.ctrl.http.redirect:/WEB-INF/http/redirect}")
     private String redirect;
