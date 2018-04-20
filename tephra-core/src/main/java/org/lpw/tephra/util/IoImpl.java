@@ -27,7 +27,7 @@ public class IoImpl implements Io {
 
     @Override
     public void mkdirs(File file) {
-        if (file == null)
+        if (file == null || file.exists())
             return;
 
         if (!file.mkdirs())

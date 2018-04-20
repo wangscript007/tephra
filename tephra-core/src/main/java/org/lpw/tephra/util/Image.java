@@ -1,6 +1,7 @@
 package org.lpw.tephra.util;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -124,4 +125,12 @@ public interface Image {
      * @return 如果是图片则返回true；否则返回false。
      */
     boolean is(String contentType, String name);
+
+    /**
+     * 获取图片文件宽高。
+     *
+     * @param file 图片文件。
+     * @return 文件宽高，第一个元素为宽，第二个为高；如果获取失败则返回null。
+     */
+    int[] size(File file);
 }

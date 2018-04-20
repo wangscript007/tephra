@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,6 +21,8 @@ public class ImageImpl implements Image {
     private Validator validator;
     @Inject
     private Numeric numeric;
+    @Inject
+    private Logger logger;
 
     @Override
     public BufferedImage read(byte[] bytes) throws IOException {
@@ -139,5 +142,18 @@ public class ImageImpl implements Image {
         return ((contentType.equals("image/jpeg") && (suffix.equals(".jpg") || suffix.equals(".jpeg"))) ||
                 (contentType.equals("image/png") && suffix.equals(".png"))
                 || (contentType.equals("image/gif") && suffix.equals(".gif")));
+    }
+
+    @Override
+    public int[] size(File file) {
+        try {
+            BufferedImage image = ImageIO.read(file);
+
+            return new int[]{image.getWidth(), image.getHeight()};
+        } catch (Exception e) {
+            logger.warn(e, "读取图片文件[{}]长宽时发生异常！", file.getAbsolutePath());
+
+            return null;
+        }
     }
 }
