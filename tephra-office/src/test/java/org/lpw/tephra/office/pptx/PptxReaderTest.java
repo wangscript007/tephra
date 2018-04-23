@@ -10,12 +10,12 @@ import java.io.IOException;
 /**
  * @author lpw
  */
-public class ReaderTest extends TephraTestSupport {
+public class PptxReaderTest extends TephraTestSupport {
     @Inject
-    private Reader reader;
+    private PptxReader pptxReader;
 
     @Test
     public void read() throws IOException {
-        reader.read(new FileInputStream("src/test/resources/001.pptx"));
+        pptxReader.read(new FileInputStream("/mnt/hgfs/share/ppt/demo.pptx"));
     }
 }

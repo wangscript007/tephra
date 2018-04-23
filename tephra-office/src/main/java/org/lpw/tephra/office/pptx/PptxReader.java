@@ -7,6 +7,6 @@ import java.io.InputStream;
  *
  * @author lpw
  */
-public interface Reader {
+public interface PptxReader {
     void read(InputStream inputStream);
 }

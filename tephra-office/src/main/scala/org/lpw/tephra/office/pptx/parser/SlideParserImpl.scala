@@ -1,11 +1,11 @@
-package org.lpw.tephra.office.pptx
+package org.lpw.tephra.office.pptx.parser
 
 import com.alibaba.fastjson.{JSONArray, JSONObject}
 import javax.inject.Inject
 import org.lpw.tephra.office.OfficeHelper
 import org.springframework.stereotype.Component
 
-import scala.xml.{Node, XML}
+import scala.xml.{Node, NodeSeq, XML}
 
 /**
   * @author lpw
@@ -14,41 +14,37 @@ import scala.xml.{Node, XML}
 class SlideParserImpl extends Parser {
     @Inject private val officeHelper: OfficeHelper = null
 
-    override def getName: String = "slide"
+    override def getType: Parsers.Type = Parsers.Type.Slide
 
-    override def parse(path: String, rels: JSONObject): JSONObject = {
-        val slide: JSONObject = new JSONObject()
+    override def parse(path: String, parserObject: ParserObject): Unit = {
+        val name: String = path.substring(path.lastIndexOf('/') + 1)
         val elements: JSONArray = new JSONArray()
         (XML.loadFile(path) \\ "spTree").head.child.foreach(node => {
             if (node.label == "pic")
-                image(node, rels, elements)
+                image(parserObject, name, node, elements)
             else if (node.label == "sp")
                 text(node, elements)
         })
-        slide.put("elements", elements)
-
-        slide
+        parserObject.addSlide(elements)
     }
 
-
-    private def image(node: Node, rels: JSONObject, elements: JSONArray): Unit = {
-        val id: String = (node \ "blipFill" \ "blip").head.attributes.filter(_.key == "embed").value.text
-        if (!rels.containsKey(id))
+    private def image(parserObject: ParserObject, name: String, node: Node, elements: JSONArray): Unit = {
+        val id: String = name + (node \ "blipFill" \ "blip").head.attributes.filter(_.key == "embed").value.text
+        val size: Array[Int] = parserObject.getImageSize(id)
+        if (size == null)
             return
 
         val json: JSONObject = new JSONObject()
         json.put("type", "image")
         xywh(node, json)
 
-        val rel = rels.getJSONObject(id)
-        json.put("uri", rel.getString("uri"))
-
-        val size: JSONObject = new JSONObject()
-        size.put("width", rel.getIntValue("width"))
-        size.put("height", rel.getIntValue("height"))
+        json.put("uri", parserObject.getImageUri(id))
+        val s: JSONObject = new JSONObject()
+        s.put("width", size.apply(0))
+        s.put("height", size.apply(1))
         json.put("size", size)
 
-        cropped(node, size, json)
+        cropped(node, s, json)
         elements.add(json)
     }
 
@@ -82,6 +78,10 @@ class SlideParserImpl extends Parser {
     }
 
     private def xywh(node: Node, json: JSONObject): Unit = {
+        val nodes: NodeSeq = node \ "spPr" \ "xfrm" \ "off"
+        if (nodes.isEmpty)
+            return
+
         val off: Node = (node \ "spPr" \ "xfrm" \ "off").head
         json.put("x", officeHelper.emuToPixel((off \ "@x").text.toInt))
         json.put("y", officeHelper.emuToPixel((off \ "@y").text.toInt))
