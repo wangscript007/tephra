@@ -1,23 +1,19 @@
 package org.lpw.tephra.office.pptx.parser;
 
+import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.sl.usermodel.Shape;
+import org.lpw.tephra.office.pptx.MediaWriter;
+
 /**
  * @author lpw
  */
 public interface Parsers {
     /**
-     * 解析器类型。
-     */
-    enum Type {
-        Presentation,
-        Rels,
-        Slide
-    }
-
-    /**
-     * 获取解析器。
+     * 解析数据。
      *
-     * @param type 类型。
-     * @return 解析器。
+     * @param shape       形状。
+     * @param mediaWriter 媒体资源输出器。
+     * @param object      解析数据。
      */
-    Parser get(Type type);
+    void parse(Shape shape, MediaWriter mediaWriter, JSONObject object);
 }

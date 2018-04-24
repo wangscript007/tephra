@@ -1,5 +1,7 @@
 package org.lpw.tephra.office.pptx;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.InputStream;
 
 /**
@@ -8,5 +10,5 @@ import java.io.InputStream;
  * @author lpw
  */
 public interface PptxReader {
-    void read(InputStream inputStream);
+    JSONObject read(InputStream inputStream, MediaWriter mediaWriter);
 }

@@ -1,22 +1,26 @@
 package org.lpw.tephra.office.pptx.parser;
 
+import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.sl.usermodel.Shape;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.lpw.tephra.office.pptx.MediaWriter;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * @author lpw
  */
 @Component("tephra.office.pptx.parsers")
 public class ParsersImpl implements Parsers, ContextRefreshedListener {
-    private Map<Type, Parser> map;
+    private List<Parser> list;
 
     @Override
-    public Parser get(Type type) {
-        return map.get(type);
+    public void parse(Shape shape, MediaWriter mediaWriter, JSONObject object) {
+        list.forEach(parser -> parser.parse(shape, mediaWriter, object));
     }
 
     @Override
@@ -26,7 +30,8 @@ public class ParsersImpl implements Parsers, ContextRefreshedListener {
 
     @Override
     public void onContextRefreshed() {
-        map = new HashMap<>();
-        BeanFactory.getBeans(Parser.class).forEach(parser -> map.put(parser.getType(), parser));
+        list = new ArrayList<>();
+        list.addAll(BeanFactory.getBeans(Parser.class));
+        list.sort(Comparator.comparingInt(Parser::getSort));
     }
 }

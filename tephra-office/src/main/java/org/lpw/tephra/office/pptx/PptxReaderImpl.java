@@ -1,17 +1,16 @@
 package org.lpw.tephra.office.pptx;
 
-import org.lpw.tephra.office.OfficeHelper;
-import org.lpw.tephra.office.pptx.parser.Parser;
-import org.lpw.tephra.office.pptx.parser.ParserObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.office.pptx.parser.Parsers;
-import org.lpw.tephra.util.Image;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Zipper;
+import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
+import java.awt.Dimension;
 import java.io.InputStream;
 
 /**
@@ -20,56 +19,49 @@ import java.io.InputStream;
 @Component("tephra.office.pptx.reader")
 public class PptxReaderImpl implements PptxReader {
     @Inject
-    private Zipper zipper;
-    @Inject
-    private Image image;
+    private Numeric numeric;
     @Inject
     private Logger logger;
-    @Inject
-    private OfficeHelper officeHelper;
     @Inject
     private Parsers parsers;
 
     @Override
-    public void read(InputStream inputStream) {
-        ParserObject parserObject = new ParserObject();
+    public JSONObject read(InputStream inputStream, MediaWriter mediaWriter) {
+        JSONObject object = new JSONObject();
         try {
-            String path = unzip(inputStream);
-            parsers.get(Parsers.Type.Presentation).parse(path + "/ppt/presentation.xml", parserObject);
-            images(path, parserObject);
-            Parser rels = parsers.get(Parsers.Type.Rels);
-            Parser slide = parsers.get(Parsers.Type.Slide);
-            for (int i = 1; i <= 1; i++) {
-                rels.parse(path + "/ppt/slides/_rels/slide" + i + ".xml.rels", parserObject);
-                slide.parse(path + "/ppt/slides/slide1" + i + ".xml", parserObject);
-            }
+            XMLSlideShow xmlSlideShow = new XMLSlideShow(inputStream);
+            parseSize(xmlSlideShow, object);
+            JSONArray slides = new JSONArray();
+            xmlSlideShow.getSlides().forEach(xslfSlide -> {
+                JSONObject slide = new JSONObject();
+                parseSlide(xslfSlide, mediaWriter, slide);
+                slides.add(slide);
+            });
+            object.put("slides", slides);
+            xmlSlideShow.close();
         } catch (Exception e) {
-            logger.warn(e, "读取PPTX信息时发生异常！");
+            logger.warn(e, "读取PPTX数据时发生异常！");
         }
-        
-        System.out.println("#######################################################");
-        System.out.println(parserObject.getWidth() + "," + parserObject.getHeight());
-        parserObject.getSlides().forEach(System.out::println);
+
+        return object;
     }
 
-    private String unzip(InputStream inputStream) throws IOException {
-        String output = officeHelper.getTempPath("pptx");
-        zipper.unzip(inputStream, new File(output));
-
-        return output;
+    private void parseSize(XMLSlideShow xmlSlideShow, JSONObject object) {
+        JSONObject size = new JSONObject();
+        Dimension dimension = xmlSlideShow.getPageSize();
+        size.put("width", dimension.width);
+        size.put("height", dimension.height);
+        object.put("size", size);
     }
 
-    private void images(String path, ParserObject parserObject) {
-        File[] files = new File(path + "/ppt/media/").listFiles();
-        if (files == null)
-            return;
-
-        for (File file : files) {
-            int[] size = image.size(file);
-            if (size == null || size.length != 2)
-                continue;
-
-            parserObject.addImage("/ppt/media/" + file.getName(), size);
-        }
+    private void parseSlide(XSLFSlide xslfSlide, MediaWriter mediaWriter, JSONObject slide) {
+        parsers.parse(xslfSlide.getBackground(), mediaWriter, slide);
+        JSONArray shapes = new JSONArray();
+        xslfSlide.getShapes().forEach(xslfShape -> {
+            JSONObject shape = new JSONObject();
+            parsers.parse(xslfShape, mediaWriter, shape);
+            shapes.add(shape);
+        });
+        slide.put("shapes", shapes);
     }
 }

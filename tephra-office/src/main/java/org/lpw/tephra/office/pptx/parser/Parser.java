@@ -1,5 +1,9 @@
 package org.lpw.tephra.office.pptx.parser;
 
+import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.sl.usermodel.Shape;
+import org.lpw.tephra.office.pptx.MediaWriter;
+
 /**
  * 解析器。
  *
@@ -7,17 +11,18 @@ package org.lpw.tephra.office.pptx.parser;
  */
 public interface Parser {
     /**
-     * 获取解析器类型。
+     * 获取处理顺序。
      *
-     * @return 解析器类型。
+     * @return 处理顺序。
      */
-    Parsers.Type getType();
+    int getSort();
 
     /**
-     * 解析。
+     * 解析数据。
      *
-     * @param path         文件路径。
-     * @param parserObject 解析数据。
+     * @param shape       形状。
+     * @param mediaWriter 媒体资源输出器。
+     * @param object      解析数据。
      */
-    void parse(String path, ParserObject parserObject);
+    void parse(Shape shape, MediaWriter mediaWriter, JSONObject object);
 }
