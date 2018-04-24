@@ -37,4 +37,21 @@ public interface Context {
      * @return 本地化信息；如果未设置则使用默认值。
      */
     Locale getLocale();
+
+    /**
+     * 保存数据到当前线程上下文中。
+     *
+     * @param key   引用key。
+     * @param value 数据。
+     */
+    void putThreadLocal(String key, Object value);
+
+    /**
+     * 获取当前线程上下文数据。
+     *
+     * @param key 引用key。
+     * @param <T> 数据类型。
+     * @return 当前线程上下文数据。
+     */
+    <T> T getThreadLocal(String key);
 }

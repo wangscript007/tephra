@@ -1,11 +1,13 @@
 package org.lpw.tephra.util;
 
+import org.lpw.tephra.atomic.Closable;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author lpw
  */
 @Component("tephra.util.context")
-public class ContextImpl implements Context, ContextRefreshedListener {
+public class ContextImpl implements Context, Closable, ContextRefreshedListener {
     @Inject
     private Validator validator;
     @Inject
@@ -24,12 +26,13 @@ public class ContextImpl implements Context, ContextRefreshedListener {
     @Value("${tephra.util.context.charset:UTF-8}")
     private String charset;
     private String root;
-    private Map<String, String> map = new ConcurrentHashMap<>();
+    private Map<String, String> absolutePath = new ConcurrentHashMap<>();
     private ThreadLocal<Locale> locale = new ThreadLocal<>();
+    private ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
 
     @Override
     public String getAbsolutePath(String path) {
-        String absolutePath = map.get(path);
+        String absolutePath = this.absolutePath.get(path);
         if (absolutePath == null) {
             if (path.startsWith("abs:"))
                 absolutePath = path.substring(4);
@@ -37,7 +40,7 @@ public class ContextImpl implements Context, ContextRefreshedListener {
                 absolutePath = getClass().getClassLoader().getResource(path.substring(10)).getPath();
             else
                 absolutePath = new File(root + "/" + path).getAbsolutePath();
-            map.put(path, absolutePath);
+            this.absolutePath.put(path, absolutePath);
         }
 
         return absolutePath;
@@ -63,6 +66,32 @@ public class ContextImpl implements Context, ContextRefreshedListener {
     }
 
     @Override
+    public void putThreadLocal(String key, Object value) {
+        getThreadLocalMap().put(key, value);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    @Override
+    public <T> T getThreadLocal(String key) {
+        return (T) getThreadLocalMap().get(key);
+    }
+
+    @Override
+    public void close() {
+        getThreadLocalMap().clear();
+    }
+
+    private Map<String, Object> getThreadLocalMap() {
+        Map<String, Object> map = threadLocal.get();
+        if (map == null) {
+            map = new HashMap<>();
+            threadLocal.set(map);
+        }
+
+        return map;
+    }
+
+    @Override
     public int getContextRefreshedSort() {
         return 1;
     }
@@ -77,7 +106,7 @@ public class ContextImpl implements Context, ContextRefreshedListener {
         }
 
         root = path.replace(File.separatorChar, '/');
-        map.clear();
+        absolutePath.clear();
 
         if (logger.isInfoEnable())
             logger.info("设置运行期根路径：{}", root);
