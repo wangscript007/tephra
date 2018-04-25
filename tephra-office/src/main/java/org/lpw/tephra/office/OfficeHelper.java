@@ -29,18 +29,18 @@ public interface OfficeHelper {
     int emuToPixel(int emu);
 
     /**
-     * 字体值转化为像素值。
+     * 磅值转化为像素值。
      *
-     * @param fontSize 字体值。
+     * @param point 磅值。
      * @return 像素值。
      */
-    int fontSizeToPixel(int fontSize);
+    int pointToPixel(double point);
 
     /**
-     * 像素值转化为字体值。
+     * 像素值转化为磅值。
      *
      * @param pixel 像素值。
-     * @return 字体值。
+     * @return 磅值。
      */
-    int pixelToFontSize(int pixel);
+    double pixelToPoint(int pixel);
 }

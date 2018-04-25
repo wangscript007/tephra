@@ -2,13 +2,16 @@ package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
+import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.MediaWriter;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +21,8 @@ import java.util.Map;
  */
 @Component("tephra.office.pptx.parser.text")
 public class TextParserImpl implements Parser {
+    @Inject
+    private OfficeHelper officeHelper;
     private String[] merges = {"align", "fontFamily", "fontSize", "color", "bold", "italic", "underline", "strikethrough",
             "subscript", "superscript"};
 
@@ -33,6 +38,7 @@ public class TextParserImpl implements Parser {
 
         XSLFTextShape xslfTextShape = (XSLFTextShape) xslfShape;
         JSONObject text = new JSONObject();
+        parseMargin(xslfTextShape, text);
         parseVerticalAlignment(xslfTextShape, text);
         JSONArray paragraphs = new JSONArray();
         xslfTextShape.getTextParagraphs().forEach(xslfTextParagraph -> {
@@ -60,6 +66,16 @@ public class TextParserImpl implements Parser {
         merge(text, paragraphs);
         text.put("paragraphs", paragraphs);
         shape.put("text", text);
+    }
+
+    private void parseMargin(XSLFTextShape xslfTextShape, JSONObject text) {
+        Insets2D insets2D = xslfTextShape.getInsets();
+        JSONObject margin = new JSONObject();
+        margin.put("left", officeHelper.pointToPixel(insets2D.left));
+        margin.put("top", officeHelper.pointToPixel(insets2D.top));
+        margin.put("right", officeHelper.pointToPixel(insets2D.right));
+        margin.put("bottom", officeHelper.pointToPixel(insets2D.bottom));
+        text.put("margin", margin);
     }
 
     private void parseVerticalAlignment(XSLFTextShape xslfTextShape, JSONObject text) {

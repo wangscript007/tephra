@@ -2,6 +2,7 @@ package org.lpw.tephra.office;
 
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Generator;
+import org.lpw.tephra.util.Numeric;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,8 @@ public class OfficeHelperImpl implements OfficeHelper {
     private Generator generator;
     @Inject
     private Context context;
+    @Inject
+    private Numeric numeric;
     @Value("${tephra.office.temp-path:}")
     private String tempPath;
 
@@ -35,12 +38,12 @@ public class OfficeHelperImpl implements OfficeHelper {
     }
 
     @Override
-    public int fontSizeToPixel(int fontSize) {
-        return fontSize / 100;
+    public int pointToPixel(double point) {
+        return numeric.toInt(point * 96 / 72);
     }
 
     @Override
-    public int pixelToFontSize(int pixel) {
-        return pixel * 100;
+    public double pixelToPoint(int pixel) {
+        return pixel * 72 / 96.0D;
     }
 }
