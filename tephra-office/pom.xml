@@ -17,12 +17,12 @@
     <dependencies>
         <dependency>
             <groupId>org.lpw.tephra</groupId>
-            <artifactId>tephra-wormhole</artifactId>
+            <artifactId>tephra-core</artifactId>
             <version>${version.tephra}</version>
         </dependency>
         <dependency>
             <groupId>org.lpw.tephra</groupId>
-            <artifactId>tephra-test</artifactId>
+            <artifactId>tephra-core-test</artifactId>
             <version>${version.tephra}</version>
             <scope>test</scope>
         </dependency>
