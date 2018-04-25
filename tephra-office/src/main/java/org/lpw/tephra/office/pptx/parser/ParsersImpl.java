@@ -1,7 +1,7 @@
 package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.office.pptx.MediaWriter;
@@ -19,8 +19,8 @@ public class ParsersImpl implements Parsers, ContextRefreshedListener {
     private List<Parser> list;
 
     @Override
-    public void parse(Shape shape, MediaWriter mediaWriter, JSONObject object) {
-        list.forEach(parser -> parser.parse(shape, mediaWriter, object));
+    public void parse(XSLFShape xslfShape, MediaWriter mediaWriter, JSONObject shape) {
+        list.forEach(parser -> parser.parse(xslfShape, mediaWriter, shape));
     }
 
     @Override

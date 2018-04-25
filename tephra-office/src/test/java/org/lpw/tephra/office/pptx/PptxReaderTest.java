@@ -20,6 +20,6 @@ public class PptxReaderTest extends TephraTestSupport {
     @Test
     public void read() throws IOException {
         io.write("target/demo.json", pptxReader.read(new FileInputStream("/mnt/hgfs/share/ppt/demo.pptx"),
-                (type, inputStream) -> "").toJSONString().getBytes());
+                (type, contentType, inputStream) -> "").toJSONString().getBytes());
     }
 }

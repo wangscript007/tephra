@@ -3,6 +3,8 @@ package org.lpw.tephra.office.pptx;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFAutoShape;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.office.pptx.parser.Parsers;
 import org.lpw.tephra.util.Logger;

@@ -22,8 +22,9 @@ public interface MediaWriter {
      * 输出媒体资源。
      *
      * @param type        资源类型。
+     * @param contentType 内容类型。
      * @param inputStream 资源流。
      * @return 资源获取路径。
      */
-    String write(Type type, InputStream inputStream);
+    String write(Type type, String contentType, InputStream inputStream);
 }
