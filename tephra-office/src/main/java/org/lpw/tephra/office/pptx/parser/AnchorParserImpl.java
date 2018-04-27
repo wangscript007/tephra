@@ -1,7 +1,7 @@
 package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.lpw.tephra.office.pptx.MediaWriter;
 import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Component;
@@ -23,8 +23,8 @@ public class AnchorParserImpl implements Parser {
     }
 
     @Override
-    public void parse(XSLFShape xslfShape, MediaWriter mediaWriter, JSONObject shape) {
-        Rectangle2D rectangle2D = xslfShape.getAnchor();
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
+        Rectangle2D rectangle2D = xslfSimpleShape.getAnchor();
         JSONObject anchor = new JSONObject();
         anchor.put("x", numeric.toInt(rectangle2D.getX()));
         anchor.put("y", numeric.toInt(rectangle2D.getY()));

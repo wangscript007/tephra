@@ -3,8 +3,7 @@ package org.lpw.tephra.office.pptx;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFAutoShape;
-import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.office.pptx.parser.Parsers;
 import org.lpw.tephra.util.Logger;
@@ -61,7 +60,7 @@ public class PptxReaderImpl implements PptxReader {
         JSONArray shapes = new JSONArray();
         xslfSlide.getShapes().forEach(xslfShape -> {
             JSONObject shape = new JSONObject();
-            parsers.parse(xslfShape, mediaWriter, shape);
+            parsers.parse((XSLFSimpleShape) xslfShape, mediaWriter, shape);
             shapes.add(shape);
         });
         slide.put("shapes", shapes);

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
-import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.lpw.tephra.office.OfficeHelper;
@@ -12,7 +12,6 @@ import org.lpw.tephra.office.pptx.MediaWriter;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,11 +31,11 @@ public class TextParserImpl implements Parser {
     }
 
     @Override
-    public void parse(XSLFShape xslfShape, MediaWriter mediaWriter, JSONObject shape) {
-        if (!(xslfShape instanceof XSLFTextShape))
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
+        if (!(xslfSimpleShape instanceof XSLFTextShape))
             return;
 
-        XSLFTextShape xslfTextShape = (XSLFTextShape) xslfShape;
+        XSLFTextShape xslfTextShape = (XSLFTextShape) xslfSimpleShape;
         JSONObject text = new JSONObject();
         parseMargin(xslfTextShape, text);
         parseVerticalAlignment(xslfTextShape, text);
@@ -48,7 +47,7 @@ public class TextParserImpl implements Parser {
             xslfTextParagraph.getTextRuns().forEach(xslfTextRun -> {
                 JSONObject word = new JSONObject();
                 word.put("fontFamily", xslfTextRun.getFontFamily());
-                word.put("fontSize", xslfTextRun.getFontSize());
+                word.put("fontSize", officeHelper.pointToPixel(xslfTextRun.getFontSize()));
                 word.put("bold", xslfTextRun.isBold());
                 word.put("italic", xslfTextRun.isItalic());
                 word.put("underline", xslfTextRun.isUnderlined());
@@ -108,17 +107,8 @@ public class TextParserImpl implements Parser {
     }
 
     private void parseColor(PaintStyle paintStyle, JSONObject word) {
-        if (!(paintStyle instanceof PaintStyle.SolidPaint))
-            return;
-
-        PaintStyle.SolidPaint solidPaint = (PaintStyle.SolidPaint) paintStyle;
-        Color solidColor = solidPaint.getSolidColor().getColor();
-        JSONObject color = new JSONObject();
-        color.put("red", solidColor.getRed());
-        color.put("green", solidColor.getGreen());
-        color.put("blue", solidColor.getBlue());
-        color.put("alpha", solidColor.getAlpha());
-        word.put("color", color);
+        if (paintStyle instanceof PaintStyle.SolidPaint)
+            word.put("color", officeHelper.colorToJson(((PaintStyle.SolidPaint) paintStyle).getSolidColor().getColor()));
     }
 
     private void merge(JSONObject object, JSONArray array) {

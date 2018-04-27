@@ -1,5 +1,6 @@
 package org.lpw.tephra.office;
 
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Numeric;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.awt.Color;
 
 /**
  * @author lpw
@@ -45,5 +47,31 @@ public class OfficeHelperImpl implements OfficeHelper {
     @Override
     public double pixelToPoint(int pixel) {
         return pixel * 72 / 96.0D;
+    }
+
+    @Override
+    public int fromPercent(int max, int percent) {
+        return max * percent / 100000;
+    }
+
+    @Override
+    public int toPercent(int max, int value) {
+        return 100000 * value / max;
+    }
+
+    @Override
+    public JSONObject colorToJson(Color color) {
+        JSONObject object = new JSONObject();
+        object.put("red", color.getRed());
+        object.put("green", color.getGreen());
+        object.put("blue", color.getBlue());
+        object.put("alpha", color.getAlpha());
+
+        return object;
+    }
+
+    @Override
+    public Color jsonToColor(JSONObject object) {
+        return null;
     }
 }

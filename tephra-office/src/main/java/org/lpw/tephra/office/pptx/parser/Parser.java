@@ -1,7 +1,7 @@
 package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.lpw.tephra.office.pptx.MediaWriter;
 
 /**
@@ -20,9 +20,9 @@ public interface Parser {
     /**
      * 解析数据。
      *
-     * @param xslfShape   形状。
-     * @param mediaWriter 媒体资源输出器。
-     * @param shape       解析数据。
+     * @param xslfSimpleShape 形状。
+     * @param mediaWriter     媒体资源输出器。
+     * @param shape           解析数据。
      */
-    void parse(XSLFShape xslfShape, MediaWriter mediaWriter, JSONObject shape);
+    void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape);
 }

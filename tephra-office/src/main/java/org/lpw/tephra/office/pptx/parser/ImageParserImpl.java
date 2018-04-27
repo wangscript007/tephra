@@ -3,7 +3,7 @@ package org.lpw.tephra.office.pptx.parser;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
-import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.lpw.tephra.office.pptx.MediaWriter;
 import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
@@ -22,20 +22,18 @@ public class ImageParserImpl implements Parser {
 
     @Override
     public int getSort() {
-        return 2;
+        return 5;
     }
 
     @Override
-    public void parse(XSLFShape xslfShape, MediaWriter mediaWriter, JSONObject shape) {
-        if (!(xslfShape instanceof XSLFPictureShape))
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
+        if (!(xslfSimpleShape instanceof XSLFPictureShape))
             return;
 
-        XSLFPictureShape xslfPictureShape = (XSLFPictureShape) xslfShape;
+        XSLFPictureShape xslfPictureShape = (XSLFPictureShape) xslfSimpleShape;
         JSONObject image = new JSONObject();
         XSLFPictureData xslfPictureData = xslfPictureShape.getPictureData();
         parseSize(xslfPictureData, image);
-        System.out.println(xslfPictureShape.getLineWidth());
-        System.out.println(xslfPictureShape.getLineColor());
         image.put("contentType", xslfPictureData.getContentType());
         try {
             image.put("uri", mediaWriter.write(MediaWriter.Type.Image, xslfPictureData.getContentType(), xslfPictureData.getInputStream()));

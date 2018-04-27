@@ -2,8 +2,8 @@ package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.sl.usermodel.PaintStyle;
-import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.MediaWriter;
 import org.springframework.stereotype.Component;
 
@@ -16,19 +16,17 @@ import java.awt.Color;
 @Component("tephra.office.pptx.parser.fill")
 public class FillParserImpl implements Parser {
     @Inject
+    private OfficeHelper officeHelper;
+    @Inject
     private FillXmlParser fillXmlParser;
 
     @Override
     public int getSort() {
-        return 1;
+        return 2;
     }
 
     @Override
-    public void parse(XSLFShape xslfShape, MediaWriter mediaWriter, JSONObject shape) {
-        if (!(xslfShape instanceof XSLFSimpleShape))
-            return;
-
-        XSLFSimpleShape xslfSimpleShape = (XSLFSimpleShape) xslfShape;
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
         JSONObject fill = new JSONObject();
         color(xslfSimpleShape, fill);
         texture(xslfSimpleShape, mediaWriter, fill);
@@ -41,12 +39,7 @@ public class FillParserImpl implements Parser {
         if (fillColor == null)
             return;
 
-        JSONObject color = new JSONObject();
-        color.put("red", fillColor.getRed());
-        color.put("green", fillColor.getGreen());
-        color.put("blue", fillColor.getBlue());
-        color.put("alpha", fillColor.getAlpha());
-        fill.put("color", color);
+        fill.put("color", officeHelper.colorToJson(fillColor));
     }
 
     private void texture(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject fill) {
