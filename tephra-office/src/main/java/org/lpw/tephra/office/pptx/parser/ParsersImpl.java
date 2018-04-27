@@ -33,6 +33,5 @@ public class ParsersImpl implements Parsers, ContextRefreshedListener {
         list = new ArrayList<>();
         list.addAll(BeanFactory.getBeans(Parser.class));
         list.sort(Comparator.comparingInt(Parser::getSort));
-        list.forEach(parser -> System.out.println(parser.getSort() + ";" + parser));
     }
 }
