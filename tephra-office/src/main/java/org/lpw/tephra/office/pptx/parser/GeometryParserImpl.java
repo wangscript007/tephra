@@ -38,7 +38,7 @@ public class GeometryParserImpl implements Parser {
     }
 
     private void parseLine(XSLFSimpleShape xslfSimpleShape, JSONObject geometry) {
-        if (xslfSimpleShape.getLineWidth() == 0.0D)
+        if (xslfSimpleShape.getLineWidth() == 0.0D || xslfSimpleShape.getLineColor() == null)
             return;
 
         JSONObject line = new JSONObject();

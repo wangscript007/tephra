@@ -3,6 +3,8 @@ package org.lpw.tephra.office.pptx;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFGroupShape;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.office.pptx.parser.Parsers;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.awt.Dimension;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * @author lpw
@@ -62,11 +65,27 @@ public class PptxReaderImpl implements PptxReader {
             slide.put("background", background);
 
         JSONArray shapes = new JSONArray();
-        xslfSlide.getShapes().forEach(xslfShape -> {
-            JSONObject shape = new JSONObject();
-            parsers.parse((XSLFSimpleShape) xslfShape, mediaWriter, shape);
-            shapes.add(shape);
-        });
+        parseShapes(xslfSlide.getShapes(), mediaWriter, shapes);
         slide.put("shapes", shapes);
+    }
+
+    private void parseShapes(List<XSLFShape> xslfSlides, MediaWriter mediaWriter, JSONArray shapes) {
+        xslfSlides.forEach(xslfShape -> {
+            if (xslfShape instanceof XSLFSimpleShape) {
+                JSONObject shape = new JSONObject();
+                parsers.parse((XSLFSimpleShape) xslfShape, mediaWriter, shape);
+                shapes.add(shape);
+
+                return;
+            }
+
+            if (xslfShape instanceof XSLFGroupShape) {
+                parseShapes(((XSLFGroupShape) xslfShape).getShapes(), mediaWriter, shapes);
+
+                return;
+            }
+
+            logger.warn(null, "无法处理的PPTX图形[{}]。", xslfShape);
+        });
     }
 }
