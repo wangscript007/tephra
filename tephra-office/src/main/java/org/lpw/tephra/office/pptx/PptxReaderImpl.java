@@ -56,7 +56,11 @@ public class PptxReaderImpl implements PptxReader {
     }
 
     private void parseSlide(XSLFSlide xslfSlide, MediaWriter mediaWriter, JSONObject slide) {
-        parsers.parse(xslfSlide.getBackground(), mediaWriter, slide);
+        JSONObject background = new JSONObject();
+        parsers.parse(xslfSlide.getBackground(), mediaWriter, background);
+        if (!background.isEmpty())
+            slide.put("background", background);
+
         JSONArray shapes = new JSONArray();
         xslfSlide.getShapes().forEach(xslfShape -> {
             JSONObject shape = new JSONObject();

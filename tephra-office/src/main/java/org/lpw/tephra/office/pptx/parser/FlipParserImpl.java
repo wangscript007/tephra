@@ -17,7 +17,7 @@ public class FlipParserImpl implements Parser {
 
     @Override
     public int getSort() {
-        return 3;
+        return 1;
     }
 
     @Override

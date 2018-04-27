@@ -7,6 +7,6 @@ import com.alibaba.fastjson.JSONObject;
  *
  * @author lpw
  */
-public interface FillXmlParser {
+public interface GeometryXmlParser {
     void putFillRect(String xml, JSONObject texture);
 }

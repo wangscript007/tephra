@@ -9,7 +9,7 @@ import scala.xml.XML
   * @author lpw
   */
 @Component("tephra.office.pptx.parser.fill.xml")
-class FillXmlParserImpl extends FillXmlParser {
+class GeometryXmlParserImpl extends GeometryXmlParser {
     private val map = Map("l" -> "left", "t" -> "top", "r" -> "right", "b" -> "bottom")
 
     override def putFillRect(xml: String, texture: JSONObject): Unit = {

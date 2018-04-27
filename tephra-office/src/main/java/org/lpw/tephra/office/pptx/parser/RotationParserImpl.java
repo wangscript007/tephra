@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class RotationParserImpl implements Parser {
     @Override
     public int getSort() {
-        return 4;
+        return 2;
     }
 
     @Override
