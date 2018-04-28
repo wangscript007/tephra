@@ -60,6 +60,7 @@ public class PptxReaderImpl implements PptxReader {
 
     private void parseSlide(XSLFSlide xslfSlide, MediaWriter mediaWriter, JSONObject slide) {
         parseBackground(xslfSlide, mediaWriter, slide);
+
         JSONArray shapes = new JSONArray();
         parseShapes(xslfSlide.getShapes(), mediaWriter, shapes);
         slide.put("shapes", shapes);
@@ -71,7 +72,6 @@ public class PptxReaderImpl implements PptxReader {
         background.remove("anchor");
         if (!background.isEmpty())
             slide.put("background", background);
-
     }
 
     private void parseShapes(List<XSLFShape> xslfSlides, MediaWriter mediaWriter, JSONArray shapes) {
