@@ -1,5 +1,6 @@
 package org.lpw.tephra.ctrl.context;
 
+import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,14 +15,17 @@ import java.util.Map;
  */
 @Controller("tephra.ctrl.context.header")
 public class HeaderImpl implements Header, HeaderAware {
+    private static final String ADAPTER = "tephra.ctrl.context.header.adapter";
+    private static final String IP = "tephra.ctrl.context.header.ip";
+
+    @Inject
+    private Context context;
     @Inject
     private Validator validator;
     @Inject
     private Numeric numeric;
     @Value("${tephra.ctrl.context.header.real-ip:}")
     private String realIp;
-    private ThreadLocal<HeaderAdapter> adapter = new ThreadLocal<>();
-    private ThreadLocal<String> ip = new ThreadLocal<>();
 
     @Override
     public String get(String name) {
@@ -40,35 +44,35 @@ public class HeaderImpl implements Header, HeaderAware {
 
     @Override
     public String getIp() {
-        if (ip.get() != null)
-            return ip.get();
+        String ip = context.getThreadLocal(IP);
+        if (!validator.isEmpty(ip))
+            return ip;
 
         if (!validator.isEmpty(realIp)) {
-            String ip = get(realIp);
+            ip = get(realIp);
             if (!validator.isEmpty(ip))
                 return ip;
         }
 
-        HeaderAdapter adapter = this.adapter.get();
+        HeaderAdapter adapter = context.getThreadLocal(ADAPTER);
 
         return adapter == null ? null : adapter.getIp();
     }
 
     @Override
     public void setIp(String ip) {
-        this.ip.set(ip);
+        context.putThreadLocal(IP, ip);
     }
 
     @Override
     public Map<String, String> getMap() {
-        HeaderAdapter adapter = this.adapter.get();
+        HeaderAdapter adapter = context.getThreadLocal(ADAPTER);
 
         return adapter == null ? new HashMap<>() : adapter.getMap();
     }
 
     @Override
     public void set(HeaderAdapter adapter) {
-        this.adapter.set(adapter);
-        ip.remove();
+        context.putThreadLocal(ADAPTER, adapter);
     }
 }

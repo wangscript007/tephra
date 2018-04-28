@@ -1,6 +1,7 @@
 package org.lpw.tephra.ctrl.context;
 
 import org.lpw.tephra.cache.Cache;
+import org.lpw.tephra.util.Context;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
@@ -10,11 +11,13 @@ import javax.inject.Inject;
  */
 @Controller("tephra.ctrl.context.session")
 public class SessionImpl implements Session, SessionAware {
+    private static final String ADAPTER = "tephra.ctrl.context.session.adapter";
     private static final String CACHE = "tephra.ctrl.context.session:";
 
     @Inject
+    private Context context;
+    @Inject
     private Cache cache;
-    private ThreadLocal<SessionAdapter> adapter = new ThreadLocal<>();
 
     @Override
     public void set(String key, Object value) {
@@ -23,7 +26,9 @@ public class SessionImpl implements Session, SessionAware {
 
     @Override
     public void set(String id, String key, Object value) {
-        cache.put(getKey(id, key), value, false);
+        String cacheKey = getKey(id, key);
+        context.putThreadLocal(cacheKey, value);
+        cache.put(cacheKey, value, false);
     }
 
     @Override
@@ -33,7 +38,10 @@ public class SessionImpl implements Session, SessionAware {
 
     @Override
     public <T> T get(String id, String key) {
-        return cache.get(getKey(id, key));
+        String cacheKey = getKey(id, key);
+        T value = context.getThreadLocal(cacheKey);
+
+        return value == null ? cache.get(cacheKey) : value;
     }
 
     @Override
@@ -43,7 +51,9 @@ public class SessionImpl implements Session, SessionAware {
 
     @Override
     public void remove(String id, String key) {
-        cache.remove(getKey(id, key));
+        String cacheKey = getKey(id, key);
+        context.removeThreadLocal(cacheKey);
+        cache.remove(cacheKey);
     }
 
     private String getKey(String id, String key) {
@@ -52,11 +62,13 @@ public class SessionImpl implements Session, SessionAware {
 
     @Override
     public String getId() {
-        return adapter.get() == null ? null : adapter.get().getId();
+        SessionAdapter adapter = context.getThreadLocal(ADAPTER);
+
+        return adapter == null ? null : adapter.getId();
     }
 
     @Override
     public void set(SessionAdapter adapter) {
-        this.adapter.set(adapter);
+        context.putThreadLocal(ADAPTER, adapter);
     }
 }

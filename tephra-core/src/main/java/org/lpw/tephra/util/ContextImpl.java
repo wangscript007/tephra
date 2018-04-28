@@ -76,6 +76,12 @@ public class ContextImpl implements Context, Closable, ContextRefreshedListener 
         return (T) getThreadLocalMap().get(key);
     }
 
+    @SuppressWarnings({"unchecked"})
+    @Override
+    public <T> T removeThreadLocal(String key) {
+        return (T) getThreadLocalMap().remove(key);
+    }
+
     @Override
     public void close() {
         getThreadLocalMap().clear();

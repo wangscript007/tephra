@@ -54,4 +54,13 @@ public interface Context {
      * @return 当前线程上下文数据。
      */
     <T> T getThreadLocal(String key);
+
+    /**
+     * 删除当前线程上下文数据。
+     *
+     * @param key 引用key。
+     * @param <T> 数据类型。
+     * @return 当前线程上下文数据。
+     */
+    <T> T removeThreadLocal(String key);
 }

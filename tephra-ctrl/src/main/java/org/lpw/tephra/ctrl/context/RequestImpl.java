@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Coder;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelHelper;
-import org.lpw.tephra.dao.model.ModelTables;
+import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Json;
@@ -24,6 +24,10 @@ import java.util.Optional;
  */
 @Controller("tephra.ctrl.context.request")
 public class RequestImpl implements Request, RequestAware {
+    private static final String ADAPTER = "tephra.ctrl.context.request.adapter";
+
+    @Inject
+    private Context context;
     @Inject
     private Validator validator;
     @Inject
@@ -40,11 +44,10 @@ public class RequestImpl implements Request, RequestAware {
     private ModelHelper modelHelper;
     @Inject
     private Optional<Coder> coder;
-    private ThreadLocal<RequestAdapter> adapter = new ThreadLocal<>();
 
     @Override
     public String get(String name) {
-        return adapter.get() == null ? null : adapter.get().get(name);
+        return getAdapter() == null ? null : getAdapter().get(name);
     }
 
     @Override
@@ -86,10 +89,10 @@ public class RequestImpl implements Request, RequestAware {
 
     @Override
     public String[] getAsArray(String name) {
-        if (adapter.get() == null)
+        if (getAdapter() == null)
             return null;
 
-        String[] array = adapter.get().getAsArray(name);
+        String[] array = getAdapter().getAsArray(name);
 
         return array == null ? converter.toArray(get(name), ",") : array;
     }
@@ -106,56 +109,60 @@ public class RequestImpl implements Request, RequestAware {
 
     @Override
     public Map<String, String> getMap() {
-        if (adapter.get() == null)
+        if (getAdapter() == null)
             return null;
 
-        Map<String, String> map = adapter.get().getMap();
+        Map<String, String> map = getAdapter().getMap();
 
         return coder.isPresent() ? coder.get().decode(map) : map;
     }
 
     @Override
     public String getFromInputStream() {
-        return adapter.get() == null ? null : adapter.get().getFromInputStream();
+        return getAdapter() == null ? null : getAdapter().getFromInputStream();
     }
 
     @Override
     public <T extends Model> T setToModel(Class<T> modelClass) {
-        return adapter.get() == null ? null : modelHelper.fromMap(getMap(), modelClass);
+        return getAdapter() == null ? null : modelHelper.fromMap(getMap(), modelClass);
     }
 
     @Override
     public String getServerName() {
-        return adapter.get() == null ? null : adapter.get().getServerName();
+        return getAdapter() == null ? null : getAdapter().getServerName();
     }
 
     @Override
     public int getServerPort() {
-        return adapter.get() == null ? 0 : adapter.get().getServerPort();
+        return getAdapter() == null ? 0 : getAdapter().getServerPort();
     }
 
     @Override
     public String getContextPath() {
-        return adapter.get() == null ? null : adapter.get().getContextPath();
+        return getAdapter() == null ? null : getAdapter().getContextPath();
     }
 
     @Override
     public String getUrl() {
-        return adapter.get() == null ? null : adapter.get().getUrl();
+        return getAdapter() == null ? null : getAdapter().getUrl();
     }
 
     @Override
     public String getUri() {
-        return adapter.get() == null ? null : adapter.get().getUri();
+        return getAdapter() == null ? null : getAdapter().getUri();
     }
 
     @Override
     public String getMethod() {
-        return adapter.get() == null ? null : adapter.get().getMethod();
+        return getAdapter() == null ? null : getAdapter().getMethod();
+    }
+
+    private RequestAdapter getAdapter() {
+        return context.getThreadLocal(ADAPTER);
     }
 
     @Override
     public void set(RequestAdapter adapter) {
-        this.adapter.set(adapter);
+        context.putThreadLocal(ADAPTER, adapter);
     }
 }

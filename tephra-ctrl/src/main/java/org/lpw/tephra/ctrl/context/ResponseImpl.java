@@ -6,6 +6,7 @@ import org.lpw.tephra.ctrl.execute.ExecutorHelper;
 import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateHelper;
 import org.lpw.tephra.ctrl.template.Templates;
+import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,11 @@ import java.util.Optional;
  */
 @Controller("tephra.ctrl.context.response")
 public class ResponseImpl implements Response, ResponseAware {
+    private static final String ADAPTER = "tephra.ctrl.context.response.adapter";
+    private static final String CONTENT_TYPE = "tephra.ctrl.context.response.content-type";
+
+    @Inject
+    private Context context;
     @Inject
     private Validator validator;
     @Inject
@@ -32,26 +38,24 @@ public class ResponseImpl implements Response, ResponseAware {
     private TemplateHelper templateHelper;
     @Inject
     private Optional<Coder> coder;
-    private ThreadLocal<ResponseAdapter> adapter = new ThreadLocal<>();
-    private ThreadLocal<String> contentType = new ThreadLocal<>();
 
     @Override
     public void setContentType(String contentType) {
         if (logger.isDebugEnable())
             logger.debug("设置Content-Type[{}]", contentType);
 
-        this.contentType.set(contentType);
-        adapter.get().setContentType(contentType);
+        context.putThreadLocal(CONTENT_TYPE, contentType);
+        getAdapter().setContentType(contentType);
     }
 
     @Override
     public void setHeader(String name, String value) {
-        adapter.get().setHeader(name, value);
+        getAdapter().setHeader(name, value);
     }
 
     @Override
     public OutputStream getOutputStream() {
-        return adapter.get().getOutputStream();
+        return getAdapter().getOutputStream();
     }
 
     @Override
@@ -70,7 +74,7 @@ public class ResponseImpl implements Response, ResponseAware {
             setContentType(template);
             if (!coder.isPresent()) {
                 template.process(view, object, getOutputStream());
-                adapter.get().send();
+                getAdapter().send();
 
                 return;
             }
@@ -79,19 +83,19 @@ public class ResponseImpl implements Response, ResponseAware {
             template.process(view, object, baos);
             baos.close();
             getOutputStream().write(coder.get().encode(baos.toByteArray()));
-            adapter.get().send();
+            getAdapter().send();
         } catch (Exception e) {
             logger.warn(e, "返回输出结果时发生异常！");
         }
     }
 
     private void setContentType(Template template) {
-        if (!validator.isEmpty(contentType.get()))
+        if (!validator.isEmpty(context.getThreadLocal(CONTENT_TYPE)))
             return;
 
         if (logger.isDebugEnable())
             logger.debug("使用Content-Type[{}]", template.getContentType());
-        adapter.get().setContentType(template.getContentType());
+        getAdapter().setContentType(template.getContentType());
     }
 
     @Override
@@ -99,17 +103,20 @@ public class ResponseImpl implements Response, ResponseAware {
         if (logger.isDebugEnable())
             logger.debug("跳转到：{}。", url);
 
-        adapter.get().redirectTo(url);
+        getAdapter().redirectTo(url);
     }
 
     @Override
     public void sendError(int code) {
-        adapter.get().sendError(code);
+        getAdapter().sendError(code);
+    }
+
+    private ResponseAdapter getAdapter() {
+        return context.getThreadLocal(ADAPTER);
     }
 
     @Override
     public void set(ResponseAdapter adapter) {
-        this.adapter.set(adapter);
-        contentType.remove();
+        context.putThreadLocal(ADAPTER, adapter);
     }
 }
