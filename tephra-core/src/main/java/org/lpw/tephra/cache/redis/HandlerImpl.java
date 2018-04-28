@@ -2,6 +2,7 @@ package org.lpw.tephra.cache.redis;
 
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.cache.Handler;
+import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Serializer;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,8 @@ public class HandlerImpl implements Handler, ContextRefreshedListener {
     private Serializer serializer;
     @Inject
     private Validator validator;
+    @Inject
+    private Logger logger;
     @Value("${tephra.cache.redis.host:}")
     private String host;
     @Value("${tephra.cache.redis.port:6379}")
@@ -42,9 +45,13 @@ public class HandlerImpl implements Handler, ContextRefreshedListener {
 
     @Override
     public void put(String key, Object value, boolean resident) {
-        Jedis jedis = pool.getResource();
-        jedis.set(key.getBytes(), serializer.serialize(value));
-        jedis.close();
+        try {
+            Jedis jedis = pool.getResource();
+            jedis.set(key.getBytes(), serializer.serialize(value));
+            jedis.close();
+        } catch (Exception e) {
+            logger.warn(e, "推送Redis缓存数据[{}:{}:{}]时发生异常！", key, value, resident);
+        }
     }
 
     @Override
@@ -59,14 +66,21 @@ public class HandlerImpl implements Handler, ContextRefreshedListener {
 
     @SuppressWarnings({"unchecked"})
     private <T> T get(String key, boolean remove) {
-        Jedis jedis = pool.getResource();
-        byte[] k = key.getBytes();
-        byte[] bytes = jedis.get(k);
-        if (remove)
-            jedis.del(k);
-        jedis.close();
+        try {
 
-        return (T) serializer.unserialize(bytes);
+            Jedis jedis = pool.getResource();
+            byte[] k = key.getBytes();
+            byte[] bytes = jedis.get(k);
+            if (remove)
+                jedis.del(k);
+            jedis.close();
+
+            return (T) serializer.unserialize(bytes);
+        } catch (Exception e) {
+            logger.warn(e, "获取Redis缓存[{}:{}]数据时发生异常！", key, remove);
+
+            return null;
+        }
     }
 
     @Override
