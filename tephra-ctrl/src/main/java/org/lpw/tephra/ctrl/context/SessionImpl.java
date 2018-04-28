@@ -26,7 +26,7 @@ public class SessionImpl implements Session, SessionAware {
 
     @Override
     public void set(String id, String key, Object value) {
-        String cacheKey = getKey(id, key);
+        String cacheKey = getCacheKey(id, key);
         context.putThreadLocal(cacheKey, value);
         cache.put(cacheKey, value, false);
     }
@@ -38,7 +38,7 @@ public class SessionImpl implements Session, SessionAware {
 
     @Override
     public <T> T get(String id, String key) {
-        String cacheKey = getKey(id, key);
+        String cacheKey = getCacheKey(id, key);
         T value = context.getThreadLocal(cacheKey);
 
         return value == null ? cache.get(cacheKey) : value;
@@ -51,12 +51,12 @@ public class SessionImpl implements Session, SessionAware {
 
     @Override
     public void remove(String id, String key) {
-        String cacheKey = getKey(id, key);
+        String cacheKey = getCacheKey(id, key);
         context.removeThreadLocal(cacheKey);
         cache.remove(cacheKey);
     }
 
-    private String getKey(String id, String key) {
+    private String getCacheKey(String id, String key) {
         return CACHE + id + key;
     }
 
