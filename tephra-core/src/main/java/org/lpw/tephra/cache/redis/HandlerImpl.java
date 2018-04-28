@@ -67,7 +67,6 @@ public class HandlerImpl implements Handler, ContextRefreshedListener {
     @SuppressWarnings({"unchecked"})
     private <T> T get(String key, boolean remove) {
         try {
-
             Jedis jedis = pool.getResource();
             byte[] k = key.getBytes();
             byte[] bytes = jedis.get(k);
