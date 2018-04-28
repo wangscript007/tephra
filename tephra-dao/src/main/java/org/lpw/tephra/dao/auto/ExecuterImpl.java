@@ -42,30 +42,36 @@ public class ExecuterImpl implements Executer, ContextRefreshedListener {
 
     @Override
     public int execute(String dataSource, String sql, boolean state0) {
-        sql = sql.trim();
-        if (sql.equals("") || sql.charAt(0) == '-')
-            return 0;
-
-        String md5 = digest.md5(dataSource + sql);
-        if (hasAutoTable()) {
-            if (state0 && liteOrm.findOne(new LiteQuery(AutoModel.class).where("c_md5=? and c_state=?"), new Object[]{md5, 0}) != null) {
-                liteOrm.close();
-
+        try {
+            sql = sql.trim();
+            if (sql.equals("") || sql.charAt(0) == '-')
                 return 0;
+
+            String md5 = digest.md5(dataSource + sql);
+            if (hasAutoTable()) {
+                if (state0 && liteOrm.findOne(new LiteQuery(AutoModel.class).where("c_md5=? and c_state=?"), new Object[]{md5, 0}) != null) {
+                    liteOrm.close();
+
+                    return 0;
+                }
+
+                AutoModel auto = new AutoModel();
+                auto.setMd5(md5);
+                auto.setDataSource(dataSource);
+                auto.setSql(sql);
+                auto.setTime(dateTime.now());
+                liteOrm.save(auto);
             }
 
-            AutoModel auto = new AutoModel();
-            auto.setMd5(md5);
-            auto.setDataSource(dataSource);
-            auto.setSql(sql);
-            auto.setTime(dateTime.now());
-            liteOrm.save(auto);
+            int n = this.sql.update(dataSource, sql, new Object[0]);
+            this.sql.close();
+
+            return n;
+        } catch (Throwable throwable) {
+            this.sql.fail(throwable);
+
+            return 0;
         }
-
-        int n = this.sql.update(dataSource, sql, new Object[0]);
-        this.sql.close();
-
-        return n;
     }
 
     private boolean hasAutoTable() {
