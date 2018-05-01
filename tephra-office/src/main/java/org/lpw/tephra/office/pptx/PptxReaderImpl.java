@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import java.awt.Dimension;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author lpw
@@ -37,6 +38,8 @@ public class PptxReaderImpl implements PptxReader {
             parseSize(xmlSlideShow, object);
             JSONArray slides = new JSONArray();
             xmlSlideShow.getSlides().forEach(xslfSlide -> {
+                parseLayout(xslfSlide, mediaWriter, null);
+
                 JSONObject slide = new JSONObject();
                 parseSlide(xslfSlide, mediaWriter, slide);
                 slides.add(slide);
@@ -56,6 +59,15 @@ public class PptxReaderImpl implements PptxReader {
         size.put("width", dimension.width);
         size.put("height", dimension.height);
         object.put("size", size);
+    }
+
+    private void parseLayout(XSLFSlide xslfSlide, MediaWriter mediaWriter, Map<String, Map<Integer, JSONObject>> map) {
+        System.out.println("############################################################");
+        parseShapes(xslfSlide.getSlideLayout().getShapes(), mediaWriter, new JSONArray());
+        System.out.println("#######");
+//        XSLFSlideLayout xslfSlideLayout = xslfSlide.getSlideLayout();
+//        if (map.containsKey(xslfSlideLayout.getName()))
+//            return;
     }
 
     private void parseSlide(XSLFSlide xslfSlide, MediaWriter mediaWriter, JSONObject slide) {

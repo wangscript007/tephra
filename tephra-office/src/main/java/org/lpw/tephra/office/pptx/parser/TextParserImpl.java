@@ -65,6 +65,7 @@ public class TextParserImpl implements Parser {
         merge(text, paragraphs);
         text.put("paragraphs", paragraphs);
         shape.put("text", text);
+        System.out.println(xslfSimpleShape.getShapeId() + ";" + text);
     }
 
     private void parseMargin(XSLFTextShape xslfTextShape, JSONObject text) {
