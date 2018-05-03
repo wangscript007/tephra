@@ -8,14 +8,12 @@ import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
-import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.poi.StreamWriter;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -30,17 +28,13 @@ import java.util.regex.Pattern;
  * @author lpw
  */
 @Component("tephra.poi.pptx.svg")
-public class SvgParserImpl implements Parser {
+public class SvgParserImpl extends ImageParserSupport implements Parser {
     @Inject
     private Http http;
     @Inject
     private Converter converter;
     @Inject
-    private Numeric numeric;
-    @Inject
     private Logger logger;
-    @Inject
-    private ParserHelper parserHelper;
     private Pattern pattern = Pattern.compile("viewBox=\"[^\"]+\"");
 
     @Override
@@ -53,9 +47,7 @@ public class SvgParserImpl implements Parser {
         try {
             XSLFPictureData xslfPictureData = xmlSlideShow.addPicture(parserHelper.getImage(object, "image/png",
                     readSvg(object.getString("svg"))), PictureData.PictureType.PNG);
-            XSLFPictureShape xslfPictureShape = xslfSlide.createPicture(xslfPictureData);
-            xslfPictureShape.setAnchor(parserHelper.getRectangle(object));
-            parserHelper.rotate(xslfPictureShape, object);
+            parse(xslfSlide, xslfPictureData, object);
 
             return true;
         } catch (Throwable e) {

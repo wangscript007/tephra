@@ -4,8 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.apache.xmlbeans.XmlObject;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.MediaWriter;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTRelativeRect;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStretchInfoProperties;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -18,8 +24,6 @@ import java.awt.Color;
 public class GeometryParserImpl implements Parser {
     @Inject
     private OfficeHelper officeHelper;
-    @Inject
-    private GeometryXmlParser geometryXmlParser;
 
     @Override
     public int getSort() {
@@ -30,11 +34,12 @@ public class GeometryParserImpl implements Parser {
     public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
         JSONObject geometry = new JSONObject();
         parseLine(xslfSimpleShape, geometry);
-        parseFill(xslfSimpleShape, mediaWriter, geometry);
-        if (!geometry.isEmpty()) {
-            geometry.put("type", xslfSimpleShape.getShapeType() == null ? "rect" : format(xslfSimpleShape.getShapeType().toString()));
-            shape.put("geometry", geometry);
-        }
+        parseFill(xslfSimpleShape, mediaWriter, geometry, shape);
+        if (geometry.isEmpty())
+            return;
+
+        geometry.put("type", xslfSimpleShape.getShapeType() == null ? "rect" : format(xslfSimpleShape.getShapeType().toString()));
+        shape.put("geometry", geometry);
     }
 
     private void parseLine(XSLFSimpleShape xslfSimpleShape, JSONObject geometry) {
@@ -66,10 +71,10 @@ public class GeometryParserImpl implements Parser {
             color.put("alpha", officeHelper.fromPercent(255, alpha));
     }
 
-    private void parseFill(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject geometry) {
+    private void parseFill(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject geometry, JSONObject shape) {
         JSONObject fill = new JSONObject();
         parseColor(xslfSimpleShape, fill);
-        parseTexture(xslfSimpleShape, mediaWriter, fill);
+        parseTexture(xslfSimpleShape, mediaWriter, fill, shape);
         if (!fill.isEmpty())
             geometry.put("fill", fill);
 
@@ -81,7 +86,7 @@ public class GeometryParserImpl implements Parser {
             fill.put("color", officeHelper.colorToJson(fillColor));
     }
 
-    private void parseTexture(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject fill) {
+    private void parseTexture(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject fill, JSONObject shape) {
         PaintStyle paintStyle = xslfSimpleShape.getFillStyle().getPaint();
         if (!(paintStyle instanceof PaintStyle.TexturePaint))
             return;
@@ -91,7 +96,33 @@ public class GeometryParserImpl implements Parser {
         texture.put("contentType", texturePaint.getContentType());
         texture.put("alpha", texturePaint.getAlpha() / 100000.0D);
         texture.put("uri", mediaWriter.write(MediaWriter.Type.Image, texturePaint.getContentType(), texturePaint.getImageData()));
-        geometryXmlParser.putFillRect(xslfSimpleShape.getXmlObject().toString(), texture);
+        parseFillRect(xslfSimpleShape, texture, shape);
         fill.put("texture", texture);
+    }
+
+    private void parseFillRect(XSLFSimpleShape xslfSimpleShape, JSONObject texture, JSONObject shape) {
+        XmlObject xmlObject = xslfSimpleShape.getXmlObject();
+        if (xmlObject instanceof CTBackground)
+            parseBlipFill(((CTBackground) xmlObject).getBgPr().getBlipFill(), texture, shape);
+        else if (xmlObject instanceof CTShape)
+            parseBlipFill(((CTShape) xmlObject).getSpPr().getBlipFill(), texture, shape);
+    }
+
+    private void parseBlipFill(CTBlipFillProperties ctBlipFillProperties, JSONObject texture, JSONObject shape) {
+        CTStretchInfoProperties ctStretchInfoProperties = ctBlipFillProperties.getStretch();
+        if (ctStretchInfoProperties == null)
+            return;
+
+        CTRelativeRect ctRelativeRect = ctStretchInfoProperties.getFillRect();
+        if (ctRelativeRect == null)
+            return;
+
+        JSONObject anchor = shape.getJSONObject("anchor");
+        int width = anchor.getIntValue("width");
+        int height = anchor.getIntValue("height");
+        texture.put("left", officeHelper.fromPercent(width, ctRelativeRect.getL()));
+        texture.put("top", officeHelper.fromPercent(height, ctRelativeRect.getT()));
+        texture.put("right", officeHelper.fromPercent(width, ctRelativeRect.getR()));
+        texture.put("bottom", officeHelper.fromPercent(height, ctRelativeRect.getB()));
     }
 }

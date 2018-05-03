@@ -9,6 +9,7 @@ import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.MediaWriter;
+import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -20,6 +21,8 @@ import java.util.Map;
  */
 @Component("tephra.office.pptx.parser.text")
 public class TextParserImpl implements Parser {
+    @Inject
+    private Validator validator;
     @Inject
     private OfficeHelper officeHelper;
     private String[] merges = {"align", "fontFamily", "fontSize", "color", "bold", "italic", "underline", "strikethrough",
@@ -45,6 +48,9 @@ public class TextParserImpl implements Parser {
             parseAlign(xslfTextParagraph, paragraph);
             JSONArray words = new JSONArray();
             xslfTextParagraph.getTextRuns().forEach(xslfTextRun -> {
+                if (validator.isEmpty(xslfTextRun.getRawText()))
+                    return;
+
                 JSONObject word = new JSONObject();
                 word.put("fontFamily", xslfTextRun.getFontFamily());
                 word.put("fontSize", officeHelper.pointToPixel(xslfTextRun.getFontSize()));
@@ -58,14 +64,19 @@ public class TextParserImpl implements Parser {
                 word.put("word", xslfTextRun.getRawText());
                 words.add(word);
             });
+            if (words.isEmpty())
+                return;
+
             merge(paragraph, words);
             paragraph.put("words", words);
             paragraphs.add(paragraph);
         });
+        if(paragraphs.isEmpty())
+            return;
+
         merge(text, paragraphs);
         text.put("paragraphs", paragraphs);
         shape.put("text", text);
-        System.out.println(xslfSimpleShape.getShapeId() + ";" + text);
     }
 
     private void parseMargin(XSLFTextShape xslfTextShape, JSONObject text) {

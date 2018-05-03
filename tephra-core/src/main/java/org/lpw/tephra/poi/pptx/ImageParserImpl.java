@@ -11,7 +11,6 @@ import org.lpw.tephra.poi.StreamWriter;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -26,17 +25,13 @@ import java.util.Map;
  * @author lpw
  */
 @Component("tephra.poi.pptx.image")
-public class ImageParserImpl implements Parser {
+public class ImageParserImpl extends ImageParserSupport implements Parser {
     @Inject
     private Http http;
     @Inject
     private Json json;
     @Inject
-    private Numeric numeric;
-    @Inject
     private Logger logger;
-    @Inject
-    private ParserHelper parserHelper;
 
     @Override
     public String getType() {
@@ -56,12 +51,10 @@ public class ImageParserImpl implements Parser {
             String contenType = map.get("Content-Type");
             XSLFPictureData xslfPictureData = xmlSlideShow.addPicture(parserHelper.getImage(object, contenType, outputStream),
                     getPictureType(image, contenType));
-            XSLFPictureShape xslfPictureShape = xslfSlide.createPicture(xslfPictureData);
-            xslfPictureShape.setAnchor(parserHelper.getRectangle(object));
-            parserHelper.rotate(xslfPictureShape, object);
+            parse(xslfSlide, xslfPictureData, object);
 
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.warn(e, "解析图片[{}]时发生异常！", object.toJSONString());
 
             return false;

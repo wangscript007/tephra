@@ -113,4 +113,12 @@ public interface Json {
      * @return 如果包含则返回true；否则返回false。
      */
     boolean hasTrue(JSONObject object, String key);
+
+    /**
+     * 复制。
+     *
+     * @param object 源JSON对象。
+     * @return 新JSON对象。
+     */
+    JSONObject copy(JSONObject object);
 }

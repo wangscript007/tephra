@@ -2,19 +2,19 @@ package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.apache.xmlbeans.XmlObject;
 import org.lpw.tephra.office.pptx.MediaWriter;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTCamera;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTScene3D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSphereCoords;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 /**
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.filp")
 public class FlipParserImpl implements Parser {
-    @Inject
-    private FlipXmlParser flipXmlParser;
-
     @Override
     public int getSort() {
         return 1;
@@ -23,12 +23,28 @@ public class FlipParserImpl implements Parser {
     @Override
     public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
         JSONObject flip = new JSONObject();
-        if (xslfSimpleShape.getFlipHorizontal())
+        CTSphereCoords ctSphereCoords = getScene3D(xslfSimpleShape);
+        if (xslfSimpleShape.getFlipHorizontal() || (ctSphereCoords != null && ctSphereCoords.getLat() == 10800000))
             flip.put("horizontal", true);
-        if (xslfSimpleShape.getFlipVertical())
+        if (xslfSimpleShape.getFlipVertical() || (ctSphereCoords != null && ctSphereCoords.getLon() == 10800000))
             flip.put("vertical", true);
-        flipXmlParser.putScene3d(xslfSimpleShape.getXmlObject().toString(), flip);
         if (!flip.isEmpty())
             shape.put("flip", flip);
+    }
+
+    private CTSphereCoords getScene3D(XSLFSimpleShape xslfSimpleShape) {
+        XmlObject xmlObject = xslfSimpleShape.getXmlObject();
+        if (!(xmlObject instanceof CTShape))
+            return null;
+
+        CTScene3D ctScene3D = ((CTShape) xmlObject).getSpPr().getScene3D();
+        if (ctScene3D == null)
+            return null;
+
+        CTCamera ctCamera = ctScene3D.getCamera();
+        if (ctCamera == null)
+            return null;
+
+        return ctCamera.getRot();
     }
 }

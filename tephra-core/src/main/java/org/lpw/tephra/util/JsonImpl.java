@@ -168,4 +168,9 @@ public class JsonImpl implements Json {
     public boolean hasTrue(JSONObject object, String key) {
         return containsKey(object, key) && object.getBooleanValue(key);
     }
+
+    @Override
+    public JSONObject copy(JSONObject object) {
+        return object == null ? null : toObject(toString(object));
+    }
 }
