@@ -160,6 +160,21 @@ public class JsonImpl implements Json {
     }
 
     @Override
+    public JSONObject findObject(JSONObject object, String... keys) {
+        if (validator.isEmpty(object) || validator.isEmpty(keys))
+            return null;
+
+        for (String key : keys) {
+            if (!object.containsKey(key))
+                return null;
+
+            object = object.getJSONObject(key);
+        }
+
+        return object;
+    }
+
+    @Override
     public boolean containsKey(JSONObject object, String key) {
         return object != null && key != null && object.containsKey(key);
     }

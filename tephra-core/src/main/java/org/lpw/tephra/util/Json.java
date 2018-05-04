@@ -97,6 +97,15 @@ public interface Json {
     byte[] toBytes(Object object);
 
     /**
+     * 递归查找对象。
+     *
+     * @param object 根对象。
+     * @param keys   递归key集。
+     * @return 对象；未找到则返回null。
+     */
+    JSONObject findObject(JSONObject object, String... keys);
+
+    /**
      * 是否包含key。
      *
      * @param object JSON对象。
