@@ -102,17 +102,34 @@ public class IoImpl implements Io {
     }
 
     @Override
-    public void write(String path, byte[] content) {
+    public void write(String path, byte[] bytes) {
         if (validator.isEmpty(path))
             return;
 
-        try {
-            if (logger.isDebugEnable())
-                logger.debug("写入文件：{}", path);
+        if (logger.isDebugEnable())
+            logger.debug("写入文件：{}", path);
 
-            OutputStream output = new FileOutputStream(path);
-            output.write(content);
-            output.close();
+        try {
+            OutputStream outputStream = new FileOutputStream(path);
+            outputStream.write(bytes);
+            outputStream.close();
+        } catch (IOException e) {
+            logger.warn(e, "写入文件[{}]时异常！", path);
+        }
+    }
+
+    @Override
+    public void write(String path, InputStream inputStream) {
+        if (validator.isEmpty(path))
+            return;
+
+        if (logger.isDebugEnable())
+            logger.debug("写入文件：{}", path);
+
+        try {
+            OutputStream outputStream = new FileOutputStream(path);
+            copy(inputStream,outputStream);
+            outputStream.close();
         } catch (IOException e) {
             logger.warn(e, "写入文件[{}]时异常！", path);
         }

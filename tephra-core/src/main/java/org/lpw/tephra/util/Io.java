@@ -60,10 +60,18 @@ public interface Io {
     /**
      * 写入文件。
      *
-     * @param path    文件所在路径。
-     * @param content 文件内容。
+     * @param path  文件所在路径。
+     * @param bytes 文件内容。
      */
-    void write(String path, byte[] content);
+    void write(String path, byte[] bytes);
+
+    /**
+     * 写入文件。
+     *
+     * @param path        文件所在路径。
+     * @param inputStream 输入流。
+     */
+    void write(String path, InputStream inputStream);
 
     /**
      * 复制文件。
