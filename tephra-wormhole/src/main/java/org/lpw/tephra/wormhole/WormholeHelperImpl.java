@@ -22,12 +22,14 @@ public class WormholeHelperImpl implements WormholeHelper {
     private Sign sign;
     @Inject
     private Http http;
-    @Value("${tephra.wormhole.image.url:}")
-    private String imageUrl;
+    @Value("${tephra.wormhole.url:}")
+    private String url;
+    @Value("${tephra.wormhole.url.save-image:}")
+    private String saveImageUrl;
 
     @Override
     public String saveImage(String path, String name, String sign, File file) {
-        if (validator.isEmpty(imageUrl))
+        if (validator.isEmpty(url) || validator.isEmpty(saveImageUrl))
             return null;
 
         Map<String, String> parameters = new HashMap<>();
@@ -42,6 +44,6 @@ public class WormholeHelperImpl implements WormholeHelper {
         Map<String, File> files = new HashMap<>();
         files.put("file", file);
 
-        return http.upload(imageUrl, null, parameters, files);
+        return url + http.upload(saveImageUrl, null, parameters, files);
     }
 }
