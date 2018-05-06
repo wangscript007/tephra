@@ -2,6 +2,7 @@ package org.lpw.tephra.dao.jdbc;
 
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.dao.ConnectionFactory;
+import org.lpw.tephra.dao.Mode;
 import org.lpw.tephra.dao.dialect.Dialect;
 
 import java.util.List;
@@ -11,6 +12,14 @@ import java.util.Map;
  * @author lpw
  */
 public interface DataSource extends ConnectionFactory<javax.sql.DataSource> {
+    /**
+     * 增加一次获取失败。
+     *
+     * @param name 数据源引用名称。
+     * @param mode 操作方式。
+     */
+    void addGetFailure(String name, Mode mode);
+
     /**
      * 获取只读数据源集。
      *

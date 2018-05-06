@@ -71,8 +71,9 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
             this.connections.set(connections);
 
             return connection;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.warn(e, "获取数据库[{}:{}]连接时发生异常！", dataSource, mode);
+            this.dataSource.addGetFailure(dataSource, mode);
 
             throw new NullPointerException("获取数据库[" + dataSource + "," + mode + "]连接时发生异常！");
         }

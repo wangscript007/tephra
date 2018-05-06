@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.lpw.tephra.dao.Mode;
 import org.lpw.tephra.dao.dialect.Dialect;
 import org.lpw.tephra.dao.dialect.DialectFactory;
 import org.lpw.tephra.util.Converter;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author lpw
@@ -56,6 +58,7 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
     private Map<String, DataSource> writeables = new ConcurrentHashMap<>();
     private Map<String, List<DataSource>> readonlys = new ConcurrentHashMap<>();
     private Map<String, Boolean> readonly = new ConcurrentHashMap<>();
+    private Map<String, AtomicInteger> failures = new ConcurrentHashMap<>();
 
     @Override
     public DataSource getWriteable(String key) {
@@ -70,6 +73,18 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
         List<DataSource> list = listReadonly(key);
 
         return list.get(generator.random(0, list.size() - 1));
+    }
+
+    @Override
+    public synchronized void addGetFailure(String name, Mode mode) {
+        AtomicInteger atomicInteger = failures.computeIfAbsent(name, key -> new AtomicInteger());
+        if (atomicInteger.incrementAndGet() < maxActive)
+            return;
+
+        JSONObject config = configs.get(name);
+        createDataSource(key, dialects.get(name), config.getString("username"), config.getString("password"),
+                config.getJSONArray("ips"), config.getString("schema"));
+        atomicInteger.set(0);
     }
 
     @Override
@@ -128,16 +143,15 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
         configs.put(key, config);
         Dialect dialect = dialectFactory.get(config.getString("type"));
         dialects.put(key, dialect);
-        createDataSource(key, dialect, config.getString("username"), config.getString("password"), config.getJSONArray("ips"), config.getString("schema"));
+        if (key != null && writeables.get(key) == null)
+            createDataSource(key, dialect, config.getString("username"), config.getString("password"),
+                    config.getJSONArray("ips"), config.getString("schema"));
 
         if (logger.isInfoEnable())
             logger.info("成功创建数据库[{}]连接池。", config);
     }
 
     private void createDataSource(String key, Dialect dialect, String username, String password, JSONArray ips, String schema) {
-        if (key == null || writeables.get(key) != null)
-            return;
-
         for (int i = 0; i < ips.size(); i++) {
             org.apache.tomcat.jdbc.pool.DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource();
             dataSource.setDriverClassName(dialect.getDriver());

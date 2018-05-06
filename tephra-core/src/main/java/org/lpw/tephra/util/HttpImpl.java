@@ -33,7 +33,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -265,8 +264,8 @@ public class HttpImpl implements Http, ContextRefreshedListener {
             io.copy(response.getEntity().getContent(), outputStream);
             response.close();
             outputStream.close();
-        } catch (IOException e) {
-            logger.warn(e, "执行HTTP请求时发生异常！");
+        } catch (Throwable e) {
+            logger.warn(null, "执行HTTP请求时发生异常[{}]！", e.getMessage());
         }
     }
 
