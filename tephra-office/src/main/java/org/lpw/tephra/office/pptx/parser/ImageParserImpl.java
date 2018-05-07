@@ -36,7 +36,7 @@ public class ImageParserImpl implements Parser {
         parseSize(xslfPictureData, image);
         image.put("contentType", xslfPictureData.getContentType());
         try {
-            image.put("uri", mediaWriter.write(MediaWriter.Type.Image, xslfPictureData.getContentType(), xslfPictureData.getInputStream()));
+            image.put("url", mediaWriter.write(MediaWriter.Type.Image, xslfPictureData.getContentType(), xslfPictureData.getInputStream()));
         } catch (IOException e) {
             logger.warn(e, "获取PPTX图片数据时发生异常！");
         }

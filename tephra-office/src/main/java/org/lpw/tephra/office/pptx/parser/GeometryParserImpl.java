@@ -95,7 +95,7 @@ public class GeometryParserImpl implements Parser {
         PaintStyle.TexturePaint texturePaint = (PaintStyle.TexturePaint) paintStyle;
         texture.put("contentType", texturePaint.getContentType());
         texture.put("alpha", texturePaint.getAlpha() / 100000.0D);
-        texture.put("uri", mediaWriter.write(MediaWriter.Type.Image, texturePaint.getContentType(), texturePaint.getImageData()));
+        texture.put("url", mediaWriter.write(MediaWriter.Type.Image, texturePaint.getContentType(), texturePaint.getImageData()));
         parseFillRect(xslfSimpleShape, texture, shape);
         fill.put("texture", texture);
     }

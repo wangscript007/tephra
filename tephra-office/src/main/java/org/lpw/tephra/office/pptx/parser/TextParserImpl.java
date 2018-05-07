@@ -25,7 +25,7 @@ public class TextParserImpl implements Parser {
     private Validator validator;
     @Inject
     private OfficeHelper officeHelper;
-    private String[] merges = {"align", "fontFamily", "fontSize", "color", "bold", "italic", "underline", "strikethrough",
+    private String[] merges = {"horizontalAlign", "fontFamily", "fontSize", "color", "bold", "italic", "underline", "strikethrough",
             "subscript", "superscript"};
 
     @Override
@@ -71,7 +71,7 @@ public class TextParserImpl implements Parser {
             paragraph.put("words", words);
             paragraphs.add(paragraph);
         });
-        if(paragraphs.isEmpty())
+        if (paragraphs.isEmpty())
             return;
 
         merge(text, paragraphs);
@@ -105,16 +105,16 @@ public class TextParserImpl implements Parser {
     private void parseAlign(XSLFTextParagraph xslfTextParagraph, JSONObject paragraph) {
         switch (xslfTextParagraph.getTextAlign()) {
             case LEFT:
-                paragraph.put("align", "left");
+                paragraph.put("horizontalAlign", "left");
                 return;
             case CENTER:
-                paragraph.put("align", "center");
+                paragraph.put("horizontalAlign", "center");
                 return;
             case RIGHT:
-                paragraph.put("align", "right");
+                paragraph.put("horizontalAlign", "right");
                 return;
             case JUSTIFY:
-                paragraph.put("align", "justify");
+                paragraph.put("horizontalAlign", "justify");
         }
     }
 
