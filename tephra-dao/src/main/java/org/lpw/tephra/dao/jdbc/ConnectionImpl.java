@@ -71,9 +71,9 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
             this.connections.set(connections);
 
             return connection;
-        } catch (Throwable e) {
-            logger.warn(e, "获取数据库[{}:{}]连接时发生异常！", dataSource, mode);
-            this.dataSource.addGetFailure(dataSource, mode);
+        } catch (Throwable throwable) {
+            this.dataSource.addGetFailure(dataSource, mode, throwable);
+            logger.warn(throwable, "获取数据库[{}:{}]连接时发生异常！", dataSource, mode);
 
             throw new NullPointerException("获取数据库[" + dataSource + "," + mode + "]连接时发生异常！");
         }
@@ -82,7 +82,7 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
     @Override
     public void fail(Throwable throwable) {
         Map<String, Connection> connections = this.connections.get();
-        if (connections != null) {
+        if (!validator.isEmpty(connections)) {
             rollback(connections);
             close(connections);
 
@@ -95,7 +95,7 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
     @Override
     public void close() {
         Map<String, Connection> connections = this.connections.get();
-        if (connections != null) {
+        if (!validator.isEmpty(connections)) {
             commit(connections);
             close(connections);
 
@@ -110,10 +110,10 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
             for (Connection connection : connections.values())
                 if (isOpen(connection) && !connection.getAutoCommit())
                     connection.commit();
-        } catch (SQLException e) {
-            logger.warn(e, "提交数据库[{}]事务时发生异常！", converter.toString(connections));
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "提交数据库[{}]事务时发生异常！", converter.toString(connections));
 
-            fail(e);
+            fail(throwable);
         }
     }
 
@@ -122,27 +122,27 @@ public class ConnectionImpl extends ConnectionSupport<Connection> implements org
             try {
                 if (isOpen(connection) && !connection.getAutoCommit())
                     connection.rollback(savepoints.get().get(key));
-            } catch (SQLException e) {
-                logger.warn(e, "回滚数据库连接时发生异常！");
+            } catch (Throwable throwable) {
+                logger.warn(throwable, "回滚数据库连接[{}]时发生异常！", key);
+            }
+        });
+    }
+
+    private void close(Map<String, Connection> connections) {
+        connections.forEach((key, connection) -> {
+            try {
+                if (isOpen(connection)) {
+                    connection.releaseSavepoint(savepoints.get().get(key));
+                    connection.close();
+                }
+            } catch (Throwable throwable) {
+                logger.warn(throwable, "关闭数据库[{}]事务时发生异常！", key);
             }
         });
     }
 
     private boolean isOpen(Connection connection) throws SQLException {
         return !connection.isClosed();
-    }
-
-    private void close(Map<String, Connection> connections) {
-        connections.forEach((key, connection) -> {
-            try {
-                connection.releaseSavepoint(savepoints.get().get(key));
-                connection.close();
-            } catch (SQLException e) {
-                logger.warn(e, "关闭数据库[{}]事务时发生异常！", key);
-
-                fail(e);
-            }
-        });
     }
 
     private void remove() {

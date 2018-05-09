@@ -15,10 +15,11 @@ public interface DataSource extends ConnectionFactory<javax.sql.DataSource> {
     /**
      * 增加一次获取失败。
      *
-     * @param name 数据源引用名称。
-     * @param mode 操作方式。
+     * @param name      数据源引用名称。
+     * @param mode      操作方式。
+     * @param throwable 异常信息。
      */
-    void addGetFailure(String name, Mode mode);
+    void addGetFailure(String name, Mode mode, Throwable throwable);
 
     /**
      * 获取只读数据源集。

@@ -76,11 +76,14 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
     }
 
     @Override
-    public synchronized void addGetFailure(String name, Mode mode) {
+    public synchronized void addGetFailure(String name, Mode mode, Throwable throwable) {
         AtomicInteger atomicInteger = failures.computeIfAbsent(name, key -> new AtomicInteger());
+        logger.error(null, "获取数据库[{}:{}:{}:{}]连接失败[{}]！", name, mode,
+                maxActive, atomicInteger.get(), throwable.getMessage());
         if (atomicInteger.incrementAndGet() < maxActive)
             return;
 
+        logger.error(null, "获取数据库连接失败累计次数超过最大连接数，尝试重新创建连接池！");
         JSONObject config = configs.get(name);
         createDataSource(key, dialects.get(name), config.getString("username"), config.getString("password"),
                 config.getJSONArray("ips"), config.getString("schema"));
