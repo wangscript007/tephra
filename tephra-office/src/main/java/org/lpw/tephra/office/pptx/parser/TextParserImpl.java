@@ -53,7 +53,7 @@ public class TextParserImpl implements Parser {
 
                 JSONObject word = new JSONObject();
                 word.put("fontFamily", xslfTextRun.getFontFamily());
-                word.put("fontSize", officeHelper.pointToPixel(xslfTextRun.getFontSize()));
+                word.put("fontSize", xslfTextRun.getFontSize());
                 word.put("bold", xslfTextRun.isBold());
                 word.put("italic", xslfTextRun.isItalic());
                 word.put("underline", xslfTextRun.isUnderlined());

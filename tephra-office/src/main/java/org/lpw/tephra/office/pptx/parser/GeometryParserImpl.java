@@ -34,7 +34,7 @@ public class GeometryParserImpl implements Parser {
     public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
         JSONObject geometry = new JSONObject();
         parseLine(xslfSimpleShape, geometry);
-        parseFill(xslfSimpleShape, mediaWriter, geometry, shape);
+        parseFill(xslfSimpleShape, mediaWriter, geometry);
         if (geometry.isEmpty())
             return;
 
@@ -68,13 +68,13 @@ public class GeometryParserImpl implements Parser {
 
         int alpha = ((PaintStyle.SolidPaint) paintStyle).getSolidColor().getAlpha();
         if (alpha > -1)
-            color.put("alpha", officeHelper.fromPercent(255, alpha));
+            color.put("alpha", officeHelper.fromPercent(alpha));
     }
 
-    private void parseFill(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject geometry, JSONObject shape) {
+    private void parseFill(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject geometry) {
         JSONObject fill = new JSONObject();
         parseColor(xslfSimpleShape, fill);
-        parseTexture(xslfSimpleShape, mediaWriter, fill, shape);
+        parseTexture(xslfSimpleShape, mediaWriter, fill);
         if (!fill.isEmpty())
             geometry.put("fill", fill);
 
@@ -86,7 +86,7 @@ public class GeometryParserImpl implements Parser {
             fill.put("color", officeHelper.colorToJson(fillColor));
     }
 
-    private void parseTexture(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject fill, JSONObject shape) {
+    private void parseTexture(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject fill) {
         PaintStyle paintStyle = xslfSimpleShape.getFillStyle().getPaint();
         if (!(paintStyle instanceof PaintStyle.TexturePaint))
             return;
@@ -96,19 +96,19 @@ public class GeometryParserImpl implements Parser {
         texture.put("contentType", texturePaint.getContentType());
         texture.put("alpha", texturePaint.getAlpha() / 100000.0D);
         texture.put("url", mediaWriter.write(MediaWriter.Type.Image, texturePaint.getContentType(), texturePaint.getImageData()));
-        parseFillRect(xslfSimpleShape, texture, shape);
+        parseFillRect(xslfSimpleShape, texture);
         fill.put("texture", texture);
     }
 
-    private void parseFillRect(XSLFSimpleShape xslfSimpleShape, JSONObject texture, JSONObject shape) {
+    private void parseFillRect(XSLFSimpleShape xslfSimpleShape, JSONObject texture) {
         XmlObject xmlObject = xslfSimpleShape.getXmlObject();
         if (xmlObject instanceof CTBackground)
-            parseBlipFill(((CTBackground) xmlObject).getBgPr().getBlipFill(), texture, shape);
+            parseBlipFill(((CTBackground) xmlObject).getBgPr().getBlipFill(), texture);
         else if (xmlObject instanceof CTShape)
-            parseBlipFill(((CTShape) xmlObject).getSpPr().getBlipFill(), texture, shape);
+            parseBlipFill(((CTShape) xmlObject).getSpPr().getBlipFill(), texture);
     }
 
-    private void parseBlipFill(CTBlipFillProperties ctBlipFillProperties, JSONObject texture, JSONObject shape) {
+    private void parseBlipFill(CTBlipFillProperties ctBlipFillProperties, JSONObject texture) {
         CTStretchInfoProperties ctStretchInfoProperties = ctBlipFillProperties.getStretch();
         if (ctStretchInfoProperties == null)
             return;
@@ -117,12 +117,9 @@ public class GeometryParserImpl implements Parser {
         if (ctRelativeRect == null)
             return;
 
-        JSONObject anchor = shape.getJSONObject("anchor");
-        int width = anchor.getIntValue("width");
-        int height = anchor.getIntValue("height");
-        texture.put("left", officeHelper.fromPercent(width, ctRelativeRect.getL()));
-        texture.put("top", officeHelper.fromPercent(height, ctRelativeRect.getT()));
-        texture.put("right", officeHelper.fromPercent(width, ctRelativeRect.getR()));
-        texture.put("bottom", officeHelper.fromPercent(height, ctRelativeRect.getB()));
+        texture.put("left", officeHelper.fromPercent(ctRelativeRect.getL()));
+        texture.put("top", officeHelper.fromPercent(ctRelativeRect.getT()));
+        texture.put("right", officeHelper.fromPercent(ctRelativeRect.getR()));
+        texture.put("bottom", officeHelper.fromPercent(ctRelativeRect.getB()));
     }
 }

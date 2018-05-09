@@ -50,13 +50,13 @@ public class OfficeHelperImpl implements OfficeHelper {
     }
 
     @Override
-    public int fromPercent(int max, int percent) {
-        return max * percent / 100000;
+    public double fromPercent(int percent) {
+        return percent / 100000.0D;
     }
 
     @Override
-    public int toPercent(int max, int value) {
-        return 100000 * value / max;
+    public int toPercent(double value) {
+        return numeric.toInt(value * 100000);
     }
 
     @Override

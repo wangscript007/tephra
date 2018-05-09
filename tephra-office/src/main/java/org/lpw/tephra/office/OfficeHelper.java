@@ -49,22 +49,20 @@ public interface OfficeHelper {
     double pixelToPoint(int pixel);
 
     /**
-     * 转化百分比数值。
+     * 获取百分比数值。
      *
-     * @param max     最大值。
      * @param percent 百分比。
      * @return 数值。
      */
-    int fromPercent(int max, int percent);
+    double fromPercent(int percent);
 
     /**
-     * 转化为百分比数值。
+     * 转化为百分比值。
      *
-     * @param max   最大值。
      * @param value 数值。
-     * @return 百分比数值。
+     * @return 百分比值。
      */
-    int toPercent(int max, int value);
+    int toPercent(double value);
 
     /**
      * 颜色值转化为JSON数据。
