@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.MediaWriter;
 import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.io.IOException;
 
 /**
@@ -19,6 +21,8 @@ import java.io.IOException;
 public class ImageParserImpl implements Parser {
     @Inject
     private Logger logger;
+    @Inject
+    private OfficeHelper officeHelper;
 
     @Override
     public int getSort() {
@@ -31,6 +35,7 @@ public class ImageParserImpl implements Parser {
             return;
 
         XSLFPictureShape xslfPictureShape = (XSLFPictureShape) xslfSimpleShape;
+        parseClipping(xslfPictureShape, shape);
         JSONObject image = new JSONObject();
         XSLFPictureData xslfPictureData = xslfPictureShape.getPictureData();
         parseSize(xslfPictureData, image);
@@ -41,6 +46,19 @@ public class ImageParserImpl implements Parser {
             logger.warn(e, "获取PPTX图片数据时发生异常！");
         }
         shape.put("image", image);
+    }
+
+    private void parseClipping(XSLFPictureShape xslfPictureShape, JSONObject shape) {
+        Insets insets = xslfPictureShape.getClipping();
+        if (insets == null)
+            return;
+
+        JSONObject clipping = new JSONObject();
+        clipping.put("left", officeHelper.fromPercent(insets.left));
+        clipping.put("top", officeHelper.fromPercent(insets.top));
+        clipping.put("right", officeHelper.fromPercent(insets.right));
+        clipping.put("bottom", officeHelper.fromPercent(insets.bottom));
+        shape.put("clipping", clipping);
     }
 
     private void parseSize(XSLFPictureData xslfPictureData, JSONObject image) {
