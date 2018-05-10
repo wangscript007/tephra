@@ -40,6 +40,8 @@ public class GeometryParserImpl implements Parser {
 
         geometry.put("type", xslfSimpleShape.getShapeType() == null ? "rect" : format(xslfSimpleShape.getShapeType().toString()));
         shape.put("geometry", geometry);
+        System.out.println("###############################");
+        System.out.println(xslfSimpleShape.getXmlObject());
     }
 
     private void parseLine(XSLFSimpleShape xslfSimpleShape, JSONObject geometry) {

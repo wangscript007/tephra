@@ -31,6 +31,11 @@ public class ContextImpl implements Context, Closable, ContextRefreshedListener 
     private ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
 
     @Override
+    public String getAbsoluteRoot() {
+        return root;
+    }
+
+    @Override
     public String getAbsolutePath(String path) {
         String absolutePath = this.absolutePath.get(path);
         if (absolutePath == null) {

@@ -9,6 +9,13 @@ import java.util.Locale;
  */
 public interface Context {
     /**
+     * 获取根绝对路径值。
+     *
+     * @return 根绝对路径值。
+     */
+    String getAbsoluteRoot();
+
+    /**
      * 获取绝对路径。
      *
      * @param path 相对路径。
