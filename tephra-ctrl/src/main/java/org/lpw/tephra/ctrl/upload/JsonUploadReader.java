@@ -18,6 +18,7 @@ public class JsonUploadReader implements UploadReader {
     private String contentType;
     private String base64;
     private byte[] bytes;
+    private InputStream inputStream;
 
     JsonUploadReader(JSONObject object) {
         this(object.getString("fieldName"), object.getString("fileName"), object.getString("contentType"),
@@ -58,7 +59,10 @@ public class JsonUploadReader implements UploadReader {
 
     @Override
     public InputStream getInputStream() {
-        return new ByteArrayInputStream(getBytes());
+        if (inputStream == null)
+            inputStream = new ByteArrayInputStream(getBytes());
+
+        return inputStream;
     }
 
     @Override

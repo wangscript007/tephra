@@ -8,6 +8,13 @@ import java.io.InputStream;
  */
 public interface WormholeHelper {
     /**
+     * 判断Wormhole服务是否可用。
+     *
+     * @return true-可用；false-不可用。
+     */
+    boolean enable();
+
+    /**
      * 保存图片。
      *
      * @param path        目录。

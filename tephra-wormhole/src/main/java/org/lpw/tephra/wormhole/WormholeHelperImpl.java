@@ -38,6 +38,11 @@ public class WormholeHelperImpl implements WormholeHelper {
     private String saveImageUrl;
 
     @Override
+    public boolean enable() {
+        return !validator.isEmpty(url) && !validator.isEmpty(saveImageUrl);
+    }
+
+    @Override
     public String saveImage(String path, String name, String conentType, String sign, InputStream inputStream) {
         String suffix = null;
         if (!validator.isEmpty(name))

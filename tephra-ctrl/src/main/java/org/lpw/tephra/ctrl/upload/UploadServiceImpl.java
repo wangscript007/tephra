@@ -6,7 +6,6 @@ import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.storage.Storage;
 import org.lpw.tephra.storage.Storages;
-import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Image;
@@ -14,6 +13,7 @@ import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Message;
 import org.lpw.tephra.util.Validator;
+import org.lpw.tephra.wormhole.WormholeHelper;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -40,13 +40,13 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
     @Inject
     private Generator generator;
     @Inject
-    private Converter converter;
-    @Inject
     private Image image;
     @Inject
     private Logger logger;
     @Inject
     private Storages storages;
+    @Inject
+    private WormholeHelper wormholeHelper;
     @Inject
     private JsonConfigs jsonConfigs;
     private Map<String, UploadListener> listeners;
@@ -98,7 +98,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         String name = reader.getName();
         UploadListener listener = getListener(name);
         if (listener == null)
-            return failure(reader, message.get(PREFIX + "listener.not-exists",name));
+            return failure(reader, message.get(PREFIX + "listener.not-exists", name));
 
         String contentType = listener.getContentType(name, reader.getContentType(), reader.getFileName());
         if (!listener.isUploadEnable(name, contentType, reader.getFileName())) {
@@ -144,6 +144,16 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         object.put("success", true);
         object.put("name", reader.getName());
         object.put("fileName", reader.getFileName());
+
+        if (image.is(contentType, reader.getFileName()) && storage.getType().equals(Storages.TYPE_DISK) && wormholeHelper.enable()) {
+            object.put("path", wormholeHelper.saveImage(null, null, contentType, null, reader.getInputStream()));
+
+            if (logger.isDebugEnable())
+                logger.debug("保存上传文件[{}]。", object);
+
+            return object;
+        }
+
         String path = getPath(listener, reader, contentType);
         object.put("path", path);
         reader.write(storage, path);
@@ -152,8 +162,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
             object.put("thumbnail", thumbnail);
 
         if (logger.isDebugEnable())
-            logger.debug("保存上传[{}:{}]的文件[{}:{}:{}]。", reader.getName(), reader.getFileName(), path,
-                    thumbnail, converter.toBitSize(reader.getSize()));
+            logger.debug("保存上传文件[{}]。", object);
 
         return object;
     }
