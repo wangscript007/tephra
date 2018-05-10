@@ -146,7 +146,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         object.put("fileName", reader.getFileName());
 
         if (image.is(contentType, reader.getFileName()) && storage.getType().equals(Storages.TYPE_DISK) && wormholeHelper.enable()) {
-            object.put("path", wormholeHelper.saveImage(null, null, contentType, null, reader.getInputStream()));
+            object.put("path", wormholeHelper.image(null, null, contentType, null, reader.getInputStream()));
 
             if (logger.isDebugEnable())
                 logger.debug("保存上传文件[{}]。", object);

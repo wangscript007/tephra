@@ -24,7 +24,7 @@ public interface WormholeHelper {
      * @param inputStream 输入流。
      * @return URI地址。
      */
-    String saveImage(String path, String name, String conentType, String sign, InputStream inputStream);
+    String image(String path, String name, String conentType, String sign, InputStream inputStream);
 
     /**
      * 保存图片。
@@ -35,5 +35,5 @@ public interface WormholeHelper {
      * @param file 文件。
      * @return URI地址。
      */
-    String saveImage(String path, String name, String sign, File file);
+    String image(String path, String name, String sign, File file);
 }

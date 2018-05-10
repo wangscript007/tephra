@@ -32,18 +32,19 @@ public class WormholeHelperImpl implements WormholeHelper {
     private Sign sign;
     @Inject
     private Http http;
-    @Value("${tephra.wormhole.url:}")
-    private String url;
-    @Value("${tephra.wormhole.url.save-image:}")
-    private String saveImageUrl;
+    @Value("${tephra.wormhole.image:}")
+    private String image;
 
     @Override
     public boolean enable() {
-        return !validator.isEmpty(url) && !validator.isEmpty(saveImageUrl);
+        return !validator.isEmpty(image);
     }
 
     @Override
-    public String saveImage(String path, String name, String conentType, String sign, InputStream inputStream) {
+    public String image(String path, String name, String conentType, String sign, InputStream inputStream) {
+        if (validator.isEmpty(image))
+            return null;
+
         String suffix = null;
         if (!validator.isEmpty(name))
             suffix = name.substring(name.lastIndexOf('.'));
@@ -51,15 +52,15 @@ public class WormholeHelperImpl implements WormholeHelper {
             suffix = "." + conentType.substring(conentType.lastIndexOf('/') + 1);
         File file = new File(context.getAbsoluteRoot() + generator.random(32) + (suffix == null ? "" : suffix));
         io.write(file.getAbsolutePath(), inputStream);
-        String url = saveImage(path, name, sign, file);
+        String url = image(path, name, sign, file);
         io.delete(file);
 
         return url;
     }
 
     @Override
-    public String saveImage(String path, String name, String sign, File file) {
-        if (validator.isEmpty(url) || validator.isEmpty(saveImageUrl))
+    public String image(String path, String name, String sign, File file) {
+        if (validator.isEmpty(image))
             return null;
 
         Map<String, String> parameters = new HashMap<>();
@@ -74,6 +75,6 @@ public class WormholeHelperImpl implements WormholeHelper {
         Map<String, File> files = new HashMap<>();
         files.put("file", file);
 
-        return url + http.upload(saveImageUrl, null, parameters, files);
+        return http.upload(image, null, parameters, files);
     }
 }
