@@ -144,38 +144,44 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         object.put("success", true);
         object.put("name", reader.getName());
         object.put("fileName", reader.getFileName());
+        String suffix = getSuffix(listener, reader);
 
-        if (image.is(contentType, reader.getFileName()) && storage.getType().equals(Storages.TYPE_DISK) && wormholeHelper.enable()) {
-            object.put("path", wormholeHelper.image(null, null, contentType, null, reader.getInputStream()));
+        if (storage.getType().equals(Storages.TYPE_DISK)) {
+            String path = listener.getPath(reader.getName(), contentType, reader.getFileName());
+            String whPath = image.is(contentType, reader.getFileName()) ?
+                    wormholeHelper.image(path, null, suffix, null, reader.getInputStream()) :
+                    wormholeHelper.file(path, null, suffix, null, reader.getInputStream());
+            if (whPath != null) {
+                object.put("path", whPath);
+                if (logger.isDebugEnable())
+                    logger.debug("保存上传文件[{}]。", object);
 
-            if (logger.isDebugEnable())
-                logger.debug("保存上传文件[{}]。", object);
-
-            return object;
+                return object;
+            }
         }
 
-        String path = getPath(listener, reader, contentType);
+        String path = (ROOT + contentType + "/" + listener.getPath(reader.getName(), contentType, reader.getFileName()) + "/"
+                + dateTime.toString(dateTime.today(), "yyyyMMdd") + "/" + generator.random(32)
+                + suffix).replaceAll("[/]+", "/");
         object.put("path", path);
         reader.write(storage, path);
         String thumbnail = thumbnail(listener.getImageSize(key), storage, contentType, path);
         if (thumbnail != null)
             object.put("thumbnail", thumbnail);
-
         if (logger.isDebugEnable())
             logger.debug("保存上传文件[{}]。", object);
 
         return object;
     }
 
-    private String getPath(UploadListener listener, UploadReader reader, String contentType) {
-        String name = reader.getFileName();
-        StringBuilder path = new StringBuilder(ROOT).append(contentType).append('/')
-                .append(listener.getPath(reader.getName(), contentType, name)).append('/')
-                .append(dateTime.toString(dateTime.today(), "yyyyMMdd")).append('/').append(generator.random(32));
-        String suffix = listener.getSuffix(listener.getKey(), contentType, name);
-        path.append(validator.isEmpty(suffix) ? name.substring(name.lastIndexOf('.')) : suffix);
+    private String getSuffix(UploadListener listener, UploadReader reader) {
+        String suffix = listener.getSuffix(listener.getKey(), reader.getContentType(), reader.getFileName());
+        if (!validator.isEmpty(suffix))
+            return suffix;
 
-        return path.toString().replaceAll("[/]+", "/");
+        int indexOf = reader.getFileName().lastIndexOf('.');
+
+        return indexOf == -1 ? "" : reader.getFileName().substring(indexOf);
     }
 
     private String thumbnail(int[] size, Storage storage, String contentType, String path) {

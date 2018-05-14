@@ -34,33 +34,43 @@ public class WormholeHelperImpl implements WormholeHelper {
     private Http http;
     @Value("${tephra.wormhole.image:}")
     private String image;
+    @Value("${tephra.wormhole.file:}")
+    private String file;
 
     @Override
-    public boolean enable() {
-        return !validator.isEmpty(image);
-    }
-
-    @Override
-    public String image(String path, String name, String conentType, String sign, InputStream inputStream) {
-        if (validator.isEmpty(image))
-            return null;
-
-        String suffix = null;
-        if (!validator.isEmpty(name))
-            suffix = name.substring(name.lastIndexOf('.'));
-        else if (!validator.isEmpty(conentType))
-            suffix = "." + conentType.substring(conentType.lastIndexOf('/') + 1);
-        File file = new File(context.getAbsoluteRoot() + generator.random(32) + (suffix == null ? "" : suffix));
-        io.write(file.getAbsolutePath(), inputStream);
-        String url = image(path, name, sign, file);
-        io.delete(file);
-
-        return url;
+    public String image(String path, String name, String suffix, String sign, InputStream inputStream) {
+        return save(image, path, name, suffix, sign, inputStream);
     }
 
     @Override
     public String image(String path, String name, String sign, File file) {
-        if (validator.isEmpty(image))
+        return save(image, path, name, sign, file);
+    }
+
+    @Override
+    public String file(String path, String name, String suffix, String sign, InputStream inputStream) {
+        return save(this.file, path, name, suffix, sign, inputStream);
+    }
+
+    @Override
+    public String file(String path, String name, String sign, File file) {
+        return save(this.file, path, name, sign, file);
+    }
+
+    private String save(String url, String path, String name, String suffix, String sign, InputStream inputStream) {
+        if (validator.isEmpty(url))
+            return null;
+
+        File file = new File(context.getAbsoluteRoot() + getFilename(name, suffix));
+        io.write(file.getAbsolutePath(), inputStream);
+        String whUrl = save(url, path, name, sign, file);
+        io.delete(file);
+
+        return whUrl;
+    }
+
+    private String save(String url, String path, String name, String sign, File file) {
+        if (validator.isEmpty(url))
             return null;
 
         Map<String, String> parameters = new HashMap<>();
@@ -75,6 +85,17 @@ public class WormholeHelperImpl implements WormholeHelper {
         Map<String, File> files = new HashMap<>();
         files.put("file", file);
 
-        return http.upload(image, null, parameters, files);
+        return http.upload(url, null, parameters, files);
+    }
+
+    private String getFilename(String name, String suffix) {
+        int indexOf;
+        if (!validator.isEmpty(name) && (indexOf = name.lastIndexOf('.')) > -1)
+            suffix = name.substring(indexOf);
+
+        if (!validator.isEmpty(suffix))
+            return generator.random(32) + suffix;
+
+        return generator.random(32);
     }
 }
