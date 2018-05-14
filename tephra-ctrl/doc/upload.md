@@ -8,7 +8,7 @@
 
 |名称|类型|说明|
 |---|---|---|
-|fieldName|string|域名称[监听器KEY]。|
+|name|string|名称[监听器KEY]。|
 |fileName|string|文件名。|
 |contentType|string|文件类型。|
 |base64|string|Base64编码的文件数据。|
@@ -17,7 +17,7 @@
 ```
 {
     "success": "true/false",
-    "fieldName": "域名称，须与监听器KEY相同",
+    "name": "域名称，须与监听器KEY相同",
     "fileName": "文件名",
     "path": "上传文件保存路径，成功时返回",
     "thumbnail": "缩略图文件保存路径，成功且上传文件为符合缩略图设置的图片时返回",
@@ -47,3 +47,7 @@
 上传文件默认保存为`/upload/${content-type}/${date}/${file-name}`，其中`${content-type}`为文件类型，如image/png，`${date}`为上传日期，格式为yyyyMMdd，`${file-name}`为随机生成的长度为32个字符的文件名＋文件后缀。
 
 如果需要对上传的文件分门别类存储到不同的路径下，可以重写`UploadListener.getPath`方法，返回目标分类地址即可。如返回`/${path}/`，则文件最终保存的路径为：`/upload/${content-type}/${path}/${date}/${file-name}`。
+
+## Wormhole优先
+
+如果配置了[Wormhole](https://github.com/heisedebaise/wormhole)服务，则优先存储到Wormhole服务；否则存储到本地。

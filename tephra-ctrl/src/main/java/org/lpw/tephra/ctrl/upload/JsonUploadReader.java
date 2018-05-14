@@ -21,7 +21,7 @@ public class JsonUploadReader implements UploadReader {
     private InputStream inputStream;
 
     JsonUploadReader(JSONObject object) {
-        this(object.getString("fieldName"), object.getString("fileName"), object.getString("contentType"),
+        this(object.getString("name"), object.getString("fileName"), object.getString("contentType"),
                 object.getString("base64"));
     }
 

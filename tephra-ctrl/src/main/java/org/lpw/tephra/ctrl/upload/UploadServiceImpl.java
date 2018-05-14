@@ -83,11 +83,11 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
     }
 
     @Override
-    public JSONObject upload(String fieldName, String fileName, String contentType, String base64) {
+    public JSONObject upload(String name, String fileName, String contentType, String base64) {
         try {
-            return upload(new JsonUploadReader(fieldName, fileName, contentType, base64));
+            return upload(new JsonUploadReader(name, fileName, contentType, base64));
         } catch (IOException e) {
-            logger.warn(e, "处理文件[{}:{}:{}]上传时发生异常！", fieldName, fileName, contentType);
+            logger.warn(e, "处理文件[{}:{}:{}]上传时发生异常！", name, fileName, contentType);
 
             return new JSONObject();
         }
@@ -212,7 +212,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
     private JSONObject failure(UploadReader uploadReader, String message) {
         JSONObject object = new JSONObject();
         object.put("success", false);
-        object.put("fieldName", uploadReader.getName());
+        object.put("name", uploadReader.getName());
         object.put("fileName", uploadReader.getFileName());
         object.put("message", message);
 
