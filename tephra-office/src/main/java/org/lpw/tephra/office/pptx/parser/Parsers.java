@@ -14,6 +14,7 @@ public interface Parsers {
      * @param xslfSimpleShape 形状。
      * @param mediaWriter     媒体资源输出器。
      * @param shape           解析数据。
+     * @param layout          是否为模板形状。
      */
-    void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape);
+    void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout);
 }

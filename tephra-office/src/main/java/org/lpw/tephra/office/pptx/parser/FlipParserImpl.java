@@ -21,7 +21,7 @@ public class FlipParserImpl implements Parser {
     }
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
         JSONObject flip = new JSONObject();
         CTSphereCoords ctSphereCoords = getScene3D(xslfSimpleShape);
         if (xslfSimpleShape.getFlipHorizontal() || (ctSphereCoords != null && ctSphereCoords.getLat() == 10800000))

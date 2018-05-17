@@ -16,7 +16,7 @@ public class RotationParserImpl implements Parser {
     }
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
         if (xslfSimpleShape.getRotation() != 0.0D)
             shape.put("rotation", xslfSimpleShape.getRotation());
     }

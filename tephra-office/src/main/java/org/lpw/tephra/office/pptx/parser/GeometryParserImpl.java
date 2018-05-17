@@ -31,7 +31,7 @@ public class GeometryParserImpl implements Parser {
     }
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
         JSONObject geometry = new JSONObject();
         parseLine(xslfSimpleShape, geometry);
         parseFill(xslfSimpleShape, mediaWriter, geometry);
@@ -77,7 +77,6 @@ public class GeometryParserImpl implements Parser {
         parseTexture(xslfSimpleShape, mediaWriter, fill);
         if (!fill.isEmpty())
             geometry.put("fill", fill);
-
     }
 
     private void parseColor(XSLFSimpleShape xslfSimpleShape, JSONObject fill) {

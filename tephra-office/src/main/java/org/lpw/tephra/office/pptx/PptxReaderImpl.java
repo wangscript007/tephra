@@ -88,7 +88,7 @@ public class PptxReaderImpl implements PptxReader {
 
     private void parseBackground(XSLFBackground xslfBackground, MediaWriter mediaWriter, JSONObject slide, Map<Integer, String> layout) {
         JSONObject background = copyOrNew(layout, 0);
-        parsers.parse(xslfBackground, mediaWriter, background);
+        parsers.parse(xslfBackground, mediaWriter, background, slide == null);
         background.remove("anchor");
         if (background.isEmpty())
             return;
@@ -103,7 +103,7 @@ public class PptxReaderImpl implements PptxReader {
         xslfSlides.forEach(xslfShape -> {
             if (xslfShape instanceof XSLFSimpleShape) {
                 JSONObject shape = copyOrNew(layout, xslfShape.getShapeId());
-                parsers.parse((XSLFSimpleShape) xslfShape, mediaWriter, shape);
+                parsers.parse((XSLFSimpleShape) xslfShape, mediaWriter, shape, shapes == null);
                 if (shapes == null)
                     layout.put(xslfShape.getShapeId(), json.toString(shape));
                 else

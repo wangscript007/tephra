@@ -30,7 +30,7 @@ public class ImageParserImpl implements Parser {
     }
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
         if (!(xslfSimpleShape instanceof XSLFPictureShape))
             return;
 

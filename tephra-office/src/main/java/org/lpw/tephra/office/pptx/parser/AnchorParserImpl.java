@@ -23,7 +23,7 @@ public class AnchorParserImpl implements Parser {
     }
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
         Rectangle2D rectangle2D = xslfSimpleShape.getAnchor();
         JSONObject anchor = new JSONObject();
         anchor.put("x", numeric.toInt(rectangle2D.getX()));

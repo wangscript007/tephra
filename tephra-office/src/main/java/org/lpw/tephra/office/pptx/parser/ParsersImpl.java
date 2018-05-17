@@ -19,8 +19,8 @@ public class ParsersImpl implements Parsers, ContextRefreshedListener {
     private List<Parser> list;
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape) {
-        list.forEach(parser -> parser.parse(xslfSimpleShape, mediaWriter, shape));
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
+        list.forEach(parser -> parser.parse(xslfSimpleShape, mediaWriter, shape, layout));
     }
 
     @Override
