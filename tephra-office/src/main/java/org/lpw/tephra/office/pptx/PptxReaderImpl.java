@@ -9,10 +9,10 @@ import org.apache.poi.xslf.usermodel.XSLFGroupShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.parser.Parser;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -28,11 +28,11 @@ import java.util.Map;
 @Component("tephra.office.pptx.reader")
 public class PptxReaderImpl implements PptxReader {
     @Inject
-    private Numeric numeric;
-    @Inject
     private Json json;
     @Inject
     private Logger logger;
+    @Inject
+    private OfficeHelper officeHelper;
     @Inject
     private Parser parser;
 
@@ -61,8 +61,8 @@ public class PptxReaderImpl implements PptxReader {
     private void parseSize(XMLSlideShow xmlSlideShow, JSONObject object) {
         JSONObject size = new JSONObject();
         Dimension dimension = xmlSlideShow.getPageSize();
-        size.put("width", dimension.width);
-        size.put("height", dimension.height);
+        size.put("width", officeHelper.pointToPixel(dimension.width));
+        size.put("height", officeHelper.pointToPixel(dimension.height));
         object.put("size", size);
     }
 

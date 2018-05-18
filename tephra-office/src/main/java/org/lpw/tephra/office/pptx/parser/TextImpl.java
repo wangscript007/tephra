@@ -39,9 +39,6 @@ public class TextImpl implements Simple {
             return;
 
         XSLFTextShape xslfTextShape = (XSLFTextShape) xslfSimpleShape;
-        JSONObject text = new JSONObject();
-        parseMargin(xslfTextShape, text);
-        parseVerticalAlignment(xslfTextShape, text);
         JSONArray paragraphs = new JSONArray();
         xslfTextShape.getTextParagraphs().forEach(xslfTextParagraph -> {
             JSONObject paragraph = new JSONObject();
@@ -74,6 +71,10 @@ public class TextImpl implements Simple {
         if (paragraphs.isEmpty())
             return;
 
+        JSONObject text = new JSONObject();
+        text.put("direction", xslfTextShape.getTextDirection().name().toLowerCase());
+        parseMargin(xslfTextShape, text);
+        parseVerticalAlignment(xslfTextShape, text);
         merge(text, paragraphs);
         text.put("paragraphs", paragraphs);
         text.put("layout", layout);

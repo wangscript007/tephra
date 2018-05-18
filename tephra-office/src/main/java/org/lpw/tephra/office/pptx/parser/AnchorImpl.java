@@ -3,8 +3,8 @@ package org.lpw.tephra.office.pptx.parser;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.MediaWriter;
-import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -16,7 +16,7 @@ import java.awt.geom.Rectangle2D;
 @Component("tephra.office.pptx.parser.anchor")
 public class AnchorImpl implements Simple, Graphic {
     @Inject
-    private Numeric numeric;
+    private OfficeHelper officeHelper;
 
     @Override
     public int getSort() {
@@ -35,10 +35,10 @@ public class AnchorImpl implements Simple, Graphic {
 
     private void parse(Rectangle2D rectangle2D, JSONObject shape) {
         JSONObject anchor = new JSONObject();
-        anchor.put("x", numeric.toInt(rectangle2D.getX()));
-        anchor.put("y", numeric.toInt(rectangle2D.getY()));
-        anchor.put("width", numeric.toInt(rectangle2D.getWidth()));
-        anchor.put("height", numeric.toInt(rectangle2D.getHeight()));
+        anchor.put("x", officeHelper.pointToPixel(rectangle2D.getX()));
+        anchor.put("y", officeHelper.pointToPixel(rectangle2D.getY()));
+        anchor.put("width", officeHelper.pointToPixel(rectangle2D.getWidth()));
+        anchor.put("height", officeHelper.pointToPixel(rectangle2D.getHeight()));
         shape.put("anchor", anchor);
     }
 }
