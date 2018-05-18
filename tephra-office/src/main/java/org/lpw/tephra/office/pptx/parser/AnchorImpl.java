@@ -14,7 +14,7 @@ import java.awt.geom.Rectangle2D;
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.anchor")
-public class AnchorImpl implements Simple, Graphic {
+public class AnchorImpl implements Simple, Graphic, Anchor {
     @Inject
     private OfficeHelper officeHelper;
 
@@ -33,7 +33,8 @@ public class AnchorImpl implements Simple, Graphic {
         parse(xslfGraphicFrame.getAnchor(), shape);
     }
 
-    private void parse(Rectangle2D rectangle2D, JSONObject shape) {
+    @Override
+    public void parse(Rectangle2D rectangle2D, JSONObject shape) {
         JSONObject anchor = new JSONObject();
         anchor.put("x", officeHelper.pointToPixel(rectangle2D.getX()));
         anchor.put("y", officeHelper.pointToPixel(rectangle2D.getY()));

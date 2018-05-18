@@ -40,6 +40,7 @@ public class ParserImpl implements Parser, ContextRefreshedListener {
         simples = new ArrayList<>();
         simples.addAll(BeanFactory.getBeans(Simple.class));
         simples.sort(Comparator.comparingInt(Simple::getSort));
+//        simples.forEach(simple -> System.out.println(simple.getSort() + ";" + simple));
 
         graphics = new ArrayList<>();
         graphics.addAll(BeanFactory.getBeans(Graphic.class));
