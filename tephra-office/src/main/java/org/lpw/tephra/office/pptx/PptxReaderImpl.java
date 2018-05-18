@@ -4,11 +4,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFBackground;
+import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFGroupShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.lpw.tephra.office.pptx.parser.Parsers;
+import org.lpw.tephra.office.pptx.parser.Parser;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Numeric;
@@ -33,7 +34,7 @@ public class PptxReaderImpl implements PptxReader {
     @Inject
     private Logger logger;
     @Inject
-    private Parsers parsers;
+    private Parser parser;
 
     @Override
     public JSONObject read(InputStream inputStream, MediaWriter mediaWriter) {
@@ -88,7 +89,7 @@ public class PptxReaderImpl implements PptxReader {
 
     private void parseBackground(XSLFBackground xslfBackground, MediaWriter mediaWriter, JSONObject slide, Map<Integer, String> layout) {
         JSONObject background = copyOrNew(layout, 0);
-        parsers.parse(xslfBackground, mediaWriter, background, slide == null);
+        parser.parse(xslfBackground, mediaWriter, background, slide == null);
         background.remove("anchor");
         if (background.isEmpty())
             return;
@@ -103,11 +104,19 @@ public class PptxReaderImpl implements PptxReader {
         xslfSlides.forEach(xslfShape -> {
             if (xslfShape instanceof XSLFSimpleShape) {
                 JSONObject shape = copyOrNew(layout, xslfShape.getShapeId());
-                parsers.parse((XSLFSimpleShape) xslfShape, mediaWriter, shape, shapes == null);
+                parser.parse((XSLFSimpleShape) xslfShape, mediaWriter, shape, shapes == null);
                 if (shapes == null)
                     layout.put(xslfShape.getShapeId(), json.toString(shape));
                 else
                     shapes.add(shape);
+
+                return;
+            }
+
+            if (xslfShape instanceof XSLFGraphicFrame) {
+                JSONObject shape = copyOrNew(layout, xslfShape.getShapeId());
+                parser.parse((XSLFGraphicFrame) xslfShape, mediaWriter, shape);
+                shapes.add(shape);
 
                 return;
             }

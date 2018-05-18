@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.rotation")
-public class RotationParserImpl implements Parser {
+public class RotationImpl implements Simple {
     @Override
     public int getSort() {
         return 2;

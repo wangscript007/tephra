@@ -20,7 +20,7 @@ import java.util.Map;
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.text")
-public class TextParserImpl implements Parser {
+public class TextImpl implements Simple {
     @Inject
     private Validator validator;
     @Inject
@@ -76,6 +76,7 @@ public class TextParserImpl implements Parser {
 
         merge(text, paragraphs);
         text.put("paragraphs", paragraphs);
+        text.put("layout", layout);
         shape.put("text", text);
     }
 

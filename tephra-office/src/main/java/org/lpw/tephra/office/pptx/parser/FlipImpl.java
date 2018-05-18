@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.filp")
-public class FlipParserImpl implements Parser {
+public class FlipImpl implements Simple {
     @Override
     public int getSort() {
         return 1;

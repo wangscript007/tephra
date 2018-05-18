@@ -1,6 +1,7 @@
 package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.lpw.tephra.office.pptx.MediaWriter;
 import org.lpw.tephra.util.Numeric;
@@ -13,7 +14,7 @@ import java.awt.geom.Rectangle2D;
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.anchor")
-public class AnchorParserImpl implements Parser {
+public class AnchorImpl implements Simple, Graphic {
     @Inject
     private Numeric numeric;
 
@@ -24,7 +25,15 @@ public class AnchorParserImpl implements Parser {
 
     @Override
     public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
-        Rectangle2D rectangle2D = xslfSimpleShape.getAnchor();
+        parse(xslfSimpleShape.getAnchor(), shape);
+    }
+
+    @Override
+    public void parse(XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
+        parse(xslfGraphicFrame.getAnchor(), shape);
+    }
+
+    private void parse(Rectangle2D rectangle2D, JSONObject shape) {
         JSONObject anchor = new JSONObject();
         anchor.put("x", numeric.toInt(rectangle2D.getX()));
         anchor.put("y", numeric.toInt(rectangle2D.getY()));

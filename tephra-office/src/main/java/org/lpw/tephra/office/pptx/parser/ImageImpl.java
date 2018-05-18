@@ -18,7 +18,7 @@ import java.io.IOException;
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.image")
-public class ImageParserImpl implements Parser {
+public class ImageImpl implements Simple {
     @Inject
     private Logger logger;
     @Inject
@@ -26,7 +26,7 @@ public class ImageParserImpl implements Parser {
 
     @Override
     public int getSort() {
-        return 5;
+        return 8;
     }
 
     @Override

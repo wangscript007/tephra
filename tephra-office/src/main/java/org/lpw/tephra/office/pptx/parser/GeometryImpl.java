@@ -21,13 +21,13 @@ import java.awt.Color;
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.geometry")
-public class GeometryParserImpl implements Parser {
+public class GeometryImpl implements Simple {
     @Inject
     private OfficeHelper officeHelper;
 
     @Override
     public int getSort() {
-        return 6;
+        return 5;
     }
 
     @Override
