@@ -94,7 +94,8 @@ public class GeometryImpl implements Simple {
         PaintStyle.TexturePaint texturePaint = (PaintStyle.TexturePaint) paintStyle;
         texture.put("contentType", texturePaint.getContentType());
         texture.put("alpha", texturePaint.getAlpha() / 100000.0D);
-        texture.put("url", mediaWriter.write(MediaWriter.Type.Image, texturePaint.getContentType(), texturePaint.getImageData()));
+        texture.put("url", mediaWriter.write(MediaWriter.Type.Image, texturePaint.getContentType(), null,
+                texturePaint.getImageData()));
         parseFillRect(xslfSimpleShape, texture);
         fill.put("texture", texture);
     }
