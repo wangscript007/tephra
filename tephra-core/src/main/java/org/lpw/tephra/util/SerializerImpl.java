@@ -39,12 +39,11 @@ public class SerializerImpl implements Serializer {
         if (object == null || outputStream == null)
             return;
 
-        Output output = new Output(outputStream);
         Kryo kryo = kryoPool.borrow();
-        kryo.writeClass(output, object.getClass());
-        kryo.writeObject(output, object);
-        kryoPool.release(kryo);
+        Output output = new Output(outputStream);
+        kryo.writeClassAndObject(output, object);
         output.close();
+        kryoPool.release(kryo);
     }
 
     @Override
@@ -55,11 +54,11 @@ public class SerializerImpl implements Serializer {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T unserialize(InputStream inputStream) {
-        Input input = new Input(inputStream);
         Kryo kryo = kryoPool.borrow();
+        Input input = new Input(inputStream);
         T object = (T) kryo.readObject(input, kryo.readClass(input).getType());
-        kryoPool.release(kryo);
         input.close();
+        kryoPool.release(kryo);
 
         return object;
     }
