@@ -2,6 +2,7 @@ package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
@@ -50,22 +51,22 @@ public class TextImpl implements Simple {
 
                 JSONObject word = new JSONObject();
                 word.put("fontFamily", xslfTextRun.getFontFamily());
-                word.put("fontSize", xslfTextRun.getFontSize());
+                word.put("fontSize", officeHelper.pointToPixel(xslfTextRun.getFontSize()));
                 word.put("bold", xslfTextRun.isBold());
                 word.put("italic", xslfTextRun.isItalic());
                 word.put("underline", xslfTextRun.isUnderlined());
                 word.put("strikethrough", xslfTextRun.isStrikethrough());
                 word.put("subscript", xslfTextRun.isSubscript());
                 word.put("superscript", xslfTextRun.isSuperscript());
-                parseColor(xslfTextRun.getFontColor(), word);
                 word.put("word", xslfTextRun.getRawText());
+                parseColor(xslfTextRun.getFontColor(), word);
                 words.add(word);
             });
             if (words.isEmpty())
                 return;
 
             merge(paragraph, words);
-            paragraph.put("words", words);
+            paragraph.put("words", merge(words));
             paragraphs.add(paragraph);
         });
         if (paragraphs.isEmpty())
@@ -122,7 +123,7 @@ public class TextImpl implements Simple {
 
     private void parseColor(PaintStyle paintStyle, JSONObject word) {
         if (paintStyle instanceof PaintStyle.SolidPaint)
-            word.put("color", officeHelper.colorToJson(((PaintStyle.SolidPaint) paintStyle).getSolidColor().getColor()));
+            word.put("color", officeHelper.colorToJson(DrawPaint.applyColorTransform(((PaintStyle.SolidPaint) paintStyle).getSolidColor())));
     }
 
     private void merge(JSONObject object, JSONArray array) {
@@ -172,5 +173,23 @@ public class TextImpl implements Simple {
                     obj.remove(key);
             }
         }
+    }
+
+    private JSONArray merge(JSONArray words) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0, size = words.size(); i < size; i++) {
+            JSONObject word = words.getJSONObject(i);
+            if (word.size() > 1)
+                return words;
+
+            sb.append(word.getString("word"));
+        }
+
+        JSONObject object = new JSONObject();
+        object.put("word", sb.toString());
+        JSONArray array = new JSONArray();
+        array.add(object);
+
+        return array;
     }
 }
