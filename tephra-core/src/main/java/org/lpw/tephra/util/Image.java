@@ -133,4 +133,12 @@ public interface Image {
      * @return 文件宽高，第一个元素为宽，第二个为高；如果获取失败则返回null。
      */
     int[] size(File file);
+
+    /**
+     * 获取图片文件宽高。
+     *
+     * @param inputStream 图片流。
+     * @return 文件宽高，第一个元素为宽，第二个为高；如果获取失败则返回null。
+     */
+    int[] size(InputStream inputStream);
 }

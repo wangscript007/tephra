@@ -7,6 +7,8 @@ import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.xmlbeans.XmlObject;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.MediaWriter;
+import org.lpw.tephra.util.Image;
+import org.lpw.tephra.util.Logger;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRelativeRect;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStretchInfoProperties;
@@ -16,12 +18,18 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.awt.Color;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.geometry")
 public class GeometryImpl implements Simple {
+    @Inject
+    private Image image;
+    @Inject
+    private Logger logger;
     @Inject
     private OfficeHelper officeHelper;
 
@@ -90,14 +98,26 @@ public class GeometryImpl implements Simple {
         if (!(paintStyle instanceof PaintStyle.TexturePaint))
             return;
 
-        JSONObject texture = new JSONObject();
-        PaintStyle.TexturePaint texturePaint = (PaintStyle.TexturePaint) paintStyle;
-        texture.put("contentType", texturePaint.getContentType());
-        texture.put("alpha", texturePaint.getAlpha() / 100000.0D);
-        texture.put("url", mediaWriter.write(MediaWriter.Type.Image, texturePaint.getContentType(), null,
-                texturePaint.getImageData()));
-        parseFillRect(xslfSimpleShape, texture);
-        fill.put("texture", texture);
+        try {
+            JSONObject texture = new JSONObject();
+            PaintStyle.TexturePaint texturePaint = (PaintStyle.TexturePaint) paintStyle;
+            InputStream inputStream = texturePaint.getImageData();
+            int[] wh = image.size(inputStream);
+            inputStream.reset();
+            JSONObject size = new JSONObject();
+            size.put("width", wh[0]);
+            size.put("height", wh[1]);
+            texture.put("size", size);
+
+            texture.put("contentType", texturePaint.getContentType());
+            texture.put("alpha", texturePaint.getAlpha() / 100000.0D);
+            texture.put("url", mediaWriter.write(MediaWriter.Type.Image, texturePaint.getContentType(), null,
+                    texturePaint.getImageData()));
+            parseFillRect(xslfSimpleShape, texture);
+            fill.put("texture", texture);
+        } catch (IOException e) {
+            logger.warn(e, "解析填充图片时发生异常！");
+        }
     }
 
     private void parseFillRect(XSLFSimpleShape xslfSimpleShape, JSONObject texture) {

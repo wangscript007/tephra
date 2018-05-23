@@ -21,7 +21,8 @@ public class PptxReaderTest extends CoreTestSupport {
     public void read() throws IOException {
         long time = System.currentTimeMillis();
         io.write("target/demo.json", pptxReader.read(new FileInputStream("/mnt/hgfs/share/ppt/demo.pptx"),
-                (type, contentType, fileName, inputStream) -> "").toJSONString().getBytes());
+                (type, contentType, fileName, inputStream) -> "" + io.read(inputStream).length)
+                .toJSONString().getBytes());
         System.out.println((System.currentTimeMillis() - time) / 1000.0);
     }
 }

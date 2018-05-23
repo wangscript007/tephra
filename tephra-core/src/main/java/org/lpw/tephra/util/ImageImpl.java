@@ -151,7 +151,20 @@ public class ImageImpl implements Image {
 
             return new int[]{image.getWidth(), image.getHeight()};
         } catch (Exception e) {
-            logger.warn(e, "读取图片文件[{}]长宽时发生异常！", file.getAbsolutePath());
+            logger.warn(e, "读取图片文件[{}]宽高时发生异常！", file.getAbsolutePath());
+
+            return null;
+        }
+    }
+
+    @Override
+    public int[] size(InputStream inputStream) {
+        try {
+            BufferedImage image = ImageIO.read(inputStream);
+
+            return new int[]{image.getWidth(), image.getHeight()};
+        } catch (Exception e) {
+            logger.warn(e, "读取图片流宽高时发生异常！");
 
             return null;
         }
