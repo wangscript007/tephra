@@ -19,8 +19,6 @@ import java.io.OutputStream;
 public class SerializerImpl implements Serializer {
     @Inject
     private Validator validator;
-    @Inject
-    private Logger logger;
     private KryoPool kryoPool = new KryoPool.Builder(Kryo::new).build();
 
     @Override
@@ -56,7 +54,7 @@ public class SerializerImpl implements Serializer {
     public <T> T unserialize(InputStream inputStream) {
         Kryo kryo = kryoPool.borrow();
         Input input = new Input(inputStream);
-        T object = (T) kryo.readObject(input, kryo.readClass(input).getType());
+        T object = (T) kryo.readClassAndObject(input);
         input.close();
         kryoPool.release(kryo);
 
