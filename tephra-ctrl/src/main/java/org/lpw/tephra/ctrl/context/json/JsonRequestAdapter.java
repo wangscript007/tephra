@@ -1,4 +1,4 @@
-package org.lpw.tephra.ctrl.socket.context;
+package org.lpw.tephra.ctrl.context.json;
 
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.context.RequestAdapter;
@@ -6,11 +6,11 @@ import org.lpw.tephra.ctrl.context.RequestAdapter;
 /**
  * @author lpw
  */
-public class RequestAdapterImpl extends JsonSupport implements RequestAdapter {
+public class JsonRequestAdapter extends Support implements RequestAdapter {
     private int port;
     private String uri;
 
-    public RequestAdapterImpl(JSONObject object, int port, String uri) {
+    public JsonRequestAdapter(JSONObject object, int port, String uri) {
         super(object);
         this.port = port;
         this.uri = uri;

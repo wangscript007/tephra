@@ -1,6 +1,7 @@
-package org.lpw.tephra.ctrl.context;
+package org.lpw.tephra.ctrl.context.local;
 
 import org.lpw.tephra.bean.BeanFactory;
+import org.lpw.tephra.ctrl.context.SessionAdapter;
 import org.lpw.tephra.util.Generator;
 
 /**

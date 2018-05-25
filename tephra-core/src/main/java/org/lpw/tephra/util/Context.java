@@ -46,6 +46,11 @@ public interface Context {
     Locale getLocale();
 
     /**
+     * 清空当前线程上下文。
+     */
+    void clearThreadLocal();
+
+    /**
      * 保存数据到当前线程上下文中。
      *
      * @param key   引用key。

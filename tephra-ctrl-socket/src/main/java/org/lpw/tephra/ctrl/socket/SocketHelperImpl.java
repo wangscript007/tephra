@@ -42,6 +42,11 @@ public class SocketHelperImpl implements SocketHelper {
     }
 
     @Override
+    public void send(String sessionId, ByteArrayOutputStream byteArrayOutputStream) {
+        send(sessionId, byteArrayOutputStream.toByteArray());
+    }
+
+    @Override
     public void send(String sessionId, byte[] message) {
         if (sessionId == null)
             sessionId = session.getId();

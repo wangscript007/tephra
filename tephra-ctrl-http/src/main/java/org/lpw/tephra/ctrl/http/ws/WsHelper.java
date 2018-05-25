@@ -1,5 +1,7 @@
 package org.lpw.tephra.ctrl.http.ws;
 
+import org.lpw.tephra.ctrl.context.ResponseSender;
+
 import javax.websocket.Session;
 
 /**
@@ -7,11 +9,21 @@ import javax.websocket.Session;
  *
  * @author lpw
  */
-public interface WsHelper {
+public interface WsHelper extends ResponseSender {
     /**
      * WebSocket监听URI地址。
      */
     String URI = "/tephra/ctrl-http/ws";
+
+    /**
+     * 当前线程上下文IP地址key。
+     */
+    String IP = "tephra.ctrl.http.ws.ip";
+
+    /**
+     * 当前线程上下文端口号key。
+     */
+    String PORT = "tephra.ctrl.http.ws.port";
 
     /**
      * 处理连接打开事件。
@@ -29,6 +41,21 @@ public interface WsHelper {
     void message(Session session, String message);
 
     /**
+     * 发送消息到客户端。
+     *
+     * @param sessionId 客户端Session ID。
+     * @param message 消息。
+     */
+    void send(String sessionId, String message);
+
+    /**
+     * 发送消息到所有客户端。
+     *
+     * @param message 消息。
+     */
+    void send(String message);
+
+    /**
      * 处理连接异常事件。
      *
      * @param session   连接Session。
@@ -44,29 +71,9 @@ public interface WsHelper {
     void close(Session session);
 
     /**
-     * 发送消息到客户端。
-     *
-     * @param session 客户端Session ID。
-     * @param message 消息。
-     */
-    void send(String session, String message);
-
-    /**
-     * 发送消息到所有客户端。
-     *
-     * @param message 消息。
-     */
-    void send(String message);
-
-    /**
      * 关闭客户端连接。
      *
-     * @param session 客户端Session ID。
+     * @param sessionId 客户端Session ID。
      */
-    void close(String session);
-
-    /**
-     * 关闭所有客户端连接。
-     */
-    void close();
+    void close(String sessionId);
 }

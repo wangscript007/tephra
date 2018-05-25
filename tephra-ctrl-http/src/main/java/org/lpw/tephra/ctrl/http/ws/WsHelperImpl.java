@@ -1,166 +1,164 @@
 package org.lpw.tephra.ctrl.http.ws;
 
-import org.lpw.tephra.atomic.Closable;
-import org.lpw.tephra.atomic.Failable;
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.ContextClosedListener;
-import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.crypto.Digest;
-import org.lpw.tephra.ctrl.http.IgnoreUri;
+import org.lpw.tephra.ctrl.Dispatcher;
+import org.lpw.tephra.ctrl.context.HeaderAware;
+import org.lpw.tephra.ctrl.context.RequestAware;
+import org.lpw.tephra.ctrl.context.ResponseAware;
+import org.lpw.tephra.ctrl.context.SessionAware;
+import org.lpw.tephra.ctrl.context.json.JsonHeaderAdapter;
+import org.lpw.tephra.ctrl.context.json.JsonRequestAdapter;
+import org.lpw.tephra.ctrl.context.json.JsonResponseAdapter;
+import org.lpw.tephra.ctrl.context.json.JsonSessionAdapter;
+import org.lpw.tephra.ctrl.http.ServiceHelper;
+import org.lpw.tephra.util.Context;
+import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
-import org.springframework.beans.factory.annotation.Value;
+import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.websocket.Session;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author lpw
  */
 @Service("tephra.ctrl.http.ws.helper")
-public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListener, ContextClosedListener {
+public class WsHelperImpl implements WsHelper, ContextClosedListener {
+    @Inject
+    private Context context;
     @Inject
     private Generator generator;
     @Inject
     private Digest digest;
     @Inject
+    private Converter converter;
+    @Inject
+    private Json json;
+    @Inject
+    private Validator validator;
+    @Inject
     private Logger logger;
     @Inject
-    private Set<Failable> failables;
+    private HeaderAware headerAware;
     @Inject
-    private Set<Closable> closables;
+    private SessionAware sessionAware;
     @Inject
-    protected Optional<WsListener> listener;
-    @Value("${tephra.ctrl.http.web-socket.max:64}")
-    private int max;
-    private AtomicLong counter;
-    private Map<String, Session> sessions;
-    private String key;
+    private RequestAware requestAware;
+    @Inject
+    private ResponseAware responseAware;
+    @Inject
+    private Dispatcher dispatcher;
+    private Map<String, Session> sessions = new ConcurrentHashMap<>();
+    private Map<String, String> sids = new ConcurrentHashMap<>();
+    private Map<String, String> ips = new ConcurrentHashMap<>();
+    private int port;
+    private String sessionKey;
 
     @Override
     public void open(Session session) {
-        if (!listener.isPresent() || counter.incrementAndGet() > max) {
-            logger.warn(null, listener == null ? "未提供WsListener实现，无法开启WebSocket监听。" : "超过最大可连接数，拒绝新连接。");
-            try {
-                session.close();
-            } catch (IOException e) {
-                logger.warn(e, "关闭客户端Session时发生异常！");
-            }
-
-            return;
-        }
-
-        String key = getKey(session);
-        sessions.put(key, session);
-        listener.get().open(key);
-        closables.forEach(Closable::close);
+        String sid = getSessionId(session);
+        sessions.put(sid, session);
+        ips.put(sid, context.getThreadLocal(IP));
+        if (port == 0)
+            port = context.getThreadLocal(PORT);
+        if (logger.isDebugEnable())
+            logger.debug("新的WebSocket连接[{}:{}:{}]。", port, ips.get(sid), sid);
     }
 
     @Override
     public void message(Session session, String message) {
-        if (!listener.isPresent())
-            return;
+        JSONObject object = json.toObject(message);
+        if (object == null) {
+            close(session);
+            logger.warn(null, "收到不可处理的WebSocket数据[{}]。", message);
 
-        listener.get().message(getKey(session), message);
-        closables.forEach(Closable::close);
+            return;
+        }
+
+        String sid = getSessionId(session);
+        JSONObject header = object.getJSONObject("header");
+        String tsid = null;
+        if (!validator.isEmpty(header) && header.containsKey(ServiceHelper.SESSION_ID)) {
+            tsid = header.getString(ServiceHelper.SESSION_ID);
+            sids.put(sid, tsid);
+            sids.put(tsid, sid);
+        }
+
+        headerAware.set(new JsonHeaderAdapter(header, ips.get(sid)));
+        sessionAware.set(new JsonSessionAdapter(tsid == null ? sid : tsid));
+        requestAware.set(new JsonRequestAdapter(object.getJSONObject("request"), port, object.getString("uri")));
+        responseAware.set(new JsonResponseAdapter(this, sid));
+        dispatcher.execute();
     }
 
     @Override
-    public void error(Session session, Throwable throwable) {
-        if (!listener.isPresent())
-            return;
-
-        String key = getKey(session);
-        listener.get().error(key, throwable);
-        logger.warn(throwable, "WebSocket执行异常！");
-        failables.forEach(failable -> failable.fail(throwable));
-    }
-
-    @Override
-    public void close(Session session) {
-        if (!listener.isPresent())
-            return;
-
-        String key = getKey(session);
-        listener.get().close(key);
-        sessions.remove(key);
-        closables.forEach(Closable::close);
-        counter.decrementAndGet();
-    }
-
-    private String getKey(Session session) {
-        return digest.md5(key + session.getId());
+    public void send(String sessionId, ByteArrayOutputStream byteArrayOutputStream) {
+        send(sessionId, byteArrayOutputStream.toString());
     }
 
     @Override
     public void send(String sessionId, String message) {
-        if (listener == null)
+        if (validator.isEmpty(sessionId))
             return;
 
-        Session session = sessions.get(sessionId);
-        if (session == null) {
-            logger.warn(null, "Session ID[{}]不存在！", sessionId);
-
+        if (!sessions.containsKey(sessionId))
+            sessionId = sids.get(sessionId);
+        if (!sessions.containsKey(sessionId))
             return;
+
+        try {
+            sessions.get(sessionId).getBasicRemote().sendText(message);
+        } catch (IOException e) {
+            logger.warn(e, "推送消息[{}]到WebSocket客户端时发生异常！", message);
         }
-
-        send(session, message);
     }
 
     @Override
     public void send(String message) {
-        if (listener == null)
-            return;
-
-        sessions.values().forEach(session -> send(session, message));
+        sessions.keySet().forEach(sid -> send(sid, message));
     }
 
-    private void send(Session session, String message) {
-        try {
-            session.getBasicRemote().sendText(message);
-        } catch (IOException e) {
-            logger.warn(e, "发送信息[{}]时发生异常！", message);
-        }
+    @Override
+    public void error(Session session, Throwable throwable) {
+        close(session);
+    }
+
+    @Override
+    public void close(Session session) {
+        close(getSessionId(session));
+    }
+
+    private String getSessionId(Session session) {
+        if (sessionKey == null)
+            sessionKey = generator.random(32);
+
+        return digest.md5(sessionKey + session.getId());
     }
 
     @Override
     public void close(String sessionId) {
-        Session session = sessions.get(sessionId);
-        if (session != null) {
-            try {
-                session.close();
-            } catch (IOException e) {
-                logger.warn(e, "关闭客户端Session[{}]时发生异常！", sessionId);
-            }
+        Session session = sessions.remove(sessionId);
+        String tsid = sids.remove(sessionId);
+        if (tsid != null)
+            sids.remove(tsid);
+        ips.remove(sessionId);
+        if (session == null)
+            return;
+
+        try {
+            session.close();
+        } catch (IOException e) {
+            logger.warn(e, "关闭WebSocket Session[{}]时发生异常！", sessionId);
         }
-    }
-
-    @Override
-    public void close() {
-        sessions.keySet().forEach(this::close);
-    }
-
-    @Override
-    public String[] getIgnoreUris() {
-        return new String[]{URI};
-    }
-
-    @Override
-    public int getContextRefreshedSort() {
-        return 18;
-    }
-
-    @Override
-    public void onContextRefreshed() {
-        counter = new AtomicLong();
-        sessions = new ConcurrentHashMap<>();
-        key = generator.random(32);
     }
 
     @Override
@@ -170,6 +168,6 @@ public class WsHelperImpl implements WsHelper, IgnoreUri, ContextRefreshedListen
 
     @Override
     public void onContextClosed() {
-        close();
+        sessions.keySet().forEach(this::close);
     }
 }

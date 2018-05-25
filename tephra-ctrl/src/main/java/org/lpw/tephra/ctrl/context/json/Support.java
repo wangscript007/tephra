@@ -1,4 +1,4 @@
-package org.lpw.tephra.ctrl.socket.context;
+package org.lpw.tephra.ctrl.context.json;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -8,11 +8,11 @@ import java.util.Map;
 /**
  * @author lpw
  */
-public class JsonSupport {
-    JSONObject object;
+public class Support {
+    private JSONObject object;
     private Map<String, String> map;
 
-    JsonSupport(JSONObject object) {
+    Support(JSONObject object) {
         this.object = object == null ? new JSONObject() : object;
     }
 

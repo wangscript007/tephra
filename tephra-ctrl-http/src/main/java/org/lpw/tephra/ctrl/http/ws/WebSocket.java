@@ -14,7 +14,7 @@ import javax.websocket.server.ServerEndpoint;
  */
 @ServerEndpoint(WsHelper.URI)
 public class WebSocket {
-    protected WsHelper wsHelper;
+    private WsHelper wsHelper;
 
     public WebSocket() {
         wsHelper = BeanFactory.getBean(WsHelper.class);

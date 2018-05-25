@@ -7,10 +7,10 @@ import org.lpw.tephra.ctrl.context.HeaderAware;
 import org.lpw.tephra.ctrl.context.RequestAware;
 import org.lpw.tephra.ctrl.context.ResponseAware;
 import org.lpw.tephra.ctrl.context.SessionAware;
-import org.lpw.tephra.ctrl.socket.context.HeaderAdapterImpl;
-import org.lpw.tephra.ctrl.socket.context.RequestAdapterImpl;
-import org.lpw.tephra.ctrl.socket.context.ResponseAdapterImpl;
-import org.lpw.tephra.ctrl.socket.context.SessionAdapterImpl;
+import org.lpw.tephra.ctrl.context.json.JsonHeaderAdapter;
+import org.lpw.tephra.ctrl.context.json.JsonRequestAdapter;
+import org.lpw.tephra.ctrl.context.json.JsonResponseAdapter;
+import org.lpw.tephra.ctrl.context.json.JsonSessionAdapter;
 import org.lpw.tephra.nio.NioHelper;
 import org.lpw.tephra.nio.ServerListener;
 import org.lpw.tephra.util.Compresser;
@@ -135,12 +135,12 @@ public class ServerListenerImpl implements ServerListener {
     }
 
     private void execute(String sid, String tsid, JSONObject object) {
-        headerAware.set(new HeaderAdapterImpl(object.getJSONObject("header"), nioHelper.getIp(sid)));
-        sessionAware.set(new SessionAdapterImpl(tsid == null ? sid : tsid));
+        headerAware.set(new JsonHeaderAdapter(object.getJSONObject("header"), nioHelper.getIp(sid)));
+        sessionAware.set(new JsonSessionAdapter(tsid == null ? sid : tsid));
         if (tsid != null)
             socketHelper.bind(sid, tsid);
-        requestAware.set(new RequestAdapterImpl(object.getJSONObject("request"), port, object.getString("uri")));
-        responseAware.set(new ResponseAdapterImpl(socketHelper, sid));
+        requestAware.set(new JsonRequestAdapter(object.getJSONObject("request"), port, object.getString("uri")));
+        responseAware.set(new JsonResponseAdapter(socketHelper, sid));
         dispatcher.execute();
     }
 

@@ -2,10 +2,10 @@ package org.lpw.tephra.carousel;
 
 import org.lpw.tephra.ctrl.Dispatcher;
 import org.lpw.tephra.ctrl.context.HeaderAware;
-import org.lpw.tephra.ctrl.context.LocalHeaderAdapter;
-import org.lpw.tephra.ctrl.context.LocalRequestAdapter;
-import org.lpw.tephra.ctrl.context.LocalResponseAdapter;
-import org.lpw.tephra.ctrl.context.LocalSessionAdapter;
+import org.lpw.tephra.ctrl.context.local.LocalHeaderAdapter;
+import org.lpw.tephra.ctrl.context.local.LocalRequestAdapter;
+import org.lpw.tephra.ctrl.context.local.LocalResponseAdapter;
+import org.lpw.tephra.ctrl.context.local.LocalSessionAdapter;
 import org.lpw.tephra.ctrl.context.RequestAware;
 import org.lpw.tephra.ctrl.context.Response;
 import org.lpw.tephra.ctrl.context.ResponseAware;

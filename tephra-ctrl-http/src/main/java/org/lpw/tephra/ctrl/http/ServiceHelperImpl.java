@@ -14,6 +14,7 @@ import org.lpw.tephra.ctrl.http.context.HeaderAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.RequestAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.ResponseAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.SessionAdapterImpl;
+import org.lpw.tephra.ctrl.http.ws.WsHelper;
 import org.lpw.tephra.ctrl.status.Status;
 import org.lpw.tephra.ctrl.upload.UploadService;
 import org.lpw.tephra.storage.StorageListener;
@@ -49,7 +50,6 @@ import java.util.Set;
 @Controller("tephra.ctrl.http.service.helper")
 public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private static final String ROOT = "/";
-    private static final String SESSION_ID = "tephra-session-id";
 
     @Inject
     private Validator validator;
@@ -150,6 +150,14 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
             redirect(request, uri, response);
 
             return true;
+        }
+
+        context.clearThreadLocal();
+        if (lowerCaseUri.equals(WsHelper.URI)) {
+            context.putThreadLocal(WsHelper.IP, request.getRemoteAddr());
+            context.putThreadLocal(WsHelper.PORT, request.getServerPort());
+
+            return false;
         }
 
         String sessionId = getSessionId(request);

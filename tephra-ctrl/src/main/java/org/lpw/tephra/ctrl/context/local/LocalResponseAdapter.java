@@ -1,4 +1,6 @@
-package org.lpw.tephra.ctrl.context;
+package org.lpw.tephra.ctrl.context.local;
+
+import org.lpw.tephra.ctrl.context.ResponseAdapter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

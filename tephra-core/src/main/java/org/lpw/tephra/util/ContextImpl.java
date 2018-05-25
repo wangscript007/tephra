@@ -71,6 +71,11 @@ public class ContextImpl implements Context, Closable, ContextRefreshedListener 
     }
 
     @Override
+    public void clearThreadLocal() {
+        getThreadLocalMap().clear();
+    }
+
+    @Override
     public void putThreadLocal(String key, Object value) {
         getThreadLocalMap().put(key, value);
     }

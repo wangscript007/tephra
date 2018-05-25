@@ -1,7 +1,7 @@
-package org.lpw.tephra.ctrl.socket.context;
+package org.lpw.tephra.ctrl.context.json;
 
 import org.lpw.tephra.ctrl.context.ResponseAdapter;
-import org.lpw.tephra.ctrl.socket.SocketHelper;
+import org.lpw.tephra.ctrl.context.ResponseSender;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,13 +10,13 @@ import java.io.OutputStream;
 /**
  * @author lpw
  */
-public class ResponseAdapterImpl implements ResponseAdapter {
-    private SocketHelper socketHelper;
+public class JsonResponseAdapter implements ResponseAdapter {
+    private ResponseSender responseSender;
     private String sessionId;
     private ByteArrayOutputStream outputStream;
 
-    public ResponseAdapterImpl(SocketHelper socketHelper, String sessionId) {
-        this.socketHelper = socketHelper;
+    public JsonResponseAdapter(ResponseSender responseSender, String sessionId) {
+        this.responseSender = responseSender;
         this.sessionId = sessionId;
         outputStream = new ByteArrayOutputStream();
     }
@@ -37,7 +37,7 @@ public class ResponseAdapterImpl implements ResponseAdapter {
     @Override
     public void send() throws IOException {
         outputStream.close();
-        socketHelper.send(sessionId, outputStream.toByteArray());
+        responseSender.send(sessionId, outputStream);
     }
 
     @Override

@@ -10,6 +10,11 @@ import java.io.OutputStream;
  */
 public interface ServiceHelper {
     /**
+     * Session ID key。
+     */
+    String SESSION_ID = "tephra-session-id";
+
+    /**
      * 设置部署路径。
      *
      * @param real    部署绝对根路径。

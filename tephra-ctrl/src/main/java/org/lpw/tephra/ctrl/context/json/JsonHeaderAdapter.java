@@ -1,4 +1,4 @@
-package org.lpw.tephra.ctrl.socket.context;
+package org.lpw.tephra.ctrl.context.json;
 
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.context.HeaderAdapter;
@@ -6,10 +6,10 @@ import org.lpw.tephra.ctrl.context.HeaderAdapter;
 /**
  * @author lpw
  */
-public class HeaderAdapterImpl extends JsonSupport implements HeaderAdapter {
+public class JsonHeaderAdapter extends Support implements HeaderAdapter {
     private String ip;
 
-    public HeaderAdapterImpl(JSONObject object, String ip) {
+    public JsonHeaderAdapter(JSONObject object, String ip) {
         super(object);
         this.ip = ip;
     }
