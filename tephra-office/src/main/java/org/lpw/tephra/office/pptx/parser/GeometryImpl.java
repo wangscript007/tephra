@@ -6,7 +6,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.xmlbeans.XmlObject;
 import org.lpw.tephra.office.OfficeHelper;
-import org.lpw.tephra.office.pptx.MediaWriter;
+import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.util.Image;
 import org.lpw.tephra.util.Logger;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;

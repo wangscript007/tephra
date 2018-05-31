@@ -1,4 +1,4 @@
-package org.lpw.tephra.office.pptx;
+package org.lpw.tephra.office;
 
 import java.io.InputStream;
 

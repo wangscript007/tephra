@@ -5,7 +5,7 @@ import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
-import org.lpw.tephra.office.pptx.MediaWriter;
+import org.lpw.tephra.office.MediaWriter;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

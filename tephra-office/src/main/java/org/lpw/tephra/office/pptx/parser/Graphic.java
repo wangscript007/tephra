@@ -2,7 +2,7 @@ package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
-import org.lpw.tephra.office.pptx.MediaWriter;
+import org.lpw.tephra.office.MediaWriter;
 
 /**
  * 图表形状解析器。

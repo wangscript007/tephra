@@ -5,7 +5,7 @@ import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.lpw.tephra.office.OfficeHelper;
-import org.lpw.tephra.office.pptx.MediaWriter;
+import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
 

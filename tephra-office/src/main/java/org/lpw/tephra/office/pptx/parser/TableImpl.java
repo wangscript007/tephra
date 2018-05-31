@@ -6,7 +6,7 @@ import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFTable;
 import org.apache.poi.xslf.usermodel.XSLFTableCell;
 import org.lpw.tephra.office.OfficeHelper;
-import org.lpw.tephra.office.pptx.MediaWriter;
+import org.lpw.tephra.office.MediaWriter;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

@@ -9,6 +9,7 @@ import org.apache.poi.xslf.usermodel.XSLFGroupShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.parser.Parser;
 import org.lpw.tephra.util.Json;

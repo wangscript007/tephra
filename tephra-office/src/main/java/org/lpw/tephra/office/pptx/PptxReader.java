@@ -1,6 +1,7 @@
 package org.lpw.tephra.office.pptx;
 
 import com.alibaba.fastjson.JSONObject;
+import org.lpw.tephra.office.MediaWriter;
 
 import java.io.InputStream;
 

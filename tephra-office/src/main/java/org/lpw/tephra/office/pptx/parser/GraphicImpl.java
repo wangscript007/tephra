@@ -3,7 +3,7 @@ package org.lpw.tephra.office.pptx.parser;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFTable;
-import org.lpw.tephra.office.pptx.MediaWriter;
+import org.lpw.tephra.office.MediaWriter;
 import org.springframework.stereotype.Component;
 
 /**

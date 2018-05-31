@@ -9,7 +9,7 @@ import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.lpw.tephra.office.OfficeHelper;
-import org.lpw.tephra.office.pptx.MediaWriter;
+import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 

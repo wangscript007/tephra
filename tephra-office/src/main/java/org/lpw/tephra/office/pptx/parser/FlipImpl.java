@@ -3,7 +3,7 @@ package org.lpw.tephra.office.pptx.parser;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.xmlbeans.XmlObject;
-import org.lpw.tephra.office.pptx.MediaWriter;
+import org.lpw.tephra.office.MediaWriter;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTCamera;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTScene3D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSphereCoords;
