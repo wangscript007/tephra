@@ -12,6 +12,7 @@ import java.io.InputStream;
 public interface PptxReader {
     /**
      * 读取并解析PPTX文件数据。
+     *
      * @param inputStream 输入流。
      * @param mediaWriter 媒体输出器。
      * @return JSON数据。
