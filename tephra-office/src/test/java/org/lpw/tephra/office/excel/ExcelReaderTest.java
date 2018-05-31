@@ -1,4 +1,4 @@
-package org.lpw.tephra.office.pptx;
+package org.lpw.tephra.office.excel;
 
 import org.junit.Test;
 import org.lpw.tephra.test.CoreTestSupport;
@@ -11,16 +11,16 @@ import java.io.IOException;
 /**
  * @author lpw
  */
-public class PptxReaderTest extends CoreTestSupport {
+public class ExcelReaderTest extends CoreTestSupport {
     @Inject
     private Io io;
     @Inject
-    private PptxReader pptxReader;
+    private ExcelReader excelReader;
 
     @Test
     public void read() throws IOException {
         long time = System.currentTimeMillis();
-        io.write("target/demo.json", pptxReader.read(new FileInputStream("/mnt/hgfs/share/ppt/demo.pptx"),
+        io.write("target/excel.json", excelReader.read(new FileInputStream("/mnt/hgfs/share/excel/Workbook1.xlsx"),
                 (type, contentType, fileName, inputStream) -> "" + io.read(inputStream).length).toJSONString().getBytes());
         System.out.println((System.currentTimeMillis() - time) / 1000.0);
     }

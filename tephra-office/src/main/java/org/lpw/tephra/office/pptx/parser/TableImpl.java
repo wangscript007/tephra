@@ -3,10 +3,11 @@ package org.lpw.tephra.office.pptx.parser;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTable;
 import org.apache.poi.xslf.usermodel.XSLFTableCell;
-import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.MediaWriter;
+import org.lpw.tephra.office.OfficeHelper;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -27,7 +28,7 @@ public class TableImpl implements Graphic {
     }
 
     @Override
-    public void parse(XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
+    public void parse(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
         if (!(xslfGraphicFrame instanceof XSLFTable))
             return;
 

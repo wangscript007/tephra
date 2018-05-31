@@ -3,6 +3,7 @@ package org.lpw.tephra.office.pptx.parser;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.office.MediaWriter;
@@ -26,8 +27,8 @@ public class ParserImpl implements Parser, ContextRefreshedListener {
     }
 
     @Override
-    public void parse(XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
-        graphics.forEach(graphic -> graphic.parse(xslfGraphicFrame, mediaWriter, shape));
+    public void parse(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
+        graphics.forEach(graphic -> graphic.parse(xslfSlide, xslfGraphicFrame, mediaWriter, shape));
     }
 
     @Override

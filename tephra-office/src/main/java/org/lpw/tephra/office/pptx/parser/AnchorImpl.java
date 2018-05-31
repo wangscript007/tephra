@@ -3,8 +3,9 @@ package org.lpw.tephra.office.pptx.parser;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
-import org.lpw.tephra.office.OfficeHelper;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.office.MediaWriter;
+import org.lpw.tephra.office.OfficeHelper;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -29,7 +30,7 @@ public class AnchorImpl implements Simple, Graphic, Anchor {
     }
 
     @Override
-    public void parse(XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
+    public void parse(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
         parse(xslfGraphicFrame.getAnchor(), shape);
     }
 

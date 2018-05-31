@@ -74,7 +74,7 @@ public class PptxReaderImpl implements PptxReader {
 
         Map<Integer, String> layout = new HashMap<>();
         parseBackground(xslfSlide.getSlideLayout().getBackground(), mediaWriter, null, layout);
-        parseShapes(xslfSlide.getSlideLayout().getShapes(), mediaWriter, null, layout);
+        parseShapes(xslfSlide, xslfSlide.getSlideLayout().getShapes(), mediaWriter, null, layout);
         layouts.put(name, layout);
 
         return layout;
@@ -84,7 +84,7 @@ public class PptxReaderImpl implements PptxReader {
         parseBackground(xslfSlide.getBackground(), mediaWriter, slide, layout);
 
         JSONArray shapes = new JSONArray();
-        parseShapes(xslfSlide.getShapes(), mediaWriter, shapes, layout);
+        parseShapes(xslfSlide, xslfSlide.getShapes(), mediaWriter, shapes, layout);
         slide.put("shapes", shapes);
     }
 
@@ -101,7 +101,8 @@ public class PptxReaderImpl implements PptxReader {
             slide.put("background", background);
     }
 
-    private void parseShapes(List<XSLFShape> xslfSlides, MediaWriter mediaWriter, JSONArray shapes, Map<Integer, String> layout) {
+    private void parseShapes(XSLFSlide xslfSlide, List<XSLFShape> xslfSlides, MediaWriter mediaWriter, JSONArray shapes,
+                             Map<Integer, String> layout) {
         xslfSlides.forEach(xslfShape -> {
             if (xslfShape instanceof XSLFSimpleShape) {
                 JSONObject shape = copyOrNew(layout, xslfShape.getShapeId());
@@ -116,14 +117,14 @@ public class PptxReaderImpl implements PptxReader {
 
             if (xslfShape instanceof XSLFGraphicFrame) {
                 JSONObject shape = copyOrNew(layout, xslfShape.getShapeId());
-                parser.parse((XSLFGraphicFrame) xslfShape, mediaWriter, shape);
+                parser.parse(xslfSlide, (XSLFGraphicFrame) xslfShape, mediaWriter, shape);
                 shapes.add(shape);
 
                 return;
             }
 
             if (xslfShape instanceof XSLFGroupShape) {
-                parseShapes(((XSLFGroupShape) xslfShape).getShapes(), mediaWriter, shapes, layout);
+                parseShapes(xslfSlide, ((XSLFGroupShape) xslfShape).getShapes(), mediaWriter, shapes, layout);
 
                 return;
             }
