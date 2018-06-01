@@ -14,12 +14,12 @@ public class MysqlDialect extends DialectSupport implements Dialect {
 
     @Override
     public String getDriver() {
-        return "com.mysql.jdbc.Driver";
+        return "com.mysql.cj.jdbc.Driver";
     }
 
     @Override
     public String getUrl(String ip, String schema) {
-        return "jdbc:mysql://" + ip + "/" + schema + "?useUnicode=true&characterEncoding=utf8&autoReconnect=true";
+        return "jdbc:mysql://" + ip + "/" + schema + "?useSSL=false&useUnicode=true&characterEncoding=utf8&autoReconnect=true";
     }
 
     @Override
