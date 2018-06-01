@@ -6,6 +6,7 @@ import org.lpw.tephra.dao.orm.PageList;
 import org.lpw.tephra.dao.orm.TestModel;
 import org.lpw.tephra.test.DaoTestSupport;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.TimeUnit;
 
@@ -20,9 +21,9 @@ import java.util.List;
  */
 public class HibernateOrmTest extends DaoTestSupport {
     @Inject
-    private Converter converter;
-    @Inject
     private Numeric numeric;
+    @Inject
+    private DateTime dateTime;
     @Inject
     private HibernateOrm hibernateOrm;
 
@@ -50,8 +51,8 @@ public class HibernateOrmTest extends DaoTestSupport {
         Assert.assertEquals(model1.getId(), model2.getId());
         Assert.assertEquals(1, model2.getSort());
         Assert.assertEquals("HibernateOrm", model2.getName());
-        Assert.assertEquals(converter.toString(new Date(time - TimeUnit.Day.getTime())), converter.toString(model2.getDate()));
-        Assert.assertEquals(converter.toString(new Timestamp(time - TimeUnit.Hour.getTime())), converter.toString(model2.getTime()));
+        equals(new Date(time - TimeUnit.Day.getTime()), model2.getDate());
+        equals(new Timestamp(time - TimeUnit.Hour.getTime()), model2.getTime());
         hibernateOrm.close();
 
         TestModel model3 = new TestModel();
@@ -64,8 +65,8 @@ public class HibernateOrmTest extends DaoTestSupport {
         Assert.assertEquals(model1.getId(), model4.getId());
         Assert.assertEquals(0, model4.getSort());
         Assert.assertEquals("new name", model4.getName());
-        Assert.assertEquals(converter.toString(new Date(time - 3 * TimeUnit.Day.getTime())), converter.toString(model4.getDate()));
-        Assert.assertEquals(converter.toString(new Timestamp(time - 3 * TimeUnit.Hour.getTime())), converter.toString(model4.getTime()));
+        equals(new Date(time - 3 * TimeUnit.Day.getTime()), model4.getDate());
+        equals(new Timestamp(time - 3 * TimeUnit.Hour.getTime()), model4.getTime());
         hibernateOrm.close();
 
         hibernateOrm.delete(model1);
@@ -97,11 +98,19 @@ public class HibernateOrmTest extends DaoTestSupport {
             Assert.assertEquals(36, model.getId().length());
             Assert.assertEquals(i, model.getSort());
             Assert.assertEquals("name" + i, model.getName());
-            Assert.assertEquals(converter.toString(new Date(time - i * TimeUnit.Day.getTime())), converter.toString(model.getDate()));
-            Assert.assertEquals(converter.toString(new Timestamp(time - i * TimeUnit.Hour.getTime())), converter.toString(model.getTime()));
+            equals(new Date(time - i * TimeUnit.Day.getTime()), model.getDate());
+            equals(new Timestamp(time - i * TimeUnit.Hour.getTime()), model.getTime());
             Assert.assertEquals(numeric.toInt(list.get(i)), model.hashCode());
         }
 
         hibernateOrm.close();
+    }
+
+    private void equals(Date date1, Date date2) {
+        Assert.assertEquals(dateTime.toString(date1), dateTime.toString(date2));
+    }
+
+    private void equals(Timestamp timestamp1, Timestamp timestamp2) {
+        Assert.assertTrue(Math.abs(timestamp1.getTime() - timestamp2.getTime()) < 2000L);
     }
 }
