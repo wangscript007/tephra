@@ -14,6 +14,9 @@ import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.parser.Parser;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -30,6 +33,8 @@ import java.util.Map;
 public class PptxReaderImpl implements PptxReader {
     @Inject
     private Json json;
+    @Inject
+    private Numeric numeric;
     @Inject
     private Logger logger;
     @Inject
@@ -124,13 +129,35 @@ public class PptxReaderImpl implements PptxReader {
             }
 
             if (xslfShape instanceof XSLFGroupShape) {
-                parseShapes(xslfSlide, ((XSLFGroupShape) xslfShape).getShapes(), mediaWriter, shapes, layout);
+                parseGroup(xslfSlide, (XSLFGroupShape) xslfShape, mediaWriter, shapes, layout);
 
                 return;
             }
 
             logger.warn(null, "无法处理的PPTX图形[{}]。", xslfShape);
         });
+    }
+
+    private void parseGroup(XSLFSlide xslfSlide, XSLFGroupShape xslfGroupShape, MediaWriter mediaWriter, JSONArray shapes,
+                            Map<Integer, String> layout) {
+        CTGroupShape ctGroupShape = (CTGroupShape) xslfGroupShape.getXmlObject();
+        CTGroupTransform2D ctGroupTransform2D = ctGroupShape.getGrpSpPr().getXfrm();
+        int chX = officeHelper.emuToPixel(ctGroupTransform2D.getChOff().getX() - ctGroupTransform2D.getOff().getX());
+        int chY = officeHelper.emuToPixel(ctGroupTransform2D.getChOff().getY() - ctGroupTransform2D.getOff().getY());
+        double chW = 1.0D * ctGroupTransform2D.getExt().getCx() / ctGroupTransform2D.getChExt().getCx();
+        double chH = 1.0D * ctGroupTransform2D.getExt().getCy() / ctGroupTransform2D.getChExt().getCy();
+
+        JSONArray array = new JSONArray();
+        parseShapes(xslfSlide, xslfGroupShape.getShapes(), mediaWriter, array, layout);
+        for (int i = 0, size = array.size(); i < size; i++) {
+            JSONObject object = array.getJSONObject(i);
+            JSONObject anchor = object.getJSONObject("anchor");
+            anchor.put("x", anchor.getIntValue("x") - chX);
+            anchor.put("y", anchor.getIntValue("y") - chY);
+            anchor.put("width", numeric.toInt(anchor.getIntValue("width") * chW));
+            anchor.put("height", numeric.toInt(anchor.getIntValue("height") * chH));
+            shapes.add(object);
+        }
     }
 
     private JSONObject copyOrNew(Map<Integer, String> layout, int id) {

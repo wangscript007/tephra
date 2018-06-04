@@ -128,7 +128,7 @@ public class IoImpl implements Io {
 
         try {
             OutputStream outputStream = new FileOutputStream(path);
-            copy(inputStream,outputStream);
+            copy(inputStream, outputStream);
             outputStream.close();
         } catch (IOException e) {
             logger.warn(e, "写入文件[{}]时异常！", path);
@@ -165,6 +165,30 @@ public class IoImpl implements Io {
         for (int i = 0, length = source.length(); i < length; i++)
             writer.append(source.charAt(i));
         writer.flush();
+    }
+
+    @Override
+    public void close(InputStream inputStream) {
+        if (inputStream == null)
+            return;
+
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            logger.warn(e, "关闭输入流时发生异常！");
+        }
+    }
+
+    @Override
+    public void close(OutputStream outputStream) {
+        if (outputStream == null)
+            return;
+
+        try {
+            outputStream.close();
+        } catch (IOException e) {
+            logger.warn(e, "关闭输出流时发生异常！");
+        }
     }
 
     @Override

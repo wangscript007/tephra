@@ -30,13 +30,13 @@ public class OfficeHelperImpl implements OfficeHelper {
     }
 
     @Override
-    public int pixelToEmu(int pixel) {
-        return pixel * 9525;
+    public long pixelToEmu(int pixel) {
+        return pixel * 9525L;
     }
 
     @Override
-    public int emuToPixel(int emu) {
-        return emu / 9525;
+    public int emuToPixel(long emu) {
+        return numeric.toInt(emu / 9525);
     }
 
     @Override

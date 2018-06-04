@@ -100,6 +100,20 @@ public interface Io {
     void write(OutputStream outputStream, StringBuffer source) throws IOException;
 
     /**
+     * 关闭输入流。
+     *
+     * @param inputStream 输入流。
+     */
+    void close(InputStream inputStream);
+
+    /**
+     * 关闭输出流。
+     *
+     * @param outputStream 输出流。
+     */
+    void close(OutputStream outputStream);
+
+    /**
      * 移动文件。
      *
      * @param source 源文件。

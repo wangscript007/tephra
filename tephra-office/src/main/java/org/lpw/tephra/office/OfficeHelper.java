@@ -22,7 +22,7 @@ public interface OfficeHelper {
      * @param pixel 像素值。
      * @return EMU值。
      */
-    int pixelToEmu(int pixel);
+    long pixelToEmu(int pixel);
 
     /**
      * EMU值转化为像素值。
@@ -30,7 +30,7 @@ public interface OfficeHelper {
      * @param emu EMU值。
      * @return 像素值。
      */
-    int emuToPixel(int emu);
+    int emuToPixel(long emu);
 
     /**
      * 磅值转化为像素值。
