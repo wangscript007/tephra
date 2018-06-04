@@ -9,6 +9,13 @@ import java.util.Map;
  */
 public interface RequestAdapter {
     /**
+     * 获取请求ID值。
+     *
+     * @return 请求ID值；如果不存在则返回null。
+     */
+    String getId();
+
+    /**
      * 获得请求参数值。
      *
      * @param name 参数名称。

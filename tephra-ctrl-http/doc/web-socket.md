@@ -42,6 +42,7 @@ CtrlHttp模块提供了一个标准的WebSocket监听服务，可以在客户端
 
 ```json
 {
+    "id": "请求ID值，用于标记一个请求，推送请求结果时，将包含此ID值。",
     "tephra-session-id": "字符串，全局的Session ID；如果未提供则使用系统默认的Session ID。",
     "uri": "字符串，请求URI地址。",
     "header": "JSON对象，需要的头信息。",

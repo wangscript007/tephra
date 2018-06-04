@@ -20,6 +20,11 @@ public class LocalRequestAdapter implements RequestAdapter {
     }
 
     @Override
+    public String getId() {
+        return null;
+    }
+
+    @Override
     public String get(String name) {
         return map.get(name);
     }

@@ -95,7 +95,8 @@ public class WsHelperImpl implements WsHelper, ContextClosedListener {
 
         headerAware.set(new JsonHeaderAdapter(header, ips.get(sid)));
         sessionAware.set(new JsonSessionAdapter(tsid == null ? sid : tsid));
-        requestAware.set(new JsonRequestAdapter(object.getJSONObject("request"), port, object.getString("uri")));
+        requestAware.set(new JsonRequestAdapter(port, object.getString("id"), object.getString("uri"),
+                object.getJSONObject("request")));
         responseAware.set(new JsonResponseAdapter(this, sid));
         dispatcher.execute();
     }
@@ -117,8 +118,8 @@ public class WsHelperImpl implements WsHelper, ContextClosedListener {
 
         try {
             sessions.get(sessionId).getBasicRemote().sendText(message);
-        } catch (IOException e) {
-            logger.warn(e, "推送消息[{}]到WebSocket客户端时发生异常！", message);
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "推送消息[{}]到WebSocket客户端时发生异常！", message);
         }
     }
 

@@ -8,12 +8,19 @@ import org.lpw.tephra.ctrl.context.RequestAdapter;
  */
 public class JsonRequestAdapter extends Support implements RequestAdapter {
     private int port;
+    private String id;
     private String uri;
 
-    public JsonRequestAdapter(JSONObject object, int port, String uri) {
+    public JsonRequestAdapter(int port, String id, String uri, JSONObject object) {
         super(object);
         this.port = port;
+        this.id = id;
         this.uri = uri;
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
     @Override

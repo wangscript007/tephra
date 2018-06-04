@@ -139,7 +139,8 @@ public class ServerListenerImpl implements ServerListener {
         sessionAware.set(new JsonSessionAdapter(tsid == null ? sid : tsid));
         if (tsid != null)
             socketHelper.bind(sid, tsid);
-        requestAware.set(new JsonRequestAdapter(object.getJSONObject("request"), port, object.getString("uri")));
+        requestAware.set(new JsonRequestAdapter(port, object.getString("id"), object.getString("uri"),
+                object.getJSONObject("request")));
         responseAware.set(new JsonResponseAdapter(socketHelper, sid));
         dispatcher.execute();
     }

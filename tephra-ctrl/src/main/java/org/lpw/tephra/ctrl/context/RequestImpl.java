@@ -46,6 +46,11 @@ public class RequestImpl implements Request, RequestAware {
     private Optional<Coder> coder;
 
     @Override
+    public String getId() {
+        return getAdapter() == null ? null : getAdapter().getId();
+    }
+
+    @Override
     public String get(String name) {
         return getAdapter() == null ? null : getAdapter().get(name);
     }

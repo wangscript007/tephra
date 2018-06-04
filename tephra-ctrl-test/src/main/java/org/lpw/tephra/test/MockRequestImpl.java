@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public class MockRequestImpl implements MockRequest {
     private String method;
+    private String id;
     private String url;
     private String uri;
     private String serverName;
@@ -34,6 +35,15 @@ public class MockRequestImpl implements MockRequest {
     @Override
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

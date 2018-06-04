@@ -30,6 +30,11 @@ public class RequestAdapterImpl implements RequestAdapter {
     }
 
     @Override
+    public String getId() {
+        return null;
+    }
+
+    @Override
     public String get(String name) {
         return getMap().get(name);
     }
