@@ -15,10 +15,6 @@
     <name>tephra-dao</name>
     <url>https://github.com/heisedebaise/tephra</url>
 
-    <properties>
-        <version.mysql>5.1.40</version.mysql>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>javax.transaction</groupId>
@@ -28,7 +24,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>${version.mysql}</version>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>

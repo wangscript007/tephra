@@ -8,6 +8,7 @@ import org.lpw.tephra.dao.orm.PageList;
 import org.lpw.tephra.dao.orm.TestModel;
 import org.lpw.tephra.test.DaoTestSupport;
 import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.TimeUnit;
 
@@ -20,9 +21,9 @@ import java.sql.Timestamp;
  */
 public class LiteOrmTest extends DaoTestSupport {
     @Inject
-    private Converter converter;
-    @Inject
     private Numeric numeric;
+    @Inject
+    private DateTime dateTime;
     @Inject
     private Sql sql;
     @Inject
@@ -51,8 +52,8 @@ public class LiteOrmTest extends DaoTestSupport {
         Assert.assertEquals(model1.getId(), model2.getId());
         Assert.assertEquals(1, model2.getSort());
         Assert.assertEquals("LiteOrm", model2.getName());
-        Assert.assertEquals(converter.toString(new Date(time - TimeUnit.Day.getTime())), converter.toString(model2.getDate()));
-        Assert.assertEquals(converter.toString(new Timestamp(time - TimeUnit.Hour.getTime())), converter.toString(model2.getTime()));
+        equals(new Date(time - TimeUnit.Day.getTime()), model2.getDate());
+        equals(new Timestamp(time - TimeUnit.Hour.getTime()), model2.getTime());
 
         TestModel model3 = new TestModel();
         model3.setId(model1.getId());
@@ -64,8 +65,8 @@ public class LiteOrmTest extends DaoTestSupport {
         Assert.assertEquals(model1.getId(), model4.getId());
         Assert.assertEquals(0, model4.getSort());
         Assert.assertEquals("名称\uD83D\uDC4C", model4.getName());
-        Assert.assertEquals(converter.toString(new Date(time - 3 * TimeUnit.Day.getTime())), converter.toString(model4.getDate()));
-        Assert.assertEquals(converter.toString(new Timestamp(time - 3 * TimeUnit.Hour.getTime())), converter.toString(model4.getTime()));
+        equals(new Date(time - 3 * TimeUnit.Day.getTime()), model4.getDate());
+        equals(new Timestamp(time - 3 * TimeUnit.Hour.getTime()), model4.getTime());
 
         liteOrm.delete(model1);
         Assert.assertNull(liteOrm.findById(TestModel.class, model1.getId()));
@@ -93,8 +94,8 @@ public class LiteOrmTest extends DaoTestSupport {
             Assert.assertEquals(36, model.getId().length());
             Assert.assertEquals(i, model.getSort());
             Assert.assertEquals("name" + i, model.getName());
-            Assert.assertEquals(converter.toString(new Date(time - i * TimeUnit.Day.getTime())), converter.toString(model.getDate()));
-            Assert.assertEquals(converter.toString(new Timestamp(time - i * TimeUnit.Hour.getTime())), converter.toString(model.getTime()));
+            equals(new Date(time - i * TimeUnit.Day.getTime()), model.getDate());
+            equals(new Timestamp(time - i * TimeUnit.Hour.getTime()), model.getTime());
         }
 
         close();
@@ -116,8 +117,8 @@ public class LiteOrmTest extends DaoTestSupport {
             SqlTable table = sql.query("select * from " + prefix + "_tephra_test where c_id=?", new Object[]{model1.getId()});
             Assert.assertEquals(1, numeric.toInt(table.get(0, "c_sort")));
             Assert.assertEquals("LiteOrm", table.get(0, "c_name"));
-            Assert.assertEquals(converter.toString(new Date(time - TimeUnit.Day.getTime())), converter.toString(table.get(0, "c_date")));
-            Assert.assertEquals(converter.toString(new Timestamp(time - TimeUnit.Hour.getTime())), converter.toString(table.get(0, "c_time")));
+            equals(new Date(time - TimeUnit.Day.getTime()), table.get(0, "c_date"));
+            equals(new Timestamp(time - TimeUnit.Hour.getTime()), table.get(0, "c_time"));
         }
 
         model1.setSort(2);
@@ -129,8 +130,8 @@ public class LiteOrmTest extends DaoTestSupport {
             SqlTable table = sql.query("select * from " + prefix + "_tephra_test where c_id=?", new Object[]{model1.getId()});
             Assert.assertEquals(2, numeric.toInt(table.get(0, "c_sort")));
             Assert.assertEquals("name 2", table.get(0, "c_name"));
-            Assert.assertEquals(converter.toString(new Date(time - 2 * TimeUnit.Day.getTime())), converter.toString(table.get(0, "c_date")));
-            Assert.assertEquals(converter.toString(new Timestamp(time - 2 * TimeUnit.Hour.getTime())), converter.toString(table.get(0, "c_time")));
+            equals(new Date(time - 2 * TimeUnit.Day.getTime()), table.get(0, "c_date"));
+            equals(new Timestamp(time - 2 * TimeUnit.Hour.getTime()), table.get(0, "c_time"));
         }
 
         sql.update("update t_tephra_test set c_name=?", new Object[]{"table"});
@@ -178,11 +179,19 @@ public class LiteOrmTest extends DaoTestSupport {
             for (int i = 0; i < 5; i++) {
                 Assert.assertEquals(i, numeric.toInt(table.get(i, "c_sort")));
                 Assert.assertEquals("name" + i, table.get(i, "c_name"));
-                Assert.assertEquals(converter.toString(new Date(time - i * TimeUnit.Day.getTime())), converter.toString(table.get(i, "c_date")));
-                Assert.assertEquals(converter.toString(new Timestamp(time - i * TimeUnit.Hour.getTime())), converter.toString(table.get(i, "c_time")));
+                equals(new Date(time - i * TimeUnit.Day.getTime()), table.get(i, "c_date"));
+                equals(new Timestamp(time - i * TimeUnit.Hour.getTime()), table.get(i, "c_time"));
             }
         }
 
         close();
+    }
+
+    private void equals(Date date1, Date date2) {
+        Assert.assertEquals(dateTime.toString(date1), dateTime.toString(date2));
+    }
+
+    private void equals(Timestamp timestamp1, Timestamp timestamp2) {
+        Assert.assertTrue(Math.abs(timestamp1.getTime() - timestamp2.getTime()) < 2000L);
     }
 }
