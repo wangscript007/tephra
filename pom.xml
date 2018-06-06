@@ -14,8 +14,9 @@
         <module>tephra-ctrl-http</module>
         <module>tephra-ctrl-socket</module>
         <module>tephra-script</module>
-        <module>tephra-office</module>
         <module>tephra-wormhole</module>
+        <module>tephra-chrome</module>
+        <module>tephra-office</module>
         <module>tephra-carousel</module>
         <module>tephra-hadoop</module>
         <module>tephra-web</module>

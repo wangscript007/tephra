@@ -1,6 +1,7 @@
 package org.lpw.tephra.chrome;
 
 import com.alibaba.fastjson.JSONObject;
+import org.lpw.tephra.util.Coder;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Json;
@@ -16,7 +17,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.Base64;
 
 /**
  * @author lpw
@@ -32,6 +32,8 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
     private Thread thread;
     @Inject
     private Converter converter;
+    @Inject
+    private Coder coder;
     @Inject
     private Logger logger;
     @Inject
@@ -74,12 +76,13 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
                 thread.sleep(1, TimeUnit.Second);
             }
             if (result == null) {
-                logger.warn(null, "请求[{}]等待[{}]秒未获得Chrome推送的数据！", converter.toString(messages), maxWait);
+                logger.warn(null, "请求[{}:{}:{}]等待[{}]秒未获得Chrome推送的数据！",
+                        service, url, converter.toString(messages), maxWait);
 
                 return null;
             }
         } catch (Throwable throwable) {
-            logger.warn(throwable, "请求Chrome[{}]时发生异常！", object.toJSONString());
+            logger.warn(throwable, "请求Chrome[{}:{}:{}]时发生异常！", service, url, object.toJSONString());
         } finally {
             wsClient.close();
             http.get("http://" + service + "/json/close/" + object.getString("id"), null, "");
@@ -88,8 +91,11 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
         if (logger.isDebugEnable())
             logger.debug("接收到Chrome推送的数据[{}]。", converter.toBitSize(result.length()));
         JSONObject obj = json.toObject(result);
-        if (obj == null)
+        if (obj == null) {
+            logger.warn(null, "无法解析Chrome推送的数据[{}]。", result);
+
             return null;
+        }
 
         if (!obj.containsKey("result")) {
             logger.warn(null, "请求Chrome失败[{}]！", result);
@@ -97,7 +103,14 @@ public class ChromeClientImpl implements WsClientListener, ChromeClient {
             return null;
         }
 
-        return Base64.getDecoder().decode(obj.getJSONObject("result").getString("data"));
+        JSONObject result = obj.getJSONObject("result");
+        if (!result.containsKey("data")) {
+            logger.warn(null, "请求Chrome失败[{}]！", this.result);
+
+            return null;
+        }
+
+        return coder.decodeBase64(result.getString("data"));
     }
 
     @Override

@@ -7,7 +7,7 @@ package org.lpw.tephra.chrome;
  *
  * @author lpw
  */
-public interface Chrome {
+public interface ChromeHelper {
     /**
      * 输出PDF文档。
      *
@@ -16,9 +16,9 @@ public interface Chrome {
      * @param width  页面宽度，单位：像素。
      * @param height 页面高度，单位：像素。
      * @param range  输出的页面。
-     * @return PDF数据。
+     * @return PDF文件路径。
      */
-    byte[] pdf(String url, int wait, int width, int height, String range);
+    String pdf(String url, int wait, int width, int height, String range);
 
     /**
      * 输出PNG图片。
@@ -29,9 +29,9 @@ public interface Chrome {
      * @param y      Y位置，单位：像素。
      * @param width  页面宽度，单位：像素。
      * @param height 页面高度，单位：像素。
-     * @return PNG数据。
+     * @return PNG文件路径。
      */
-    byte[] png(String url, int wait, int x, int y, int width, int height);
+    String png(String url, int wait, int x, int y, int width, int height);
 
     /**
      * 输出JPEG图片。
@@ -42,7 +42,7 @@ public interface Chrome {
      * @param y      Y位置，单位：像素。
      * @param width  页面宽度，单位：像素。
      * @param height 页面高度，单位：像素。
-     * @return PNG数据。
+     * @return JPEG文件路径。
      */
-    byte[] jpeg(String url, int wait, int x, int y, int width, int height);
+    String jpeg(String url, int wait, int x, int y, int width, int height);
 }
