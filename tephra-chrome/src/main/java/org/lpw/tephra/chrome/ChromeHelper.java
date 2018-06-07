@@ -16,9 +16,10 @@ public interface ChromeHelper {
      * @param width  页面宽度，单位：像素。
      * @param height 页面高度，单位：像素。
      * @param range  输出的页面。
+     * @param output PDF文件输出目录。
      * @return PDF文件路径。
      */
-    String pdf(String url, int wait, int width, int height, String range);
+    String pdf(String url, int wait, int width, int height, String range, String output);
 
     /**
      * 输出PNG图片。
@@ -29,9 +30,10 @@ public interface ChromeHelper {
      * @param y      Y位置，单位：像素。
      * @param width  页面宽度，单位：像素。
      * @param height 页面高度，单位：像素。
+     * @param output PNG文件输出目录。
      * @return PNG文件路径。
      */
-    String png(String url, int wait, int x, int y, int width, int height);
+    String png(String url, int wait, int x, int y, int width, int height, String output);
 
     /**
      * 输出JPEG图片。
@@ -42,7 +44,8 @@ public interface ChromeHelper {
      * @param y      Y位置，单位：像素。
      * @param width  页面宽度，单位：像素。
      * @param height 页面高度，单位：像素。
+     * @param output JPEG文件输出目录。
      * @return JPEG文件路径。
      */
-    String jpeg(String url, int wait, int x, int y, int width, int height);
+    String jpeg(String url, int wait, int x, int y, int width, int height, String output);
 }

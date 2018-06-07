@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.chrome.runner.Image;
+import org.lpw.tephra.chrome.runner.Pdf;
 import org.lpw.tephra.storage.StorageListener;
 import org.lpw.tephra.storage.Storages;
 import org.lpw.tephra.util.Context;
@@ -47,6 +48,7 @@ public class ChromeHelperImpl implements ChromeHelper, StorageListener, ContextR
     @Inject
     private Logger logger;
     private String command;
+    private String pdf;
     private String image;
     @Value("${tephra.chrome.services:/WEB-INF/chrome}")
     private String services;
@@ -56,31 +58,34 @@ public class ChromeHelperImpl implements ChromeHelper, StorageListener, ContextR
     private List<String> list;
 
     @Override
-    public String pdf(String url, int wait, int width, int height, String range) {
-        return null;
+    public String pdf(String url, int wait, int width, int height, String range, String output) {
+        return execute(pdf, url, wait, 0, 0, width, height, range, "pdf", 0, output, ".pdf");
     }
 
     @Override
-    public String png(String url, int wait, int x, int y, int width, int height) {
-        return execute(image, url, wait, x, y, width, height, "png", 0, ".png");
+    public String png(String url, int wait, int x, int y, int width, int height, String output) {
+        return execute(image, url, wait, x, y, width, height, null, "png", 0, output, ".png");
     }
 
     @Override
-    public String jpeg(String url, int wait, int x, int y, int width, int height) {
-        return execute(image, url, wait, x, y, width, height, "jpeg", 100, ".jpg");
+    public String jpeg(String url, int wait, int x, int y, int width, int height, String output) {
+        return execute(image, url, wait, x, y, width, height, null, "jpeg", 100, output, ".jpg");
     }
 
-    private String execute(String type, String url, int wait, int x, int y, int width, int height,
-                           String format, int quality, String suffix) {
+    private String execute(String type, String url, int wait, int x, int y, int width, int height, String range,
+                           String format, int quality, String output, String suffix) {
         Future<String> future = executorService.submit(() -> {
             String service = list.get(generator.random(0, list.size() - 1));
             JSONObject object = json.toObject(http.get("http://" + service + "/json/new", null, url));
             Thread.sleep(wait * 1000);
-            String output = context.getAbsolutePath("/") + "/" + generator.random(32) + suffix;
+            String path = context.getAbsolutePath(output);
+            io.mkdirs(path);
+            String file = path + "/" + generator.random(32) + suffix;
             String[] hp = converter.toArray(service, ":");
             String cmd = command + type + " -host=" + hp[0] + " -port=" + hp[1]
-                    + " -uri=" + new URI(object.getString("webSocketDebuggerUrl")).getPath() + " -output=" + output
-                    + " -x=" + x + " -y=" + y + " -width=" + width + " -height=" + height + " -format=" + format + " -quality=" + quality;
+                    + " -uri=" + new URI(object.getString("webSocketDebuggerUrl")).getPath() + " -output=" + file
+                    + " -x=" + x + " -y=" + y + " -width=" + width + " -height=" + height
+                    + " -range=" + range + " -format=" + format + " -quality=" + quality;
             if (logger.isDebugEnable())
                 logger.debug("执行Chrome指令[{}:{}]。", url, cmd);
             Process process = Runtime.getRuntime().exec(cmd);
@@ -89,7 +94,7 @@ public class ChromeHelperImpl implements ChromeHelper, StorageListener, ContextR
                         io.readAsString(process.getErrorStream()));
             http.get("http://" + service + "/json/close/" + object.getString("id"), null, "");
 
-            return output;
+            return file;
         });
 
         try {
@@ -110,9 +115,10 @@ public class ChromeHelperImpl implements ChromeHelper, StorageListener, ContextR
     public void onContextRefreshed() {
         String path = ChromeHelper.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         command = "java -cp " + getJsonPath(path) + ":" + path + " ";
+        pdf = Pdf.class.getName();
         image = Image.class.getName();
         if (logger.isInfoEnable())
-            logger.info("设置Chrome headless客户端命令[{}:{}]。", command, image);
+            logger.info("设置Chrome headless客户端命令[{}:{}:{}]。", command, pdf, image);
 
         executorService = Executors.newFixedThreadPool(maxThread);
     }
