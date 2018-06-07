@@ -2,7 +2,9 @@ package org.lpw.tephra.ctrl.validate;
 
 import org.lpw.tephra.crypto.Sign;
 import org.lpw.tephra.ctrl.context.Header;
+import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.security.TrustfulIp;
+import org.lpw.tephra.util.Logger;
 
 import javax.inject.Inject;
 
@@ -12,6 +14,8 @@ import javax.inject.Inject;
 public class SignValidatorSupport extends ValidatorSupport implements SignValidator {
     @Inject
     private Sign sign;
+    @Inject
+    private Logger logger;
     @Inject
     private Header header;
     @Inject
@@ -25,8 +29,13 @@ public class SignValidatorSupport extends ValidatorSupport implements SignValida
 
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
-        return !enable() || trustfulIp.contains(header.getIp())
-                || sign.verify(request.getMap(), validator.isEmpty(validate.getString()) ? null : validate.getString()[0]);
+        if (!enable() || trustfulIp.contains(header.getIp())
+                || sign.verify(request.getMap(), validator.isEmpty(validate.getString()) ? null : validate.getString()[0]))
+            return true;
+
+        logger.warn(null, "参数[{}]签名验证不通过！", converter.toString(request.getMap()));
+
+        return false;
     }
 
     private boolean enable() {

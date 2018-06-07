@@ -54,8 +54,9 @@ public class SignImpl implements Sign, StorageListener {
 
     @Override
     public boolean verify(Map<String, String> map, String name) {
-        return !validator.isEmpty(map) && map.containsKey(SIGN) && map.containsKey(SIGN_TIME) &&
-                System.currentTimeMillis() - numeric.toLong(map.get(SIGN_TIME)) < time && get(map, name).equals(map.get(SIGN));
+        return !validator.isEmpty(map) && map.containsKey(SIGN) && map.containsKey(SIGN_TIME)
+                && Math.abs(System.currentTimeMillis() - numeric.toLong(map.get(SIGN_TIME))) < time
+                && get(map, name).equals(map.get(SIGN));
     }
 
     protected String get(Map<String, String> map, String name) {
