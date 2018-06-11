@@ -13,6 +13,8 @@
 |contentType|string|文件类型。|
 |base64|string|Base64编码的文件数据。|
 
+> 将参数以`json`格式提交。
+
 返回
 ```
 {

@@ -6,6 +6,7 @@ import org.lpw.tephra.scheduler.MinuteJob;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Json;
+import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service(UploadService.PREFIX + "json-configs")
 public class JsonConfigsImpl implements JsonConfigs, MinuteJob {
+    @Inject
+    private Validator validator;
     @Inject
     private Context context;
     @Inject
@@ -34,7 +37,7 @@ public class JsonConfigsImpl implements JsonConfigs, MinuteJob {
         if (map == null)
             init();
 
-        return map.get(key);
+        return validator.isEmpty(key) ? null : map.get(key);
     }
 
     private synchronized void init() {
@@ -50,7 +53,11 @@ public class JsonConfigsImpl implements JsonConfigs, MinuteJob {
         if (map == null)
             return;
 
-        for (File file : new File(context.getAbsolutePath(configs)).listFiles()) {
+        File[] files = new File(context.getAbsolutePath(configs)).listFiles();
+        if (files == null || files.length == 0)
+            return;
+
+        for (File file : files) {
             String key = file.getName().substring(0, file.getName().lastIndexOf('.'));
             JsonConfig config = map.get(key);
             if (config != null && config.getLastModify() == file.lastModified())
