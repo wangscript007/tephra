@@ -13,7 +13,15 @@ public enum MediaType {
     /**
      * PNG图片。
      */
-    Png("image/png");
+    Png("image/png"),
+    /**
+     * GIF图片。
+     */
+    Gif("image/gif"),
+    /**
+     * SVG图片。
+     */
+    SVG("image/svg+xml");
 
     private String contentType;
 
