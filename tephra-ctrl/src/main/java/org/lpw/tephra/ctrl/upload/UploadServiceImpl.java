@@ -83,9 +83,9 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
     }
 
     @Override
-    public JSONObject upload(String name, String fileName, String contentType, String base64) {
+    public JSONObject upload(String name, String fileName, String contentType, String base64, String string) {
         try {
-            return upload(new JsonUploadReader(name, fileName, contentType, base64));
+            return upload(new JsonUploadReader(name, fileName, contentType, base64, string));
         } catch (IOException e) {
             logger.warn(e, "处理文件[{}:{}:{}]上传时发生异常！", name, fileName, contentType);
 

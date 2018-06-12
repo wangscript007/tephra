@@ -31,13 +31,14 @@ public interface UploadService {
     /**
      * 处理单个文件上传请求。
      *
-     * @param name   域名称[监听器KEY]。
+     * @param name        域名称[监听器KEY]。
      * @param fileName    文件名。
      * @param contentType 文件类型。
      * @param base64      Base64编码的文件数据。
+     * @param string      字符串数据。
      * @return 处理结果。
      */
-    JSONObject upload(String name, String fileName, String contentType, String base64);
+    JSONObject upload(String name, String fileName, String contentType, String base64, String string);
 
     /**
      * 处理上传请求。
