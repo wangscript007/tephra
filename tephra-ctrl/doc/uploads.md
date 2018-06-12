@@ -11,10 +11,13 @@
         "name": "名称，须与监听器KEY相同",
         "fileName": "文件名",
         "contentType": "文件Content-Type",
-        "base64": "BASE64编码后的数据"
+        "base64": "BASE64编码后的数据",
+        "string": "字符串数据"
     }
 ]
 ```
+
+> 如果`base64`未提交则保存`string`数据。
 
 返回
 ```
