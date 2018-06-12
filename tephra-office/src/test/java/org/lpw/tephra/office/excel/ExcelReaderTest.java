@@ -21,7 +21,7 @@ public class ExcelReaderTest extends CoreTestSupport {
     public void read() throws IOException {
         long time = System.currentTimeMillis();
         io.write("target/excel.json", excelReader.read(new FileInputStream("/mnt/hgfs/share/excel/Workbook1.xlsx"),
-                (type, contentType, fileName, inputStream) -> "" + io.read(inputStream).length).toJSONString().getBytes());
+                (type, fileName, inputStream) -> "" + io.read(inputStream).length).toJSONString().getBytes());
         System.out.println((System.currentTimeMillis() - time) / 1000.0);
     }
 }

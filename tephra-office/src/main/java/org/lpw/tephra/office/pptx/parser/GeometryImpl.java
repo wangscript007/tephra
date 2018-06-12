@@ -5,8 +5,9 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.xmlbeans.XmlObject;
-import org.lpw.tephra.office.OfficeHelper;
+import org.lpw.tephra.office.MediaType;
 import org.lpw.tephra.office.MediaWriter;
+import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.util.Image;
 import org.lpw.tephra.util.Logger;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
@@ -111,7 +112,7 @@ public class GeometryImpl implements Simple {
 
             texture.put("contentType", texturePaint.getContentType());
             texture.put("alpha", texturePaint.getAlpha() / 100000.0D);
-            texture.put("url", mediaWriter.write(MediaWriter.Type.Image, texturePaint.getContentType(), null,
+            texture.put("url", mediaWriter.write(MediaType.find(texturePaint.getContentType()), null,
                     texturePaint.getImageData()));
             parseFillRect(xslfSimpleShape, texture);
             fill.put("texture", texture);

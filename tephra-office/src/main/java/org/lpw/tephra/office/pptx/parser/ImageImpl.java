@@ -4,8 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
-import org.lpw.tephra.office.OfficeHelper;
+import org.lpw.tephra.office.MediaType;
 import org.lpw.tephra.office.MediaWriter;
+import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
 
@@ -41,7 +42,7 @@ public class ImageImpl implements Simple {
         parseSize(xslfPictureData, image);
         image.put("contentType", xslfPictureData.getContentType());
         try {
-            image.put("url", mediaWriter.write(MediaWriter.Type.Image, xslfPictureData.getContentType(),
+            image.put("url", mediaWriter.write(MediaType.find(xslfPictureData.getContentType()),
                     xslfPictureData.getFileName(), xslfPictureData.getInputStream()));
         } catch (IOException e) {
             logger.warn(e, "获取PPTX图片数据时发生异常！");
