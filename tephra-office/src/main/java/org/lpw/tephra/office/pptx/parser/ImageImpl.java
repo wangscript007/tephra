@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaType;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
@@ -69,5 +70,10 @@ public class ImageImpl implements Simple {
         size.put("width", dimension.width);
         size.put("height", dimension.height);
         image.put("size", size);
+    }
+
+    @Override
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+
     }
 }

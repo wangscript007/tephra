@@ -5,6 +5,7 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.xmlbeans.XmlObject;
+import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaType;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
@@ -142,5 +143,23 @@ public class GeometryImpl implements Simple {
         texture.put("top", officeHelper.fromPercent(ctRelativeRect.getT()));
         texture.put("right", officeHelper.fromPercent(ctRelativeRect.getR()));
         texture.put("bottom", officeHelper.fromPercent(ctRelativeRect.getB()));
+    }
+
+    @Override
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+        if (!shape.containsKey("geometry"))
+            return;
+
+        JSONObject geometry = shape.getJSONObject("geometry");
+        parseFill(xslfSimpleShape, mediaReader, geometry);
+    }
+
+    private void parseFill(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject geometry) {
+        if (!geometry.containsKey("fill"))
+            return;
+
+        JSONObject fill = geometry.getJSONObject("fill");
+        if (fill.containsKey("color"))
+            xslfSimpleShape.setFillColor(officeHelper.jsonToColor(fill.getJSONObject("color")));
     }
 }

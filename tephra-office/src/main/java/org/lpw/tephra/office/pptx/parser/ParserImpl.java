@@ -6,6 +6,7 @@ import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaWriter;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,11 @@ public class ParserImpl implements Parser, ContextRefreshedListener {
     @Override
     public void parse(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
         graphics.forEach(graphic -> graphic.parse(xslfSlide, xslfGraphicFrame, mediaWriter, shape));
+    }
+
+    @Override
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+        simples.forEach(simple -> simple.parse(xslfSimpleShape, mediaReader, shape));
     }
 
     @Override

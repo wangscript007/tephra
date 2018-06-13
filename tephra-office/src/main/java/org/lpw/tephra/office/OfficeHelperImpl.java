@@ -72,6 +72,7 @@ public class OfficeHelperImpl implements OfficeHelper {
 
     @Override
     public Color jsonToColor(JSONObject object) {
-        return null;
+        return new Color(object.getIntValue("red"), object.getIntValue("green"), object.getIntValue("blue"),
+                object.containsKey("alpha") ? object.getIntValue("alpha") : 255);
     }
 }

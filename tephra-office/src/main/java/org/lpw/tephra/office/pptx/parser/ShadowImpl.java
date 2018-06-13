@@ -3,6 +3,7 @@ package org.lpw.tephra.office.pptx.parser;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFShadow;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.MediaWriter;
 import org.springframework.stereotype.Component;
@@ -37,5 +38,10 @@ public class ShadowImpl implements Simple {
         shadow.put("distance", officeHelper.pointToPixel(xslfShadow.getDistance()));
         shadow.put("color", officeHelper.colorToJson(xslfShadow.getFillColor()));
         shape.put("shadow", shadow);
+    }
+
+    @Override
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+
     }
 }

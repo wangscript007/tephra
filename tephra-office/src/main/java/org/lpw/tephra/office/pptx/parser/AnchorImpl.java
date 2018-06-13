@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
 import org.springframework.stereotype.Component;
@@ -42,5 +43,18 @@ public class AnchorImpl implements Simple, Graphic, Anchor {
         anchor.put("width", officeHelper.pointToPixel(rectangle2D.getWidth()));
         anchor.put("height", officeHelper.pointToPixel(rectangle2D.getHeight()));
         shape.put("anchor", anchor);
+    }
+
+    @Override
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+        if (!shape.containsKey("anchor"))
+            return;
+
+        JSONObject anchor = shape.getJSONObject("anchor");
+        xslfSimpleShape.setAnchor(new Rectangle2D.Double(
+                officeHelper.pixelToPoint(anchor.getIntValue("x")),
+                officeHelper.pixelToPoint(anchor.getIntValue("y")),
+                officeHelper.pixelToPoint(anchor.getIntValue("width")),
+                officeHelper.pixelToPoint(anchor.getIntValue("height"))));
     }
 }

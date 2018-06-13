@@ -8,8 +8,9 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
-import org.lpw.tephra.office.OfficeHelper;
+import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaWriter;
+import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
@@ -191,5 +192,10 @@ public class TextImpl implements Simple {
         array.add(object);
 
         return array;
+    }
+
+    @Override
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+
     }
 }

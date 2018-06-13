@@ -5,12 +5,14 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.office.MediaReader;
+import org.lpw.tephra.office.pptx.parser.Parser;
 import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,12 +29,14 @@ public class PptxWriterImpl implements PptxWriter {
     private Validator validator;
     @Inject
     private Logger logger;
+    @Inject
+    private Parser parser;
 
     @Override
     public void write(OutputStream outputStream, JSONObject object, MediaReader mediaReader) {
         XMLSlideShow xmlSlideShow = newXMLSlideShow();
         parseSize(xmlSlideShow, object.getJSONObject("size"));
-        parseSildes(xmlSlideShow, object.getJSONArray("slides"));
+        parseSildes(xmlSlideShow, mediaReader, object.getJSONArray("slides"));
 
         try {
             xmlSlideShow.write(outputStream);
@@ -59,13 +63,19 @@ public class PptxWriterImpl implements PptxWriter {
         xmlSlideShow.setPageSize(new Dimension(size.getIntValue("width"), size.getIntValue("height")));
     }
 
-    private void parseSildes(XMLSlideShow xmlSlideShow, JSONArray slides) {
+    private void parseSildes(XMLSlideShow xmlSlideShow, MediaReader mediaReader, JSONArray slides) {
         if (validator.isEmpty(slides))
             return;
 
         for (int i = 0, size = slides.size(); i < size; i++) {
             JSONObject slide = slides.getJSONObject(i);
             XSLFSlide xslfSlide = xmlSlideShow.createSlide();
+            parseBackground(xslfSlide, mediaReader, slide);
         }
+    }
+
+    private void parseBackground(XSLFSlide xslfSlide, MediaReader mediaReader, JSONObject slide) {
+        if (slide.containsKey("background"))
+            parser.parse(xslfSlide.getBackground(), mediaReader, slide.getJSONObject("background"));
     }
 }

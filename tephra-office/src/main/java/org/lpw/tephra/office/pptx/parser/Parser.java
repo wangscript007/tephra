@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaWriter;
 
 /**
@@ -31,4 +32,13 @@ public interface Parser {
      * @param shape            解析数据。
      */
     void parse(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape);
+
+    /**
+     * 解析数据。
+     *
+     * @param xslfSimpleShape 形状。
+     * @param mediaReader     媒体资源读取器。
+     * @param shape           解析数据。
+     */
+    void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape);
 }

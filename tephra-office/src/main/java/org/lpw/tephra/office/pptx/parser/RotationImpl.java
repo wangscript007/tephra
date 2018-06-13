@@ -2,6 +2,7 @@ package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Component;
@@ -28,5 +29,11 @@ public class RotationImpl implements Simple {
 
         int rotation = numeric.toInt(xslfSimpleShape.getRotation());
         shape.put("rotation", rotation < 0 ? (360 + rotation) : rotation);
+    }
+
+    @Override
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+        if (shape.containsKey("rotation"))
+            xslfSimpleShape.setRotation(shape.getDoubleValue("rotation"));
     }
 }

@@ -3,18 +3,25 @@ package org.lpw.tephra.office.pptx.parser;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.xmlbeans.XmlObject;
+import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaWriter;
+import org.lpw.tephra.util.Json;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTCamera;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTScene3D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSphereCoords;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
+
 /**
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.filp")
 public class FlipImpl implements Simple {
+    @Inject
+    private Json json;
+
     @Override
     public int getSort() {
         return 1;
@@ -46,5 +53,17 @@ public class FlipImpl implements Simple {
             return null;
 
         return ctCamera.getRot();
+    }
+
+    @Override
+    public void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+        if (!shape.containsKey("flip"))
+            return;
+
+        JSONObject flip = shape.getJSONObject("flip");
+        if (json.hasTrue(flip, "horizontal"))
+            xslfSimpleShape.setFlipHorizontal(true);
+        if (json.hasTrue(flip, "vertical"))
+            xslfSimpleShape.setFlipVertical(true);
     }
 }
