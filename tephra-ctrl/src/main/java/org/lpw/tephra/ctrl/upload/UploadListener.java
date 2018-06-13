@@ -32,21 +32,21 @@ public interface UploadListener {
     /**
      * 验证是否允许上传。
      *
-     * @param key         上传文件key。
-     * @param contentType 文件类型。
-     * @param name        文件名。
+     * @param key          上传文件key。
+     * @param uploadReader 上传数据读取器。
      * @return 如果允许则返回true；否则返回false。
      */
-    boolean isUploadEnable(String key, String contentType, String name);
+    boolean isUploadEnable(String key, UploadReader uploadReader);
 
     /**
      * 处理数据。
      *
+     * @param key          上传文件key。
      * @param uploadReader 上传数据读取器。
      * @return 处理后的数据。如果返回为null则继续执行存储操作，否则不存储。
      * @throws IOException IO异常。
      */
-    default JSONObject settle(UploadReader uploadReader) throws IOException {
+    default JSONObject settle(String key, UploadReader uploadReader) throws IOException {
         return null;
     }
 

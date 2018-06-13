@@ -28,9 +28,9 @@ public class JsonConfigImpl implements JsonConfig {
     }
 
     @Override
-    public boolean isUploadEnable(String key, String contentType, String name) {
+    public boolean isUploadEnable(String key, UploadReader uploadReader) {
         for (Pattern pattern : map.keySet())
-            if (pattern.matcher(contentType).find())
+            if (pattern.matcher(uploadReader.getContentType()).find())
                 return true;
 
         return false;

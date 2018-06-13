@@ -101,14 +101,14 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
             return failure(uploadReader, message.get(PREFIX + "listener.not-exists", name));
 
         String contentType = listener.getContentType(name, uploadReader.getContentType(), uploadReader.getFileName());
-        if (!listener.isUploadEnable(name, contentType, uploadReader.getFileName())) {
+        if (!listener.isUploadEnable(name, uploadReader)) {
             logger.warn(null, "无法处理文件上传请求[key={}&content-type={}&name={}]！",
                     name, contentType, uploadReader.getFileName());
 
             return failure(uploadReader, message.get(PREFIX + "disable", name, contentType, uploadReader.getFileName()));
         }
 
-        JSONObject object = listener.settle(uploadReader);
+        JSONObject object = listener.settle(name, uploadReader);
         if (object == null)
             object = save(name, listener, uploadReader, contentType);
         uploadReader.delete();
