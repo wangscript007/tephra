@@ -24,7 +24,6 @@ public class UploadCtrl {
 
     @Execute(name = "upload")
     public Object upload() {
-        return uploadService.upload(request.get("name"), request.get("fileName"), request.get("contentType"),
-                request.get("base64"), request.get("string"));
+        return uploadService.upload(request.getMap());
     }
 }

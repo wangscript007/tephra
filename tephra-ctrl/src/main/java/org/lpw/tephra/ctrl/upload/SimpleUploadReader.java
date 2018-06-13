@@ -1,6 +1,5 @@
 package org.lpw.tephra.ctrl.upload;
 
-import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.storage.Storage;
 import org.lpw.tephra.util.Coder;
@@ -8,30 +7,38 @@ import org.lpw.tephra.util.Coder;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author lpw
  */
-public class JsonUploadReader implements UploadReader {
+public class SimpleUploadReader implements UploadReader {
     private String name;
     private String fileName;
     private String contentType;
     private String base64;
     private String string;
+    private Map<String, String> map;
     private byte[] bytes;
     private InputStream inputStream;
 
-    JsonUploadReader(JSONObject object) {
-        this(object.getString("name"), object.getString("fileName"), object.getString("contentType"),
-                object.getString("base64"), object.getString("string"));
-    }
-
-    JsonUploadReader(String name, String fileName, String contentType, String base64, String string) {
-        this.name = name;
-        this.fileName = fileName;
-        this.contentType = contentType;
-        this.base64 = base64;
-        this.string = string;
+    SimpleUploadReader(Map<String, String> map) {
+        name = map.get("name");
+        fileName = map.get("fileName");
+        contentType = map.get("contentType");
+        base64 = map.get("base64");
+        string = map.get("string");
+        Set<String> set = new HashSet<>();
+        set.add("name");
+        set.add("fileName");
+        set.add("contentType");
+        set.add("base64");
+        set.add("string");
+        this.map = new HashMap<>();
+        map.keySet().stream().filter(key -> !set.contains(key)).forEach(key -> this.map.put(key, map.get(key)));
     }
 
     @Override
@@ -47,6 +54,11 @@ public class JsonUploadReader implements UploadReader {
     @Override
     public String getContentType() {
         return contentType;
+    }
+
+    @Override
+    public String getParameter(String name) {
+        return map.get(name);
     }
 
     @Override

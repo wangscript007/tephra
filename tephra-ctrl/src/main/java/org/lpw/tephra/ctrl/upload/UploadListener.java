@@ -97,8 +97,9 @@ public interface UploadListener {
     /**
      * 上传完成。
      *
-     * @param object 处理结果。
+     * @param uploadReader 上传数据读取器。
+     * @param object       处理结果。
      */
-    default void complete(JSONObject object) {
+    default void complete(UploadReader uploadReader, JSONObject object) {
     }
 }

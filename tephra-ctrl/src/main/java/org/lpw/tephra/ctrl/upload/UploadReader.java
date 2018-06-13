@@ -33,6 +33,14 @@ public interface UploadReader {
     String getContentType();
 
     /**
+     * 获取参数值。
+     *
+     * @param name 参数名。
+     * @return 参数值；不存在则返回null。
+     */
+    String getParameter(String name);
+
+    /**
      * 获取文件大小。
      *
      * @return 文件大小。

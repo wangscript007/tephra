@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author lpw
@@ -31,32 +32,28 @@ public interface UploadService {
     /**
      * 处理单个文件上传请求。
      *
-     * @param name        域名称[监听器KEY]。
-     * @param fileName    文件名。
-     * @param contentType 文件类型。
-     * @param base64      Base64编码的文件数据。
-     * @param string      字符串数据。
+     * @param map 参数集。
      * @return 处理结果。
      */
-    JSONObject upload(String name, String fileName, String contentType, String base64, String string);
+    JSONObject upload(Map<String, String> map);
 
     /**
      * 处理上传请求。
      *
-     * @param readers 上传数据读取实例集。
+     * @param uploadReaders 上传数据读取实例集。
      * @return 处理结果。
      * @throws IOException IO异常。
      */
-    JSONArray uploads(List<UploadReader> readers) throws IOException;
+    JSONArray uploads(List<UploadReader> uploadReaders) throws IOException;
 
     /**
      * 处理上传请求。
      *
-     * @param reader 上传数据读取实例。
+     * @param uploadReader 上传数据读取实例。
      * @return 处理结果。
      * @throws IOException IO异常。
      */
-    JSONObject upload(UploadReader reader) throws IOException;
+    JSONObject upload(UploadReader uploadReader) throws IOException;
 
     /**
      * 删除上传的文件。

@@ -8,6 +8,7 @@ import org.lpw.tephra.util.Io;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 /**
  * @author lpw
@@ -20,14 +21,16 @@ public class HttpUploadReader implements UploadReader {
     private long size;
     private InputStream inputStream;
     private byte[] bytes;
+    private Map<String, String> map;
 
-    HttpUploadReader(Part part) throws IOException {
+    HttpUploadReader(Part part, Map<String, String> map) throws IOException {
         this.part = part;
         name = part.getName();
         fileName = part.getSubmittedFileName();
         contentType = part.getContentType();
         size = part.getSize();
         inputStream = part.getInputStream();
+        this.map = map;
     }
 
     @Override
@@ -43,6 +46,11 @@ public class HttpUploadReader implements UploadReader {
     @Override
     public String getContentType() {
         return contentType;
+    }
+
+    @Override
+    public String getParameter(String name) {
+        return map.get(name);
     }
 
     @Override

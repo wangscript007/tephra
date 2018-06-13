@@ -60,12 +60,12 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         if (validator.isEmpty(uploads))
             return new JSONArray();
 
-        List<UploadReader> readers = new ArrayList<>();
+        List<UploadReader> uploadReaders = new ArrayList<>();
         for (int i = 0, size = uploads.size(); i < size; i++)
-            readers.add(new JsonUploadReader(uploads.getJSONObject(i)));
+            uploadReaders.add(new SimpleUploadReader(json.toMap(uploads.getJSONObject(i))));
 
         try {
-            return uploads(readers);
+            return uploads(uploadReaders);
         } catch (IOException e) {
             logger.warn(e, "处理JSON方式上传文件时发生异常！");
 
@@ -74,45 +74,45 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
     }
 
     @Override
-    public JSONArray uploads(List<UploadReader> readers) throws IOException {
+    public JSONArray uploads(List<UploadReader> uploadReaders) throws IOException {
         JSONArray array = new JSONArray();
-        for (UploadReader reader : readers)
-            array.add(upload(reader));
+        for (UploadReader uploadReader : uploadReaders)
+            array.add(upload(uploadReader));
 
         return array;
     }
 
     @Override
-    public JSONObject upload(String name, String fileName, String contentType, String base64, String string) {
+    public JSONObject upload(Map<String, String> map) {
         try {
-            return upload(new JsonUploadReader(name, fileName, contentType, base64, string));
+            return upload(new SimpleUploadReader(map));
         } catch (IOException e) {
-            logger.warn(e, "处理文件[{}:{}:{}]上传时发生异常！", name, fileName, contentType);
+            logger.warn(e, "处理文件[{}:{}:{}]上传时发生异常！", map.get("name"), map.get("fileName"), map.get("contentType"));
 
             return new JSONObject();
         }
     }
 
     @Override
-    public JSONObject upload(UploadReader reader) throws IOException {
-        String name = reader.getName();
+    public JSONObject upload(UploadReader uploadReader) throws IOException {
+        String name = uploadReader.getName();
         UploadListener listener = getListener(name);
         if (listener == null)
-            return failure(reader, message.get(PREFIX + "listener.not-exists", name));
+            return failure(uploadReader, message.get(PREFIX + "listener.not-exists", name));
 
-        String contentType = listener.getContentType(name, reader.getContentType(), reader.getFileName());
-        if (!listener.isUploadEnable(name, contentType, reader.getFileName())) {
+        String contentType = listener.getContentType(name, uploadReader.getContentType(), uploadReader.getFileName());
+        if (!listener.isUploadEnable(name, contentType, uploadReader.getFileName())) {
             logger.warn(null, "无法处理文件上传请求[key={}&content-type={}&name={}]！",
-                    name, contentType, reader.getFileName());
+                    name, contentType, uploadReader.getFileName());
 
-            return failure(reader, message.get(PREFIX + "disable", name, contentType, reader.getFileName()));
+            return failure(uploadReader, message.get(PREFIX + "disable", name, contentType, uploadReader.getFileName()));
         }
 
-        JSONObject object = listener.settle(reader);
+        JSONObject object = listener.settle(uploadReader);
         if (object == null)
-            object = save(name, listener, reader, contentType);
-        reader.delete();
-        listener.complete(object);
+            object = save(name, listener, uploadReader, contentType);
+        uploadReader.delete();
+        listener.complete(uploadReader, object);
 
         return object;
     }

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author lpw
@@ -157,6 +159,14 @@ public class JsonImpl implements Json {
     @Override
     public byte[] toBytes(Object object) {
         return JSON.toJSONBytes(object, SerializerFeature.DisableCircularReferenceDetect);
+    }
+
+    @Override
+    public Map<String, String> toMap(JSONObject object) {
+        Map<String, String> map = new HashMap<>();
+        object.keySet().forEach(key -> map.put(key, object.getString(key)));
+
+        return map;
     }
 
     @Override

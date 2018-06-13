@@ -3,6 +3,9 @@ package org.lpw.tephra.util;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @author lpw
  */
@@ -95,6 +98,14 @@ public interface Json {
      * @return JSON字节流。
      */
     byte[] toBytes(Object object);
+
+    /**
+     * 转化为Map对象。
+     *
+     * @param object JSON数据。
+     * @return Map对象。
+     */
+    Map<String, String> toMap(JSONObject object);
 
     /**
      * 递归查找对象。

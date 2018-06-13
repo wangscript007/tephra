@@ -51,9 +51,11 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
             serviceHelper.setCors(request, response);
             OutputStream outputStream = serviceHelper.setContext(request, response, UPLOAD);
             List<UploadReader> readers = new ArrayList<>();
+            Map<String, String> map = new HashMap<>();
+            request.getParameterMap().forEach((name, value) -> map.put(name, converter.toString(value)));
             for (Part part : request.getParts())
                 if (part.getSize() <= maxFileSize)
-                    readers.add(new HttpUploadReader(part));
+                    readers.add(new HttpUploadReader(part, map));
             if (readers.isEmpty())
                 return;
 
