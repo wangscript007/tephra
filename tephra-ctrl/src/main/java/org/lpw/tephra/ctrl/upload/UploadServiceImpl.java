@@ -102,7 +102,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
 
         String contentType = listener.getContentType(name, uploadReader.getContentType(), uploadReader.getFileName());
         if (!listener.isUploadEnable(name, uploadReader)) {
-            logger.warn(null, "无法处理文件上传请求[key={}&content-type={}&name={}]！",
+            logger.warn(null, "无法处理文件上传请求[key={}&content-type={}&file-name={}]！",
                     name, contentType, uploadReader.getFileName());
 
             return failure(uploadReader, message.get(PREFIX + "disable", name, contentType, uploadReader.getFileName()));
