@@ -54,8 +54,11 @@ public class RequestAdapterImpl implements RequestAdapter {
             if (content.length() == 0)
                 map = new HashMap<>();
             else {
-                if (content.charAt(0) == '{')
-                    fromJson();
+                char ch = content.charAt(0);
+                if (ch == '{')
+                    fromJson(true);
+                else if (ch == '[')
+                    fromJson(false);
                 else
                     map = BeanFactory.getBean(Converter.class).toParameterMap(getFromInputStream());
             }
@@ -88,10 +91,11 @@ public class RequestAdapterImpl implements RequestAdapter {
         }
     }
 
-    private void fromJson() {
+    private void fromJson(boolean object) {
         try {
             map = new HashMap<>();
-            BeanFactory.getBean(Json.class).toObject(content).forEach((key, value) -> map.put(key, value.toString()));
+            if (object)
+                BeanFactory.getBean(Json.class).toObject(content).forEach((key, value) -> map.put(key, value.toString()));
         } catch (Throwable throwable) {
             BeanFactory.getBean(Logger.class).warn(throwable, "从JSON内容[{}]中获取参数集异常！", content);
         }
