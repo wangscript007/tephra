@@ -52,7 +52,7 @@ public class ChromeHelperImpl implements ChromeHelper, StorageListener, ContextR
     private String image;
     @Value("${tephra.chrome.services:/WEB-INF/chrome}")
     private String services;
-    @Value("${tephra.chrome.max-thread:5}")
+    @Value("${tephra.chrome.max-thread:64}")
     private int maxThread;
     private ExecutorService executorService;
     private List<String> list;
