@@ -1,7 +1,9 @@
 package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.office.MediaReader;
@@ -26,12 +28,12 @@ public class AnchorImpl implements Simple, Graphic, Anchor {
     }
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
+    public void parseShape(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
         parse(xslfSimpleShape.getAnchor(), shape);
     }
 
     @Override
-    public void parse(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
+    public void parseShape(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
         parse(xslfGraphicFrame.getAnchor(), shape);
     }
 
@@ -46,7 +48,12 @@ public class AnchorImpl implements Simple, Graphic, Anchor {
     }
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+    public XSLFShape createShape(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, MediaReader mediaReader, JSONObject shape) {
+        return null;
+    }
+
+    @Override
+    public void parseToShape(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
         if (!shape.containsKey("anchor"))
             return;
 

@@ -3,7 +3,10 @@ package org.lpw.tephra.office.pptx.parser;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.StrokeStyle;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.xmlbeans.XmlObject;
 import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaType;
@@ -41,7 +44,7 @@ public class GeometryImpl implements Simple {
     }
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
+    public void parseShape(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
         JSONObject geometry = new JSONObject();
         parseLine(xslfSimpleShape, geometry);
         parseFill(xslfSimpleShape, mediaWriter, geometry);
@@ -146,15 +149,20 @@ public class GeometryImpl implements Simple {
     }
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+    public XSLFShape createShape(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, MediaReader mediaReader, JSONObject shape) {
+        return null;
+    }
+
+    @Override
+    public void parseToShape(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
         if (!shape.containsKey("geometry"))
             return;
 
         JSONObject geometry = shape.getJSONObject("geometry");
-        parseFill(xslfSimpleShape, mediaReader, geometry);
+        parseFillToShape(xslfSimpleShape, mediaReader, geometry);
     }
 
-    private void parseFill(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject geometry) {
+    private void parseFillToShape(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject geometry) {
         if (!geometry.containsKey("fill"))
             return;
 

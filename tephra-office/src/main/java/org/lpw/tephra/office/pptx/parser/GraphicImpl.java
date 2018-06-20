@@ -1,10 +1,13 @@
 package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTable;
 import org.apache.xmlbeans.XmlObject;
+import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
@@ -31,7 +34,7 @@ public class GraphicImpl implements Graphic {
     }
 
     @Override
-    public void parse(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
+    public void parseShape(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
         if (xslfGraphicFrame instanceof XSLFTable)
             return;
 
@@ -49,5 +52,10 @@ public class GraphicImpl implements Graphic {
         } catch (IOException e) {
             logger.warn(e, "读取图表[{}]数据时发生异常！", xmlObject);
         }
+    }
+
+    @Override
+    public XSLFShape createShape(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, MediaReader mediaReader, JSONObject shape) {
+        return null;
     }
 }

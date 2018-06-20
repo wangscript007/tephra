@@ -10,7 +10,7 @@ import org.lpw.tephra.office.MediaWriter;
  *
  * @author lpw
  */
-public interface Simple {
+public interface Simple extends Creater {
     /**
      * 获取处理顺序。
      *
@@ -19,14 +19,14 @@ public interface Simple {
     int getSort();
 
     /**
-     * 解析数据。
+     * 解析形状。
      *
      * @param xslfSimpleShape 形状。
      * @param mediaWriter     媒体资源输出器。
      * @param shape           解析数据。
      * @param layout          是否为模板形状。
      */
-    void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout);
+    void parseShape(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout);
 
     /**
      * 解析数据。
@@ -35,5 +35,5 @@ public interface Simple {
      * @param mediaReader     媒体资源读取器。
      * @param shape           解析数据。
      */
-    void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape);
+    void parseToShape(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape);
 }

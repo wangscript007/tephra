@@ -106,7 +106,7 @@ public class PptxReaderImpl implements PptxReader {
     private void parseBackground(XSLFBackground xslfBackground, MediaWriter mediaWriter, JSONObject slide,
                                  Map<Integer, String> layout) {
         JSONObject background = layout.containsKey(0) ? json.toObject(layout.get(0)) : new JSONObject();
-        parser.parse(xslfBackground, mediaWriter, background, slide == null);
+        parser.parseShape(xslfBackground, mediaWriter, background, slide == null);
         background.remove("anchor");
         if (background.isEmpty())
             return;
@@ -122,7 +122,7 @@ public class PptxReaderImpl implements PptxReader {
         xslfSlides.forEach(xslfShape -> {
             if (xslfShape instanceof XSLFSimpleShape) {
                 JSONObject shape = getOrNew(fromLayout, xslfShape.getShapeId());
-                parser.parse((XSLFSimpleShape) xslfShape, mediaWriter, shape, shapes == null);
+                parser.parseShape((XSLFSimpleShape) xslfShape, mediaWriter, shape, shapes == null);
                 if (shapes == null)
                     layout.put(xslfShape.getShapeId(), json.toString(shape));
                 else
@@ -133,7 +133,7 @@ public class PptxReaderImpl implements PptxReader {
 
             if (xslfShape instanceof XSLFGraphicFrame) {
                 JSONObject shape = getOrNew(fromLayout, xslfShape.getShapeId());
-                parser.parse(xslfSlide, (XSLFGraphicFrame) xslfShape, mediaWriter, shape);
+                parser.parseShape(xslfSlide, (XSLFGraphicFrame) xslfShape, mediaWriter, shape);
                 shapes.add(shape);
 
                 return;

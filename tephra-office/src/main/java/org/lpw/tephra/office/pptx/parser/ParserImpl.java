@@ -1,7 +1,9 @@
 package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.bean.BeanFactory;
@@ -23,18 +25,32 @@ public class ParserImpl implements Parser, ContextRefreshedListener {
     private List<Graphic> graphics;
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
-        simples.forEach(simple -> simple.parse(xslfSimpleShape, mediaWriter, shape, layout));
+    public void parseShape(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
+        simples.forEach(simple -> simple.parseShape(xslfSimpleShape, mediaWriter, shape, layout));
     }
 
     @Override
-    public void parse(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
-        graphics.forEach(graphic -> graphic.parse(xslfSlide, xslfGraphicFrame, mediaWriter, shape));
+    public void parseShape(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
+        graphics.forEach(graphic -> graphic.parseShape(xslfSlide, xslfGraphicFrame, mediaWriter, shape));
     }
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
-        simples.forEach(simple -> simple.parse(xslfSimpleShape, mediaReader, shape));
+    public XSLFShape createShape(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, MediaReader mediaReader, JSONObject shape) {
+        XSLFShape xslfShape;
+        for (Simple simple : simples)
+            if ((xslfShape = simple.createShape(xmlSlideShow, xslfSlide, mediaReader, shape)) != null)
+                return xslfShape;
+
+        for (Graphic graphic : graphics)
+            if ((xslfShape = graphic.createShape(xmlSlideShow, xslfSlide, mediaReader, shape)) != null)
+                return xslfShape;
+
+        return null;
+    }
+
+    @Override
+    public void parseToShape(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+        simples.forEach(simple -> simple.parseToShape(xslfSimpleShape, mediaReader, shape));
     }
 
     @Override

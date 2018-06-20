@@ -10,7 +10,7 @@ import org.lpw.tephra.office.MediaWriter;
  *
  * @author lpw
  */
-public interface Graphic {
+public interface Graphic extends Creater {
     /**
      * 获取处理顺序。
      *
@@ -19,12 +19,12 @@ public interface Graphic {
     int getSort();
 
     /**
-     * 解析数据。
+     * 解析形状。
      *
      * @param xslfSlide        Slide。
      * @param xslfGraphicFrame 形状。
      * @param mediaWriter      媒体资源输出器。
      * @param shape            解析数据。
      */
-    void parse(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape);
+    void parseShape(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape);
 }

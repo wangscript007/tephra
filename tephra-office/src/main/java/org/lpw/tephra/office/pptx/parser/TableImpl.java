@@ -2,10 +2,13 @@ package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTable;
 import org.apache.poi.xslf.usermodel.XSLFTableCell;
+import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
 import org.springframework.stereotype.Component;
@@ -28,7 +31,7 @@ public class TableImpl implements Graphic {
     }
 
     @Override
-    public void parse(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
+    public void parseShape(XSLFSlide xslfSlide, XSLFGraphicFrame xslfGraphicFrame, MediaWriter mediaWriter, JSONObject shape) {
         if (!(xslfGraphicFrame instanceof XSLFTable))
             return;
 
@@ -39,7 +42,7 @@ public class TableImpl implements Graphic {
             xslfTableRow.getCells().forEach(xslfTableCell -> {
                 JSONObject cell = new JSONObject();
                 parseSpan(xslfTableCell, cell);
-                parser.parse(xslfTableCell, mediaWriter, cell, false);
+                parser.parseShape(xslfTableCell, mediaWriter, cell, false);
                 cells.add(cell);
             });
             if (cells.isEmpty())
@@ -62,5 +65,10 @@ public class TableImpl implements Graphic {
         span.put("column", xslfTableCell.getGridSpan());
         span.put("row", xslfTableCell.getRowSpan());
         cell.put("span", span);
+    }
+
+    @Override
+    public XSLFShape createShape(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, MediaReader mediaReader, JSONObject shape) {
+        return null;
     }
 }

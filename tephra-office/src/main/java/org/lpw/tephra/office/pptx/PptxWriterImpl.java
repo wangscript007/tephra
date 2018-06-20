@@ -3,16 +3,19 @@ package org.lpw.tephra.office.pptx;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.lpw.tephra.office.MediaReader;
+import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.parser.Parser;
 import org.lpw.tephra.util.DateTime;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,7 +31,11 @@ public class PptxWriterImpl implements PptxWriter {
     @Inject
     private Validator validator;
     @Inject
+    private Numeric numeric;
+    @Inject
     private Logger logger;
+    @Inject
+    private OfficeHelper officeHelper;
     @Inject
     private Parser parser;
 
@@ -60,7 +67,8 @@ public class PptxWriterImpl implements PptxWriter {
         if (validator.isEmpty(size))
             return;
 
-        xmlSlideShow.setPageSize(new Dimension(size.getIntValue("width"), size.getIntValue("height")));
+        xmlSlideShow.setPageSize(new Dimension(numeric.toInt(officeHelper.pixelToPoint(size.getIntValue("width"))),
+                numeric.toInt(officeHelper.pixelToPoint(size.getIntValue("height")))));
     }
 
     private void parseSildes(XMLSlideShow xmlSlideShow, MediaReader mediaReader, JSONArray slides) {
@@ -71,11 +79,30 @@ public class PptxWriterImpl implements PptxWriter {
             JSONObject slide = slides.getJSONObject(i);
             XSLFSlide xslfSlide = xmlSlideShow.createSlide();
             parseBackground(xslfSlide, mediaReader, slide);
+            parseShapes(xmlSlideShow, xslfSlide, mediaReader, slide.getJSONArray("shapes"));
         }
     }
 
     private void parseBackground(XSLFSlide xslfSlide, MediaReader mediaReader, JSONObject slide) {
-        if (slide.containsKey("background"))
-            parser.parse(xslfSlide.getBackground(), mediaReader, slide.getJSONObject("background"));
+        if (!slide.containsKey("background"))
+            return;
+
+        xslfSlide.getXmlObject().getCSld().addNewBg();
+        parser.parseToShape(xslfSlide.getBackground(), mediaReader, slide.getJSONObject("background"));
+    }
+
+    private void parseShapes(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, MediaReader mediaReader, JSONArray shapes) {
+        for (int i = 0, size = shapes.size(); i < size; i++) {
+            JSONObject shape = shapes.getJSONObject(i);
+            XSLFShape xslfShape = parser.createShape(xmlSlideShow, xslfSlide, mediaReader, shape);
+            if (xslfShape == null) {
+                logger.warn(null, "无法处理PPTx形状[{}]！", shape);
+
+                continue;
+            }
+
+            if (xslfShape instanceof XSLFSimpleShape)
+                parser.parseToShape((XSLFSimpleShape) xslfShape, mediaReader, shape);
+        }
     }
 }

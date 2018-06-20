@@ -1,7 +1,10 @@
 package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.xmlbeans.XmlObject;
 import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaWriter;
@@ -28,7 +31,7 @@ public class FlipImpl implements Simple {
     }
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
+    public void parseShape(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
         JSONObject flip = new JSONObject();
         CTSphereCoords ctSphereCoords = getScene3D(xslfSimpleShape);
         if (xslfSimpleShape.getFlipHorizontal() || (ctSphereCoords != null && ctSphereCoords.getLat() == 10800000))
@@ -56,7 +59,12 @@ public class FlipImpl implements Simple {
     }
 
     @Override
-    public void parse(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+    public XSLFShape createShape(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, MediaReader mediaReader, JSONObject shape) {
+        return null;
+    }
+
+    @Override
+    public void parseToShape(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
         if (!shape.containsKey("flip"))
             return;
 

@@ -2,7 +2,7 @@ package org.lpw.tephra.office;
 
 import com.alibaba.fastjson.JSONObject;
 
-import java.io.OutputStream;
+import java.io.InputStream;
 
 /**
  * 媒体资源输出器。
@@ -13,9 +13,8 @@ public interface MediaReader {
     /**
      * 读取媒体资源。
      *
-     * @param outputStream 输出流。
-     * @param object       数据。
-     * @return 媒体类型。
+     * @param object 数据。
+     * @return 媒体资源输入流。
      */
-    MediaType read(OutputStream outputStream, JSONObject object);
+    InputStream read(JSONObject object);
 }
