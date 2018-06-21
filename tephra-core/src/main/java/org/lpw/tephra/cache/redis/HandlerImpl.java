@@ -45,12 +45,10 @@ public class HandlerImpl implements Handler, ContextRefreshedListener {
 
     @Override
     public void put(String key, Object value, boolean resident) {
-        try {
-            Jedis jedis = pool.getResource();
+        try (Jedis jedis = pool.getResource()) {
             jedis.set(key.getBytes(), serializer.serialize(value));
-            jedis.close();
-        } catch (Exception e) {
-            logger.warn(e, "推送Redis缓存数据[{}:{}:{}]时发生异常！", key, value, resident);
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "推送Redis缓存数据[{}:{}:{}]时发生异常！", key, value, resident);
         }
     }
 
@@ -66,17 +64,15 @@ public class HandlerImpl implements Handler, ContextRefreshedListener {
 
     @SuppressWarnings({"unchecked"})
     private <T> T get(String key, boolean remove) {
-        try {
-            Jedis jedis = pool.getResource();
+        try (Jedis jedis = pool.getResource()) {
             byte[] k = key.getBytes();
             byte[] bytes = jedis.get(k);
             if (remove)
                 jedis.del(k);
-            jedis.close();
 
             return (T) serializer.unserialize(bytes);
-        } catch (Exception e) {
-            logger.warn(e, "获取Redis缓存[{}:{}]数据时发生异常！", key, remove);
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "获取Redis缓存[{}:{}]数据时发生异常！", key, remove);
 
             return null;
         }

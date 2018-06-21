@@ -58,7 +58,7 @@ public class SerializerImpl implements Serializer {
         }
 
         Output output = new Output(outputStream);
-        new Kryo().writeClassAndObject(output, object);
+        kryo().writeClassAndObject(output, object);
         output.close();
     }
 
@@ -107,9 +107,16 @@ public class SerializerImpl implements Serializer {
     @SuppressWarnings("unchecked")
     private <T> T unserializeByKryo(byte[] bytes) {
         Input input = new Input(bytes);
-        T object = (T) new Kryo().readClassAndObject(input);
+        T object = (T) kryo().readClassAndObject(input);
         input.close();
 
         return object;
+    }
+
+    private Kryo kryo() {
+        Kryo kryo = new Kryo();
+        kryo.setRegistrationRequired(false);
+
+        return kryo;
     }
 }

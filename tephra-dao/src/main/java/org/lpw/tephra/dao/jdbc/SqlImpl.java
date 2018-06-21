@@ -24,7 +24,8 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
             pstmt.close();
 
             if (logger.isDebugEnable())
-                logger.debug("执行SQL[{}:{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args), System.currentTimeMillis() - time);
+                logger.debug("执行SQL[{}:{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args),
+                        System.currentTimeMillis() - time);
 
             return sqlTable;
         } catch (SQLException e) {
@@ -44,7 +45,8 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
             pstmt.close();
 
             if (logger.isDebugEnable())
-                logger.debug("执行SQL[{}:{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args), System.currentTimeMillis() - time);
+                logger.debug("执行SQL[{}:{}:{}:{}]检索操作。", dataSource, sql, converter.toString(args),
+                        System.currentTimeMillis() - time);
 
             return array;
         } catch (SQLException e) {
@@ -78,7 +80,8 @@ public class SqlImpl extends JdbcSupport<PreparedStatement> implements Sql {
             pstmt.close();
 
             if (logger.isDebugEnable())
-                logger.debug("执行SQL[{}:{}:{}:{}]批量更新操作。", dataSource, sql, converter.toString(args), System.currentTimeMillis() - time);
+                logger.debug("执行SQL[{}:{}:{}:{}]批量更新操作。", dataSource, sql, converter.toString(args),
+                        System.currentTimeMillis() - time);
 
             return array;
         } catch (SQLException e) {
