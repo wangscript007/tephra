@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.pool.KryoPool;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -29,7 +28,6 @@ public class SerializerImpl implements Serializer {
     private Logger logger;
     private byte[] jsonObject = "json->object::".getBytes();
     private byte[] jsonArray = "json->array::".getBytes();
-    private KryoPool kryoPool = new KryoPool.Builder(Kryo::new).build();
 
     @Override
     public byte[] serialize(Object object) {
@@ -59,11 +57,9 @@ public class SerializerImpl implements Serializer {
             return;
         }
 
-        Kryo kryo = kryoPool.borrow();
         Output output = new Output(outputStream);
-        kryo.writeClassAndObject(output, object);
+        new Kryo().writeClassAndObject(output, object);
         output.close();
-        kryoPool.release(kryo);
     }
 
     private void serializeJson(byte[] bytes, Object object, OutputStream outputStream) {
@@ -110,11 +106,9 @@ public class SerializerImpl implements Serializer {
 
     @SuppressWarnings("unchecked")
     private <T> T unserializeByKryo(byte[] bytes) {
-        Kryo kryo = kryoPool.borrow();
         Input input = new Input(bytes);
-        T object = (T) kryo.readClassAndObject(input);
+        T object = (T) new Kryo().readClassAndObject(input);
         input.close();
-        kryoPool.release(kryo);
 
         return object;
     }
