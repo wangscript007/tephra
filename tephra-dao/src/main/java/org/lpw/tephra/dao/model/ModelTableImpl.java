@@ -401,7 +401,7 @@ public class ModelTableImpl implements ModelTable {
         setMethods.forEach((name, set) -> {
             Method get = getMethods.get(name);
             if (get == null) {
-                logger.warn(null, "无法获得Get[{}]方法！", name);
+                logger.warn(null, "无法获得Model[{}]Get[{}]方法！", modelClass, name);
 
                 return;
             }
@@ -417,7 +417,8 @@ public class ModelTableImpl implements ModelTable {
     @Override
     public <T extends Model> String toString(T model) {
         StringBuilder string = new StringBuilder().append("table=").append(tableName).append(";id=").append(model.getId());
-        columns.forEach((column, property) -> string.append(';').append(column).append('&').append(property).append('=').append(get(model, column)));
+        columns.forEach((column, property) ->
+                string.append(';').append(column).append('&').append(property).append('=').append(get(model, column)));
 
         return string.toString();
     }
