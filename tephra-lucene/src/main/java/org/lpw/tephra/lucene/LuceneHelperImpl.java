@@ -100,16 +100,14 @@ public class LuceneHelperImpl implements LuceneHelper {
             return set;
 
         StringBuilder query = new StringBuilder();
-        words.forEach(word -> query.append(" +").append(word));
+        words.forEach(word -> query.append(" +\"").append(word).append('"'));
         try {
             IndexReader indexReader = DirectoryReader.open(get(key));
             IndexSearcher indexSearcher = new IndexSearcher(indexReader);
             TopDocs topDocs = indexSearcher.search(new QueryParser("data", new HanLPAnalyzer())
                     .parse(query.substring(2)), size);
-            for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+            for (ScoreDoc scoreDoc : topDocs.scoreDocs)
                 set.add(indexSearcher.doc(scoreDoc.doc).get("id"));
-                System.out.println(indexSearcher.doc(scoreDoc.doc).get("data"));
-            }
             indexReader.close();
         } catch (Throwable throwable) {
             logger.warn(throwable, "检索Lucene数据[{}:{}]时发生异常！", key, query);
