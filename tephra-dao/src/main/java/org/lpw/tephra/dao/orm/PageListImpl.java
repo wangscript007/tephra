@@ -27,7 +27,7 @@ public class PageListImpl<T extends Model> implements PageList<T> {
     private int pageEnd;
 
     @Override
-    public void setPage(int count, int size, int number) {
+    public PageList<T> setPage(int count, int size, int number) {
         this.count = Math.max(0, count);
         this.size = Math.max(1, size);
         this.number = Math.min(number, this.count / this.size + (this.count % this.size == 0 ? 0 : 1));
@@ -35,6 +35,8 @@ public class PageListImpl<T extends Model> implements PageList<T> {
         page = Math.max(1, count / size + (count % size == 0 ? 0 : 1));
         pageStart = Math.max(1, this.number - 9);
         pageEnd = Math.min(page, pageStart + 19);
+
+        return this;
     }
 
     @Override

@@ -15,8 +15,9 @@ public interface PageList<T extends Model> {
      * @param count  记录总数。
      * @param size   每页显示记录数。
      * @param number 当前显示页码数。
+     * @return 当前实例。
      */
-    void setPage(int count, int size, int number);
+    PageList<T> setPage(int count, int size, int number);
 
     /**
      * 获取记录总数。
