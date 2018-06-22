@@ -11,8 +11,12 @@ public class Image extends Support {
     private String format = "png";
     private int quality = 100;
 
+    private Image(String[] args) {
+        super(args);
+    }
+
     @Override
-    void parseArg(String arg) {
+    void arg(String arg) {
         if (arg.startsWith("-x="))
             x = Double.parseDouble(arg.substring(3));
         else if (arg.startsWith("-y="))
@@ -24,12 +28,12 @@ public class Image extends Support {
     }
 
     @Override
-    String getMethod() {
+    String method() {
         return "Page.captureScreenshot";
     }
 
     @Override
-    JSONObject getParams() {
+    JSONObject params() {
         JSONObject params = new JSONObject();
         params.put("format", format);
         if (format.equals("jpeg"))
@@ -46,6 +50,6 @@ public class Image extends Support {
     }
 
     public static void main(String[] args) throws Exception {
-        new Image().setArgs(args).execute();
+        new Image(args).execute();
     }
 }

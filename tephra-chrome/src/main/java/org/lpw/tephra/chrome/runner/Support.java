@@ -15,6 +15,7 @@ import java.util.Random;
  * @author lpw
  */
 abstract class Support {
+    private String[] args;
     private String host;
     private int port;
     private String uri;
@@ -23,7 +24,27 @@ abstract class Support {
     private String output;
     private Random random;
 
-    Support setArgs(String[] args){
+    Support(String[] args) {
+        this.args = args;
+    }
+
+    void execute() throws Exception {
+        args();
+
+        Socket socket = new Socket(host, port);
+        OutputStream outputStream = socket.getOutputStream();
+        outputStream.write(handshake().getBytes());
+        outputStream.flush();
+        read(socket.getInputStream(), false);
+        outputStream.write(pack(message().toJSONString()).toByteArray());
+        outputStream.flush();
+        ByteArrayOutputStream byteArrayOutputStream = read(socket.getInputStream(), true);
+        socket.close();
+
+        save(new StringBuilder(byteArrayOutputStream.toString()));
+    }
+
+    private void args() {
         for (String arg : args) {
             arg = arg.trim();
             if (arg.startsWith("-host="))
@@ -39,28 +60,12 @@ abstract class Support {
             else if (arg.startsWith("-output="))
                 output = arg.substring(8);
             else
-                parseArg(arg);
+                arg(arg);
         }
         random = new Random();
-
-        return this;
     }
 
-    void parseArg(String arg) {
-    }
-
-    void execute() throws Exception {
-        Socket socket = new Socket(host, port);
-        OutputStream outputStream = socket.getOutputStream();
-        outputStream.write(handshake().getBytes());
-        outputStream.flush();
-        read(socket.getInputStream(), false);
-        outputStream.write(pack(getMessage().toJSONString()).toByteArray());
-        outputStream.flush();
-        ByteArrayOutputStream byteArrayOutputStream = read(socket.getInputStream(), true);
-        socket.close();
-
-        save(new StringBuilder(byteArrayOutputStream.toString()));
+    void arg(String arg) {
     }
 
     private String handshake() {
@@ -71,18 +76,18 @@ abstract class Support {
                 + "Origin: http://" + host + ":" + port + "\r\n\r\n";
     }
 
-    private JSONObject getMessage() {
+    private JSONObject message() {
         JSONObject object = new JSONObject();
         object.put("id", random(10000000, 99999999));
-        object.put("method", getMethod());
-        object.put("params", getParams());
+        object.put("method", method());
+        object.put("params", params());
 
         return object;
     }
 
-    abstract String getMethod();
+    abstract String method();
 
-    abstract JSONObject getParams();
+    abstract JSONObject params();
 
     private ByteArrayOutputStream read(InputStream inputStream, boolean json) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

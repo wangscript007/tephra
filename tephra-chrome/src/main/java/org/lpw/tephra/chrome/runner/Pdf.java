@@ -8,19 +8,23 @@ import com.alibaba.fastjson.JSONObject;
 public class Pdf extends Support {
     private String range = "";
 
+    private Pdf(String[] args) {
+        super(args);
+    }
+
     @Override
-    void parseArg(String arg) {
+    void arg(String arg) {
         if (arg.startsWith("-range="))
             range = arg.substring(7);
     }
 
     @Override
-    String getMethod() {
+    String method() {
         return "Page.printToPDF";
     }
 
     @Override
-    JSONObject getParams() {
+    JSONObject params() {
         JSONObject params = new JSONObject();
         params.put("printBackground", true);
         params.put("paperWidth", width / 96.0D);
@@ -35,6 +39,6 @@ public class Pdf extends Support {
     }
 
     public static void main(String[] args) throws Exception {
-        new Pdf().setArgs(args).execute();
+        new Pdf(args).execute();
     }
 }
