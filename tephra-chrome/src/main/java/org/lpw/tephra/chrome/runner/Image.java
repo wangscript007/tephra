@@ -11,10 +11,6 @@ public class Image extends Support {
     private String format = "png";
     private int quality = 100;
 
-    private Image(String[] args) {
-        super(args);
-    }
-
     @Override
     void parseArg(String arg) {
         if (arg.startsWith("-x="))
@@ -41,8 +37,8 @@ public class Image extends Support {
         JSONObject clip = new JSONObject();
         clip.put("x", x);
         clip.put("y", y);
-        clip.put("width", x + width);
-        clip.put("height", y + height);
+        clip.put("width", width);
+        clip.put("height", height);
         clip.put("scale", 1);
         params.put("clip", clip);
 
@@ -50,6 +46,6 @@ public class Image extends Support {
     }
 
     public static void main(String[] args) throws Exception {
-        new Image(args).execute();
+        new Image().setArgs(args).execute();
     }
 }

@@ -23,7 +23,7 @@ abstract class Support {
     private String output;
     private Random random;
 
-    Support(String[] args) {
+    Support setArgs(String[] args){
         for (String arg : args) {
             arg = arg.trim();
             if (arg.startsWith("-host="))
@@ -42,6 +42,8 @@ abstract class Support {
                 parseArg(arg);
         }
         random = new Random();
+
+        return this;
     }
 
     void parseArg(String arg) {

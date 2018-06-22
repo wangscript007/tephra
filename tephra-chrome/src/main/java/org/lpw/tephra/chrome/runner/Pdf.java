@@ -8,10 +8,6 @@ import com.alibaba.fastjson.JSONObject;
 public class Pdf extends Support {
     private String range = "";
 
-    private Pdf(String[] args) {
-        super(args);
-    }
-
     @Override
     void parseArg(String arg) {
         if (arg.startsWith("-range="))
@@ -39,6 +35,6 @@ public class Pdf extends Support {
     }
 
     public static void main(String[] args) throws Exception {
-        new Pdf(args).execute();
+        new Pdf().setArgs(args).execute();
     }
 }

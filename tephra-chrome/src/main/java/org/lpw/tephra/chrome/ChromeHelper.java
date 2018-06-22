@@ -38,14 +38,15 @@ public interface ChromeHelper {
     /**
      * 输出JPEG图片。
      *
-     * @param url    URL地址。
-     * @param wait   等待时间，单位：秒。
-     * @param x      X位置，单位：像素。
-     * @param y      Y位置，单位：像素。
-     * @param width  页面宽度，单位：像素。
-     * @param height 页面高度，单位：像素。
-     * @param output JPEG文件输出目录。
+     * @param url     URL地址。
+     * @param wait    等待时间，单位：秒。
+     * @param x       X位置，单位：像素。
+     * @param y       Y位置，单位：像素。
+     * @param width   页面宽度，单位：像素。
+     * @param height  页面高度，单位：像素。
+     * @param quality 图片质量，[1-100]。
+     * @param output  JPEG文件输出目录。
      * @return JPEG文件路径。
      */
-    String jpeg(String url, int wait, int x, int y, int width, int height, String output);
+    String jpeg(String url, int wait, int x, int y, int width, int height, int quality, String output);
 }

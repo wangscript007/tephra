@@ -68,8 +68,8 @@ public class ChromeHelperImpl implements ChromeHelper, StorageListener, ContextR
     }
 
     @Override
-    public String jpeg(String url, int wait, int x, int y, int width, int height, String output) {
-        return execute(image, url, wait, x, y, width, height, null, "jpeg", 100, output, ".jpg");
+    public String jpeg(String url, int wait, int x, int y, int width, int height, int quality, String output) {
+        return execute(image, url, wait, x, y, width, height, null, "jpeg", quality, output, ".jpg");
     }
 
     private String execute(String type, String url, int wait, int x, int y, int width, int height, String range,

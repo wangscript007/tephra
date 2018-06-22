@@ -27,7 +27,7 @@ public class PptxWriterTest extends CoreTestSupport {
     public void write() throws IOException {
         long time = System.currentTimeMillis();
         OutputStream outputStream = new FileOutputStream("/mnt/hgfs/share/ppt/demo-out.pptx");
-        pptxWriter.write(outputStream, json.toObject(io.readAsString("/mnt/hgfs/share/ppt/demo.json")), (obj) -> {
+        pptxWriter.write(outputStream, json.toObject(io.readAsString("target/pptx.json")), (obj) -> {
             try {
                 return new FileInputStream("/mnt/hgfs/share/ppt/demo/ppt/media/image1.jpeg");
             } catch (FileNotFoundException e) {
