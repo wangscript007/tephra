@@ -28,11 +28,6 @@
             <artifactId>tephra-ctrl-http</artifactId>
             <version>${version.tephra}</version>
         </dependency>
-        <dependency>
-            <groupId>org.lpw.tephra</groupId>
-            <artifactId>tephra-chrome</artifactId>
-            <version>${version.tephra}</version>
-        </dependency>
     </dependencies>
     <build>
         <finalName>tephra-web</finalName>
