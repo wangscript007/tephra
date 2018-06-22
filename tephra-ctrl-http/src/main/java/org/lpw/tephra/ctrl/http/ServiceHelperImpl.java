@@ -95,8 +95,11 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private String redirect;
     @Value("${tephra.ctrl.http.cors:/WEB-INF/http/cors.json}")
     private String cors;
+    @Value("${tephra.ctrl.http.virtual-context:}")
+    private String virtualContext;
     private int contextPath;
     private String servletContextPath;
+    private int virtualContextLength;
     private String[] prefixes;
     private String[] suffixes;
     private Set<String> ignoreUris;
@@ -109,8 +112,9 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     public void setPath(String real, String context) {
         contextPath = validator.isEmpty(context) || context.equals(ROOT) ? 0 : context.length();
         servletContextPath = contextPath > 0 ? context : "";
+        virtualContextLength = virtualContext.length();
         if (logger.isInfoEnable())
-            logger.info("部署项目路径[{}]。", context);
+            logger.info("部署项目路径[{}]，虚拟路径[{}]。", context, virtualContext);
         prefixes = converter.toArray(ignorePrefixes, ",");
         suffixes = converter.toArray(ignoreSuffixes, ",");
 
@@ -174,6 +178,9 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         String uri = request.getRequestURI();
         if (contextPath > 0)
             uri = uri.substring(contextPath);
+        if (virtualContextLength > 0 && uri.startsWith(virtualContext))
+            uri = uri.substring(virtualContextLength);
+
 
         return uri;
     }
