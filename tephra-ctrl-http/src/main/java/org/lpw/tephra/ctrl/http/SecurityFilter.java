@@ -35,7 +35,6 @@ public class SecurityFilter implements Filter {
             chain.doFilter(request, response);
         else
             response.sendError(404);
-
     }
 
     @Override

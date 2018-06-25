@@ -3,6 +3,7 @@ package org.lpw.tephra.ctrl.http.upload;
 import org.lpw.tephra.atomic.Closables;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.lpw.tephra.ctrl.http.IgnoreUri;
 import org.lpw.tephra.ctrl.http.ServiceHelper;
 import org.lpw.tephra.ctrl.upload.UploadReader;
 import org.lpw.tephra.ctrl.upload.UploadService;
@@ -26,7 +27,7 @@ import java.util.Map;
  * @author lpw
  */
 @Service(UploadHelper.PREFIX + "helper")
-public class UploadHelperImpl implements UploadHelper, ContextRefreshedListener {
+public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefreshedListener {
     @Inject
     private Converter converter;
     @Inject
@@ -48,7 +49,7 @@ public class UploadHelperImpl implements UploadHelper, ContextRefreshedListener 
     public void upload(HttpServletRequest request, HttpServletResponse response, String uploader) {
         try {
             serviceHelper.setCors(request, response);
-            OutputStream outputStream = serviceHelper.setContext(request, response, UPLOAD);
+            OutputStream outputStream = serviceHelper.setContext(request, response, uploader);
             List<UploadReader> readers = new ArrayList<>();
             Map<String, String> map = new HashMap<>();
             request.getParameterMap().forEach((name, value) -> map.put(name, converter.toString(value)));
@@ -66,6 +67,11 @@ public class UploadHelperImpl implements UploadHelper, ContextRefreshedListener 
         } finally {
             closables.close();
         }
+    }
+
+    @Override
+    public String[] getIgnoreUris() {
+        return new String[]{UPLOAD, UPLOAD_PATH};
     }
 
     @Override
