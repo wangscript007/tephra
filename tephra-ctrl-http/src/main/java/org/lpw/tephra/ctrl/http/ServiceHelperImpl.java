@@ -95,7 +95,7 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private String redirect;
     @Value("${tephra.ctrl.http.cors:/WEB-INF/http/cors.json}")
     private String cors;
-    @Value("${tephra.ctrl.http.virtual-context:/api}")
+    @Value("${tephra.ctrl.http.virtual-context:}")
     private String virtualContext;
     private int contextPath;
     private String servletContextPath;
