@@ -14,6 +14,7 @@ import org.lpw.tephra.ctrl.http.context.HeaderAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.RequestAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.ResponseAdapterImpl;
 import org.lpw.tephra.ctrl.http.context.SessionAdapterImpl;
+import org.lpw.tephra.ctrl.http.upload.UploadHelper;
 import org.lpw.tephra.ctrl.http.ws.WsHelper;
 import org.lpw.tephra.ctrl.status.Status;
 import org.lpw.tephra.ctrl.upload.UploadService;
@@ -79,6 +80,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private Dispatcher dispatcher;
     @Inject
     private Status status;
+    @Inject
+    private UploadHelper uploadHelper;
     @Inject
     private Optional<IgnoreTimeHash> ignoreTimeHash;
     @Inject
@@ -148,6 +151,18 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
                 logger.debug("忽略请求[{}]。", uri);
 
             return false;
+        }
+
+        if (lowerCaseUri.equals(UploadHelper.UPLOAD)) {
+            uploadHelper.upload(request, response, UploadHelper.UPLOAD);
+
+            return true;
+        }
+
+        if (lowerCaseUri.equals(UploadHelper.UPLOAD_PATH)) {
+            uploadHelper.upload(request, response, UploadHelper.UPLOAD_PATH);
+
+            return true;
         }
 
         if (lowerCaseUri.startsWith("/redirect")) {
