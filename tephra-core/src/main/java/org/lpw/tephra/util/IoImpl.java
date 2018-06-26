@@ -192,18 +192,15 @@ public class IoImpl implements Io {
     }
 
     @Override
-    public void move(File source, File target) throws IOException {
-        OutputStream outputStream = new FileOutputStream(target);
-        InputStream inputStream = new FileInputStream(source);
-        copy(inputStream, outputStream);
-        inputStream.close();
-        outputStream.close();
-        delete(source);
+    public File move(File source, File target) {
+        mkdirs(target.getParentFile());
+
+        return source.renameTo(target) ? target : source;
     }
 
     @Override
-    public void move(String source, String target) throws IOException {
-        move(new File(source), new File(target));
+    public String move(String source, String target) {
+        return move(new File(source), new File(target)).getAbsolutePath();
     }
 
     @Override

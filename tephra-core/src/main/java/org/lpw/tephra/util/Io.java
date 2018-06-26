@@ -118,18 +118,18 @@ public interface Io {
      *
      * @param source 源文件。
      * @param target 目标文件。
-     * @throws IOException 未处理IO读写异常。
+     * @return 如果移动成功则返回目标文件；失败则返回源文件。
      */
-    void move(File source, File target) throws IOException;
+    File move(File source, File target);
 
     /**
      * 移动文件。
      *
      * @param source 源文件。
      * @param target 目标文件。
-     * @throws IOException 未处理IO读写异常。
+     * @return 如果移动成功则返回目标文件；失败则返回源文件。
      */
-    void move(String source, String target) throws IOException;
+    String move(String source, String target);
 
     /**
      * 删除文件/目录（递归）。
