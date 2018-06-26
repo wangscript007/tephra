@@ -3,8 +3,10 @@ package org.lpw.tephra.ctrl.upload;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.storage.Storage;
 import org.lpw.tephra.util.Coder;
+import org.lpw.tephra.util.Http;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -21,6 +23,7 @@ public class SimpleUploadReader implements UploadReader {
     private String contentType;
     private String base64;
     private String string;
+    private String url;
     private Map<String, String> map;
     private byte[] bytes;
     private InputStream inputStream;
@@ -31,12 +34,14 @@ public class SimpleUploadReader implements UploadReader {
         contentType = map.get("contentType");
         base64 = map.get("base64");
         string = map.get("string");
+        url = map.get("url");
         Set<String> set = new HashSet<>();
         set.add("name");
         set.add("fileName");
         set.add("contentType");
         set.add("base64");
         set.add("string");
+        set.add("url");
         this.map = new HashMap<>();
         map.keySet().stream().filter(key -> !set.contains(key)).forEach(key -> this.map.put(key, map.get(key)));
     }
@@ -82,9 +87,33 @@ public class SimpleUploadReader implements UploadReader {
     @Override
     public byte[] getBytes() {
         if (bytes == null)
-            bytes = base64 == null ? string.getBytes() : BeanFactory.getBean(Coder.class).decodeBase64(base64);
+            read();
 
         return bytes;
+    }
+
+    private void read() {
+        if (base64 != null) {
+            bytes = BeanFactory.getBean(Coder.class).decodeBase64(base64);
+
+            return;
+        }
+
+        if (string != null) {
+            bytes = string.getBytes();
+
+            return;
+        }
+
+        if (url == null)
+            return;
+
+        Map<String, String> map = new HashMap<>();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        BeanFactory.getBean(Http.class).post(url, null, null, map, outputStream);
+        if (contentType == null && map.containsKey("content-type"))
+            contentType = map.get("content-type");
+        bytes = outputStream.toByteArray();
     }
 
     @Override

@@ -12,12 +12,13 @@
         "fileName": "文件名",
         "contentType": "文件Content-Type",
         "base64": "BASE64编码后的数据",
-        "string": "字符串数据"
+        "string": "字符串数据",
+        "url": "文件URL地址"
     }
 ]
 ```
 
-> 如果`base64`未提交则保存`string`数据。
+> `base64/string/url`三选一，优先使用`banse64`，然后是`string`，最后是`url`。
 
 > 其它参数可直接添加到请求参数列表。
 

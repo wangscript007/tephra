@@ -132,26 +132,26 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         return listener;
     }
 
-    private JSONObject save(String key, UploadListener listener, UploadReader reader, String contentType) throws IOException {
-        Storage storage = storages.get(listener.getStorage());
+    private JSONObject save(String key, UploadListener uploadListener, UploadReader uploadReader, String contentType) throws IOException {
+        Storage storage = storages.get(uploadListener.getStorage());
         if (storage == null) {
-            logger.warn(null, "无法获得存储处理器[{}]，文件上传失败！", listener.getStorage());
+            logger.warn(null, "无法获得存储处理器[{}]，文件上传失败！", uploadListener.getStorage());
 
-            return failure(reader, message.get(PREFIX + "storage.not-exists", listener.getStorage()));
+            return failure(uploadReader, message.get(PREFIX + "storage.not-exists", uploadListener.getStorage()));
         }
 
         JSONObject object = new JSONObject();
         object.put("success", true);
-        object.put("name", reader.getName());
-        object.put("fileName", reader.getFileName());
-        object.put("fileSize", reader.getSize());
-        String suffix = getSuffix(listener, reader);
+        object.put("name", uploadReader.getName());
+        object.put("fileName", uploadReader.getFileName());
+        object.put("fileSize", uploadReader.getSize());
+        String suffix = getSuffix(uploadListener, uploadReader);
 
         if (storage.getType().equals(Storages.TYPE_DISK)) {
-            String path = listener.getPath(reader.getName(), contentType, reader.getFileName());
-            String whPath = image.is(contentType, reader.getFileName()) ?
-                    wormholeHelper.image(path, null, suffix, null, reader.getInputStream()) :
-                    wormholeHelper.file(path, null, suffix, null, reader.getInputStream());
+            String path = uploadListener.getPath(uploadReader.getName(), contentType, uploadReader.getFileName());
+            String whPath = image.is(contentType, uploadReader.getFileName()) ?
+                    wormholeHelper.image(path, null, suffix, null, uploadReader.getInputStream()) :
+                    wormholeHelper.file(path, null, suffix, null, uploadReader.getInputStream());
             if (whPath != null) {
                 object.put("path", whPath);
                 if (logger.isDebugEnable())
@@ -161,12 +161,12 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
             }
         }
 
-        String path = (ROOT + contentType + "/" + listener.getPath(reader.getName(), contentType, reader.getFileName()) + "/"
-                + dateTime.toString(dateTime.today(), "yyyyMMdd") + "/" + generator.random(32)
+        String path = (ROOT + contentType + "/" + uploadListener.getPath(uploadReader.getName(), contentType, uploadReader.getFileName())
+                + "/" + dateTime.toString(dateTime.today(), "yyyyMMdd") + "/" + generator.random(32)
                 + suffix).replaceAll("[/]+", "/");
         object.put("path", path);
-        reader.write(storage, path);
-        String thumbnail = thumbnail(listener.getImageSize(key), storage, contentType, path);
+        uploadReader.write(storage, path);
+        String thumbnail = thumbnail(uploadListener.getImageSize(key), storage, contentType, path);
         if (thumbnail != null)
             object.put("thumbnail", thumbnail);
         if (logger.isDebugEnable())

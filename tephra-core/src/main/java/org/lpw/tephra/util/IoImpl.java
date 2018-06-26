@@ -205,6 +205,9 @@ public class IoImpl implements Io {
 
     @Override
     public void delete(File file) {
+        if (file == null)
+            return;
+
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (files != null)

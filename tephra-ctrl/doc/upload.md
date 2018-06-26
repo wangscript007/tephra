@@ -13,8 +13,9 @@
 |contentType|string|文件类型。|
 |base64|string|Base64编码的文件数据。|
 |string|string|字符串文件数据。|
+|url|string|文件URL地址。|
 
-> 如果`base64`未提交则保存`string`数据。
+> `base64/string/url`三选一，优先使用`banse64`，然后是`string`，最后是`url`。
 
 > 其它参数可直接添加到请求参数列表。
 
@@ -24,6 +25,7 @@
     "success": "true/false",
     "name": "名称，须与监听器KEY相同",
     "fileName": "文件名",
+    "fileSize": "文件大小",
     "path": "上传文件保存路径，成功时返回",
     "thumbnail": "缩略图文件保存路径，成功且上传文件为符合缩略图设置的图片时返回",
     "message": "错误信息，失败时返回"
