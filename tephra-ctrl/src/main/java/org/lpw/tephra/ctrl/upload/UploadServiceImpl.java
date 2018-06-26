@@ -144,6 +144,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         object.put("success", true);
         object.put("name", reader.getName());
         object.put("fileName", reader.getFileName());
+        object.put("fileSize", reader.getSize());
         String suffix = getSuffix(listener, reader);
 
         if (storage.getType().equals(Storages.TYPE_DISK)) {
