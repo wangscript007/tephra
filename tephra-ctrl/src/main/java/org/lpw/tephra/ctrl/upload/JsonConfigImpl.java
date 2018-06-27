@@ -28,7 +28,7 @@ public class JsonConfigImpl implements JsonConfig {
     }
 
     @Override
-    public boolean isUploadEnable(String key, UploadReader uploadReader) {
+    public boolean isUploadEnable(UploadReader uploadReader) {
         for (Pattern pattern : map.keySet())
             if (pattern.matcher(uploadReader.getContentType()).find())
                 return true;
@@ -48,9 +48,9 @@ public class JsonConfigImpl implements JsonConfig {
     }
 
     @Override
-    public String getPath(String key, String contentType, String name) {
+    public String getPath(UploadReader uploadReader) {
         for (Pattern pattern : map.keySet())
-            if (pattern.matcher(contentType).find())
+            if (pattern.matcher(uploadReader.getContentType()).find())
                 return map.get(pattern);
 
         return null;

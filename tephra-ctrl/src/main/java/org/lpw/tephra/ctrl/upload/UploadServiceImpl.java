@@ -100,15 +100,15 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         if (listener == null)
             return failure(uploadReader, message.get(PREFIX + "listener.not-exists", name));
 
-        String contentType = listener.getContentType(name, uploadReader.getContentType(), uploadReader.getFileName());
-        if (!listener.isUploadEnable(name, uploadReader)) {
+        String contentType = listener.getContentType(uploadReader);
+        if (!listener.isUploadEnable(uploadReader)) {
             logger.warn(null, "无法处理文件上传请求[key={}&content-type={}&file-name={}]！",
                     name, contentType, uploadReader.getFileName());
 
             return failure(uploadReader, message.get(PREFIX + "disable", name, contentType, uploadReader.getFileName()));
         }
 
-        JSONObject object = listener.settle(name, uploadReader);
+        JSONObject object = listener.settle(uploadReader);
         if (object == null)
             object = save(name, listener, uploadReader, contentType);
         uploadReader.delete();
@@ -148,7 +148,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         String suffix = getSuffix(uploadListener, uploadReader);
 
         if (storage.getType().equals(Storages.TYPE_DISK)) {
-            String path = uploadListener.getPath(uploadReader.getName(), contentType, uploadReader.getFileName());
+            String path = uploadListener.getPath(uploadReader);
             String whPath = image.is(contentType, uploadReader.getFileName()) ?
                     wormholeHelper.image(path, null, suffix, null, uploadReader.getInputStream()) :
                     wormholeHelper.file(path, null, suffix, null, uploadReader.getInputStream());
@@ -161,7 +161,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
             }
         }
 
-        String path = (ROOT + contentType + "/" + uploadListener.getPath(uploadReader.getName(), contentType, uploadReader.getFileName())
+        String path = (ROOT + contentType + "/" + uploadListener.getPath(uploadReader)
                 + "/" + dateTime.toString(dateTime.today(), "yyyyMMdd") + "/" + generator.random(32)
                 + suffix).replaceAll("[/]+", "/");
         object.put("path", path);
@@ -175,14 +175,14 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
         return object;
     }
 
-    private String getSuffix(UploadListener listener, UploadReader reader) {
-        String suffix = listener.getSuffix(listener.getKey(), reader.getContentType(), reader.getFileName());
+    private String getSuffix(UploadListener uploadListener, UploadReader uploadReader) {
+        String suffix = uploadListener.getSuffix(uploadReader);
         if (!validator.isEmpty(suffix))
             return suffix;
 
-        int indexOf = reader.getFileName().lastIndexOf('.');
+        int indexOf = uploadReader.getFileName().lastIndexOf('.');
 
-        return indexOf == -1 ? "" : reader.getFileName().substring(indexOf);
+        return indexOf == -1 ? "" : uploadReader.getFileName().substring(indexOf);
     }
 
     private String thumbnail(int[] size, Storage storage, String contentType, String path) {

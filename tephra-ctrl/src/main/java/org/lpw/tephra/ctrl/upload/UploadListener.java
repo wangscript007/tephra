@@ -18,35 +18,31 @@ public interface UploadListener {
     String getKey();
 
     /**
-     * 获取文件content-type属性。
+     * 获取文件Content-Type属性。
      *
-     * @param key         上传文件key。
-     * @param contentType 文件类型。
-     * @param name        文件名。
-     * @return 文件content-type属性。
+     * @param uploadReader 上传数据读取器。
+     * @return 文件Content-Type属性。
      */
-    default String getContentType(String key, String contentType, String name) {
-        return contentType;
+    default String getContentType(UploadReader uploadReader) {
+        return uploadReader.getContentType();
     }
 
     /**
      * 验证是否允许上传。
      *
-     * @param key          上传文件key。
      * @param uploadReader 上传数据读取器。
      * @return 如果允许则返回true；否则返回false。
      */
-    boolean isUploadEnable(String key, UploadReader uploadReader);
+    boolean isUploadEnable(UploadReader uploadReader);
 
     /**
      * 处理数据。
      *
-     * @param key          上传文件key。
      * @param uploadReader 上传数据读取器。
      * @return 处理后的数据。如果返回为null则继续执行存储操作，否则不存储。
      * @throws IOException IO异常。
      */
-    default JSONObject settle(String key, UploadReader uploadReader) throws IOException {
+    default JSONObject settle(UploadReader uploadReader) throws IOException {
         return null;
     }
 
@@ -62,24 +58,20 @@ public interface UploadListener {
     /**
      * 获取文件保存路径。
      *
-     * @param key         上传文件key。
-     * @param contentType 文件类型。
-     * @param name        文件名。
+     * @param uploadReader 上传数据读取器。
      * @return 文件保存路径。
      */
-    default String getPath(String key, String contentType, String name) {
+    default String getPath(UploadReader uploadReader) {
         return "";
     }
 
     /**
      * 获取文件保存后缀。
      *
-     * @param key         上传文件key。
-     * @param contentType 文件类型。
-     * @param name        文件名。
+     * @param uploadReader 上传数据读取器。
      * @return 文件后缀；null表示使用默认后缀。
      */
-    default String getSuffix(String key, String contentType, String name) {
+    default String getSuffix(UploadReader uploadReader) {
         return null;
     }
 
