@@ -96,23 +96,23 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
     @Override
     public JSONObject upload(UploadReader uploadReader) throws IOException {
         String name = uploadReader.getName();
-        UploadListener listener = getListener(name);
-        if (listener == null)
+        UploadListener uploadListener = getListener(name);
+        if (uploadListener == null)
             return failure(uploadReader, message.get(PREFIX + "listener.not-exists", name));
 
-        String contentType = listener.getContentType(uploadReader);
-        if (!listener.isUploadEnable(uploadReader)) {
+        String contentType = uploadListener.getContentType(uploadReader);
+        if (!uploadListener.isUploadEnable(uploadReader)) {
             logger.warn(null, "无法处理文件上传请求[key={}&content-type={}&file-name={}]！",
                     name, contentType, uploadReader.getFileName());
 
             return failure(uploadReader, message.get(PREFIX + "disable", name, contentType, uploadReader.getFileName()));
         }
 
-        JSONObject object = listener.settle(uploadReader);
+        JSONObject object = uploadListener.settle(uploadReader);
         if (object == null)
-            object = save(name, listener, uploadReader, contentType);
+            object = save(name, uploadListener, uploadReader, contentType);
         uploadReader.delete();
-        listener.complete(uploadReader, object);
+        uploadListener.complete(uploadReader, object);
 
         return object;
     }
@@ -125,11 +125,11 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
             if (validator.isMatchRegex(k, key))
                 return listeners.get(k);
 
-        UploadListener listener = jsonConfigs.get(key);
-        if (listener == null)
+        UploadListener uploadListener = jsonConfigs.get(key);
+        if (uploadListener == null)
             logger.warn(null, "无法获得上传监听器[{}]，文件上传失败！", key);
 
-        return listener;
+        return uploadListener;
     }
 
     private JSONObject save(String key, UploadListener uploadListener, UploadReader uploadReader, String contentType) throws IOException {
