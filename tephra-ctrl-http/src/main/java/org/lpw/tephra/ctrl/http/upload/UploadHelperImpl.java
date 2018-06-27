@@ -10,6 +10,7 @@ import org.lpw.tephra.ctrl.upload.UploadService;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,8 @@ import java.util.Map;
  */
 @Service(UploadHelper.PREFIX + "helper")
 public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefreshedListener {
+    @Inject
+    private Validator validator;
     @Inject
     private Converter converter;
     @Inject
@@ -54,7 +57,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
             Map<String, String> map = new HashMap<>();
             request.getParameterMap().forEach((name, value) -> map.put(name, converter.toString(value)));
             for (Part part : request.getParts())
-                if (part.getSize() <= maxFileSize)
+                if (!map.containsKey(part.getName()) && !validator.isEmpty(part.getSubmittedFileName()) && part.getSize() <= maxFileSize)
                     readers.add(new HttpUploadReader(part, map));
             if (readers.isEmpty())
                 return;
