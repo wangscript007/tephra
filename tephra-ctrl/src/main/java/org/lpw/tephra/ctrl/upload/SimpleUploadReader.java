@@ -44,6 +44,31 @@ public class SimpleUploadReader implements UploadReader {
         set.add("url");
         this.map = new HashMap<>();
         map.keySet().stream().filter(key -> !set.contains(key)).forEach(key -> this.map.put(key, map.get(key)));
+        read();
+    }
+
+    private void read() {
+        if (base64 != null) {
+            bytes = BeanFactory.getBean(Coder.class).decodeBase64(base64);
+
+            return;
+        }
+
+        if (string != null) {
+            bytes = string.getBytes();
+
+            return;
+        }
+
+        if (url == null)
+            return;
+
+        Map<String, String> map = new HashMap<>();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        BeanFactory.getBean(Http.class).post(url, null, null, map, outputStream);
+        if (contentType == null && map.containsKey("Content-Type"))
+            contentType = map.get("Content-Type");
+        bytes = outputStream.toByteArray();
     }
 
     @Override
@@ -86,34 +111,7 @@ public class SimpleUploadReader implements UploadReader {
 
     @Override
     public byte[] getBytes() {
-        if (bytes == null)
-            read();
-
         return bytes;
-    }
-
-    private void read() {
-        if (base64 != null) {
-            bytes = BeanFactory.getBean(Coder.class).decodeBase64(base64);
-
-            return;
-        }
-
-        if (string != null) {
-            bytes = string.getBytes();
-
-            return;
-        }
-
-        if (url == null)
-            return;
-
-        Map<String, String> map = new HashMap<>();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        BeanFactory.getBean(Http.class).post(url, null, null, map, outputStream);
-        if (contentType == null && map.containsKey("content-type"))
-            contentType = map.get("content-type");
-        bytes = outputStream.toByteArray();
     }
 
     @Override
