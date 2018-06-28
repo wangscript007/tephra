@@ -5,7 +5,9 @@ import org.lpw.tephra.test.CoreTestSupport;
 import org.lpw.tephra.util.Generator;
 
 import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -28,15 +30,19 @@ public class LuceneHelperTest extends CoreTestSupport {
                 "Lucene是当前以及最近几年最受欢迎的免费Java信息检索程序库", "人们经常提到信息检索程序库，虽然与搜索引擎有关",
                 "但不应该将信息检索程序库与搜索引擎相混淆"};
         luceneHelper.clear("test");
-        for (int i = 0; i < strings.length; i++)
+        Map<String, String> map = new HashMap<>();
+        for (int i = 0; i < strings.length; i++) {
             luceneHelper.source("test", "id " + i, strings[i]);
+            map.put("id " + i, strings[i]);
+        }
         luceneHelper.index("test");
         Set<String> words = new HashSet<>();
         words.add("全文");
         words.add("开源");
+//        words.add("Java");
         Set<String> ids = luceneHelper.query("test", words, 1024);
         System.out.println(ids.size());
-        ids.forEach(System.out::println);
+        ids.forEach(id -> System.out.println(id + "<==>" + map.get(id)));
         System.out.println((System.currentTimeMillis() - time) / 1000.0D);
     }
 }

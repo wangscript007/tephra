@@ -105,7 +105,7 @@ public class LuceneHelperImpl implements LuceneHelper {
             IndexReader indexReader = DirectoryReader.open(get(key));
             IndexSearcher indexSearcher = new IndexSearcher(indexReader);
             TopDocs topDocs = indexSearcher.search(new QueryParser("data", new HanLPAnalyzer())
-                    .parse(query.substring(2)), size);
+                    .parse(query.substring(1)), size);
             for (ScoreDoc scoreDoc : topDocs.scoreDocs)
                 set.add(indexSearcher.doc(scoreDoc.doc).get("id"));
             indexReader.close();
