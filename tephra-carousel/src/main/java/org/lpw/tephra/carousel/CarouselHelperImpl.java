@@ -38,8 +38,6 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     private static final String CACHE_SERVICE = "tephra.carousel.helper.service:";
 
     @Inject
-    private Sign sign;
-    @Inject
     private Validator validator;
     @Inject
     private Converter converter;
