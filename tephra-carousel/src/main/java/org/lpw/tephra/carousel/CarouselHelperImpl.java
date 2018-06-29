@@ -192,14 +192,6 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     }
 
     @Override
-    public void sign(String serviceKey, String signKey, Map<String, String> parameter) {
-        if (services.containsKey(serviceKey))
-            return;
-
-        sign.put(parameter, signKey);
-    }
-
-    @Override
     public void definition(Execute classExecute, Execute methodExecute, Executor executor) {
         if (!serviceAll)
             return;

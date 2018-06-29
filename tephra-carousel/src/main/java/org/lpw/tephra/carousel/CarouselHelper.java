@@ -70,14 +70,4 @@ public interface CarouselHelper {
      * @return 执行结果。
      */
     String service(String key, Map<String, String> header, Map<String, String> parameter, int cacheTime);
-
-    /**
-     * 添加参数签名到参数集中。
-     * 如果为目标服务为本地服务，则不添加。
-     *
-     * @param serviceKey 服务key。
-     * @param signKey    签名key。
-     * @param parameter  参数集。
-     */
-    void sign(String serviceKey, String signKey, Map<String, String> parameter);
 }
