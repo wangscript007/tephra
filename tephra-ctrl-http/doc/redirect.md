@@ -21,3 +21,4 @@ http://new-host:new-port/uri?name=value&args=values#anchor
     ]
 }
 ```
+> `regexes`为正则表达式的`host`集。
