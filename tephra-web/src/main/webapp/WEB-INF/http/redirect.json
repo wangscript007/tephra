@@ -1,0 +1,9 @@
+{
+    "uri": "/tephra/ctrl-http/redirect",
+    "hosts": [
+        ""
+    ],
+    "regexes": [
+        ""
+    ]
+}

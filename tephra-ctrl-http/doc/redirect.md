@@ -1,15 +1,23 @@
 # 转发请求
 
-CtrlHttp提供了转发HTTP请求的功能，以`/redirect`开始的URI请求都将被转发。如：
-```text
-/redirect
-/redirect/your/uri/path
+CtrlHttp提供了转发HTTP请求的功能，当请求`/tephra/ctrl-http/redirect`时，请求将被转发到`to`参数提供的URL地址。如请求：
+```
+http://host:port/tephra/ctrl-http/redirect?to=http%3A%2F%2Fnew-host%3Anew-port%2Furi%3Fname%3Dvalue%23anchor&args=values
+```
+将被转发到：
+```
+http://new-host:new-port/uri?name=value&args=values#anchor
 ```
 
-转发请求需提供`key`参数，参数值配置在`/WEB-INF/http/redirect`中（此配置由`tephra.ctrl.http.redirect`指定）
+转发URL的`host`需配置到`/WEB-INF/http/redirect.json`中（此配置由`tephra.ctrl.http.redirect`指定）。
 ```
-## 配置转发路径。
-## 使用【key=url】的方式，每行一个配置。
-tephra = https://github.com/heisedebaise/tephra?name=value
+{
+    "uri": "/tephra/ctrl-http/redirect",
+    "hosts": [
+        ""
+    ],
+    "regexes": [
+        ""
+    ]
+}
 ```
-则当请求`/redirect?key=tephra`时将被redirect到`https://github.com/heisedebaise/tephra?name=value`；而请求`/redirect/your/uri/path?key=tephra`时将被redirect到`https://github.com/heisedebaise/tephra/your/uri/path?name=value`。

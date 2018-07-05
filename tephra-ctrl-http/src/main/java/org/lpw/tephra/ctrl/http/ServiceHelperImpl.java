@@ -32,17 +32,15 @@ import org.springframework.stereotype.Controller;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lpw
@@ -80,6 +78,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     @Inject
     private Status status;
     @Inject
+    private Redirect redirect;
+    @Inject
     private Optional<IgnoreTimeHash> ignoreTimeHash;
     @Inject
     private CookieAware cookieAware;
@@ -91,8 +91,6 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private String ignoreNames;
     @Value("${tephra.ctrl.http.ignore.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png,.svg,.eot,.woff,.ttf,.txt}")
     private String ignoreSuffixes;
-    @Value("${tephra.ctrl.http.redirect:/WEB-INF/http/redirect}")
-    private String redirect;
     @Value("${tephra.ctrl.http.cors:/WEB-INF/http/cors.json}")
     private String cors;
     @Value("${tephra.ctrl.http.virtual-context:}")
@@ -103,7 +101,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private String[] prefixes;
     private String[] suffixes;
     private Set<String> ignoreUris;
-    private Map<String, String> redirectMap;
+    private Map<String, String> redirectMap = new ConcurrentHashMap<>();
+    private Set<String> redirects = Collections.synchronizedSet(new HashSet<>());
     private Set<String> corsOrigins;
     private String corsMethods;
     private String corsHeaders;
@@ -150,11 +149,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
             return false;
         }
 
-        if (lowerCaseUri.startsWith("/redirect")) {
-            redirect(request, uri, response);
-
+        if (redirect.redirect(request, uri, response))
             return true;
-        }
 
         context.clearThreadLocal();
         if (lowerCaseUri.equals(WsHelper.URI)) {
@@ -183,35 +179,6 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
 
 
         return uri;
-    }
-
-    private void redirect(HttpServletRequest request, String uri, HttpServletResponse response) throws IOException {
-        String key = request.getParameter("key");
-        if (!redirectMap.containsKey(key)) {
-            response.sendError(404);
-
-            return;
-        }
-
-        String suffix = uri.length() > 9 ? uri.substring(9) : "";
-        String url = redirectMap.get(key);
-        String spa = null;
-        int indexOf = url.indexOf('#');
-        if (indexOf > -1) {
-            spa = url.substring(indexOf);
-            url = url.substring(0, indexOf);
-        }
-        String arg = "";
-        if ((indexOf = url.indexOf('?')) > -1) {
-            arg = url.substring(indexOf);
-            url = url.substring(0, indexOf);
-        }
-        arg = (indexOf == -1 ? "?" : (arg + "&")) + request.getQueryString();
-        if (spa == null)
-            url = url + suffix + arg;
-        else
-            url = url + arg + spa + suffix;
-        response.sendRedirect(url);
     }
 
     private boolean service(HttpServletRequest request, HttpServletResponse response, String uri, String sessionId) throws IOException {
@@ -323,31 +290,11 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
 
     @Override
     public String[] getScanPathes() {
-        return new String[]{redirect, cors};
+        return new String[]{cors};
     }
 
     @Override
     public void onStorageChanged(String path, String absolutePath) {
-        if (path.equals(redirect))
-            redirect(absolutePath);
-        else if (path.equals(cors))
-            cors(absolutePath);
-    }
-
-    private void redirect(String absolutePath) {
-        Properties properties = new Properties();
-        try {
-            InputStream inputStream = new ByteArrayInputStream(io.read(absolutePath));
-            properties.load(inputStream);
-            inputStream.close();
-        } catch (IOException e) {
-            logger.warn(e, "读取转发配置[{}]时发生异常！", absolutePath);
-        }
-        redirectMap = new HashMap<>();
-        properties.stringPropertyNames().forEach(key -> redirectMap.put(key, properties.getProperty(key)));
-    }
-
-    private void cors(String absolutePath) {
         JSONObject object = json.toObject(io.readAsString(absolutePath));
         if (object == null) {
             corsOrigins = new HashSet<>();
