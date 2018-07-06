@@ -5,7 +5,6 @@ import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextClosedListener;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.cache.Cache;
-import org.lpw.tephra.crypto.Sign;
 import org.lpw.tephra.ctrl.context.Header;
 import org.lpw.tephra.ctrl.execute.Execute;
 import org.lpw.tephra.ctrl.execute.ExecuteListener;
@@ -130,6 +129,12 @@ public class CarouselHelperImpl implements CarouselHelper, ExecuteListener, Cont
     public String service(String key, Map<String, String> header, Map<String, String> parameter, int cacheTime) {
         if (logger.isDebugEnable())
             logger.debug("开始获取Carousel服务[key={};header={};parameter={};cacheTime={}]。", key, header, parameter, cacheTime);
+
+        if (validator.isEmpty(key)) {
+            logger.warn(null, "Carousel服务key为空！");
+
+            return null;
+        }
 
         if (services.containsKey(key)) {
             try {
