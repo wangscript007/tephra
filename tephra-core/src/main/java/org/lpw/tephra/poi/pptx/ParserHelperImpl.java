@@ -73,7 +73,8 @@ public class ParserHelperImpl implements ParserHelper, ContextRefreshedListener 
         else
             ns = numeric.toInts(color);
 
-        return new Color(ns[0], ns[1], ns[2]);
+        return object.containsKey("alpha") ? new Color(ns[0], ns[1], ns[2], numeric.toInt(object.getDoubleValue("alpha") * 255))
+                : new Color(ns[0], ns[1], ns[2]);
     }
 
     @Override
