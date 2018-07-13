@@ -46,8 +46,10 @@ public class RedirectImpl implements Redirect, StorageListener {
         String to = request.getParameter("to");
         if (to != null && enable(to))
             response.sendRedirect(getUrl(to, request));
-        else
+        else {
             response.sendError(404);
+            logger.warn(null, "未配置转发目标[{}]。", to);
+        }
 
         return true;
     }
@@ -95,6 +97,9 @@ public class RedirectImpl implements Redirect, StorageListener {
             has = true;
         }
         sb.append(anchor);
+        int last = sb.length() - 1;
+        if (sb.charAt(last) == '?')
+            sb.deleteCharAt(last);
 
         if (logger.isDebugEnable())
             logger.debug("转发请求[{}]。", sb);
