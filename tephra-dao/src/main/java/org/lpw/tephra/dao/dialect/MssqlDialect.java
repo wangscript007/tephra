@@ -34,7 +34,8 @@ public class MssqlDialect extends DialectSupport implements Dialect {
 
     @Override
     public void appendPagination(StringBuilder sql, int size, int page) {
-        sql.insert(7, "ROW_NUMBER() AS RowNum,").insert(0, "SELECT * FROM(").append(") AS RowConstrainedResult WHERE RowNum>")
+        sql.insert(7, "ROW_NUMBER() AS RowNum,").insert(0, "SELECT * FROM(")
+                .append(") AS RowConstrainedResult WHERE RowNum>")
                 .append(size * (page - 1)).append(" AND RowNum<=").append(size * page);
     }
 }

@@ -20,7 +20,8 @@ public class MysqlDialect extends DialectSupport implements Dialect {
     @Override
     public String getUrl(String ip, String schema) {
         return "jdbc:mysql://" + ip + "/" + schema
-                + "?useSSL=false&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&autoReconnect=true";
+                + "?useSSL=false&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8"
+                + "&autoReconnect=true&allowPublicKeyRetrieval=true";
     }
 
     @Override
