@@ -97,6 +97,13 @@ public class JsonImpl implements Json {
                 if (validator.isEmpty(string))
                     return nullable ? null : new JSONObject();
 
+                string = string.trim();
+                if (string.charAt(0) != '{') {
+                    logger.warn(null, "不是有效的JSON格式数据[{}]！", object);
+
+                    return nullable ? null : new JSONObject();
+                }
+
                 return JSON.parseObject(string);
             }
 
@@ -139,6 +146,13 @@ public class JsonImpl implements Json {
                 String string = (String) object;
                 if (validator.isEmpty(string))
                     return nullable ? null : new JSONArray();
+
+                string = string.trim();
+                if (string.charAt(0) != '[') {
+                    logger.warn(null, "不是有效的JSON格式数据[{}]！", object);
+
+                    return nullable ? null : new JSONArray();
+                }
 
                 return JSON.parseArray(string);
             }
