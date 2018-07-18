@@ -28,9 +28,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -53,10 +53,8 @@ public class LuceneHelperImpl implements LuceneHelper {
     @Override
     public void clear(String key) {
         io.delete(Paths.get(context.getAbsoluteRoot(), root, key, "source").toFile());
-        try {
-            IndexWriter indexWriter = new IndexWriter(get(key), new IndexWriterConfig(new StandardAnalyzer()));
+        try (IndexWriter indexWriter = new IndexWriter(get(key), new IndexWriterConfig(new StandardAnalyzer()))) {
             indexWriter.deleteAll();
-            indexWriter.close();
         } catch (Throwable throwable) {
             logger.warn(throwable, "删除Lucene索引[{}]时发生异常！", key);
         }
@@ -75,15 +73,13 @@ public class LuceneHelperImpl implements LuceneHelper {
         if (files == null || files.length == 0)
             return 0;
 
-        try {
-            IndexWriter indexWriter = new IndexWriter(get(key), new IndexWriterConfig(new HanLPAnalyzer()));
+        try (IndexWriter indexWriter = new IndexWriter(get(key), new IndexWriterConfig(new HanLPAnalyzer()))) {
             for (File file : files) {
                 Document document = new Document();
                 document.add(new StoredField("id", file.getName()));
                 document.add(new TextField("data", io.readAsString(file.getAbsolutePath()), Field.Store.YES));
                 indexWriter.addDocument(document);
             }
-            indexWriter.close();
 
             return files.length;
         } catch (Throwable throwable) {
@@ -94,26 +90,35 @@ public class LuceneHelperImpl implements LuceneHelper {
     }
 
     @Override
-    public Set<String> query(String key, Set<String> words, int size) {
-        Set<String> set = new HashSet<>();
+    public List<String> query(String key, List<String> words, boolean and, int size) {
         if (validator.isEmpty(words) || size <= 0)
-            return set;
+            return new ArrayList<>();
 
         StringBuilder query = new StringBuilder();
-        words.forEach(word -> query.append(" +\"").append(word).append('"'));
-        try {
-            IndexReader indexReader = DirectoryReader.open(get(key));
+        words.forEach(word -> query.append(" \"").append(word).append('"'));
+
+        return query(key, query.substring(1), and, size);
+    }
+
+    @Override
+    public List<String> query(String key, String string, boolean and, int size) {
+        List<String> list = new ArrayList<>();
+        if (validator.isEmpty(string) || size <= 0)
+            return list;
+
+        try (IndexReader indexReader = DirectoryReader.open(get(key))) {
             IndexSearcher indexSearcher = new IndexSearcher(indexReader);
-            TopDocs topDocs = indexSearcher.search(new QueryParser("data", new HanLPAnalyzer())
-                    .parse(query.substring(1)), size);
+            QueryParser queryParser = new QueryParser("data", new HanLPAnalyzer());
+            if (and)
+                queryParser.setDefaultOperator(QueryParser.Operator.AND);
+            TopDocs topDocs = indexSearcher.search(queryParser.parse(string), size);
             for (ScoreDoc scoreDoc : topDocs.scoreDocs)
-                set.add(indexSearcher.doc(scoreDoc.doc).get("id"));
-            indexReader.close();
+                list.add(indexSearcher.doc(scoreDoc.doc).get("id"));
         } catch (Throwable throwable) {
-            logger.warn(throwable, "检索Lucene数据[{}:{}]时发生异常！", key, query);
+            logger.warn(throwable, "检索Lucene数据[{}:{}]时发生异常！", key, string);
         }
 
-        return set;
+        return list;
     }
 
     private Directory get(String key) throws IOException {

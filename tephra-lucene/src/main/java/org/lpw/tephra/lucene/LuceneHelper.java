@@ -1,6 +1,6 @@
 package org.lpw.tephra.lucene;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Lucene全文检索。
@@ -37,8 +37,20 @@ public interface LuceneHelper {
      *
      * @param key   引用key。
      * @param words 关键词集。
+     * @param and   是否AND关键词。
      * @param size  最大返回数。
      * @return 数据ID值集。
      */
-    Set<String> query(String key, Set<String> words, int size);
+    List<String> query(String key, List<String> words, boolean and, int size);
+
+    /**
+     * 检索。
+     *
+     * @param key    引用key。
+     * @param string 检索规则。
+     * @param and    是否AND关键词。
+     * @param size   最大返回数。
+     * @return 数据ID值集。
+     */
+    List<String> query(String key, String string, boolean and, int size);
 }
