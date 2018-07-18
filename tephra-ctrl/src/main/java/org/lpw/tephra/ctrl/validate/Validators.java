@@ -80,6 +80,12 @@ public interface Validators {
     String BETWEEN = PREFIX + "between";
 
     /**
+     * 指定值验证器Bean名称。如果要验证的参数值在指定值集中则返回true；否则返回false。
+     * 默认错误信息key=PREFIX+not-in。
+     */
+    String IN = PREFIX + "in";
+
+    /**
      * 日期时间格式验证器Bean名称。如果验证的参数为日期时间格式数据则返回true；否则返回false。
      * 默认错误信息key=PREFIX+date-time.illegal。
      */
