@@ -31,17 +31,17 @@ abstract class Support {
     void execute() throws Exception {
         args();
 
-        Socket socket = new Socket(host, port);
-        OutputStream outputStream = socket.getOutputStream();
-        outputStream.write(handshake().getBytes());
-        outputStream.flush();
-        read(socket.getInputStream(), false);
-        outputStream.write(pack(message().toJSONString()).toByteArray());
-        outputStream.flush();
-        ByteArrayOutputStream byteArrayOutputStream = read(socket.getInputStream(), true);
-        socket.close();
+        try (Socket socket = new Socket(host, port)) {
+            OutputStream outputStream = socket.getOutputStream();
+            outputStream.write(handshake().getBytes());
+            outputStream.flush();
+            read(socket.getInputStream(), false);
+            outputStream.write(pack(message().toJSONString()).toByteArray());
+            outputStream.flush();
+            ByteArrayOutputStream byteArrayOutputStream = read(socket.getInputStream(), true);
 
-        save(new StringBuilder(byteArrayOutputStream.toString()));
+            save(new StringBuilder(byteArrayOutputStream.toString()));
+        }
     }
 
     private void args() {
@@ -139,9 +139,9 @@ abstract class Support {
     private void save(StringBuilder sb) throws IOException {
         sb.delete(sb.length() - 3, sb.length());
         sb.delete(0, sb.lastIndexOf("\"") + 1);
-        OutputStream outputStream = new FileOutputStream(output);
-        outputStream.write(Base64.getDecoder().decode(sb.toString()));
-        outputStream.close();
+        try (OutputStream outputStream = new FileOutputStream(output)) {
+            outputStream.write(Base64.getDecoder().decode(sb.toString()));
+        }
     }
 
     private int random(int min, int max) {
