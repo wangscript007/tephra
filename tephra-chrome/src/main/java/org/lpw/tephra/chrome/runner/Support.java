@@ -15,6 +15,7 @@ import java.util.Random;
  * @author lpw
  */
 abstract class Support {
+    private static final int BUFFER_SIZE = 1 << 16; //64K
     private String[] args;
     private String host;
     private int port;
@@ -31,14 +32,15 @@ abstract class Support {
     void execute() throws Exception {
         args();
 
-        try (Socket socket = new Socket(host, port)) {
-            OutputStream outputStream = socket.getOutputStream();
+        try (Socket socket = new Socket(host, port);
+             InputStream inputStream = socket.getInputStream();
+             OutputStream outputStream = socket.getOutputStream()) {
             outputStream.write(handshake().getBytes());
             outputStream.flush();
-            read(socket.getInputStream(), false);
+            read(inputStream, false);
             outputStream.write(pack(message().toJSONString()).toByteArray());
             outputStream.flush();
-            ByteArrayOutputStream byteArrayOutputStream = read(socket.getInputStream(), true);
+            ByteArrayOutputStream byteArrayOutputStream = read(inputStream, true);
 
             save(new StringBuilder(byteArrayOutputStream.toString()));
         }
@@ -90,16 +92,16 @@ abstract class Support {
     abstract JSONObject params();
 
     private ByteArrayOutputStream read(InputStream inputStream, boolean json) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[64 * 1024];
-        for (int length; (length = inputStream.read(buffer)) > -1; ) {
-            outputStream.write(buffer, 0, length);
-            if (length < buffer.length && (!json || (buffer[length - 1] == '}' && buffer[length - 2] == '}')))
-                break;
-        }
-        outputStream.close();
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[BUFFER_SIZE];
+            for (int length; (length = inputStream.read(buffer)) > -1; ) {
+                outputStream.write(buffer, 0, length);
+                if (length < buffer.length && (!json || (buffer[length - 1] == '}' && buffer[length - 2] == '}')))
+                    break;
+            }
 
-        return outputStream;
+            return outputStream;
+        }
     }
 
     private ByteArrayOutputStream pack(String message) {
