@@ -90,20 +90,44 @@ public class LuceneHelperImpl implements LuceneHelper {
     }
 
     @Override
-    public List<String> query(String key, List<String> words, boolean and, int size) {
-        if (validator.isEmpty(words) || size <= 0)
-            return new ArrayList<>();
+    public List<String> query(String key, String[] words, boolean and, int size) {
+        if (validator.isEmpty(words))
+            return null;
 
         StringBuilder query = new StringBuilder();
-        words.forEach(word -> query.append(" \"").append(word).append('"'));
+        for (String word : words) {
+            if (!validator.isEmpty(word))
+                query.append(" \"").append(word).append('"');
+        }
+        if (query.length() == 0)
+            return null;
+
+        return query(key, query.substring(1), and, size);
+    }
+
+    @Override
+    public List<String> query(String key, List<String> words, boolean and, int size) {
+        if (validator.isEmpty(words))
+            return null;
+
+        StringBuilder query = new StringBuilder();
+        words.forEach(word -> {
+            if (!validator.isEmpty(word))
+                query.append(" \"").append(word).append('"');
+        });
+        if (query.length() == 0)
+            return null;
 
         return query(key, query.substring(1), and, size);
     }
 
     @Override
     public List<String> query(String key, String string, boolean and, int size) {
+        if (validator.isEmpty(string))
+            return null;
+
         List<String> list = new ArrayList<>();
-        if (validator.isEmpty(string) || size <= 0)
+        if (size <= 0)
             return list;
 
         try (IndexReader indexReader = DirectoryReader.open(get(key))) {

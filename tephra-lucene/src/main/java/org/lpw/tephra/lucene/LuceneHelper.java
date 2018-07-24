@@ -39,7 +39,18 @@ public interface LuceneHelper {
      * @param words 关键词集。
      * @param and   是否AND关键词。
      * @param size  最大返回数。
-     * @return 数据ID值集。
+     * @return 数据ID值集；如果关键词为空则返回null。
+     */
+    List<String> query(String key, String[] words, boolean and, int size);
+
+    /**
+     * 检索。
+     *
+     * @param key   引用key。
+     * @param words 关键词集。
+     * @param and   是否AND关键词。
+     * @param size  最大返回数。
+     * @return 数据ID值集；如果关键词为空则返回null。
      */
     List<String> query(String key, List<String> words, boolean and, int size);
 
@@ -50,7 +61,7 @@ public interface LuceneHelper {
      * @param string 检索规则。
      * @param and    是否AND关键词。
      * @param size   最大返回数。
-     * @return 数据ID值集。
+     * @return 数据ID值集；如果关键词为空则返回null。
      */
     List<String> query(String key, String string, boolean and, int size);
 }
