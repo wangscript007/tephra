@@ -28,9 +28,8 @@ public interface LuceneHelper {
      * 创建索引。
      *
      * @param key 引用key。
-     * @return 更新数量；失败则返回-1。
      */
-    int index(String key);
+    void index(String key);
 
     /**
      * 检索。

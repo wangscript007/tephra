@@ -55,6 +55,7 @@ public class LuceneHelperImpl implements LuceneHelper {
         io.delete(Paths.get(context.getAbsoluteRoot(), root, key, "source").toFile());
         try (IndexWriter indexWriter = new IndexWriter(get(key), new IndexWriterConfig(new StandardAnalyzer()))) {
             indexWriter.deleteAll();
+            indexWriter.flush();
         } catch (Throwable throwable) {
             logger.warn(throwable, "删除Lucene索引[{}]时发生异常！", key);
         }
@@ -68,10 +69,10 @@ public class LuceneHelperImpl implements LuceneHelper {
     }
 
     @Override
-    public int index(String key) {
+    public void index(String key) {
         File[] files = Paths.get(context.getAbsoluteRoot(), root, key, "source").toFile().listFiles();
         if (files == null || files.length == 0)
-            return 0;
+            return;
 
         try (IndexWriter indexWriter = new IndexWriter(get(key), new IndexWriterConfig(new HanLPAnalyzer()))) {
             for (File file : files) {
@@ -80,12 +81,9 @@ public class LuceneHelperImpl implements LuceneHelper {
                 document.add(new TextField("data", io.readAsString(file.getAbsolutePath()), Field.Store.YES));
                 indexWriter.addDocument(document);
             }
-
-            return files.length;
+            indexWriter.flush();
         } catch (Throwable throwable) {
             logger.warn(throwable, "创建Lucene索引时发生异常！");
-
-            return -1;
         }
     }
 
