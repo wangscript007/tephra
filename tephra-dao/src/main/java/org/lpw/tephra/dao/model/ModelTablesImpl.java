@@ -89,6 +89,9 @@ public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
                 continue;
             }
 
+            if (name.equals("setId"))
+                continue;
+
             String propertyName = converter.toFirstLowerCase(name.substring(3));
             if (startsWith(name, 'g')) {
                 modelTable.addGetMethod(propertyName, method);
