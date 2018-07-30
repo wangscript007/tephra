@@ -77,7 +77,7 @@ public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
         Method[] methods = modelClass.getMethods();
         for (Method method : methods) {
             String name = method.getName();
-            if (name.length() < 3)
+            if (name.length() < 3 || name.equals("setId"))
                 continue;
 
             if (name.equals("getId")) {
@@ -88,9 +88,6 @@ public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
 
                 continue;
             }
-
-            if (name.equals("setId"))
-                continue;
 
             String propertyName = converter.toFirstLowerCase(name.substring(3));
             if (startsWith(name, 'g')) {
