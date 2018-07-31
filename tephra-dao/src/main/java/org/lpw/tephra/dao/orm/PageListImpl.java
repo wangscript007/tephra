@@ -32,7 +32,7 @@ public class PageListImpl<T extends Model> implements PageList<T> {
         this.size = Math.max(1, size);
         this.number = Math.min(number, this.count / this.size + (this.count % this.size == 0 ? 0 : 1));
         this.number = Math.max(1, this.number);
-        page = Math.max(1, count / size + (count % size == 0 ? 0 : 1));
+        page = Math.max(1, this.count / this.size + (this.count % this.size == 0 ? 0 : 1));
         pageStart = Math.max(1, this.number - 9);
         pageEnd = Math.min(page, pageStart + 19);
 
