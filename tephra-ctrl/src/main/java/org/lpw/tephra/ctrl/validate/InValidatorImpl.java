@@ -29,8 +29,8 @@ public class InValidatorImpl extends ValidatorSupport {
     protected Object[] getFailureMessageArgs(ValidateWrapper validate) {
         Object[] args = super.getFailureMessageArgs(validate);
 
-        return new Object[]{args[0],
-                converter.toString(validator.isEmpty(validate.getNumber()) ? validate.getString() : validate.getNumber())};
+        return new Object[]{args[0], converter.toString(validator.isEmpty(validate.getNumber()) ?
+                validate.getString() : validate.getNumber())};
     }
 
     @Override

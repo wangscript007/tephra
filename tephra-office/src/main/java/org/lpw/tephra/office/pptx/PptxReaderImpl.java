@@ -89,16 +89,16 @@ public class PptxReaderImpl implements PptxReader {
     private void parseSlide(XSLFSlide xslfSlide, MediaWriter mediaWriter, JSONObject slide, Map<Integer, String> layout) {
         parseBackground(xslfSlide.getBackground(), mediaWriter, slide, layout);
 
-        JSONArray shapes = new JSONArray();
         Map<Integer, JSONObject> fromLayout = new HashMap<>();
         layout.forEach((id, shape) -> {
             if (id == 0)
                 return;
 
             JSONObject object = json.toObject(shape);
-            shapes.add(object);
+//            add(shapes, object);
             fromLayout.put(id, object);
         });
+        JSONArray shapes = new JSONArray();
         parseShapes(xslfSlide, xslfSlide.getShapes(), mediaWriter, shapes, layout, fromLayout);
         slide.put("shapes", shapes);
     }
@@ -126,7 +126,7 @@ public class PptxReaderImpl implements PptxReader {
                 if (shapes == null)
                     layout.put(xslfShape.getShapeId(), json.toString(shape));
                 else
-                    shapes.add(shape);
+                    add(shapes, shape);
 
                 return;
             }
@@ -134,7 +134,7 @@ public class PptxReaderImpl implements PptxReader {
             if (xslfShape instanceof XSLFGraphicFrame) {
                 JSONObject shape = getOrNew(fromLayout, xslfShape.getShapeId());
                 parser.parseShape(xslfSlide, (XSLFGraphicFrame) xslfShape, mediaWriter, shape);
-                shapes.add(shape);
+                add(shapes, shape);
 
                 return;
             }
@@ -168,11 +168,18 @@ public class PptxReaderImpl implements PptxReader {
             anchor.put("y", anchor.getIntValue("y") - chY);
             anchor.put("width", numeric.toInt(anchor.getIntValue("width") * chW));
             anchor.put("height", numeric.toInt(anchor.getIntValue("height") * chH));
-            shapes.add(object);
+            add(shapes, object);
         }
     }
 
     private JSONObject getOrNew(Map<Integer, JSONObject> layout, int id) {
         return layout.containsKey(id) ? layout.get(id) : new JSONObject();
+    }
+
+    private void add(JSONArray shapes, JSONObject shape) {
+        if (shape.isEmpty() || (shape.size() == 1 && shape.containsKey("anchor")))
+            return;
+
+        shapes.add(shape);
     }
 }

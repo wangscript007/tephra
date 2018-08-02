@@ -8,11 +8,13 @@ import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.xmlbeans.XmlObject;
+import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaType;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.util.Image;
+import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRelativeRect;
@@ -21,8 +23,12 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.springframework.stereotype.Component;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import java.awt.Color;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -53,6 +59,7 @@ public class GeometryImpl implements Simple {
 
         geometry.put("type", xslfSimpleShape.getShapeType() == null ? "rect" : format(xslfSimpleShape.getShapeType().toString()));
         shape.put("geometry", geometry);
+        draw(xslfSimpleShape, geometry, geometry.getString("type"));
     }
 
     private void parseLine(XSLFSimpleShape xslfSimpleShape, JSONObject geometry) {
@@ -146,6 +153,22 @@ public class GeometryImpl implements Simple {
         texture.put("top", officeHelper.fromPercent(ctRelativeRect.getT()));
         texture.put("right", officeHelper.fromPercent(ctRelativeRect.getR()));
         texture.put("bottom", officeHelper.fromPercent(ctRelativeRect.getB()));
+    }
+
+    private void draw(XSLFSimpleShape xslfSimpleShape, JSONObject geometry, String type) {
+        new File("target/ppt").mkdirs();
+        try {
+            BeanFactory.getBean(Io.class).write("target/ppt/" + type + ".json", geometry.toJSONString().getBytes());
+            Rectangle2D rectangle2D = xslfSimpleShape.getAnchor();
+            BufferedImage bufferedImage = new BufferedImage((int) rectangle2D.getWidth(), (int) rectangle2D.getHeight(),
+                    BufferedImage.TYPE_4BYTE_ABGR);
+            xslfSimpleShape.draw(bufferedImage.createGraphics(), new Rectangle2D.Double(0, 0,
+                    rectangle2D.getWidth(), rectangle2D.getHeight()));
+            ImageIO.write(bufferedImage, "PNG", new File("target/ppt/" + type + ".png"));
+        } catch (Throwable throwable) {
+            System.out.println("failure:"+geometry);
+            throwable.printStackTrace();
+        }
     }
 
     @Override
