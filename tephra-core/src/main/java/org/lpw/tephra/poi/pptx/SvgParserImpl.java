@@ -46,7 +46,7 @@ public class SvgParserImpl extends ImageParserSupport implements Parser {
     public boolean parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
         try {
             XSLFPictureData xslfPictureData = xmlSlideShow.addPicture(parserHelper.getImage(object, "image/png",
-                    readSvg(object.getString("svg"))), PictureData.PictureType.PNG);
+                    readSvg(object, object.getString("svg"))), PictureData.PictureType.PNG);
             parse(xslfSlide, xslfPictureData, object);
 
             return true;
@@ -57,10 +57,14 @@ public class SvgParserImpl extends ImageParserSupport implements Parser {
         }
     }
 
-    private ByteArrayOutputStream readSvg(String image) throws IOException, TranscoderException {
+    private ByteArrayOutputStream readSvg(JSONObject object, String image) throws IOException, TranscoderException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Reader reader = new StringReader(fixViewBox(image));
-        new PNGTranscoder().transcode(new TranscoderInput(reader), new TranscoderOutput(outputStream));
+        Reader reader = new StringReader(image);
+        PNGTranscoder pngTranscoder = new PNGTranscoder();
+        float[] wh = getWidthHeight(object, image);
+        pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, wh[0]);
+        pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, wh[1]);
+        pngTranscoder.transcode(new TranscoderInput(reader), new TranscoderOutput(outputStream));
         reader.close();
         outputStream.flush();
         outputStream.close();
@@ -68,27 +72,23 @@ public class SvgParserImpl extends ImageParserSupport implements Parser {
         return outputStream;
     }
 
-    private String fixViewBox(String image) {
+    private float[] getWidthHeight(JSONObject object, String image) {
+        float[] wh = new float[]{numeric.toFloat(object.getIntValue("width")), numeric.toFloat(object.getIntValue("height"))};
+
         Matcher matcher = pattern.matcher(image);
         if (!matcher.find())
-            return image;
+            return wh;
 
         String viewBox = matcher.group();
         String[] array = converter.toArray(viewBox.substring(9, viewBox.length() - 1), " ");
-        double[] ns = new double[]{numeric.toDouble(array[2]), numeric.toDouble(array[3])};
-        if (ns[0] <= 2048 && ns[1] <= 2048)
-            return image;
-
-        if (ns[0] > 2048) {
-            ns[1] = ns[1] * 2048 / ns[0];
-            ns[0] = 2048;
-        }
-        if (ns[1] > 2048) {
-            ns[0] = ns[0] * 2048 / ns[1];
-            ns[1] = 2048;
+        float width = numeric.toFloat(array[2]);
+        float height = numeric.toFloat(array[3]);
+        if (width > wh[0] || height > wh[1]) {
+            wh[0] = width;
+            wh[1] = height;
         }
 
-        return matcher.replaceFirst("viewBox=\"0 0 " + ns[0] + " " + ns[1] + "\"");
+        return wh;
     }
 
     @Override
