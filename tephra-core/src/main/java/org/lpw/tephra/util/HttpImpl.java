@@ -254,18 +254,16 @@ public class HttpImpl implements Http, ContextRefreshedListener {
             requestHeaders.keySet().stream().filter(key -> !key.toLowerCase().equals("content-length"))
                     .forEach(key -> request.addHeader(key, requestHeaders.get(key)));
         request.addHeader("time-hash", numeric.toString(timeHash.generate(), "0"));
-        try {
-            CloseableHttpResponse response = HttpClients.custom().setConnectionManager(manager).build()
-                    .execute(request, HttpClientContext.create());
+        try (CloseableHttpResponse response = HttpClients.custom().setConnectionManager(manager)
+                .build().execute(request, HttpClientContext.create())) {
             if (responseHeaders != null)
                 for (Header header : response.getAllHeaders())
                     responseHeaders.put(header.getName(), header.getValue());
             statusCode.set(response.getStatusLine().getStatusCode());
             io.copy(response.getEntity().getContent(), outputStream);
-            response.close();
             outputStream.close();
-        } catch (Throwable e) {
-            logger.warn(null, "执行HTTP请求时发生异常[{}]！", e.getMessage());
+        } catch (Throwable throwable) {
+            logger.warn(null, "执行HTTP请求时发生异常[{}]！", throwable.getMessage());
         }
     }
 
