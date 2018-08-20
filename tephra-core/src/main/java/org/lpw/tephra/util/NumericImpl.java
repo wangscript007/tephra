@@ -12,6 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component("tephra.util.numeric")
 public class NumericImpl implements Numeric {
+    private final String integerPattern = "^[+-]?\\d+$";
+    private final String floatPattern = "^[+-]?\\d+(\\.\\d+)?$";
+
     @Inject
     private Validator validator;
     @Inject
@@ -45,7 +48,7 @@ public class NumericImpl implements Numeric {
             return (int) Math.round(stringToDouble(string, defaultValue));
 
         try {
-            return Integer.parseInt(string);
+            return validator.isMatchRegex(integerPattern, string) ? Integer.parseInt(string) : defaultValue;
         } catch (Exception e) {
             logger.warn(e, "将对象[{}]转化为int数值时发生异常！", object);
 
@@ -80,7 +83,7 @@ public class NumericImpl implements Numeric {
             return Math.round(stringToDouble(string, defaultValue));
 
         try {
-            return Long.parseLong(string);
+            return validator.isMatchRegex(integerPattern, string) ? Long.parseLong(string) : defaultValue;
         } catch (Exception e) {
             logger.warn(e, "将对象[{}]转化为long数值时发生异常！", object);
 
@@ -110,8 +113,9 @@ public class NumericImpl implements Numeric {
         if (object instanceof Long)
             return (float) (long) object;
 
+        String string = toString(object);
         try {
-            return Float.parseFloat(toString(object));
+            return validator.isMatchRegex(floatPattern, string) ? Float.parseFloat(string) : defaultValue;
         } catch (Exception e) {
             logger.warn(e, "将对象[{}]转化为float数值时发生异常！", object);
 
@@ -146,7 +150,7 @@ public class NumericImpl implements Numeric {
 
     private double stringToDouble(String string, double defaultValue) {
         try {
-            return Double.parseDouble(string);
+            return validator.isMatchRegex(floatPattern, string) ? Double.parseDouble(string) : defaultValue;
         } catch (Exception e) {
             logger.warn(e, "将对象[{}]转化为double数值时发生异常！", string);
 
@@ -155,7 +159,7 @@ public class NumericImpl implements Numeric {
     }
 
     private String toString(Object object) {
-        return object.toString().replaceAll(",", "");
+        return (object instanceof String ? (String) object : object.toString()).replaceAll(",", "");
     }
 
     @Override

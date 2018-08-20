@@ -12,10 +12,7 @@ import java.util.regex.Pattern;
  */
 @Component("tephra.util.validator")
 public class ValidatorImpl implements Validator {
-    private static final String EMAIL = "^(?:\\w+\\.?-?)*\\w+@(?:\\w+\\.?-?)*\\w+$";
-    private static final String MOBILE = "^1\\d{10}$";
-
-    private Map<String, Pattern> patterns = new ConcurrentHashMap<>();
+    private final Map<String, Pattern> patterns = new ConcurrentHashMap<>();
 
     @Override
     public boolean isEmpty(Object object) {
@@ -39,12 +36,12 @@ public class ValidatorImpl implements Validator {
 
     @Override
     public boolean isEmail(String email) {
-        return isMatchRegex(EMAIL, email);
+        return isMatchRegex("^(?:\\w+\\.?-?)*\\w+@(?:\\w+\\.?-?)*\\w+$", email);
     }
 
     @Override
     public boolean isMobile(String mobile) {
-        return isMatchRegex(MOBILE, mobile);
+        return isMatchRegex("^1\\d{10}$", mobile);
     }
 
     @Override

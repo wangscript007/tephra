@@ -139,10 +139,15 @@ abstract class Support {
     }
 
     private void save(StringBuilder sb) throws IOException {
-        sb.delete(sb.length() - 3, sb.length());
+        int length = sb.length();
+        if (length < 3)
+            return;
+
+        sb.delete(length - 3, length);
         sb.delete(0, sb.lastIndexOf("\"") + 1);
         try (OutputStream outputStream = new FileOutputStream(output)) {
             outputStream.write(Base64.getDecoder().decode(sb.toString()));
+            outputStream.flush();
         }
     }
 

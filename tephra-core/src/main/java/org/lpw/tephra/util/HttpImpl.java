@@ -20,7 +20,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -256,8 +255,8 @@ public class HttpImpl implements Http, ContextRefreshedListener {
             requestHeaders.keySet().stream().filter(key -> !key.toLowerCase().equals("content-length"))
                     .forEach(key -> request.addHeader(key, requestHeaders.get(key)));
         request.addHeader("time-hash", numeric.toString(timeHash.generate(), "0"));
-        try (CloseableHttpClient client = HttpClients.custom().setConnectionManager(manager).build();
-             CloseableHttpResponse response = client.execute(request, HttpClientContext.create())) {
+        try (CloseableHttpResponse response = HttpClients.custom().setConnectionManager(manager).build()
+                .execute(request, HttpClientContext.create())) {
             int statusCode = response.getStatusLine().getStatusCode();
             this.statusCode.set(statusCode);
             if (statusCode != 200) {
@@ -270,6 +269,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
 
             HttpEntity httpEntity = response.getEntity();
             if (httpEntity == null) {
+                outputStream.close();
                 logger.warn(null, "执行HTTP请求[{}:{}]未返回数据！", request.getMethod(), request.getURI());
 
                 return;
@@ -290,7 +290,6 @@ public class HttpImpl implements Http, ContextRefreshedListener {
             outputStream.close();
         } catch (IOException e) {
             logger.warn(null, "输出HTTP执行结果时发生异常[{}]！", e.getMessage());
-
         }
     }
 

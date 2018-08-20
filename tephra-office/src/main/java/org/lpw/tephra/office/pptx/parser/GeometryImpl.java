@@ -59,7 +59,7 @@ public class GeometryImpl implements Simple {
 
         geometry.put("type", xslfSimpleShape.getShapeType() == null ? "rect" : format(xslfSimpleShape.getShapeType().toString()));
         shape.put("geometry", geometry);
-        draw(xslfSimpleShape, geometry, geometry.getString("type"));
+//        draw(xslfSimpleShape, geometry, geometry.getString("type"));
     }
 
     private void parseLine(XSLFSimpleShape xslfSimpleShape, JSONObject geometry) {
@@ -166,7 +166,7 @@ public class GeometryImpl implements Simple {
                     rectangle2D.getWidth(), rectangle2D.getHeight()));
             ImageIO.write(bufferedImage, "PNG", new File("target/ppt/" + type + ".png"));
         } catch (Throwable throwable) {
-            System.out.println("failure:"+geometry);
+            System.out.println("failure:" + geometry);
             throwable.printStackTrace();
         }
     }

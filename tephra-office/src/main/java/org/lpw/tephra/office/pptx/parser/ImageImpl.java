@@ -13,6 +13,7 @@ import org.lpw.tephra.office.MediaType;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.util.Logger;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -53,6 +54,7 @@ public class ImageImpl implements Simple {
         } catch (IOException e) {
             logger.warn(e, "获取PPTX图片数据时发生异常！");
         }
+        image.put("state", ((CTPicture) xslfPictureShape.getXmlObject()).getBlipFill().getBlip().getCstate().toString());
         shape.put("image", image);
     }
 

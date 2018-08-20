@@ -1,5 +1,8 @@
 package org.lpw.tephra.util;
 
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -11,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
 
 /**
  * @author lpw
@@ -115,6 +120,26 @@ public class ImageImpl implements Image {
                 return "GIF";
             default:
                 return "PNG";
+        }
+    }
+
+    @Override
+    public boolean svg2png(String svg, int width, int height, OutputStream outputStream) {
+        try {
+            PNGTranscoder pngTranscoder = new PNGTranscoder();
+            pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, 1.0F * width);
+            pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, 1.0F * height);
+            Reader reader = new StringReader(svg);
+            pngTranscoder.transcode(new TranscoderInput(reader), new TranscoderOutput(outputStream));
+            reader.close();
+            outputStream.flush();
+            outputStream.close();
+
+            return true;
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "转换SVG文档[{}:{}:{}]为PNG图片时发生异常！", svg, width, height);
+
+            return false;
         }
     }
 

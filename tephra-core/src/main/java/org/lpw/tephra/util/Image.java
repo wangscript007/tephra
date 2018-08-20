@@ -110,6 +110,17 @@ public interface Image {
     void write(BufferedImage image, Format format, OutputStream outputStream) throws IOException;
 
     /**
+     * SVG转化为PNG图。
+     *
+     * @param svg          SVG文档。
+     * @param width        输出图片宽度。
+     * @param height       输出图片高度。
+     * @param outputStream PNG图输出流。
+     * @return 转换成功则返回true；否则返回false。
+     */
+    boolean svg2png(String svg, int width, int height, OutputStream outputStream);
+
+    /**
      * 根据Content-Type获取图片格式。
      *
      * @param contentType 图片Content-Type。

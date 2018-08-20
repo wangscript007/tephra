@@ -94,7 +94,7 @@ public class ChromeHelperImpl implements ChromeHelper, StorageListener, ContextR
                         io.readAsString(process.getErrorStream()));
             http.get("http://" + service + "/json/close/" + object.getString("id"), null, "");
 
-            return file.substring(file.lastIndexOf(output));
+            return file;
         });
 
         try {
