@@ -125,15 +125,12 @@ public class ImageImpl implements Image {
 
     @Override
     public boolean svg2png(String svg, int width, int height, OutputStream outputStream) {
-        try {
+        try (Reader reader = new StringReader(svg)) {
             PNGTranscoder pngTranscoder = new PNGTranscoder();
             pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, 1.0F * width);
             pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, 1.0F * height);
-            Reader reader = new StringReader(svg);
             pngTranscoder.transcode(new TranscoderInput(reader), new TranscoderOutput(outputStream));
-            reader.close();
             outputStream.flush();
-            outputStream.close();
 
             return true;
         } catch (Throwable throwable) {
