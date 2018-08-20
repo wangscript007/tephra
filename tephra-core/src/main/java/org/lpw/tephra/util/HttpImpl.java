@@ -20,6 +20,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -33,6 +34,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -254,16 +256,41 @@ public class HttpImpl implements Http, ContextRefreshedListener {
             requestHeaders.keySet().stream().filter(key -> !key.toLowerCase().equals("content-length"))
                     .forEach(key -> request.addHeader(key, requestHeaders.get(key)));
         request.addHeader("time-hash", numeric.toString(timeHash.generate(), "0"));
-        try (CloseableHttpResponse response = HttpClients.custom().setConnectionManager(manager)
-                .build().execute(request, HttpClientContext.create())) {
+        try (CloseableHttpClient client = HttpClients.custom().setConnectionManager(manager).build();
+             CloseableHttpResponse response = client.execute(request, HttpClientContext.create())) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            this.statusCode.set(statusCode);
+            if (statusCode != 200) {
+                request.abort();
+                outputStream.close();
+                logger.warn(null, "执行HTTP请求[{}:{}]失败[{}]！", request.getMethod(), request.getURI(), statusCode);
+
+                return;
+            }
+
+            HttpEntity httpEntity = response.getEntity();
+            if (httpEntity == null) {
+                logger.warn(null, "执行HTTP请求[{}:{}]未返回数据！", request.getMethod(), request.getURI());
+
+                return;
+            }
+
             if (responseHeaders != null)
                 for (Header header : response.getAllHeaders())
                     responseHeaders.put(header.getName(), header.getValue());
-            statusCode.set(response.getStatusLine().getStatusCode());
-            io.copy(response.getEntity().getContent(), outputStream);
-            outputStream.close();
+            copy(httpEntity, outputStream);
         } catch (Throwable throwable) {
             logger.warn(null, "执行HTTP请求时发生异常[{}]！", throwable.getMessage());
+        }
+    }
+
+    private void copy(HttpEntity httpEntity, OutputStream outputStream) {
+        try (InputStream inputStream = httpEntity.getContent()) {
+            io.copy(inputStream, outputStream);
+            outputStream.close();
+        } catch (IOException e) {
+            logger.warn(null, "输出HTTP执行结果时发生异常[{}]！", e.getMessage());
+
         }
     }
 
