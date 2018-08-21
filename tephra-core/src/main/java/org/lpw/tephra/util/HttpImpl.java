@@ -269,6 +269,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
 
             HttpEntity httpEntity = response.getEntity();
             if (httpEntity == null) {
+                request.abort();
                 outputStream.close();
                 logger.warn(null, "执行HTTP请求[{}:{}]未返回数据！", request.getMethod(), request.getURI());
 
@@ -278,17 +279,19 @@ public class HttpImpl implements Http, ContextRefreshedListener {
             if (responseHeaders != null)
                 for (Header header : response.getAllHeaders())
                     responseHeaders.put(header.getName(), header.getValue());
-            copy(httpEntity, outputStream);
+            copy(request, httpEntity, outputStream);
         } catch (Throwable throwable) {
+            request.abort();
             logger.warn(null, "执行HTTP请求时发生异常[{}]！", throwable.getMessage());
         }
     }
 
-    private void copy(HttpEntity httpEntity, OutputStream outputStream) {
+    private void copy(HttpUriRequest request, HttpEntity httpEntity, OutputStream outputStream) {
         try (InputStream inputStream = httpEntity.getContent()) {
             io.copy(inputStream, outputStream);
             outputStream.close();
         } catch (IOException e) {
+            request.abort();
             logger.warn(null, "输出HTTP执行结果时发生异常[{}]！", e.getMessage());
         }
     }
