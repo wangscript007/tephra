@@ -32,7 +32,9 @@ public class SvgParserImpl extends ImageParserSupport implements Parser {
     @Override
     public boolean parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            image.svg2png(object.getString("svg"), object.getIntValue("width"), object.getIntValue("height"), outputStream);
+            if (!image.svg2png(object.getString("svg"), object.getIntValue("width"), object.getIntValue("height"), outputStream))
+                return false;
+
             XSLFPictureData xslfPictureData = xmlSlideShow.addPicture(
                     parserHelper.getImage(object, "image/png", outputStream), PictureData.PictureType.PNG);
             parse(xslfSlide, xslfPictureData, object);
