@@ -1,5 +1,6 @@
 package org.lpw.tephra.wormhole;
 
+import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.crypto.Sign;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Generator;
@@ -19,7 +20,7 @@ import java.util.Map;
  * @author lpw
  */
 @Service("tephra.wormhole.helper")
-public class WormholeHelperImpl implements WormholeHelper {
+public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListener {
     @Inject
     private Validator validator;
     @Inject
@@ -32,10 +33,27 @@ public class WormholeHelperImpl implements WormholeHelper {
     private Sign sign;
     @Inject
     private Http http;
+    @Value("${tephra.wormhole.root:}")
+    private String root;
     @Value("${tephra.wormhole.image:}")
     private String image;
     @Value("${tephra.wormhole.file:}")
     private String file;
+
+    @Override
+    public boolean isImageUri(String uri) {
+        return uri.startsWith("/whimg/");
+    }
+
+    @Override
+    public boolean isFileUri(String uri) {
+        return uri.startsWith("/whfile/");
+    }
+
+    @Override
+    public String getUrl(String uri) {
+        return root + uri;
+    }
 
     @Override
     public String image(String path, String name, String suffix, String sign, InputStream inputStream) {
@@ -97,5 +115,18 @@ public class WormholeHelperImpl implements WormholeHelper {
             return generator.random(32) + suffix;
 
         return generator.random(32);
+    }
+
+    @Override
+    public int getContextRefreshedSort() {
+        return 9;
+    }
+
+    @Override
+    public void onContextRefreshed() {
+        if (validator.isEmpty(image))
+            image = root + "/whimg/save";
+        if (validator.isEmpty(file))
+            file = root + "/whfile/save";
     }
 }

@@ -8,6 +8,30 @@ import java.io.InputStream;
  */
 public interface WormholeHelper {
     /**
+     * 验证是否为图片URI地址。
+     *
+     * @param uri URI地址。
+     * @return 如果是则返回true；否则返回false。
+     */
+    boolean isImageUri(String uri);
+
+    /**
+     * 验证是否为文件URI地址。
+     *
+     * @param uri URI地址。
+     * @return 如果是则返回true；否则返回false。
+     */
+    boolean isFileUri(String uri);
+
+    /**
+     * 获取URL地址。
+     *
+     * @param uri URI地址。
+     * @return URL地址。
+     */
+    String getUrl(String uri);
+
+    /**
      * 保存图片。
      *
      * @param path        目录。
