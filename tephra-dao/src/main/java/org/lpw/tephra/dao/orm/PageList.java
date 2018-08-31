@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.dao.model.Model;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author lpw
@@ -89,4 +90,6 @@ public interface PageList<T extends Model> {
      * @return JSON格式的数据。
      */
     JSONObject toJson(boolean listable);
+
+    JSONObject toJson(Function<T, JSONObject> function);
 }

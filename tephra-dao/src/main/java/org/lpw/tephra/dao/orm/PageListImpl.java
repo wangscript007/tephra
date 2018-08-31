@@ -1,5 +1,6 @@
 package org.lpw.tephra.dao.orm;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelHelper;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author lpw
@@ -95,6 +97,16 @@ public class PageListImpl<T extends Model> implements PageList<T> {
         object.put("pageEnd", pageEnd);
         if (listable)
             object.put("list", modelHelper.toJson(list));
+
+        return object;
+    }
+
+    @Override
+    public JSONObject toJson(Function<T, JSONObject> function) {
+        JSONObject object = toJson(false);
+        JSONArray list = new JSONArray();
+        this.list.forEach(model -> list.add(function.apply(model)));
+        object.put("list", list);
 
         return object;
     }
