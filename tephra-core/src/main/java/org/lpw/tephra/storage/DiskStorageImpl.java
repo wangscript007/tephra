@@ -29,7 +29,7 @@ public class DiskStorageImpl implements Storage {
 
     @Override
     public void mkdirs(String path) {
-        new File(path).mkdirs();
+        io.mkdirs(path);
     }
 
     @Override
@@ -80,13 +80,13 @@ public class DiskStorageImpl implements Storage {
 
     @Override
     public void delete(String path) {
-        new File(getAbsolutePath(path, false)).delete();
+        io.delete(getAbsolutePath(path, false));
     }
 
     private String getAbsolutePath(String path, boolean parent) {
         String absolutePath = context.getAbsolutePath(path);
         if (parent)
-            new File(absolutePath.substring(0, absolutePath.lastIndexOf(File.separatorChar))).mkdirs();
+            io.mkdirs(absolutePath.substring(0, absolutePath.lastIndexOf(File.separatorChar)));
 
         return absolutePath;
     }

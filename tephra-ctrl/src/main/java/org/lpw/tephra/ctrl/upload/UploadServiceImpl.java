@@ -163,7 +163,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
 
         String path = (ROOT + contentType + "/" + uploadListener.getPath(uploadReader)
                 + "/" + dateTime.toString(dateTime.today(), "yyyyMMdd") + "/" + generator.random(32)
-                + suffix).replaceAll("[/]+", "/");
+                + suffix).replaceAll("[/]{2,}", "/");
         object.put("path", path);
         uploadReader.write(storage, path);
         String thumbnail = thumbnail(uploadListener.getImageSize(key), storage, contentType, path);

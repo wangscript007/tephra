@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -41,9 +42,13 @@ public class ContextImpl implements Context, Closable, ContextRefreshedListener 
         if (absolutePath == null) {
             if (path.startsWith("abs:"))
                 absolutePath = path.substring(4);
-            else if (path.startsWith("classpath:"))
-                absolutePath = getClass().getClassLoader().getResource(path.substring(10)).getPath();
-            else
+            else if (path.startsWith("classpath:")) {
+                URL url = getClass().getClassLoader().getResource(path.substring(10));
+                if (url == null)
+                    return null;
+
+                absolutePath = url.getPath();
+            } else
                 absolutePath = new File(root + "/" + path).getAbsolutePath();
             this.absolutePath.put(path, absolutePath);
         }

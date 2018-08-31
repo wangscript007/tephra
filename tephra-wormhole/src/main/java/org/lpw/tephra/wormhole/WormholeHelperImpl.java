@@ -124,6 +124,9 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
 
     @Override
     public void onContextRefreshed() {
+        if (validator.isEmpty(root))
+            return;
+
         if (validator.isEmpty(image))
             image = root + "/whimg/save";
         if (validator.isEmpty(file))
