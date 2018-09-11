@@ -24,6 +24,10 @@ public interface Parser {
      * SVG图片解析器类型。
      */
     String TYPE_SVG = "svg";
+    /**
+     * 表格图片解析器类型。
+     */
+    String TYPE_TABLE = "table";
 
     /**
      * 获取解析器类型。

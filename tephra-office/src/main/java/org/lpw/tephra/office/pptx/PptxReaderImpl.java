@@ -46,8 +46,7 @@ public class PptxReaderImpl implements PptxReader {
     @Override
     public JSONObject read(InputStream inputStream, MediaWriter mediaWriter) {
         JSONObject object = new JSONObject();
-        try {
-            XMLSlideShow xmlSlideShow = new XMLSlideShow(inputStream);
+        try (XMLSlideShow xmlSlideShow = new XMLSlideShow(inputStream)) {
             parseSize(xmlSlideShow, object);
             Map<String, Map<Integer, String>> layouts = new HashMap<>();
             JSONArray slides = new JSONArray();
@@ -57,7 +56,6 @@ public class PptxReaderImpl implements PptxReader {
                 slides.add(slide);
             });
             object.put("slides", slides);
-            xmlSlideShow.close();
         } catch (Exception e) {
             logger.warn(e, "读取PPTX数据时发生异常！");
         }
@@ -71,6 +69,26 @@ public class PptxReaderImpl implements PptxReader {
         size.put("width", officeHelper.pointToPixel(dimension.width));
         size.put("height", officeHelper.pointToPixel(dimension.height));
         object.put("size", size);
+
+//        xmlSlideShow.getTableStyles().forEach(xslfTableStyle -> {
+//            System.out.println("##########################");
+//            if (!xslfTableStyle.getStyleId().equals("{08FB837D-C827-4EFA-A057-4D05807E0F7C}"))
+//                return;
+//
+//            System.out.println(xslfTableStyle.getStyleId() + ";" + xslfTableStyle.getStyleName());
+//            CTTableStyle ctTableStyle = xslfTableStyle.getXmlObject();
+//            CTTableStyleCellStyle ctTableStyleCellStyle = ctTableStyle.getWholeTbl().getTcStyle();
+//            System.out.println(ctTableStyleCellStyle.getTcBdr().getBottom().getLnRef().getSchemeClr().getVal());
+//            xmlSlideShow.getRelations().forEach(obj -> {
+//                if (obj instanceof XSLFTheme) {
+//                    XSLFTheme xslfTheme = (XSLFTheme) obj;
+//                    System.out.println(xslfTheme.getName());
+//                    System.out.println(xslfTheme.getXmlObject());
+//                }
+//            });
+//            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+////            System.out.println(ctTableStyle);
+//        });
     }
 
     private Map<Integer, String> parseLayout(XSLFSlide xslfSlide, MediaWriter mediaWriter, Map<String, Map<Integer, String>> layouts) {
@@ -94,9 +112,7 @@ public class PptxReaderImpl implements PptxReader {
             if (id == 0)
                 return;
 
-            JSONObject object = json.toObject(shape);
-//            add(shapes, object);
-            fromLayout.put(id, object);
+            fromLayout.put(id, json.toObject(shape));
         });
         JSONArray shapes = new JSONArray();
         parseShapes(xslfSlide, xslfSlide.getShapes(), mediaWriter, shapes, layout, fromLayout);

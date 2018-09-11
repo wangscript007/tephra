@@ -1,7 +1,7 @@
 package org.lpw.tephra.poi.pptx;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;

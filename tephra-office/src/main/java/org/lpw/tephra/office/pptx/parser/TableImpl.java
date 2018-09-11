@@ -2,6 +2,7 @@ package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFShape;
@@ -42,6 +43,7 @@ public class TableImpl implements Graphic {
             xslfTableRow.getCells().forEach(xslfTableCell -> {
                 JSONObject cell = new JSONObject();
                 parseSpan(xslfTableCell, cell);
+                parseBorder(xslfTableCell, cell);
                 parser.parseShape(xslfTableCell, mediaWriter, cell, false);
                 cells.add(cell);
             });
@@ -65,6 +67,29 @@ public class TableImpl implements Graphic {
         span.put("column", xslfTableCell.getGridSpan());
         span.put("row", xslfTableCell.getRowSpan());
         cell.put("span", span);
+    }
+
+    private void parseBorder(XSLFTableCell xslfTableCell, JSONObject cell) {
+        JSONObject border = new JSONObject();
+        for (TableCell.BorderEdge edge : TableCell.BorderEdge.values()) {
+            Double width = xslfTableCell.getBorderWidth(edge);
+            if (width == null || width <= 0.0D)
+                continue;
+
+            JSONObject object = new JSONObject();
+            object.put("width", width);
+            object.put("color", officeHelper.colorToJson(xslfTableCell.getBorderColor(edge)));
+            object.put("style", xslfTableCell.getBorderStyle(edge));
+            border.put(edge.name(), object);
+            System.out.println("11:" + xslfTableCell.getBorderStyle(edge));
+            System.out.println("22:" + xslfTableCell.getBorderStyle(edge).getLineCap());
+            System.out.println("22:" + xslfTableCell.getBorderStyle(edge).getLineCap());
+            System.out.println("33:" + xslfTableCell.getBorderStyle(edge).getLineDash());
+            System.out.println("44:" + xslfTableCell.getBorderStyle(edge).getLineCompound());
+        }
+
+        if (!border.isEmpty())
+            cell.put("border", border);
     }
 
     @Override
