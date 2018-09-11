@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  */
 @Controller("tephra.ctrl.security.xss")
 public class XssImpl implements Xss, StorageListener {
-    private static final Pattern SCRIPT = Pattern.compile("<\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT].*>");
+    private static final Pattern SCRIPT = Pattern.compile("<\\s*/?\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT].*>");
 
     @Inject
     private Converter converter;
