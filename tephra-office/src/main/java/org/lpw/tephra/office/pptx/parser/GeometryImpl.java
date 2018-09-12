@@ -173,9 +173,10 @@ public class GeometryImpl implements Simple {
         xslfSimpleShape.draw(bufferedImage.createGraphics(), new Rectangle2D.Double(0, 0,
                 rectangle2D.getWidth(), rectangle2D.getHeight()));
         ImageIO.write(bufferedImage, "PNG", file);
+        String image = readerContext.getGeometryConverter().saveGeometryImage(type, file);
         io.delete(file);
 
-        return readerContext.getGeometryConverter().saveGeometryImage(type, file);
+        return image;
     }
 
     @Override
