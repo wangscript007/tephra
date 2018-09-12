@@ -1,14 +1,12 @@
 package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFShadow;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.lpw.tephra.office.MediaReader;
-import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
+import org.lpw.tephra.office.pptx.ReaderContext;
+import org.lpw.tephra.office.pptx.WriterContext;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTEffectList;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
@@ -33,7 +31,7 @@ public class ShadowImpl implements Simple {
     }
 
     @Override
-    public void parseShape(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
+    public void parseShape(ReaderContext readerContext, XSLFSimpleShape xslfSimpleShape, JSONObject shape) {
         if (xslfSimpleShape.getShadow() == null)
             return;
 
@@ -46,19 +44,15 @@ public class ShadowImpl implements Simple {
         String type = xslfShadow.getXmlObject().getDomNode().getNodeName();
         shadow.put("type", type.substring(2, type.length() - 4));
         shape.put("shadow", shadow);
-        System.out.println("##################################");
-        System.out.println(xslfSimpleShape.getXmlObject());
-        System.out.println(xslfShadow.getXmlObject().getDomNode().getNodeName());
-        System.out.println(shadow);
     }
 
     @Override
-    public XSLFShape createShape(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, MediaReader mediaReader, JSONObject shape) {
+    public XSLFShape createShape(WriterContext writerContext, JSONObject shape) {
         return null;
     }
 
     @Override
-    public void parseToShape(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+    public void parseShape(WriterContext writerContext, XSLFSimpleShape xslfSimpleShape, JSONObject shape) {
         if (!shape.containsKey("shadow"))
             return;
 

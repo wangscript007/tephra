@@ -8,7 +8,7 @@ import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFGroupShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.lpw.tephra.office.GeometryConverter;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.parser.Parser;
@@ -44,15 +44,17 @@ public class PptxReaderImpl implements PptxReader {
     private Parser parser;
 
     @Override
-    public JSONObject read(InputStream inputStream, MediaWriter mediaWriter) {
+    public JSONObject read(InputStream inputStream, MediaWriter mediaWriter, GeometryConverter geometryConverter) {
         JSONObject object = new JSONObject();
         try (XMLSlideShow xmlSlideShow = new XMLSlideShow(inputStream)) {
             parseSize(xmlSlideShow, object);
+            ReaderContext readerContext = new ReaderContext(mediaWriter, geometryConverter, xmlSlideShow);
             Map<String, Map<Integer, String>> layouts = new HashMap<>();
             JSONArray slides = new JSONArray();
             xmlSlideShow.getSlides().forEach(xslfSlide -> {
+                readerContext.setXslfSlide(xslfSlide);
                 JSONObject slide = new JSONObject();
-                parseSlide(xslfSlide, mediaWriter, slide, parseLayout(xslfSlide, mediaWriter, layouts));
+                parseSlide(readerContext, slide, parseLayout(readerContext, layouts));
                 slides.add(slide);
             });
             object.put("slides", slides);
@@ -69,43 +71,25 @@ public class PptxReaderImpl implements PptxReader {
         size.put("width", officeHelper.pointToPixel(dimension.width));
         size.put("height", officeHelper.pointToPixel(dimension.height));
         object.put("size", size);
-
-//        xmlSlideShow.getTableStyles().forEach(xslfTableStyle -> {
-//            System.out.println("##########################");
-//            if (!xslfTableStyle.getStyleId().equals("{08FB837D-C827-4EFA-A057-4D05807E0F7C}"))
-//                return;
-//
-//            System.out.println(xslfTableStyle.getStyleId() + ";" + xslfTableStyle.getStyleName());
-//            CTTableStyle ctTableStyle = xslfTableStyle.getXmlObject();
-//            CTTableStyleCellStyle ctTableStyleCellStyle = ctTableStyle.getWholeTbl().getTcStyle();
-//            System.out.println(ctTableStyleCellStyle.getTcBdr().getBottom().getLnRef().getSchemeClr().getVal());
-//            xmlSlideShow.getRelations().forEach(obj -> {
-//                if (obj instanceof XSLFTheme) {
-//                    XSLFTheme xslfTheme = (XSLFTheme) obj;
-//                    System.out.println(xslfTheme.getName());
-//                    System.out.println(xslfTheme.getXmlObject());
-//                }
-//            });
-//            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-////            System.out.println(ctTableStyle);
-//        });
     }
 
-    private Map<Integer, String> parseLayout(XSLFSlide xslfSlide, MediaWriter mediaWriter, Map<String, Map<Integer, String>> layouts) {
-        String name = xslfSlide.getSlideLayout().getName();
+    private Map<Integer, String> parseLayout(ReaderContext readerContext, Map<String, Map<Integer, String>> layouts) {
+        readerContext.setLayout(true);
+        String name = readerContext.getXslfSlide().getSlideLayout().getName();
         if (layouts.containsKey(name))
             return layouts.get(name);
 
         Map<Integer, String> layout = new LinkedHashMap<>();
-        parseBackground(xslfSlide.getSlideLayout().getBackground(), mediaWriter, null, layout);
-        parseShapes(xslfSlide, xslfSlide.getSlideLayout().getShapes(), mediaWriter, null, layout, new HashMap<>());
+        parseBackground(readerContext, readerContext.getXslfSlide().getSlideLayout().getBackground(), null, layout);
+        parseShapes(readerContext, readerContext.getXslfSlide().getSlideLayout().getShapes(), null, layout, new HashMap<>());
         layouts.put(name, layout);
 
         return layout;
     }
 
-    private void parseSlide(XSLFSlide xslfSlide, MediaWriter mediaWriter, JSONObject slide, Map<Integer, String> layout) {
-        parseBackground(xslfSlide.getBackground(), mediaWriter, slide, layout);
+    private void parseSlide(ReaderContext readerContext, JSONObject slide, Map<Integer, String> layout) {
+        readerContext.setLayout(false);
+        parseBackground(readerContext, readerContext.getXslfSlide().getBackground(), slide, layout);
 
         Map<Integer, JSONObject> fromLayout = new HashMap<>();
         layout.forEach((id, shape) -> {
@@ -115,31 +99,31 @@ public class PptxReaderImpl implements PptxReader {
             fromLayout.put(id, json.toObject(shape));
         });
         JSONArray shapes = new JSONArray();
-        parseShapes(xslfSlide, xslfSlide.getShapes(), mediaWriter, shapes, layout, fromLayout);
+        parseShapes(readerContext, readerContext.getXslfSlide().getShapes(), shapes, layout, fromLayout);
         slide.put("shapes", shapes);
     }
 
-    private void parseBackground(XSLFBackground xslfBackground, MediaWriter mediaWriter, JSONObject slide,
+    private void parseBackground(ReaderContext readerContext, XSLFBackground xslfBackground, JSONObject slide,
                                  Map<Integer, String> layout) {
         JSONObject background = layout.containsKey(0) ? json.toObject(layout.get(0)) : new JSONObject();
-        parser.parseShape(xslfBackground, mediaWriter, background, slide == null);
+        parser.parseShape(readerContext, xslfBackground, background);
         background.remove("anchor");
         if (background.isEmpty())
             return;
 
-        if (slide == null)
+        if (readerContext.isLayout())
             layout.put(0, json.toString(background));
         else
             slide.put("background", background);
     }
 
-    private void parseShapes(XSLFSlide xslfSlide, List<XSLFShape> xslfSlides, MediaWriter mediaWriter, JSONArray shapes,
+    private void parseShapes(ReaderContext readerContext, List<XSLFShape> xslfSlides, JSONArray shapes,
                              Map<Integer, String> layout, Map<Integer, JSONObject> fromLayout) {
         xslfSlides.forEach(xslfShape -> {
             if (xslfShape instanceof XSLFSimpleShape) {
                 JSONObject shape = getOrNew(fromLayout, xslfShape.getShapeId());
-                parser.parseShape((XSLFSimpleShape) xslfShape, mediaWriter, shape, shapes == null);
-                if (shapes == null)
+                parser.parseShape(readerContext, (XSLFSimpleShape) xslfShape, shape);
+                if (readerContext.isLayout())
                     layout.put(xslfShape.getShapeId(), json.toString(shape));
                 else
                     add(shapes, shape);
@@ -149,7 +133,7 @@ public class PptxReaderImpl implements PptxReader {
 
             if (xslfShape instanceof XSLFGraphicFrame) {
                 JSONObject shape = getOrNew(fromLayout, xslfShape.getShapeId());
-                parser.parseShape(xslfSlide, (XSLFGraphicFrame) xslfShape, mediaWriter, shape);
+                parser.parseShape(readerContext, (XSLFGraphicFrame) xslfShape, shape);
                 add(shapes, shape);
 
                 return;
@@ -157,7 +141,7 @@ public class PptxReaderImpl implements PptxReader {
 
             if (xslfShape instanceof XSLFGroupShape) {
                 if (shapes != null)
-                    parseGroup(xslfSlide, (XSLFGroupShape) xslfShape, mediaWriter, shapes, layout, fromLayout);
+                    parseGroup(readerContext, (XSLFGroupShape) xslfShape, shapes, layout, fromLayout);
 
                 return;
             }
@@ -166,7 +150,7 @@ public class PptxReaderImpl implements PptxReader {
         });
     }
 
-    private void parseGroup(XSLFSlide xslfSlide, XSLFGroupShape xslfGroupShape, MediaWriter mediaWriter, JSONArray shapes,
+    private void parseGroup(ReaderContext readerContext, XSLFGroupShape xslfGroupShape, JSONArray shapes,
                             Map<Integer, String> layout, Map<Integer, JSONObject> fromLayout) {
         CTGroupShape ctGroupShape = (CTGroupShape) xslfGroupShape.getXmlObject();
         CTGroupTransform2D ctGroupTransform2D = ctGroupShape.getGrpSpPr().getXfrm();
@@ -176,7 +160,7 @@ public class PptxReaderImpl implements PptxReader {
         double chH = 1.0D * ctGroupTransform2D.getExt().getCy() / ctGroupTransform2D.getChExt().getCy();
 
         JSONArray array = new JSONArray();
-        parseShapes(xslfSlide, xslfGroupShape.getShapes(), mediaWriter, array, layout, fromLayout);
+        parseShapes(readerContext, xslfGroupShape.getShapes(), array, layout, fromLayout);
         for (int i = 0, size = array.size(); i < size; i++) {
             JSONObject object = array.getJSONObject(i);
             JSONObject anchor = object.getJSONObject("anchor");

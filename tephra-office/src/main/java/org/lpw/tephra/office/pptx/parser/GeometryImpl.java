@@ -3,16 +3,14 @@ package org.lpw.tephra.office.pptx.parser;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.StrokeStyle;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.xmlbeans.XmlObject;
-import org.lpw.tephra.bean.BeanFactory;
-import org.lpw.tephra.office.MediaReader;
 import org.lpw.tephra.office.MediaType;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
+import org.lpw.tephra.office.pptx.ReaderContext;
+import org.lpw.tephra.office.pptx.WriterContext;
 import org.lpw.tephra.util.Image;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
@@ -40,6 +38,8 @@ public class GeometryImpl implements Simple {
     @Inject
     private Image image;
     @Inject
+    private Io io;
+    @Inject
     private Logger logger;
     @Inject
     private OfficeHelper officeHelper;
@@ -50,16 +50,25 @@ public class GeometryImpl implements Simple {
     }
 
     @Override
-    public void parseShape(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
+    public void parseShape(ReaderContext readerContext, XSLFSimpleShape xslfSimpleShape, JSONObject shape) {
         JSONObject geometry = new JSONObject();
         parseLine(xslfSimpleShape, geometry);
-        parseFill(xslfSimpleShape, mediaWriter, geometry);
+        parseFill(xslfSimpleShape, readerContext.getMediaWriter(), geometry);
         if (geometry.isEmpty())
             return;
 
-        geometry.put("type", xslfSimpleShape.getShapeType() == null ? "rect" : format(xslfSimpleShape.getShapeType().toString()));
+        String type = xslfSimpleShape.getShapeType() == null ? "rect" : format(xslfSimpleShape.getShapeType().toString());
+        geometry.put("type", type);
+        String image = readerContext.getGeometryConverter().getImage(type);
+        if (image == null) {
+            try {
+                image = save(readerContext, xslfSimpleShape, type);
+            } catch (IOException e) {
+                logger.warn(e, "保存不可解析图形[{}]为PNG图片文件时发生异常！", type);
+            }
+        }
+        geometry.put("image", image);
         shape.put("geometry", geometry);
-//        draw(xslfSimpleShape, geometry, geometry.getString("type"));
     }
 
     private void parseLine(XSLFSimpleShape xslfSimpleShape, JSONObject geometry) {
@@ -155,37 +164,34 @@ public class GeometryImpl implements Simple {
         texture.put("bottom", officeHelper.fromPercent(ctRelativeRect.getB()));
     }
 
-    private void draw(XSLFSimpleShape xslfSimpleShape, JSONObject geometry, String type) {
-        new File("target/ppt").mkdirs();
-        try {
-            BeanFactory.getBean(Io.class).write("target/ppt/" + type + ".json", geometry.toJSONString().getBytes());
-            Rectangle2D rectangle2D = xslfSimpleShape.getAnchor();
-            BufferedImage bufferedImage = new BufferedImage((int) rectangle2D.getWidth(), (int) rectangle2D.getHeight(),
-                    BufferedImage.TYPE_4BYTE_ABGR);
-            xslfSimpleShape.draw(bufferedImage.createGraphics(), new Rectangle2D.Double(0, 0,
-                    rectangle2D.getWidth(), rectangle2D.getHeight()));
-            ImageIO.write(bufferedImage, "PNG", new File("target/ppt/" + type + ".png"));
-        } catch (Throwable throwable) {
-            System.out.println("failure:" + geometry);
-            throwable.printStackTrace();
-        }
+    private String save(ReaderContext readerContext, XSLFSimpleShape xslfSimpleShape, String type) throws IOException {
+        File file = new File(officeHelper.getTempPath("geometry") + ".png");
+        io.mkdirs(file.getParentFile());
+        Rectangle2D rectangle2D = xslfSimpleShape.getAnchor();
+        BufferedImage bufferedImage = new BufferedImage((int) rectangle2D.getWidth(), (int) rectangle2D.getHeight(),
+                BufferedImage.TYPE_4BYTE_ABGR);
+        xslfSimpleShape.draw(bufferedImage.createGraphics(), new Rectangle2D.Double(0, 0,
+                rectangle2D.getWidth(), rectangle2D.getHeight()));
+        ImageIO.write(bufferedImage, "PNG", file);
+
+        return readerContext.getGeometryConverter().saveImage(type, file);
     }
 
     @Override
-    public XSLFShape createShape(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, MediaReader mediaReader, JSONObject shape) {
+    public XSLFShape createShape(WriterContext writerContext, JSONObject shape) {
         return null;
     }
 
     @Override
-    public void parseToShape(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+    public void parseShape(WriterContext writerContext, XSLFSimpleShape xslfSimpleShape, JSONObject shape) {
         if (!shape.containsKey("geometry"))
             return;
 
         JSONObject geometry = shape.getJSONObject("geometry");
-        parseFillToShape(xslfSimpleShape, mediaReader, geometry);
+        parseFillToShape(xslfSimpleShape, geometry);
     }
 
-    private void parseFillToShape(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject geometry) {
+    private void parseFillToShape(XSLFSimpleShape xslfSimpleShape, JSONObject geometry) {
         if (!geometry.containsKey("fill"))
             return;
 

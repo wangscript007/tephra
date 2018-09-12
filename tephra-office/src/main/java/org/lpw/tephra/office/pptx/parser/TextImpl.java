@@ -8,16 +8,14 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
-import org.lpw.tephra.office.MediaReader;
-import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
+import org.lpw.tephra.office.pptx.ReaderContext;
+import org.lpw.tephra.office.pptx.WriterContext;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +41,7 @@ public class TextImpl implements Simple {
     }
 
     @Override
-    public void parseShape(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout) {
+    public void parseShape(ReaderContext readerContext, XSLFSimpleShape xslfSimpleShape, JSONObject shape) {
         if (!(xslfSimpleShape instanceof XSLFTextShape))
             return;
 
@@ -86,7 +84,7 @@ public class TextImpl implements Simple {
         parseVerticalAlignment(xslfTextShape, text);
         merge(text, paragraphs);
         text.put("paragraphs", paragraphs);
-        text.put("layout", layout);
+        text.put("layout", readerContext.isLayout());
         shape.put("text", text);
     }
 
@@ -203,12 +201,12 @@ public class TextImpl implements Simple {
     }
 
     @Override
-    public XSLFShape createShape(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, MediaReader mediaReader, JSONObject shape) {
-        return shape.containsKey("text") ? xslfSlide.createTextBox() : null;
+    public XSLFShape createShape(WriterContext writerContext, JSONObject shape) {
+        return shape.containsKey("text") ? writerContext.getXslfSlide().createTextBox() : null;
     }
 
     @Override
-    public void parseToShape(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape) {
+    public void parseShape(WriterContext writerContext, XSLFSimpleShape xslfSimpleShape, JSONObject shape) {
         if (!shape.containsKey("text"))
             return;
 

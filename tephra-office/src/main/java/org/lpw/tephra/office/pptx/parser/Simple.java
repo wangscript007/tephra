@@ -2,8 +2,8 @@ package org.lpw.tephra.office.pptx.parser;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
-import org.lpw.tephra.office.MediaReader;
-import org.lpw.tephra.office.MediaWriter;
+import org.lpw.tephra.office.pptx.ReaderContext;
+import org.lpw.tephra.office.pptx.WriterContext;
 
 /**
  * 简单形状解析器。
@@ -21,19 +21,18 @@ public interface Simple extends Creater {
     /**
      * 解析形状。
      *
+     * @param readerContext   读上下文。
      * @param xslfSimpleShape 形状。
-     * @param mediaWriter     媒体资源输出器。
      * @param shape           解析数据。
-     * @param layout          是否为模板形状。
      */
-    void parseShape(XSLFSimpleShape xslfSimpleShape, MediaWriter mediaWriter, JSONObject shape, boolean layout);
+    void parseShape(ReaderContext readerContext, XSLFSimpleShape xslfSimpleShape, JSONObject shape);
 
     /**
      * 解析数据。
      *
+     * @param writerContext   写上下文。
      * @param xslfSimpleShape 形状。
-     * @param mediaReader     媒体资源读取器。
      * @param shape           解析数据。
      */
-    void parseToShape(XSLFSimpleShape xslfSimpleShape, MediaReader mediaReader, JSONObject shape);
+    void parseShape(WriterContext writerContext, XSLFSimpleShape xslfSimpleShape, JSONObject shape);
 }
