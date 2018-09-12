@@ -14,7 +14,7 @@ public interface GeometryConverter {
      * @param type 图形类型。
      * @return 图文件URI，不存在则返回null。
      */
-    String getImage(String type);
+    String getGeometryImage(String type);
 
     /**
      * 保存几何图形。
@@ -23,5 +23,5 @@ public interface GeometryConverter {
      * @param file 图形文件。
      * @return 图文件URI，不存在则返回null。
      */
-    String saveImage(String type, File file);
+    String saveGeometryImage(String type, File file);
 }

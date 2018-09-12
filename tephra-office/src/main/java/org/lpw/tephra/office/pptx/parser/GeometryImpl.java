@@ -59,7 +59,7 @@ public class GeometryImpl implements Simple {
 
         String type = xslfSimpleShape.getShapeType() == null ? "rect" : format(xslfSimpleShape.getShapeType().toString());
         geometry.put("type", type);
-        String image = readerContext.getGeometryConverter().getImage(type);
+        String image = readerContext.getGeometryConverter().getGeometryImage(type);
         if (image == null) {
             try {
                 image = save(readerContext, xslfSimpleShape, type);
@@ -174,7 +174,7 @@ public class GeometryImpl implements Simple {
                 rectangle2D.getWidth(), rectangle2D.getHeight()));
         ImageIO.write(bufferedImage, "PNG", file);
 
-        return readerContext.getGeometryConverter().saveImage(type, file);
+        return readerContext.getGeometryConverter().saveGeometryImage(type, file);
     }
 
     @Override
