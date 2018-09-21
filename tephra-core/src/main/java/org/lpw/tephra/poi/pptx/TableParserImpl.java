@@ -9,7 +9,10 @@ import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTable;
 import org.apache.poi.xslf.usermodel.XSLFTableCell;
 import org.apache.poi.xslf.usermodel.XSLFTableRow;
+import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.lpw.tephra.poi.StreamWriter;
+import org.lpw.tephra.util.Validator;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -22,7 +25,11 @@ import java.util.Map;
 @Component("tephra.poi.pptx.table")
 public class TableParserImpl implements Parser {
     @Inject
+    private Validator validator;
+    @Inject
     private ParserHelper parserHelper;
+    @Inject
+    private TextParser textParser;
     private Map<String, TableCell.BorderEdge> edges;
 
     public TableParserImpl() {
@@ -49,6 +56,17 @@ public class TableParserImpl implements Parser {
             for (int j = 0; j < cols.size(); j++) {
                 XSLFTableCell xslfTableCell = xslfTableRow.addCell();
                 JSONObject col = cols.getJSONObject(j);
+                JSONObject data = col.getJSONObject("data");
+                CTTableCell ctTableCell = (CTTableCell) xslfTableCell.getXmlObject();
+                if (data.containsKey("rowSpan"))
+                    ctTableCell.setRowSpan(data.getIntValue("rowSpan"));
+                if (data.containsKey("colSpan"))
+                    ctTableCell.setGridSpan(data.getIntValue("colSpan"));
+                if (col.containsKey("width"))
+                    xslfTable.setColumnWidth(j, col.getDoubleValue("width"));
+                if (col.containsKey("height"))
+                    xslfTable.setRowHeight(i, col.getDoubleValue("height"));
+
                 JSONObject style = col.getJSONObject("style");
                 edges.forEach((key, edge) -> {
                     String name = "border" + key + "Width";
@@ -58,9 +76,23 @@ public class TableParserImpl implements Parser {
                     if (style.containsKey(name))
                         xslfTableCell.setBorderColor(edge, parserHelper.getColor(style, name));
                 });
-                if (style.containsKey("backgroundColor"))
-                    xslfTableCell.setFillColor(parserHelper.getColor(style, "backgroundColor"));
-                xslfTableCell.setText(col.getJSONObject("data").getString("value"));
+                if (style.containsKey("fillColor"))
+                    xslfTableCell.setFillColor(parserHelper.getColor(style, "fillColor"));
+                if (col.containsKey("elements")) {
+                    JSONArray elements = col.getJSONArray("elements");
+                    XSLFTextParagraph xslfTextParagraph = xslfTableCell.addNewTextParagraph();
+                    for (int k = 0, size = elements.size(); k < size; k++) {
+                        JSONObject element = elements.getJSONObject(k);
+                        String value = element.getJSONObject("data").getString("value");
+                        if (validator.isEmpty(value)) {
+                            textParser.newTextRun(xslfTextParagraph, col, element).setText("");
+                            xslfTextParagraph = xslfTableCell.addNewTextParagraph();
+                        } else
+                            textParser.newTextRun(xslfTextParagraph, col, element).setText(value);
+                    }
+                } else
+                    textParser.newTextRun(xslfTableCell.addNewTextParagraph(), col, new JSONObject())
+                            .setText(data.getString("value"));
             }
         }
 

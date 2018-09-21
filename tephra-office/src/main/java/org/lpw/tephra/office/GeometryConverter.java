@@ -19,9 +19,11 @@ public interface GeometryConverter {
     /**
      * 保存几何图形。
      *
-     * @param type 图形类型。
-     * @param file 图形文件。
+     * @param type   图形类型。
+     * @param file   图形文件。
+     * @param width  宽。
+     * @param height 高。
      * @return 图文件URI，不存在则返回null。
      */
-    String saveGeometryImage(String type, File file);
+    String saveGeometryImage(String type, File file, int width, int height);
 }

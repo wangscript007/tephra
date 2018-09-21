@@ -1,7 +1,9 @@
 package org.lpw.tephra.office.pptx;
 
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFTheme;
 import org.lpw.tephra.office.GeometryConverter;
 import org.lpw.tephra.office.MediaWriter;
 
@@ -14,6 +16,7 @@ public class ReaderContext {
     private MediaWriter mediaWriter;
     private GeometryConverter geometryConverter;
     private XMLSlideShow xmlSlideShow;
+    private XSLFTheme xslfTheme;
     private XSLFSlide xslfSlide;
     private boolean layout;
 
@@ -33,6 +36,17 @@ public class ReaderContext {
 
     public XMLSlideShow getXmlSlideShow() {
         return xmlSlideShow;
+    }
+
+    public XSLFTheme getTheme() {
+        if (xslfTheme != null)
+            return xslfTheme;
+
+        for (POIXMLDocumentPart poixmlDocumentPart : xmlSlideShow.getRelations())
+            if (poixmlDocumentPart instanceof XSLFTheme)
+                return xslfTheme = (XSLFTheme) poixmlDocumentPart;
+
+        return null;
     }
 
     public XSLFSlide getXslfSlide() {

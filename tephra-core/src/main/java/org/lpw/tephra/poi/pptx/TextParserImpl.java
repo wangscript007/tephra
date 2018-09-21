@@ -25,7 +25,7 @@ import java.awt.Color;
  * @author lpw
  */
 @Component("tephra.poi.pptx.text")
-public class TextParserImpl implements Parser {
+public class TextParserImpl implements Parser, TextParser {
     @Inject
     private Numeric numeric;
     @Inject
@@ -63,6 +63,13 @@ public class TextParserImpl implements Parser {
         boolean empty = text.equals("\n");
         if (empty)
             xslfTextParagraph = newParagraph(xslfTextBox, object);
+        newTextRun(xslfTextParagraph, object, child).setText(empty ? "" : text);
+
+        return xslfTextParagraph;
+    }
+
+    @Override
+    public XSLFTextRun newTextRun(XSLFTextParagraph xslfTextParagraph, JSONObject object, JSONObject child) {
         XSLFTextRun xslfTextRun = xslfTextParagraph.addNewTextRun();
         font(xslfTextParagraph, xslfTextRun, object, child);
         color(xslfTextRun, object, child);
@@ -76,9 +83,8 @@ public class TextParserImpl implements Parser {
             xslfTextRun.setStrikethrough(true);
         if (object.containsKey("spacing") || child.containsKey("spacing"))
             xslfTextRun.setCharacterSpacing((child.containsKey("spacing") ? child : object).getDoubleValue("spacing"));
-        xslfTextRun.setText(empty ? "" : text);
 
-        return xslfTextParagraph;
+        return xslfTextRun;
     }
 
     private XSLFTextParagraph newParagraph(XSLFTextBox xslfTextBox, JSONObject object) {

@@ -7,18 +7,27 @@ import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFTable;
 import org.apache.poi.xslf.usermodel.XSLFTableCell;
+import org.apache.poi.xslf.usermodel.XSLFTableStyle;
+import org.apache.poi.xslf.usermodel.XSLFTheme;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.ReaderContext;
 import org.lpw.tephra.office.pptx.WriterContext;
+import org.lpw.tephra.util.Validator;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableBackgroundStyle;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyle;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.awt.Color;
 
 /**
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.table")
 public class TableImpl implements Graphic {
+    @Inject
+    private Validator validator;
     @Inject
     private OfficeHelper officeHelper;
     @Inject
@@ -35,6 +44,15 @@ public class TableImpl implements Graphic {
             return;
 
         XSLFTable xslfTable = (XSLFTable) xslfGraphicFrame;
+        JSONObject table = new JSONObject();
+        XSLFTheme xslfTheme = readerContext.getTheme();
+        CTTableStyle ctTableStyle = findTableStyle(readerContext, xslfTable);
+        if (xslfTheme != null && ctTableStyle != null) {
+            parseFill(xslfTheme, ctTableStyle, table);
+            System.out.println("#######################");
+            System.out.println(ctTableStyle.getBand1V());
+            System.out.println(ctTableStyle.getBand1H());
+        }
         JSONArray rows = new JSONArray();
         xslfTable.getRows().forEach(xslfTableRow -> {
             JSONArray cells = new JSONArray();
@@ -55,9 +73,45 @@ public class TableImpl implements Graphic {
         if (rows.isEmpty())
             return;
 
-        JSONObject table = new JSONObject();
         table.put("rows", rows);
         shape.put("table", table);
+    }
+
+    private CTTableStyle findTableStyle(ReaderContext readerContext, XSLFTable xslfTable) {
+        for (XSLFTableStyle xslfTableStyle : readerContext.getXmlSlideShow().getTableStyles())
+            if (xslfTableStyle.getStyleId().equals(xslfTable.getCTTable().getTblPr().getTableStyleId()))
+                return xslfTableStyle.getXmlObject();
+
+        return null;
+    }
+
+    private void parseFill(XSLFTheme xslfTheme, CTTableStyle ctTableStyle, JSONObject object) {
+        CTTableBackgroundStyle ctTableBackgroundStyle = ctTableStyle.getTblBg();
+        if (ctTableBackgroundStyle == null)
+            return;
+
+        CTStyleMatrixReference ctStyleMatrixReference = ctTableBackgroundStyle.getFillRef();
+        if (ctStyleMatrixReference == null)
+            return;
+
+        Color color = getSrgbClr(xslfTheme, ctStyleMatrixReference.getSchemeClr().getVal().toString());
+        if (color == null)
+            return;
+
+        JSONObject fill = new JSONObject();
+        fill.put("color", officeHelper.colorToJson(color));
+        object.put("fill", fill);
+    }
+
+    private Color getSrgbClr(XSLFTheme xslfTheme, String name) {
+        if (xslfTheme == null || validator.isEmpty(name))
+            return null;
+
+        byte[] bytes = xslfTheme.getCTColor(name).getSrgbClr().getVal();
+        if (bytes.length != 3)
+            return null;
+
+        return new Color(bytes[0] & 0xff, bytes[1] & 0xff, bytes[2] & 0xff);
     }
 
     private void parseSpan(XSLFTableCell xslfTableCell, JSONObject cell) {
@@ -65,6 +119,7 @@ public class TableImpl implements Graphic {
         span.put("column", xslfTableCell.getGridSpan());
         span.put("row", xslfTableCell.getRowSpan());
         cell.put("span", span);
+        xslfTableCell.getGridSpan();
     }
 
     private void parseBorder(XSLFTableCell xslfTableCell, JSONObject cell) {
