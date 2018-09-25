@@ -168,13 +168,12 @@ public class GeometryImpl implements Simple {
         File file = new File(officeHelper.getTempPath("geometry") + ".png");
         io.mkdirs(file.getParentFile());
         Rectangle2D rectangle2D = xslfSimpleShape.getAnchor();
-        BufferedImage bufferedImage = new BufferedImage((int) rectangle2D.getWidth(), (int) rectangle2D.getHeight(),
-                BufferedImage.TYPE_4BYTE_ABGR);
-        xslfSimpleShape.draw(bufferedImage.createGraphics(), new Rectangle2D.Double(0, 0,
-                rectangle2D.getWidth(), rectangle2D.getHeight()));
+        int width = (int) rectangle2D.getWidth() * 10;
+        int height = (int) rectangle2D.getHeight() * 10;
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+        xslfSimpleShape.draw(bufferedImage.createGraphics(), new Rectangle2D.Double(0, 0, width, height));
         ImageIO.write(bufferedImage, "PNG", file);
-        String image = readerContext.getGeometryConverter().saveGeometryImage(type, file, (int) rectangle2D.getWidth(),
-                (int) rectangle2D.getHeight());
+        String image = readerContext.getGeometryConverter().saveGeometryImage(type, file, width, height);
         io.delete(file);
 
         return image;
