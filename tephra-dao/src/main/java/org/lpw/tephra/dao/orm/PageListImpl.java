@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -109,5 +110,15 @@ public class PageListImpl<T extends Model> implements PageList<T> {
         object.put("list", list);
 
         return object;
+    }
+
+    @Override
+    public JSONObject toJson(BiConsumer<T, JSONObject> biConsumer) {
+        return toJson(model -> {
+            JSONObject object = modelHelper.toJson(model);
+            biConsumer.accept(model, object);
+
+            return object;
+        });
     }
 }

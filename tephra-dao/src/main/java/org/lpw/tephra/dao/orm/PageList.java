@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.dao.model.Model;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -91,5 +92,19 @@ public interface PageList<T extends Model> {
      */
     JSONObject toJson(boolean listable);
 
+    /**
+     * 转化为JSON格式的数据。
+     *
+     * @param function 转化器。
+     * @return JSON格式的数据。
+     */
     JSONObject toJson(Function<T, JSONObject> function);
+
+    /**
+     * 转化为JSON格式的数据。
+     *
+     * @param biConsumer 转化器。
+     * @return JSON格式的数据。
+     */
+    JSONObject toJson(BiConsumer<T, JSONObject> biConsumer);
 }
