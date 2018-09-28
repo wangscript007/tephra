@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * Model支持类。用于操作Model属性。
@@ -69,12 +71,46 @@ public interface ModelHelper {
      * 将Model集转化为JSON格式的数据集。
      * 转化时将调用所有get方法输出属性值。
      *
+     * @param models     Model集。
+     * @param biConsumer 转化器。
+     * @param <T>        Model类型。
+     * @return JSON数据集。
+     */
+    <T extends Model> JSONArray toJson(Collection<T> models, BiConsumer<T, JSONObject> biConsumer);
+
+    /**
+     * 将Model集转化为JSON格式的数据集。
+     * 转化时将调用所有get方法输出属性值。
+     *
      * @param models  Model集。
      * @param ignores 忽略转化的属性集，为空表示不忽略。
      * @param <T>     Model类型。
      * @return JSON数据集。
      */
     <T extends Model> JSONArray toJson(Collection<T> models, Set<String> ignores);
+
+    /**
+     * 将Model集转化为JSON格式的数据集。
+     * 转化时将调用所有get方法输出属性值。
+     *
+     * @param models     Model集。
+     * @param ignores    忽略转化的属性集，为空表示不忽略。
+     * @param biConsumer 转化器。
+     * @param <T>        Model类型。
+     * @return JSON数据集。
+     */
+    <T extends Model> JSONArray toJson(Collection<T> models, Set<String> ignores, BiConsumer<T, JSONObject> biConsumer);
+
+    /**
+     * 将Model集转化为JSON格式的数据集。
+     * 转化时将调用所有get方法输出属性值。
+     *
+     * @param models   Model集。
+     * @param function 转化器。
+     * @param <T>      Model类型。
+     * @return JSON数据集。
+     */
+    <T extends Model> JSONArray toJson(Collection<T> models, Function<T, JSONObject> function);
 
     /**
      * 将JSON对象转化为Model对象。

@@ -1,6 +1,5 @@
 package org.lpw.tephra.dao.orm;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelHelper;
@@ -88,7 +87,22 @@ public class PageListImpl<T extends Model> implements PageList<T> {
     }
 
     @Override
-    public JSONObject toJson(boolean listable) {
+    public JSONObject toJson(BiConsumer<T, JSONObject> biConsumer) {
+        JSONObject object = toJson(false);
+        object.put("list", modelHelper.toJson(this.list, biConsumer));
+
+        return object;
+    }
+
+    @Override
+    public JSONObject toJson(Function<T, JSONObject> function) {
+        JSONObject object = toJson(false);
+        object.put("list", modelHelper.toJson(this.list, function));
+
+        return object;
+    }
+
+    private JSONObject toJson(boolean listable) {
         JSONObject object = new JSONObject();
         object.put("count", count);
         object.put("size", size);
@@ -100,25 +114,5 @@ public class PageListImpl<T extends Model> implements PageList<T> {
             object.put("list", modelHelper.toJson(list));
 
         return object;
-    }
-
-    @Override
-    public JSONObject toJson(Function<T, JSONObject> function) {
-        JSONObject object = toJson(false);
-        JSONArray list = new JSONArray();
-        this.list.forEach(model -> list.add(function.apply(model)));
-        object.put("list", list);
-
-        return object;
-    }
-
-    @Override
-    public JSONObject toJson(BiConsumer<T, JSONObject> biConsumer) {
-        return toJson(model -> {
-            JSONObject object = modelHelper.toJson(model);
-            biConsumer.accept(model, object);
-
-            return object;
-        });
     }
 }

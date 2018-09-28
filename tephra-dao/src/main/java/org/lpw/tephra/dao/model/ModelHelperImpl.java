@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * @author lpw
@@ -157,12 +159,33 @@ public class ModelHelperImpl implements ModelHelper {
     }
 
     @Override
+    public <T extends Model> JSONArray toJson(Collection<T> models, BiConsumer<T, JSONObject> biConsumer) {
+        return toJson(models, new HashSet<>(), biConsumer);
+    }
+
+    @Override
     public <T extends Model> JSONArray toJson(Collection<T> models, Set<String> ignores) {
+        return toJson(models, ignores, null);
+    }
+
+    @Override
+    public <T extends Model> JSONArray toJson(Collection<T> models, Set<String> ignores, BiConsumer<T, JSONObject> biConsumer) {
+        return toJson(models, model -> {
+            JSONObject object = toJson(model, ignores);
+            if (biConsumer != null)
+                biConsumer.accept(model, object);
+
+            return object;
+        });
+    }
+
+    @Override
+    public <T extends Model> JSONArray toJson(Collection<T> models, Function<T, JSONObject> function) {
         JSONArray array = new JSONArray();
         if (validator.isEmpty(models))
             return array;
 
-        models.forEach(model -> array.add(toJson(model, ignores)));
+        models.forEach(model -> array.add(function.apply(model)));
 
         return array;
     }
