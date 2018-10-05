@@ -23,6 +23,14 @@ public @interface Jsonable {
     String format() default "";
 
     /**
+     * 是否返回时间戳。
+     * 如果true则返回JSON数据时增加返回Timestamp对象的时间戳，key为：name+Timestamp。
+     *
+     * @return 是否返回时间戳。
+     */
+    boolean timestamp() default false;
+
+    /**
      * 是否为扩展属性。
      *
      * @return 是否为扩展属性。

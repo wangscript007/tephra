@@ -95,8 +95,11 @@ public class ModelHelperImpl implements ModelHelper {
             }
 
             Object json = getJson(modelTable, name, value, jsonable);
-            if (json != null)
+            if (json != null) {
                 object.put(name, json);
+                if (jsonable.timestamp() && value instanceof Timestamp)
+                    object.put(name + "Timestamp", ((Timestamp) value).getTime());
+            }
         }
 
         return object;
