@@ -30,6 +30,11 @@ public interface Validators {
      * 默认错误信息key=PREFIX+less-min-length。
      */
     String MIN_LENGTH = PREFIX + "min-length";
+    /**
+     * 长度验证器Bean名称。如果要验证的参数长度为设置值则返回true；否则返回false。
+     * 默认错误信息key=PREFIX+illegal-length。
+     */
+    String LENGTH = PREFIX + ".length";
 
     /**
      * 格式验证器Bean名称。如果要验证的字符串格式合法则返回true；否则返回false。
