@@ -143,6 +143,23 @@ public interface DateTime {
     Date toDate(String date, String format);
 
     /**
+     * 使用默认格式将日期对象转化为日期值。
+     *
+     * @param date 日期对象。
+     * @return 日期值。如果格式不匹配则返回null。
+     */
+    java.sql.Date toSqlDate(String date);
+
+    /**
+     * 将日期字符串按指定格式转化为日期值。
+     *
+     * @param date   日期字符串。
+     * @param format 字符串格式。
+     * @return 日期值。如果格式不匹配则返回null。
+     */
+    java.sql.Date toSqlDate(String date, String format);
+
+    /**
      * 获取日期毫秒值。
      *
      * @param date 日期值。

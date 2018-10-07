@@ -173,6 +173,18 @@ public class DateTimeImpl implements DateTime {
         }
     }
 
+    @Override
+    public java.sql.Date toSqlDate(String date) {
+        return toSqlDate(date, getDateFormat());
+    }
+
+    @Override
+    public java.sql.Date toSqlDate(String date, String format) {
+        Date d = toDate(date, format);
+
+        return d == null ? null : new java.sql.Date(d.getTime());
+    }
+
     private FastDateFormat getDateFormat(String format) {
         return dateFormatMap.computeIfAbsent(format, FastDateFormat::getInstance);
     }
