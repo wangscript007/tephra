@@ -2,6 +2,8 @@ package org.lpw.tephra.dao.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * SQL检索结果二维表。
@@ -55,4 +57,11 @@ public interface SqlTable {
      * @throws SQLException SQL异常。
      */
     void set(ResultSet rs) throws SQLException;
+
+    /**
+     * For Each遍历。
+     *
+     * @param consumer 处理器。
+     */
+    void forEach(Consumer<List<Object>> consumer);
 }

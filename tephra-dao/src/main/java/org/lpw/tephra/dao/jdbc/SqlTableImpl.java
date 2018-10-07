@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @author lpw
@@ -73,5 +74,10 @@ public class SqlTableImpl implements SqlTable {
                 list.get(list.size() - 1).add(rs.getObject(i));
         }
         rowCount = list.size();
+    }
+
+    @Override
+    public void forEach(Consumer<List<Object>> consumer) {
+        list.forEach(consumer);
     }
 }
