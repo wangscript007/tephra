@@ -8,6 +8,7 @@ import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Image;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Numeric;
+import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -26,6 +27,8 @@ import java.util.Map;
 public class ParserHelperImpl implements ParserHelper, ContextRefreshedListener {
     @Inject
     private Numeric numeric;
+    @Inject
+    private Validator validator;
     @Inject
     private Json json;
     @Inject
@@ -71,7 +74,7 @@ public class ParserHelperImpl implements ParserHelper, ContextRefreshedListener 
         } else if (color.indexOf('(') > -1)
             ns = numeric.toInts(color.substring(color.indexOf('(') + 1, color.indexOf(')')));
         else
-            ns = numeric.toInts(color);
+            return null;
 
         return object.containsKey("alpha") ? new Color(ns[0], ns[1], ns[2], numeric.toInt(object.getDoubleValue("alpha") * 255))
                 : new Color(ns[0], ns[1], ns[2]);
