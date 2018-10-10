@@ -173,6 +173,10 @@ public class DateTimeImpl implements DateTime {
         }
     }
 
+    private FastDateFormat getDateFormat(String format) {
+        return dateFormatMap.computeIfAbsent(format, FastDateFormat::getInstance);
+    }
+
     @Override
     public java.sql.Date toSqlDate(String date) {
         return toSqlDate(date, getDateFormat());
@@ -185,8 +189,17 @@ public class DateTimeImpl implements DateTime {
         return d == null ? null : new java.sql.Date(d.getTime());
     }
 
-    private FastDateFormat getDateFormat(String format) {
-        return dateFormatMap.computeIfAbsent(format, FastDateFormat::getInstance);
+    @Override
+    public Timestamp[] toTimeRange(String[] dates) {
+        Timestamp[] times = new Timestamp[2];
+        if (dates != null) {
+            if (dates.length > 0)
+                times[0] = getStart(dates[0]);
+            if (dates.length > 1)
+                times[1] = getEnd(dates[1]);
+        }
+
+        return times;
     }
 
     @Override

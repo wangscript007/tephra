@@ -160,6 +160,14 @@ public interface DateTime {
     java.sql.Date toSqlDate(String date, String format);
 
     /**
+     * 转化为时间范围。
+     *
+     * @param dates 日期范围。
+     * @return 时间范围。
+     */
+    Timestamp[] toTimeRange(String[] dates);
+
+    /**
      * 获取日期毫秒值。
      *
      * @param date 日期值。
