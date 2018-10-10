@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -39,8 +40,17 @@ public class ConverterImpl implements Converter {
         if (validator.isEmpty(object))
             return "";
 
-        if (object.getClass().isArray())
+        if (object instanceof Object[])
             return arrayString((Object[]) object, ",");
+
+
+        if (object.getClass().isArray()) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0, length = Array.getLength(object); i < length; i++)
+                sb.append(',').append(Array.get(object, i));
+
+            return sb.length() == 0 ? "" : sb.substring(1);
+        }
 
         if (object instanceof Iterable)
             return iterableString((Iterable<?>) object, ",");
@@ -73,7 +83,7 @@ public class ConverterImpl implements Converter {
         for (Object object : array)
             sb.append(separator).append(toString(object));
 
-        return sb.substring(separator.length());
+        return sb.length() == 0 ? "" : sb.substring(separator.length());
     }
 
     @Override
@@ -85,7 +95,7 @@ public class ConverterImpl implements Converter {
         StringBuilder sb = new StringBuilder();
         iterable.forEach(obj -> sb.append(separator).append(toString(obj)));
 
-        return sb.substring(separator.length());
+        return sb.length() == 0 ? "" : sb.substring(separator.length());
     }
 
     @Override
@@ -97,7 +107,7 @@ public class ConverterImpl implements Converter {
         StringBuilder sb = new StringBuilder();
         map.forEach((key, value) -> sb.append(separator).append(toString(key)).append('=').append(toString(value)));
 
-        return sb.substring(separator.length());
+        return sb.length() == 0 ? "" : sb.substring(separator.length());
     }
 
     @Override
