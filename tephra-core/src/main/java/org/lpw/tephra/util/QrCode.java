@@ -68,6 +68,14 @@ public interface QrCode {
     String read(String path);
 
     /**
+     * 读取Base64中的二维码内容。
+     *
+     * @param base64 base64信息。
+     * @return 二维码内容；读取失败则返回null。
+     */
+    String readBase64(String base64);
+
+    /**
      * 读取二维码内容。
      *
      * @param inputStream 二维码图片输入流。

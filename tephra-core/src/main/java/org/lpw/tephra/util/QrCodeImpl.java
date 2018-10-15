@@ -19,13 +19,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +41,8 @@ public class QrCodeImpl implements QrCode {
     private Context context;
     @Inject
     private Validator validator;
+    @Inject
+    private Coder coder;
     @Inject
     private Logger logger;
     private QRCodeWriter writer = new QRCodeWriter();
@@ -98,7 +100,7 @@ public class QrCodeImpl implements QrCode {
             create(content, size, logo, outputStream);
             outputStream.close();
 
-            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
+            return coder.encodeBase64(outputStream.toByteArray());
         } catch (Throwable e) {
             logger.warn(e, "生成二维码图片[{}:{}]时发生异常！", content, size);
 
@@ -143,8 +145,8 @@ public class QrCodeImpl implements QrCode {
 
     @Override
     public String read(String path) {
-        try {
-            return read(new FileInputStream(path));
+        try (InputStream inputStream = new FileInputStream(path)) {
+            return read(inputStream);
         } catch (Throwable e) {
             logger.warn(e, "读取二维码图片[{}]内容时发生异常！", path);
 
@@ -153,9 +155,21 @@ public class QrCodeImpl implements QrCode {
     }
 
     @Override
+    public String readBase64(String base64) {
+        try (InputStream inputStream = new ByteArrayInputStream(coder.decodeBase64(base64))) {
+            return read(inputStream);
+        } catch (Throwable e) {
+            logger.warn(e, "读取二维码图片[{}]内容时发生异常！", base64);
+
+            return null;
+        }
+    }
+
+    @Override
     public String read(InputStream inputStream) {
         try {
-            String string = reader.decode(new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(inputStream))))).getText();
+            String string = reader.decode(new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(
+                    ImageIO.read(inputStream))))).getText();
             inputStream.close();
 
             return string;
