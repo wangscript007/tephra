@@ -89,7 +89,7 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private CookieAware cookieAware;
     @Value("${tephra.ctrl.http.ignore.root:false}")
     private boolean ignoreRoot;
-    @Value("${tephra.ctrl.http.ignore.prefixes:/upload/,/static/}")
+    @Value("${tephra.ctrl.http.ignore.prefixes:/upload/}")
     private String ignorePrefixes;
     @Value("${tephra.ctrl.http.ignore.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png,.svg,.eot,.woff,.ttf,.txt}")
     private String ignoreSuffixes;
