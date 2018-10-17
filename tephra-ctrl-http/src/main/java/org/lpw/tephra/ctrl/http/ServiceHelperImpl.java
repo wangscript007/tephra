@@ -24,6 +24,7 @@ import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.TimeHash;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Controller;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -60,6 +62,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     @Inject
     private Context context;
     @Inject
+    private Numeric numeric;
+    @Inject
     private TimeHash timeHash;
     @Inject
     private Logger logger;
@@ -85,10 +89,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private CookieAware cookieAware;
     @Value("${tephra.ctrl.http.ignore.root:false}")
     private boolean ignoreRoot;
-    @Value("${tephra.ctrl.http.ignore.prefixes:/upload/}")
+    @Value("${tephra.ctrl.http.ignore.prefixes:/upload/,/static/}")
     private String ignorePrefixes;
-    @Value("${tephra.ctrl.http.ignore.names:}")
-    private String ignoreNames;
     @Value("${tephra.ctrl.http.ignore.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png,.svg,.eot,.woff,.ttf,.txt}")
     private String ignoreSuffixes;
     @Value("${tephra.ctrl.http.cors:/WEB-INF/http/cors.json}")
@@ -125,7 +127,7 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     public boolean service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (request.getMethod().equals("OPTIONS")) {
             setCors(request, response);
-            response.setStatus(204);
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
             return true;
         }
@@ -142,7 +144,7 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
             return false;
         }
 
-        if (ignoreUris.contains(uri) || ignore(uri)) {
+        if (ignoreUris.contains(uri) || resource(request, response, uri)) {
             if (logger.isDebugEnable())
                 logger.debug("忽略请求[{}]。", uri);
 
@@ -195,6 +197,27 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         dispatcher.execute();
         outputStream.flush();
         outputStream.close();
+
+        return true;
+    }
+
+    private boolean resource(HttpServletRequest request, HttpServletResponse response, String uri) {
+        if (!ignore(uri))
+            return false;
+
+        File file = new File(context.getAbsolutePath(uri));
+        if (!file.exists()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+            return true;
+        }
+
+        String ifNoneMatch = request.getHeader("If-None-Match");
+        String lastModified = numeric.toString(file.lastModified(), "0");
+        if (lastModified.equals(ifNoneMatch))
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        else
+            response.setHeader("ETag", lastModified);
 
         return true;
     }
