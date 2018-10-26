@@ -1,5 +1,6 @@
 package org.lpw.tephra.ctrl.http.context;
 
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.ctrl.context.RequestAdapter;
 import org.lpw.tephra.util.Converter;
@@ -85,7 +86,7 @@ public class RequestAdapterImpl implements RequestAdapter {
 
             return content;
         } catch (IOException e) {
-            BeanFactory.getBean(Logger.class).warn(e, "获取InputStream中的数据时发生异常！");
+            BeanFactory.getBean(Logger.class).warn(e, "[{}]获取InputStream中的数据时发生异常！", uri);
 
             return "";
         }
@@ -94,10 +95,14 @@ public class RequestAdapterImpl implements RequestAdapter {
     private void fromJson(boolean object) {
         try {
             map = new HashMap<>();
-            if (object)
-                BeanFactory.getBean(Json.class).toObject(content).forEach((key, value) -> map.put(key, value.toString()));
+            if (!object)
+                return;
+
+            JSONObject obj = BeanFactory.getBean(Json.class).toObject(content);
+            if (obj != null)
+                obj.forEach((key, value) -> map.put(key, value.toString()));
         } catch (Throwable throwable) {
-            BeanFactory.getBean(Logger.class).warn(throwable, "从JSON内容[{}]中获取参数集异常！", content);
+            BeanFactory.getBean(Logger.class).warn(throwable, "[{}]从JSON内容[{}]中获取参数集异常！", uri, content);
         }
     }
 
