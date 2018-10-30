@@ -212,13 +212,15 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
             return true;
         }
 
-        response.setHeader("Cache-Control", "no-cache");
-        String ifNoneMatch = request.getHeader("If-None-Match");
-        String lastModified = numeric.toString(file.lastModified(), "0");
-        if (lastModified.equals(ifNoneMatch))
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-        else
-            response.setHeader("ETag", lastModified);
+        if (file.isFile()) {
+            response.setHeader("Cache-Control", "no-cache");
+            String ifNoneMatch = request.getHeader("If-None-Match");
+            String lastModified = numeric.toString(file.lastModified(), "0");
+            if (lastModified.equals(ifNoneMatch))
+                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            else
+                response.setHeader("ETag", lastModified);
+        }
 
         return true;
     }
