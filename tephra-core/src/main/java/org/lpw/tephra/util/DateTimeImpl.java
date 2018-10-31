@@ -194,9 +194,9 @@ public class DateTimeImpl implements DateTime {
         Timestamp[] times = new Timestamp[2];
         if (dates != null) {
             if (dates.length > 0)
-                times[0] = getStart(dates[0]);
+                times[0] = dates[0].length() == getDateTimeFormat().length() ? toTime(dates[0]) : getStart(dates[0]);
             if (dates.length > 1)
-                times[1] = getEnd(dates[1]);
+                times[1] = dates[1].length() == getDateTimeFormat().length() ? toTime(dates[1]) : getEnd(dates[1]);
         }
 
         return times;
