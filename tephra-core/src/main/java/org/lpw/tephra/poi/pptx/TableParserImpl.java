@@ -50,32 +50,47 @@ public class TableParserImpl implements Parser {
         XSLFTable xslfTable = xslfSlide.createTable();
         xslfTable.setAnchor(parserHelper.getRectangle(object));
         JSONArray rows = object.getJSONObject("table").getJSONArray("rows");
+        int[] rowSpans = null;
         for (int i = 0; i < rows.size(); i++) {
             XSLFTableRow xslfTableRow = xslfTable.addRow();
             JSONArray cols = rows.getJSONArray(i);
-            for (int j = 0; j < cols.size(); j++) {
+            if (rowSpans == null)
+                rowSpans = new int[cols.size()];
+            for (int j = 0, colSpan = 0; j < cols.size(); j++) {
                 XSLFTableCell xslfTableCell = xslfTableRow.addCell();
                 JSONObject col = cols.getJSONObject(j);
-                JSONObject data = col.getJSONObject("data");
+                JSONObject style = col.getJSONObject("style");
                 CTTableCell ctTableCell = (CTTableCell) xslfTableCell.getXmlObject();
-                if (data.containsKey("rowSpan"))
-                    ctTableCell.setRowSpan(data.getIntValue("rowSpan"));
-                if (data.containsKey("colSpan"))
-                    ctTableCell.setGridSpan(data.getIntValue("colSpan"));
+                if (colSpan > 1) {
+                    ctTableCell.setHMerge(true);
+                    colSpan--;
+                }
+                if (rowSpans[j] > 1) {
+                    ctTableCell.setVMerge(true);
+                    rowSpans[j]--;
+                }
+                JSONObject data = col.getJSONObject("data");
+                if (data.containsKey("rowSpan")) {
+                    rowSpans[j] = data.getIntValue("rowSpan");
+                    ctTableCell.setRowSpan(rowSpans[j]);
+                }
+                if (data.containsKey("colSpan")) {
+                    colSpan = data.getIntValue("colSpan");
+                    ctTableCell.setGridSpan(colSpan);
+                }
                 if (col.containsKey("width"))
                     xslfTable.setColumnWidth(j, col.getDoubleValue("width"));
                 if (col.containsKey("height"))
                     xslfTable.setRowHeight(i, col.getDoubleValue("height"));
 
-                JSONObject style = col.getJSONObject("style");
-                edges.forEach((key, edge) -> {
+                for (String key : edges.keySet()) {
                     String name = "border" + key + "Width";
                     if (style.containsKey(name))
-                        xslfTableCell.setBorderWidth(edge, style.getDoubleValue(name));
+                        xslfTableCell.setBorderWidth(edges.get(key), style.getDoubleValue(name));
                     name = "border" + key + "Color";
                     if (style.containsKey(name))
-                        xslfTableCell.setBorderColor(edge, parserHelper.getColor(style, name));
-                });
+                        xslfTableCell.setBorderColor(edges.get(key), parserHelper.getColor(style, name));
+                }
                 if (style.containsKey("fillColor"))
                     xslfTableCell.setFillColor(parserHelper.getColor(style, "fillColor"));
                 if (col.containsKey("elements")) {
