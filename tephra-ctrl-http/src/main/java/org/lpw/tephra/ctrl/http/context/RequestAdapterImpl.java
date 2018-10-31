@@ -89,10 +89,8 @@ public class RequestAdapterImpl implements RequestAdapter {
         if (!BeanFactory.getBean(Validator.class).isEmpty(contentType) && contentType.toLowerCase().contains("multipart/form-data"))
             return content = "";
 
-        try {
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             BeanFactory.getBean(Io.class).copy(request.getInputStream(), output);
-            output.close();
             content = output.toString();
             if (getLogger().isDebugEnable())
                 getLogger().debug("[{}]获取InputStream中的数据[{}]。", uri, content);
