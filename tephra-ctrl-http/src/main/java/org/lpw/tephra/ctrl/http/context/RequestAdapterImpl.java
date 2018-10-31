@@ -24,6 +24,8 @@ public class RequestAdapterImpl implements RequestAdapter {
     private String uri;
     private Map<String, String> map;
     private String content;
+    private Converter converter;
+    private Logger logger;
 
     public RequestAdapterImpl(HttpServletRequest request, String uri) {
         this.request = request;
@@ -61,12 +63,19 @@ public class RequestAdapterImpl implements RequestAdapter {
                 else if (ch == '[')
                     fromJson(false);
                 else
-                    map = BeanFactory.getBean(Converter.class).toParameterMap(getFromInputStream());
+                    map = getConverter().toParameterMap(getFromInputStream());
             }
-            request.getParameterMap().forEach((key, value) -> map.put(key, value[0]));
+            request.getParameterMap().forEach((key, value) -> map.put(key, getConverter().toString(value)));
         }
 
         return map;
+    }
+
+    private Converter getConverter() {
+        if (converter == null)
+            converter = BeanFactory.getBean(Converter.class);
+
+        return converter;
     }
 
     @Override
@@ -75,6 +84,8 @@ public class RequestAdapterImpl implements RequestAdapter {
             return content;
 
         String contentType = request.getHeader("content-type");
+        if (getLogger().isDebugEnable())
+            getLogger().debug("[{}]Content-Type[{}]。", uri, contentType);
         if (!BeanFactory.getBean(Validator.class).isEmpty(contentType) && contentType.toLowerCase().contains("multipart/form-data"))
             return content = "";
 
@@ -83,10 +94,12 @@ public class RequestAdapterImpl implements RequestAdapter {
             BeanFactory.getBean(Io.class).copy(request.getInputStream(), output);
             output.close();
             content = output.toString();
+            if (getLogger().isDebugEnable())
+                getLogger().debug("[{}]获取InputStream中的数据[{}]。", uri, content);
 
             return content;
         } catch (IOException e) {
-            BeanFactory.getBean(Logger.class).warn(e, "[{}]获取InputStream中的数据时发生异常！", uri);
+            getLogger().warn(e, "[{}]获取InputStream中的数据时发生异常！", uri);
 
             return "";
         }
@@ -102,8 +115,15 @@ public class RequestAdapterImpl implements RequestAdapter {
             if (obj != null)
                 obj.forEach((key, value) -> map.put(key, value.toString()));
         } catch (Throwable throwable) {
-            BeanFactory.getBean(Logger.class).warn(throwable, "[{}]从JSON内容[{}]中获取参数集异常！", uri, content);
+            getLogger().warn(throwable, "[{}]从JSON内容[{}]中获取参数集异常！", uri, content);
         }
+    }
+
+    private Logger getLogger() {
+        if (logger == null)
+            logger = BeanFactory.getBean(Logger.class);
+
+        return logger;
     }
 
     @Override
