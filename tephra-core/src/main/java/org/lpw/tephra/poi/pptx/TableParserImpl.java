@@ -16,6 +16,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,8 +50,10 @@ public class TableParserImpl implements Parser {
     public boolean parse(XMLSlideShow xmlSlideShow, XSLFSlide xslfSlide, JSONObject object) {
         XSLFTable xslfTable = xslfSlide.createTable();
         xslfTable.setAnchor(parserHelper.getRectangle(object));
+        xslfTable.getCTTable().getTblPr().setTableStyleId("{5940675A-B579-460E-94D1-54222C63F5DA}");
         JSONArray rows = object.getJSONObject("table").getJSONArray("rows");
         int[] rowSpans = null;
+        Color borderColor = null;
         for (int i = 0; i < rows.size(); i++) {
             XSLFTableRow xslfTableRow = xslfTable.addRow();
             JSONArray cols = rows.getJSONArray(i);
@@ -59,7 +62,15 @@ public class TableParserImpl implements Parser {
             for (int j = 0, colSpan = 0; j < cols.size(); j++) {
                 XSLFTableCell xslfTableCell = xslfTableRow.addCell();
                 JSONObject col = cols.getJSONObject(j);
-                JSONObject style = col.getJSONObject("style");
+                if (borderColor == null)
+                    borderColor = findBorderColor(col.getJSONObject("style"));
+                if (borderColor != null) {
+                    for (String key : edges.keySet()) {
+                        xslfTableCell.setBorderWidth(edges.get(key), 1.0D);
+                        xslfTableCell.setBorderColor(edges.get(key), borderColor);
+                    }
+                }
+
                 CTTableCell ctTableCell = (CTTableCell) xslfTableCell.getXmlObject();
                 if (colSpan > 1) {
                     ctTableCell.setHMerge(true);
@@ -83,16 +94,8 @@ public class TableParserImpl implements Parser {
                 if (col.containsKey("height"))
                     xslfTable.setRowHeight(i, col.getDoubleValue("height"));
 
-                for (String key : edges.keySet()) {
-                    String name = "border" + key + "Width";
-                    if (style.containsKey(name))
-                        xslfTableCell.setBorderWidth(edges.get(key), style.getDoubleValue(name));
-                    name = "border" + key + "Color";
-                    if (style.containsKey(name))
-                        xslfTableCell.setBorderColor(edges.get(key), parserHelper.getColor(style, name));
-                }
-                if (style.containsKey("fillColor"))
-                    xslfTableCell.setFillColor(parserHelper.getColor(style, "fillColor"));
+                if (col.containsKey("fillColor"))
+                    xslfTableCell.setFillColor(parserHelper.getColor(col, "fillColor"));
                 if (col.containsKey("elements")) {
                     JSONArray elements = col.getJSONArray("elements");
                     XSLFTextParagraph xslfTextParagraph = xslfTableCell.addNewTextParagraph();
@@ -105,13 +108,22 @@ public class TableParserImpl implements Parser {
                         } else
                             textParser.newTextRun(xslfTextParagraph, col, element).setText(value);
                     }
-                } else
-                    textParser.newTextRun(xslfTableCell.addNewTextParagraph(), col, new JSONObject())
-                            .setText(data.getString("value"));
+                } else if (data.containsKey("value"))
+                    textParser.newTextRun(xslfTableCell.addNewTextParagraph(), col, new JSONObject()).setText(data.getString("value"));
             }
         }
 
         return true;
+    }
+
+    private Color findBorderColor(JSONObject style) {
+        for (String key : edges.keySet()) {
+            String name = "border" + key + "Color";
+            if (style.containsKey(name))
+                return parserHelper.getColor(style, name);
+        }
+
+        return null;
     }
 
     @Override

@@ -67,6 +67,7 @@ public class PptxImpl implements Pptx {
 
         try {
             xmlSlideShow.write(outputStream);
+            outputStream.close();
         } catch (IOException e) {
             logger.warn(e, "输出PPTx到输出流时发生异常！");
         }
