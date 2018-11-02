@@ -82,7 +82,7 @@ public class RequestAdapterImpl implements RequestAdapter {
                 else if (ch == '[')
                     fromJson(false);
                 else
-                    map = getConverter().toParameterMap(getFromInputStream());
+                    map = getConverter().toParameterMap(content);
             }
 
             return content;
