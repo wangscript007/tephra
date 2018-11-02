@@ -18,7 +18,9 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author lpw
@@ -52,14 +54,12 @@ public class TableParserImpl implements Parser {
         xslfTable.setAnchor(parserHelper.getRectangle(object));
         xslfTable.getCTTable().getTblPr().setTableStyleId("{5940675A-B579-460E-94D1-54222C63F5DA}");
         JSONArray rows = object.getJSONObject("table").getJSONArray("rows");
-        int[] rowSpans = null;
+        Set<String> spans = new HashSet<>();
         Color borderColor = null;
         for (int i = 0; i < rows.size(); i++) {
             XSLFTableRow xslfTableRow = xslfTable.addRow();
             JSONArray cols = rows.getJSONArray(i);
-            if (rowSpans == null)
-                rowSpans = new int[cols.size()];
-            for (int j = 0, colSpan = 0; j < cols.size(); j++) {
+            for (int j = 0; j < cols.size(); j++) {
                 XSLFTableCell xslfTableCell = xslfTableRow.addCell();
                 JSONObject col = cols.getJSONObject(j);
                 if (borderColor == null)
@@ -72,23 +72,8 @@ public class TableParserImpl implements Parser {
                 }
 
                 CTTableCell ctTableCell = (CTTableCell) xslfTableCell.getXmlObject();
-                if (colSpan > 1) {
-                    ctTableCell.setHMerge(true);
-                    colSpan--;
-                }
-                if (rowSpans[j] > 1) {
-                    ctTableCell.setVMerge(true);
-                    rowSpans[j]--;
-                }
                 JSONObject data = col.getJSONObject("data");
-                if (data.containsKey("rowSpan")) {
-                    rowSpans[j] = data.getIntValue("rowSpan");
-                    ctTableCell.setRowSpan(rowSpans[j]);
-                }
-                if (data.containsKey("colSpan")) {
-                    colSpan = data.getIntValue("colSpan");
-                    ctTableCell.setGridSpan(colSpan);
-                }
+                setSpan(spans, ctTableCell, data, i, j);
                 if (col.containsKey("width"))
                     xslfTable.setColumnWidth(j, col.getDoubleValue("width"));
                 if (col.containsKey("height"))
@@ -124,6 +109,34 @@ public class TableParserImpl implements Parser {
         }
 
         return null;
+    }
+
+    private void setSpan(Set<String> spans, CTTableCell ctTableCell, JSONObject data, int i, int j) {
+        if (spans.contains("col-" + i + "-" + j))
+            ctTableCell.setHMerge(true);
+        if (spans.contains("row-" + i + "-" + j))
+            ctTableCell.setVMerge(true);
+
+        int rowSpan = data.containsKey("rowSpan") ? data.getIntValue("rowSpan") : 1;
+        int colSpan = data.containsKey("colSpan") ? data.getIntValue("colSpan") : 1;
+        if (rowSpan * colSpan <= 1)
+            return;
+
+        if (rowSpan > 1)
+            ctTableCell.setRowSpan(rowSpan);
+        if (colSpan > 1)
+            ctTableCell.setGridSpan(colSpan);
+        for (int k = 0; k < rowSpan; k++) {
+            for (int l = 0; l < colSpan; l++) {
+                if (k == 0 && l == 0)
+                    continue;
+
+                if (colSpan > 1)
+                    spans.add("col-" + (i + k) + "-" + (j + l));
+                if (rowSpan > 1)
+                    spans.add("row-" + (i + k) + "-" + (j + l));
+            }
+        }
     }
 
     @Override
