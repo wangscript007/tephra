@@ -7,6 +7,7 @@ import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Validator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
@@ -23,6 +24,7 @@ public class RequestAdapterImpl implements RequestAdapter {
     private String uri;
     private Map<String, String> map;
     private String content;
+    private Validator validator;
     private Converter converter;
     private Logger logger;
 
@@ -63,6 +65,9 @@ public class RequestAdapterImpl implements RequestAdapter {
             return content;
 
         String contentType = request.getHeader("content-type");
+        if (getValidator().isEmpty(contentType))
+            return content = "";
+
         boolean boundary = contentType.startsWith("multipart/form-data; boundary=");
         if (!boundary && contentType.startsWith("multipart/form-data"))
             return content = "";
@@ -75,7 +80,7 @@ public class RequestAdapterImpl implements RequestAdapter {
 
             if (boundary)
                 fromBoundary(contentType);
-            else {
+            else if (!getValidator().isEmpty(content)) {
                 char ch = content.charAt(0);
                 if (ch == '{')
                     fromJson(true);
@@ -128,6 +133,13 @@ public class RequestAdapterImpl implements RequestAdapter {
         } catch (Throwable throwable) {
             getLogger().warn(throwable, "[{}]从JSON内容[{}]中获取参数集异常！", uri, content);
         }
+    }
+
+    private Validator getValidator() {
+        if (validator == null)
+            validator = BeanFactory.getBean(Validator.class);
+
+        return validator;
     }
 
     private Converter getConverter() {
