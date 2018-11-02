@@ -43,14 +43,7 @@ public class RequestAdapterImpl implements RequestAdapter {
 
     @Override
     public String[] getAsArray(String name) {
-        String[] array = request.getParameterValues(name);
-        if (array == null)
-            return null;
-
-        if (array.length == 0 || array.length > 1 || array[0].indexOf(',') == -1)
-            return array;
-
-        return getConverter().toArray(array[0], ",");
+        return request.getParameterValues(name);
     }
 
     @Override
