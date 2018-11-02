@@ -49,44 +49,12 @@ public class RequestAdapterImpl implements RequestAdapter {
     @Override
     public Map<String, String> getMap() {
         if (map == null) {
-            if (content == null)
-                getFromInputStream();
-            if (content.length() == 0)
+            if (content == null && getFromInputStream().length() == 0)
                 map = new HashMap<>();
-            else {
-                char ch = content.charAt(0);
-                if (ch == '{')
-                    fromJson(true);
-                else if (ch == '[')
-                    fromJson(false);
-                else
-                    map = getConverter().toParameterMap(getFromInputStream());
-            }
             request.getParameterMap().forEach((key, value) -> map.put(key, getConverter().toString(value)));
         }
 
         return map;
-    }
-
-    private void fromJson(boolean object) {
-        try {
-            map = new HashMap<>();
-            if (!object)
-                return;
-
-            JSONObject obj = BeanFactory.getBean(Json.class).toObject(content);
-            if (obj != null)
-                obj.forEach((key, value) -> map.put(key, value.toString()));
-        } catch (Throwable throwable) {
-            getLogger().warn(throwable, "[{}]从JSON内容[{}]中获取参数集异常！", uri, content);
-        }
-    }
-
-    private Converter getConverter() {
-        if (converter == null)
-            converter = BeanFactory.getBean(Converter.class);
-
-        return converter;
     }
 
     @Override
@@ -107,6 +75,15 @@ public class RequestAdapterImpl implements RequestAdapter {
 
             if (boundary)
                 fromBoundary(contentType);
+            else {
+                char ch = content.charAt(0);
+                if (ch == '{')
+                    fromJson(true);
+                else if (ch == '[')
+                    fromJson(false);
+                else
+                    map = getConverter().toParameterMap(getFromInputStream());
+            }
 
             return content;
         } catch (IOException e) {
@@ -137,6 +114,27 @@ public class RequestAdapterImpl implements RequestAdapter {
         }
         if (getLogger().isDebugEnable())
             getLogger().debug("[{}]获取Boundary参数[{}]。", uri, map);
+    }
+
+    private void fromJson(boolean object) {
+        try {
+            map = new HashMap<>();
+            if (!object)
+                return;
+
+            JSONObject obj = BeanFactory.getBean(Json.class).toObject(content);
+            if (obj != null)
+                obj.forEach((key, value) -> map.put(key, value.toString()));
+        } catch (Throwable throwable) {
+            getLogger().warn(throwable, "[{}]从JSON内容[{}]中获取参数集异常！", uri, content);
+        }
+    }
+
+    private Converter getConverter() {
+        if (converter == null)
+            converter = BeanFactory.getBean(Converter.class);
+
+        return converter;
     }
 
     private Logger getLogger() {
