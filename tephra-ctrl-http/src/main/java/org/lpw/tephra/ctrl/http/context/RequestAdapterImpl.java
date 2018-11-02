@@ -7,7 +7,6 @@ import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Validator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
@@ -45,8 +44,13 @@ public class RequestAdapterImpl implements RequestAdapter {
     @Override
     public String[] getAsArray(String name) {
         String[] array = request.getParameterValues(name);
+        if (array == null)
+            return null;
 
-        return array == null || array.length == 1 && array[0].indexOf(',') > -1 ? null : array;
+        if (array.length == 0 || array.length > 1 || array[0].indexOf(',') == -1)
+            return array;
+
+        return getConverter().toArray(array[0], ",");
     }
 
     @Override
@@ -71,6 +75,20 @@ public class RequestAdapterImpl implements RequestAdapter {
         return map;
     }
 
+    private void fromJson(boolean object) {
+        try {
+            map = new HashMap<>();
+            if (!object)
+                return;
+
+            JSONObject obj = BeanFactory.getBean(Json.class).toObject(content);
+            if (obj != null)
+                obj.forEach((key, value) -> map.put(key, value.toString()));
+        } catch (Throwable throwable) {
+            getLogger().warn(throwable, "[{}]从JSON内容[{}]中获取参数集异常！", uri, content);
+        }
+    }
+
     private Converter getConverter() {
         if (converter == null)
             converter = BeanFactory.getBean(Converter.class);
@@ -84,37 +102,48 @@ public class RequestAdapterImpl implements RequestAdapter {
             return content;
 
         String contentType = request.getHeader("content-type");
-        if (getLogger().isDebugEnable())
-            getLogger().debug("[{}]Content-Type[{}]。", uri, contentType);
-        if (!BeanFactory.getBean(Validator.class).isEmpty(contentType) && contentType.toLowerCase().contains("multipart/form-data"))
+        boolean boundary = contentType.startsWith("multipart/form-data; boundary=");
+        if (!boundary && contentType.startsWith("multipart/form-data"))
             return content = "";
 
         try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             BeanFactory.getBean(Io.class).copy(request.getInputStream(), output);
             content = output.toString();
             if (getLogger().isDebugEnable())
-                getLogger().debug("[{}]获取InputStream中的数据[{}]。", uri, content);
+                getLogger().debug("[{}]获取InputStream中的数据[{}:{}]。", uri, contentType, content);
+
+            if (boundary)
+                fromBoundary(contentType);
 
             return content;
         } catch (IOException e) {
-            getLogger().warn(e, "[{}]获取InputStream中的数据时发生异常！", uri);
+            getLogger().warn(e, "[{}]获取InputStream中的数据[{}]时发生异常！", uri, contentType);
 
             return "";
         }
     }
 
-    private void fromJson(boolean object) {
-        try {
+    private void fromBoundary(String contentType) {
+        if (map == null)
             map = new HashMap<>();
-            if (!object)
-                return;
+        String boundary = "--" + contentType.substring(contentType.indexOf('=') + 1);
+        for (String string : content.split(boundary)) {
+            string = string.trim();
+            if (string.equals(""))
+                continue;
 
-            JSONObject obj = BeanFactory.getBean(Json.class).toObject(content);
-            if (obj != null)
-                obj.forEach((key, value) -> map.put(key, value.toString()));
-        } catch (Throwable throwable) {
-            getLogger().warn(throwable, "[{}]从JSON内容[{}]中获取参数集异常！", uri, content);
+            int indexOf = string.indexOf('"');
+            if (indexOf == -1)
+                continue;
+
+            string = string.substring(indexOf + 1);
+            if ((indexOf = string.indexOf('"')) == -1)
+                continue;
+
+            map.put(string.substring(0, indexOf), string.substring(indexOf + 1).trim());
         }
+        if (getLogger().isDebugEnable())
+            getLogger().debug("[{}]获取Boundary参数[{}]。", uri, map);
     }
 
     private Logger getLogger() {
