@@ -65,9 +65,8 @@ public class RequestAdapterImpl implements RequestAdapter {
             return content;
 
         String contentType = request.getHeader("content-type");
-        if (getValidator().isEmpty(contentType))
-            return content = "";
-
+        if (contentType == null)
+            contentType = "";
         boolean boundary = contentType.startsWith("multipart/form-data; boundary=");
         if (!boundary && contentType.startsWith("multipart/form-data"))
             return content = "";
