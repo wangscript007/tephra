@@ -18,9 +18,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.awt.Color;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author lpw
@@ -54,7 +52,7 @@ public class TableParserImpl implements Parser {
         xslfTable.setAnchor(parserHelper.getRectangle(object));
         xslfTable.getCTTable().getTblPr().setTableStyleId("{5940675A-B579-460E-94D1-54222C63F5DA}");
         JSONArray rows = object.getJSONObject("table").getJSONArray("rows");
-        Set<String> spans = new HashSet<>();
+        Map<String, Integer> spans = new HashMap<>();
         Color borderColor = null;
         for (int i = 0; i < rows.size(); i++) {
             XSLFTableRow xslfTableRow = xslfTable.addRow();
@@ -111,30 +109,60 @@ public class TableParserImpl implements Parser {
         return null;
     }
 
-    private void setSpan(Set<String> spans, CTTableCell ctTableCell, JSONObject data, int i, int j) {
-        if (spans.contains("col-" + i + "-" + j))
-            ctTableCell.setHMerge(true);
-        if (spans.contains("row-" + i + "-" + j))
-            ctTableCell.setVMerge(true);
+    private void setSpan(Map<String, Integer> spans, CTTableCell ctTableCell, JSONObject data, int i, int j) {
+        String key = "col-" + i + "-" + j;
+        if (spans.containsKey(key)) {
+            int span = spans.get(key);
+            if (span == 1)
+                ctTableCell.setHMerge(true);
+            else
+                ctTableCell.setGridSpan(span);
+        }
+        key = "row-" + i + "-" + j;
+        if (spans.containsKey(key)) {
+            int span = spans.get(key);
+            if (span == 1)
+                ctTableCell.setVMerge(true);
+            else
+                ctTableCell.setRowSpan(span);
+        }
 
         int rowSpan = data.containsKey("rowSpan") ? data.getIntValue("rowSpan") : 1;
         int colSpan = data.containsKey("colSpan") ? data.getIntValue("colSpan") : 1;
-        if (rowSpan * colSpan <= 1)
+        if (rowSpan <= 1 && colSpan <= 1)
             return;
 
-        if (rowSpan > 1)
-            ctTableCell.setRowSpan(rowSpan);
-        if (colSpan > 1)
+        if (rowSpan == 1) {
             ctTableCell.setGridSpan(colSpan);
-        for (int k = 0; k < rowSpan; k++) {
-            for (int l = 0; l < colSpan; l++) {
-                if (k == 0 && l == 0)
-                    continue;
+            for (int k = 1; k < colSpan; k++)
+                spans.put("col-" + i + "-" + (j + k), 1);
 
-                if (colSpan > 1)
-                    spans.add("col-" + (i + k) + "-" + (j + l));
-                if (rowSpan > 1)
-                    spans.add("row-" + (i + k) + "-" + (j + l));
+            return;
+        }
+
+        if (colSpan == 1) {
+            ctTableCell.setRowSpan(rowSpan);
+            for (int k = 1; k < rowSpan; k++)
+                spans.put("row-" + (i + k) + "-" + j, 1);
+
+            return;
+        }
+
+        ctTableCell.setRowSpan(rowSpan);
+        ctTableCell.setGridSpan(colSpan);
+        for (int k = 1; k < rowSpan; k++) {
+            spans.put("col-" + (i + k) + "-" + j, colSpan);
+            spans.put("row-" + (i + k) + "-" + j, 1);
+        }
+        for (int k = 1; k < colSpan; k++) {
+            spans.put("row-" + i + "-" + (j + k), rowSpan);
+            spans.put("col-" + i + "-" + (j + k), 1);
+        }
+
+        for (int k = 1; k < rowSpan; k++) {
+            for (int l = 1; l < colSpan; l++) {
+                spans.put("row-" + (i + k) + "-" + (j + l), 1);
+                spans.put("col-" + (i + k) + "-" + (j + l), 1);
             }
         }
     }
