@@ -190,14 +190,23 @@ public class DateTimeImpl implements DateTime {
     }
 
     @Override
+    public java.sql.Date[] toDateRange(String[] dates) {
+        java.sql.Date[] ds = new java.sql.Date[2];
+        if (dates != null)
+            for (int i = 0; i < ds.length; i++)
+                if (dates.length > i)
+                    ds[i] = toSqlDate(dates[i]);
+
+        return ds;
+    }
+
+    @Override
     public Timestamp[] toTimeRange(String[] dates) {
         Timestamp[] times = new Timestamp[2];
-        if (dates != null) {
-            if (dates.length > 0)
-                times[0] = dates[0].length() == getDateTimeFormat().length() ? toTime(dates[0]) : getStart(dates[0]);
-            if (dates.length > 1)
-                times[1] = dates[1].length() == getDateTimeFormat().length() ? toTime(dates[1]) : getEnd(dates[1]);
-        }
+        if (dates != null)
+            for (int i = 0; i < times.length; i++)
+                if (dates.length > i)
+                    times[i] = dates[i].length() == getDateTimeFormat().length() ? toTime(dates[i]) : getStart(dates[i]);
 
         return times;
     }

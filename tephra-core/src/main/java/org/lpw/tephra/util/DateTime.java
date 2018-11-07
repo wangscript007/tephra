@@ -160,6 +160,14 @@ public interface DateTime {
     java.sql.Date toSqlDate(String date, String format);
 
     /**
+     * 转化为日期范围。
+     *
+     * @param dates 日期范围。
+     * @return 日期范围。
+     */
+    java.sql.Date[] toDateRange(String[] dates);
+
+    /**
      * 转化为时间范围。
      *
      * @param dates 日期范围。
