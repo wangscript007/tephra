@@ -9,7 +9,10 @@ import org.springframework.stereotype.Controller;
 public class LengthValidatorImpl extends ValidatorSupport {
     @Override
     public boolean validate(ValidateWrapper validate, String parameter) {
-        return (validator.isEmpty(parameter) && validate.getNumber()[0] == 0) || parameter.length() == validate.getNumber()[0];
+        if (validator.isEmpty(parameter))
+            return validate.getNumber()[0] == 0;
+
+        return parameter.length() == validate.getNumber()[0];
     }
 
     @Override
