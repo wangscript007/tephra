@@ -7,6 +7,7 @@ import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Image;
 import org.lpw.tephra.util.Json;
+import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,8 @@ public class ParserHelperImpl implements ParserHelper, ContextRefreshedListener 
     private Json json;
     @Inject
     private Image image;
+    @Inject
+    private Logger logger;
     private Map<String, Parser> parsers;
 
     @Override
@@ -64,17 +67,27 @@ public class ParserHelperImpl implements ParserHelper, ContextRefreshedListener 
         String color = object.getString(key);
         int[] ns;
         if (color.charAt(0) == '#') {
+            int length = color.length();
+            if (length != 4 && length != 7) {
+                logger.warn(null, "解析颜色值[{}]失败！", color);
+
+                return null;
+            }
+
             String[] array = new String[3];
-            boolean full = color.length() == 7;
+            boolean full = length == 7;
             for (int i = 0; i < array.length; i++)
                 array[i] = full ? color.substring(2 * i + 1, 2 * i + 3) : (color.substring(i + 1, i + 2) + color.substring(i + 1, i + 2));
             ns = new int[3];
             for (int i = 0; i < ns.length; i++)
-                ns[i] = Integer.parseInt(array[i], 16);
+                ns[i] = numeric.hexToInt(array[i]);
         } else if (color.indexOf('(') > -1)
             ns = numeric.toInts(color.substring(color.indexOf('(') + 1, color.indexOf(')')));
-        else
+        else {
+            logger.warn(null, "解析颜色值[{}]失败！", color);
+
             return null;
+        }
 
         return object.containsKey("alpha") ? new Color(ns[0], ns[1], ns[2], numeric.toInt(object.getDoubleValue("alpha") * 255))
                 : new Color(ns[0], ns[1], ns[2]);

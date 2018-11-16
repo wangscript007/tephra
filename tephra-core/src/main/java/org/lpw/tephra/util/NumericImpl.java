@@ -57,6 +57,25 @@ public class NumericImpl implements Numeric {
     }
 
     @Override
+    public int hexToInt(String hex) {
+        return hexToInt(hex, 0);
+    }
+
+    @Override
+    public int hexToInt(String hex, int defaultValue) {
+        if (validator.isEmpty(hex))
+            return defaultValue;
+
+        try {
+            return Integer.parseInt(hex, 16);
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "转化十六进制数据[{}]为整数时发生异常！", hex);
+
+            return defaultValue;
+        }
+    }
+
+    @Override
     public long toLong(Object object) {
         return toLong(object, 0L);
     }

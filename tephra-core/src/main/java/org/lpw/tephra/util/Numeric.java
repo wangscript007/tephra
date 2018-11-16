@@ -24,6 +24,23 @@ public interface Numeric {
     int toInt(Object object, int defaultValue);
 
     /**
+     * 将十六进制数据转化为整数。
+     *
+     * @param hex 十六进制数据。
+     * @return 整数；如果转化失败则返回0。
+     */
+    int hexToInt(String hex);
+
+    /**
+     * 将十六进制数据转化为整数。
+     *
+     * @param hex          十六进制数据。
+     * @param defaultValue 默认值。
+     * @return 整数；如果转化失败则返回默认值。
+     */
+    int hexToInt(String hex, int defaultValue);
+
+    /**
      * 将对象转化为long数值。
      *
      * @param object 要转化的对象。
