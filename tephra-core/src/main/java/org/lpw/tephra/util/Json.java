@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author lpw
@@ -133,6 +132,16 @@ public interface Json {
      * @return 如果包含则返回true；否则返回false。
      */
     boolean hasTrue(JSONObject object, String key);
+
+    /**
+     * 验证是否包含指定值的元素。
+     *
+     * @param object JSON数据。
+     * @param key    属性KEY。
+     * @param value  值。
+     * @return 如果包含且值相等则返回true；否则返回false。
+     */
+    boolean has(JSONObject object, String key, String value);
 
     /**
      * 复制。
