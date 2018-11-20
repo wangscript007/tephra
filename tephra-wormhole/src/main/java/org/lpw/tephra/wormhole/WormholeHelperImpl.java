@@ -6,13 +6,16 @@ import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Io;
+import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +36,8 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     private Sign sign;
     @Inject
     private Http http;
+    @Inject
+    private Logger logger;
     @Value("${tephra.wormhole.root:}")
     private String root;
     @Value("${tephra.wormhole.image:}")
@@ -115,6 +120,15 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
             return generator.random(32) + suffix;
 
         return generator.random(32);
+    }
+
+    @Override
+    public void download(String uri, String file) {
+        try (OutputStream outputStream = new FileOutputStream(file)) {
+            http.get(getUrl(uri), null, null, null, outputStream);
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "下载Wormhole文件[{}:{}]时发生异常！", uri,file);
+        }
     }
 
     @Override

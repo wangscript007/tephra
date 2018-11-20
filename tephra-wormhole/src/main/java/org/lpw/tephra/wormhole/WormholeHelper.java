@@ -76,4 +76,12 @@ public interface WormholeHelper {
      * @return URI地址。
      */
     String file(String path, String name, String sign, File file);
+
+    /**
+     * 下载文件。
+     *
+     * @param uri  文件URI地址。
+     * @param file 文件保存绝对路径。
+     */
+    void download(String uri, String file);
 }
