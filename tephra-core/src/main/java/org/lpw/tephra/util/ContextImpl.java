@@ -27,7 +27,6 @@ public class ContextImpl implements Context, Closable, ContextRefreshedListener 
     @Value("${tephra.util.context.charset:UTF-8}")
     private String charset;
     private String root;
-    private Map<String, String> absolutePath = new ConcurrentHashMap<>();
     private ThreadLocal<Locale> locale = new ThreadLocal<>();
     private ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
 
@@ -38,22 +37,18 @@ public class ContextImpl implements Context, Closable, ContextRefreshedListener 
 
     @Override
     public String getAbsolutePath(String path) {
-        String absolutePath = this.absolutePath.get(path);
-        if (absolutePath == null) {
-            if (path.startsWith("abs:"))
-                absolutePath = path.substring(4);
-            else if (path.startsWith("classpath:")) {
-                URL url = getClass().getClassLoader().getResource(path.substring(10));
-                if (url == null)
-                    return null;
+        if (path.startsWith("abs:"))
+            return path.substring(4);
 
-                absolutePath = url.getPath();
-            } else
-                absolutePath = new File(root + "/" + path).getAbsolutePath();
-            this.absolutePath.put(path, absolutePath);
+        if (path.startsWith("classpath:")) {
+            URL url = getClass().getClassLoader().getResource(path.substring(10));
+            if (url == null)
+                return null;
+
+            return url.getPath();
         }
 
-        return absolutePath;
+        return new File(root + "/" + path).getAbsolutePath();
     }
 
     @Override
@@ -127,7 +122,6 @@ public class ContextImpl implements Context, Closable, ContextRefreshedListener 
         }
 
         root = path.replace(File.separatorChar, '/');
-        absolutePath.clear();
 
         if (logger.isInfoEnable())
             logger.info("设置运行期根路径：{}", root);
