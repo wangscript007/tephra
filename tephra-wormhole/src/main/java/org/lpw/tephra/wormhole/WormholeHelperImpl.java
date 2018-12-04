@@ -76,12 +76,12 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     }
 
     @Override
-    public boolean auth(String type, String auth, String unique) {
+    public boolean auth(AuthType type, String auth, String unique) {
         JSONObject object = new JSONObject();
         object.put("auth", auth);
         object.put("unique", unique);
 
-        return "success".equals(http.post(root + "/auth/" + type, null, object.toJSONString()));
+        return "success".equals(http.post(root + "/auth/" + type.getName(), null, object.toJSONString()));
     }
 
     @Override

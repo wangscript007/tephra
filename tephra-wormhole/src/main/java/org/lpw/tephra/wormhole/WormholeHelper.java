@@ -46,7 +46,7 @@ public interface WormholeHelper {
      * @param unique 唯一值。
      * @return 添加成功则返回true；否则返回false。
      */
-    boolean auth(String type, String auth, String unique);
+    boolean auth(AuthType type, String auth, String unique);
 
     /**
      * 保存图片。
