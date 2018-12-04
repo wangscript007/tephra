@@ -3,6 +3,7 @@ package org.lpw.tephra.wormhole;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.crypto.Sign;
 import org.lpw.tephra.util.Context;
+import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Io;
@@ -31,6 +32,8 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     @Inject
     private Generator generator;
     @Inject
+    private Converter converter;
+    @Inject
     private Io io;
     @Inject
     private Sign sign;
@@ -44,6 +47,9 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     private String image;
     @Value("${tephra.wormhole.file:}")
     private String file;
+    @Value("${tephra.wormhole.urls:}")
+    private String urls;
+    private String[] us;
 
     @Override
     public boolean isImageUri(String uri) {
@@ -58,6 +64,14 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     @Override
     public String getUrl(String uri) {
         return root + uri;
+    }
+
+    @Override
+    public String getWebSocketUrl() {
+        if (validator.isEmpty(us))
+            return "";
+
+        return us[generator.random(0, us.length - 1)] + "/whws";
     }
 
     @Override
@@ -127,7 +141,7 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
         try (OutputStream outputStream = new FileOutputStream(file)) {
             http.get(getUrl(uri), null, null, null, outputStream);
         } catch (Throwable throwable) {
-            logger.warn(throwable, "下载Wormhole文件[{}:{}]时发生异常！", uri,file);
+            logger.warn(throwable, "下载Wormhole文件[{}:{}]时发生异常！", uri, file);
         }
     }
 
@@ -145,5 +159,6 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
             image = root + "/whimg/save";
         if (validator.isEmpty(file))
             file = root + "/whfile/save";
+        us = converter.toArray(urls, ",");
     }
 }

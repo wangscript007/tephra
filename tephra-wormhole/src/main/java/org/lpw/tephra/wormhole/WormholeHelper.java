@@ -32,6 +32,13 @@ public interface WormholeHelper {
     String getUrl(String uri);
 
     /**
+     * 获取WebSocket URL地址。
+     *
+     * @return WebSocket URL地址。
+     */
+    String getWebSocketUrl();
+
+    /**
      * 保存图片。
      *
      * @param path        目录。
