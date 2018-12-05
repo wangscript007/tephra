@@ -81,7 +81,7 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
         object.put("auth", auth);
         object.put("unique", unique);
 
-        return "success".equals(http.post(root + "/auth/" + type.getName(), null, object.toJSONString()));
+        return "success".equals(http.post(root + "/whauth/" + type.getName(), null, object.toJSONString()));
     }
 
     @Override
