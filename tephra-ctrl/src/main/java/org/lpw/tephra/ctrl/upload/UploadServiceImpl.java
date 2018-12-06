@@ -178,7 +178,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
     private String getSuffix(UploadListener uploadListener, UploadReader uploadReader) {
         String suffix = uploadListener.getSuffix(uploadReader);
         if (!validator.isEmpty(suffix))
-            return suffix;
+            return suffix.toLowerCase();
 
         int indexOf = uploadReader.getFileName().lastIndexOf('.');
 
