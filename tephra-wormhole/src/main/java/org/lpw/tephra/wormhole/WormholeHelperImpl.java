@@ -48,9 +48,9 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     private String image;
     @Value("${tephra.wormhole.file:}")
     private String file;
-    @Value("${tephra.wormhole.urls:}")
-    private String urls;
-    private String[] us;
+    @Value("${tephra.wormhole.hosts:}")
+    private String hosts;
+    private String[] hostArray;
 
     @Override
     public boolean isImageUri(String uri) {
@@ -68,11 +68,19 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     }
 
     @Override
-    public String getWebSocketUrl() {
-        if (validator.isEmpty(us))
+    public String getWsUrl() {
+        if (validator.isEmpty(hostArray))
             return "";
 
-        return us[generator.random(0, us.length - 1)] + "/whws";
+        return "ws://" + hostArray[generator.random(0, hostArray.length - 1)] + ":8192/whws";
+    }
+
+    @Override
+    public String getWssUrl() {
+        if (validator.isEmpty(hostArray))
+            return "";
+
+        return "wss://" + hostArray[generator.random(0, hostArray.length - 1)] + ":8193/whws";
     }
 
     @Override
@@ -169,6 +177,6 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
             image = root + "/whimg/save";
         if (validator.isEmpty(file))
             file = root + "/whfile/save";
-        us = converter.toArray(urls, ",");
+        hostArray = converter.toArray(hosts, ",");
     }
 }

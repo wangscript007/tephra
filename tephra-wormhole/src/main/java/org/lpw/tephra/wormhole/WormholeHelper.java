@@ -36,7 +36,14 @@ public interface WormholeHelper {
      *
      * @return WebSocket URL地址。
      */
-    String getWebSocketUrl();
+    String getWsUrl();
+
+    /**
+     * 获取WebSocket URL地址。
+     *
+     * @return WebSocket URL地址。
+     */
+    String getWssUrl();
 
     /**
      * 添加认证。
