@@ -49,11 +49,11 @@ public interface WormholeHelper {
      * 添加认证。
      *
      * @param type   类型。
-     * @param auth   认证。
-     * @param unique 唯一值。
+     * @param token  认证Token。
+     * @param ticket 认证Ticket。
      * @return 添加成功则返回true；否则返回false。
      */
-    boolean auth(AuthType type, String auth, String unique);
+    boolean auth(AuthType type, String token, String ticket);
 
     /**
      * 保存图片。
