@@ -1,6 +1,5 @@
 package org.lpw.tephra.wormhole;
 
-import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.crypto.Sign;
 import org.lpw.tephra.util.Context;
@@ -85,11 +84,21 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
 
     @Override
     public boolean auth(AuthType type, String token, String ticket) {
-        JSONObject object = new JSONObject();
-        object.put("token", token);
-        object.put("ticket", ticket);
+        Map<String, String> map = new HashMap<>();
+        map.put("token", token);
+        map.put("ticket", ticket);
 
-        return "success".equals(http.post(root + "/whauth/" + type.getName(), null, object.toJSONString()));
+        return "success".equals(post("/whauth/" + type.getName(), null, map));
+    }
+
+    @Override
+    public String post(String uri, Map<String, String> requestHeaders, Map<String, String> parameters) {
+        return http.post(root + uri, null, parameters);
+    }
+
+    @Override
+    public String post(String uri, Map<String, String> requestHeaders, String parameters) {
+        return http.post(root + uri, null, parameters);
     }
 
     @Override

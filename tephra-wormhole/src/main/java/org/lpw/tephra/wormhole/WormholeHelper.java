@@ -2,6 +2,7 @@ package org.lpw.tephra.wormhole;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Map;
 
 /**
  * @author lpw
@@ -54,6 +55,26 @@ public interface WormholeHelper {
      * @return 添加成功则返回true；否则返回false。
      */
     boolean auth(AuthType type, String token, String ticket);
+
+    /**
+     * 提交POST请求。
+     *
+     * @param uri            URI。
+     * @param requestHeaders HTTP头信息集。
+     * @param parameters     参数集。
+     * @return 如果成功则返回页面数据；否则返回null。
+     */
+    String post(String uri, Map<String, String> requestHeaders, Map<String, String> parameters);
+
+    /**
+     * 提交POST请求。
+     *
+     * @param uri            URI。
+     * @param requestHeaders HTTP头信息集。
+     * @param parameters     参数集。
+     * @return 如果成功则返回页面数据；否则返回null。
+     */
+    String post(String uri, Map<String, String> requestHeaders, String parameters);
 
     /**
      * 保存图片。
