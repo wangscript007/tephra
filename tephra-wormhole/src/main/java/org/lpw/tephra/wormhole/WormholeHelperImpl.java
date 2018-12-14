@@ -71,7 +71,7 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
         if (validator.isEmpty(hostArray))
             return "";
 
-        return "ws://" + hostArray[generator.random(0, hostArray.length - 1)] + ":8192/whws";
+        return "ws://" + hostArray[generator.random(0, hostArray.length - 1)] + "/whws";
     }
 
     @Override
@@ -79,7 +79,7 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
         if (validator.isEmpty(hostArray))
             return "";
 
-        return "wss://" + hostArray[generator.random(0, hostArray.length - 1)] + ":8193/whws";
+        return "wss://" + hostArray[generator.random(0, hostArray.length - 1)] + "/whws";
     }
 
     @Override
