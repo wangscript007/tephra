@@ -1,5 +1,6 @@
 package org.lpw.tephra.wormhole;
 
+import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.crypto.Sign;
 import org.lpw.tephra.util.Context;
@@ -7,6 +8,7 @@ import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Http;
 import org.lpw.tephra.util.Io;
+import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +41,8 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     private Sign sign;
     @Inject
     private Http http;
+    @Inject
+    private Json json;
     @Inject
     private Logger logger;
     @Value("${tephra.wormhole.root:}")
@@ -87,8 +91,15 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
         Map<String, String> map = new HashMap<>();
         map.put("token", token);
         map.put("ticket", ticket);
+        String string = post("/whauth/" + type.getName(), null, map);
+        JSONObject object = json.toObject(string);
+        if (!json.has(object, "code", "0")) {
+            logger.warn(null, "添加Wormhole认证[{}:{}]失败！", map, string);
 
-        return "success".equals(post("/whauth/" + type.getName(), null, map));
+            return false;
+        }
+
+        return true;
     }
 
     @Override
