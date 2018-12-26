@@ -19,6 +19,7 @@ import org.lpw.tephra.ctrl.status.Status;
 import org.lpw.tephra.ctrl.upload.UploadService;
 import org.lpw.tephra.storage.StorageListener;
 import org.lpw.tephra.storage.Storages;
+import org.lpw.tephra.util.Coder;
 import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Io;
@@ -63,6 +64,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private Context context;
     @Inject
     private Numeric numeric;
+    @Inject
+    private Coder coder;
     @Inject
     private TimeHash timeHash;
     @Inject
@@ -135,8 +138,19 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         String uri = getUri(request);
         String lowerCaseUri = uri.toLowerCase();
         if (lowerCaseUri.startsWith(UploadService.ROOT)) {
-            if (!lowerCaseUri.startsWith(UploadService.ROOT + "image/"))
-                response.setHeader("Content-Disposition", "attachment;filename=" + uri.substring(uri.lastIndexOf('/') + 1));
+            if (!lowerCaseUri.startsWith(UploadService.ROOT + "image/")) {
+                StringBuilder attachment = new StringBuilder("attachment; filename*=").append(context.getCharset(null)).append("''");
+                String filename = request.getParameter("filename");
+                if (validator.isEmpty(filename))
+                    attachment.append(uri.substring(uri.lastIndexOf('/') + 1));
+                else {
+                    attachment.append(coder.encodeUrl(filename, null));
+                    int indexOf;
+                    if (filename.indexOf('.') == -1 && (indexOf = uri.lastIndexOf('.')) > -1)
+                        attachment.append(uri.substring(indexOf));
+                }
+                response.setHeader("Content-Disposition", attachment.toString());
+            }
 
             if (logger.isDebugEnable())
                 logger.debug("请求[{}]非图片上传资源。", uri);
