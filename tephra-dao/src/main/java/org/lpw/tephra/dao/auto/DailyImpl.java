@@ -4,11 +4,11 @@ import org.lpw.tephra.dao.jdbc.DataSource;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelTable;
 import org.lpw.tephra.dao.model.ModelTables;
+import org.lpw.tephra.util.TimeUnit;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.sql.Date;
-import java.util.Calendar;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,13 +41,10 @@ public class DailyImpl implements Daily {
             return;
 
         String tableName = modelTable.getTableName(null);
-        Calendar calendar = Calendar.getInstance();
-        for (String string : array) {
-            for (int i = 0; i < 3; i++) {
-                calendar.add(Calendar.DAY_OF_MONTH, i);
-                String str = string.replaceFirst(tableName, modelTable.getTableName(new Date(calendar.getTimeInMillis())));
-                executer.execute(dataSource, str, false);
-            }
-        }
+        long now = System.currentTimeMillis();
+        for (String string : array)
+            for (int i = 0; i < 3; i++)
+                executer.execute(dataSource, string.replaceFirst(tableName, modelTable.getTableName(
+                        new Date(now + i * TimeUnit.Day.getTime()))), false);
     }
 }
