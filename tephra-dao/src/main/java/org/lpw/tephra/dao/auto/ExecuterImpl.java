@@ -57,8 +57,8 @@ public class ExecuterImpl implements Executer, ContextRefreshedListener, DateJob
             if (sql.equals("") || sql.charAt(0) == '-')
                 return 0;
 
-            String md5 = digest.md5(dataSource + sql);
             if (hasAutoTable()) {
+                String md5 = digest.md5(dataSource + sql);
                 if (state0 && liteOrm.findOne(new LiteQuery(AutoModel.class).where("c_md5=? and c_state=?"), new Object[]{md5, 0}) != null) {
                     liteOrm.close();
 
@@ -101,6 +101,11 @@ public class ExecuterImpl implements Executer, ContextRefreshedListener, DateJob
 
         create.create(dataSource, modelTable, tableName);
         map.get(dataSource).add(tableName);
+    }
+
+    @Override
+    public Set<String> tables(String dataSource) {
+        return new HashSet<>(map.get(dataSource));
     }
 
     @Override

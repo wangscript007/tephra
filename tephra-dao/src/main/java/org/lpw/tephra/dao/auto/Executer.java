@@ -2,6 +2,8 @@ package org.lpw.tephra.dao.auto;
 
 import org.lpw.tephra.dao.model.Model;
 
+import java.util.Set;
+
 /**
  * @author lpw
  */
@@ -23,4 +25,12 @@ public interface Executer {
      * @param tableName  表名。
      */
     void create(Class<? extends Model> modelClass, String tableName);
+
+    /**
+     * 获取表名称集。
+     *
+     * @param dataSource 数据源。
+     * @return 表名称集。
+     */
+    Set<String> tables(String dataSource);
 }
