@@ -1,5 +1,7 @@
 package org.lpw.tephra.dao.auto;
 
+import org.lpw.tephra.dao.model.Model;
+
 /**
  * @author lpw
  */
@@ -13,4 +15,12 @@ interface Executer {
      * @return 影响数据行数。
      */
     int execute(String dataSource, String sql, boolean state0);
+
+    /**
+     * 读取create.sql并创建表。
+     *
+     * @param modelClass Model类。
+     * @param tableName  表名。
+     */
+    void create(Class<? extends Model> modelClass, String tableName);
 }

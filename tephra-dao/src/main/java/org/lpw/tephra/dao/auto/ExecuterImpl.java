@@ -5,6 +5,9 @@ import org.lpw.tephra.crypto.Digest;
 import org.lpw.tephra.dao.jdbc.DataSource;
 import org.lpw.tephra.dao.jdbc.Sql;
 import org.lpw.tephra.dao.jdbc.SqlTable;
+import org.lpw.tephra.dao.model.Model;
+import org.lpw.tephra.dao.model.ModelTable;
+import org.lpw.tephra.dao.model.ModelTables;
 import org.lpw.tephra.dao.orm.lite.LiteOrm;
 import org.lpw.tephra.dao.orm.lite.LiteQuery;
 import org.lpw.tephra.scheduler.DateJob;
@@ -32,6 +35,8 @@ public class ExecuterImpl implements Executer, ContextRefreshedListener, DateJob
     @Inject
     private Sql sql;
     @Inject
+    private ModelTables modelTables;
+    @Inject
     private LiteOrm liteOrm;
     @Inject
     private Create create;
@@ -42,6 +47,8 @@ public class ExecuterImpl implements Executer, ContextRefreshedListener, DateJob
     @Inject
     private Daily daily;
     private Map<String, Set<String>> map;
+    private boolean hasAutoTable;
+    private String autoTableName = AutoModel.class.getAnnotation(Table.class).name();
 
     @Override
     public int execute(String dataSource, String sql, boolean state0) {
@@ -64,7 +71,8 @@ public class ExecuterImpl implements Executer, ContextRefreshedListener, DateJob
                 auto.setSql(sql);
                 auto.setTime(dateTime.now());
                 liteOrm.save(auto);
-            }
+            } else if (sql.contains("CREATE TABLE " + autoTableName))
+                map.get(dataSource).add(autoTableName);
 
             int n = this.sql.update(dataSource, sql, new Object[0]);
             this.sql.close();
@@ -78,7 +86,21 @@ public class ExecuterImpl implements Executer, ContextRefreshedListener, DateJob
     }
 
     private boolean hasAutoTable() {
-        return map.get(dataSource.getDefaultKey()).contains(AutoModel.class.getAnnotation(Table.class).name());
+        if (hasAutoTable)
+            return true;
+
+        return hasAutoTable = map.get(dataSource.getDefaultKey()).contains(autoTableName);
+    }
+
+    @Override
+    public void create(Class<? extends Model> modelClass, String tableName) {
+        ModelTable modelTable = modelTables.get(modelClass);
+        String dataSource = this.dataSource.getKey(modelTable.getDataSource());
+        if (map.get(dataSource).contains(tableName))
+            return;
+
+        create.create(dataSource, modelTable, tableName);
+        map.get(dataSource).add(tableName);
     }
 
     @Override
