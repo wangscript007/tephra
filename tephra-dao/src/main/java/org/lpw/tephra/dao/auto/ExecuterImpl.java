@@ -7,6 +7,7 @@ import org.lpw.tephra.dao.jdbc.Sql;
 import org.lpw.tephra.dao.jdbc.SqlTable;
 import org.lpw.tephra.dao.orm.lite.LiteOrm;
 import org.lpw.tephra.dao.orm.lite.LiteQuery;
+import org.lpw.tephra.scheduler.DateJob;
 import org.lpw.tephra.util.DateTime;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +22,7 @@ import java.util.Set;
  * @author lpw
  */
 @Repository(AutoModel.NAME + ".executer")
-public class ExecuterImpl implements Executer, ContextRefreshedListener {
+public class ExecuterImpl implements Executer, ContextRefreshedListener, DateJob {
     @Inject
     private Digest digest;
     @Inject
@@ -38,6 +39,8 @@ public class ExecuterImpl implements Executer, ContextRefreshedListener {
     private Memory memory;
     @Inject
     private Update update;
+    @Inject
+    private Daily daily;
     private Map<String, Set<String>> map;
 
     @Override
@@ -98,5 +101,11 @@ public class ExecuterImpl implements Executer, ContextRefreshedListener {
         create.execute(map);
         memory.execute();
         update.execute();
+        daily.execute(map);
+    }
+
+    @Override
+    public void executeDateJob() {
+        daily.execute(map);
     }
 }

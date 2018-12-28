@@ -52,7 +52,8 @@ public class CreateImpl implements Create {
         }
     }
 
-    private String[] read(Class<? extends Model> modelClass) {
+    @Override
+    public String[] read(Class<? extends Model> modelClass) {
         try {
             InputStream inputStream = modelClass.getResourceAsStream("create.sql");
             if (inputStream == null)

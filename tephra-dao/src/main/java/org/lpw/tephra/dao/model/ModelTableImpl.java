@@ -49,6 +49,7 @@ public class ModelTableImpl implements ModelTable {
     private String dataSource;
     private String tableName;
     private String memoryName;
+    private int dailyOverdue;
     private String idColumnName;
     private boolean uuid;
     private Map<String, Method> getMethods = new HashMap<>();
@@ -82,7 +83,12 @@ public class ModelTableImpl implements ModelTable {
 
     @Override
     public String getTableName() {
-        return tableName;
+        return dailyOverdue > 0 ? getTableName(dateTime.today()) : tableName;
+    }
+
+    @Override
+    public String getTableName(Date date) {
+        return date == null ? tableName : (tableName + "_" + dateTime.toString(date, "yyyyMMdd"));
     }
 
     @Override
@@ -98,6 +104,16 @@ public class ModelTableImpl implements ModelTable {
     @Override
     public void setMemoryName(String memoryName) {
         this.memoryName = memoryName;
+    }
+
+    @Override
+    public int getDailyOverdue() {
+        return dailyOverdue;
+    }
+
+    @Override
+    public void setDailyOverdue(int dailyOverdue) {
+        this.dailyOverdue = dailyOverdue;
     }
 
     @Override

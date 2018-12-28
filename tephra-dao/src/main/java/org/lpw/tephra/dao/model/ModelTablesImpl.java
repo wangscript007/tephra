@@ -73,6 +73,9 @@ public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
         Memory memory = modelClass.getAnnotation(Memory.class);
         if (memory != null)
             modelTable.setMemoryName(memory.name());
+        Daily daily = modelClass.getAnnotation(Daily.class);
+        if (daily != null)
+            modelTable.setDailyOverdue(daily.overdue());
 
         Method[] methods = modelClass.getMethods();
         for (Method method : methods) {

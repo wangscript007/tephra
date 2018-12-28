@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import javax.persistence.Column;
 import java.lang.reflect.Method;
+import java.sql.Date;
 import java.util.Set;
 
 /**
@@ -48,6 +49,14 @@ public interface ModelTable {
     String getTableName();
 
     /**
+     * 获得表名称。
+     *
+     * @param date 日期。
+     * @return 表名称。
+     */
+    String getTableName(Date date);
+
+    /**
      * 设置表名称。
      *
      * @param tableName 表名称。
@@ -67,6 +76,20 @@ public interface ModelTable {
      * @param memoryName 内存表名称。
      */
     void setMemoryName(String memoryName);
+
+    /**
+     * 获取每日表过期天数。
+     *
+     * @return 每日表过期天数。
+     */
+    int getDailyOverdue();
+
+    /**
+     * 设置每日表过期天数。
+     *
+     * @param dailyOverdue 每日表过期天数。
+     */
+    void setDailyOverdue(int dailyOverdue);
 
     /**
      * 获得ID对应的表字段名称。
