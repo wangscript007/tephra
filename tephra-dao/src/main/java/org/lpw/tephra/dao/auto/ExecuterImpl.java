@@ -101,11 +101,11 @@ public class ExecuterImpl implements Executer, ContextRefreshedListener, DateJob
         create.execute(map);
         memory.execute();
         update.execute();
-        daily.execute(map);
+        daily.execute();
     }
 
     @Override
     public void executeDateJob() {
-        daily.execute(map);
+        daily.execute();
     }
 }

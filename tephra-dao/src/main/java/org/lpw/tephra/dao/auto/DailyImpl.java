@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.sql.Date;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author lpw
@@ -27,24 +25,30 @@ public class DailyImpl implements Daily {
     private Create create;
 
     @Override
-    public void execute(Map<String, Set<String>> tables) {
-        modelTables.getModelClasses().forEach(modelClass -> create(tables, modelTables.get(modelClass), modelClass));
+    public void execute() {
+        modelTables.getModelClasses().forEach(modelClass -> create(modelTables.get(modelClass), modelClass));
     }
 
-    private void create(Map<String, Set<String>> tables, ModelTable modelTable, Class<? extends Model> modelClass) {
-        String dataSource = this.dataSource.getKey(modelTable.getDataSource());
-        if (tables.containsKey(dataSource) && tables.get(dataSource).contains(modelTable.getTableName()))
+    private void create(ModelTable modelTable, Class<? extends Model> modelClass) {
+        if (modelTable.getDailyOverdue() <= 0)
             return;
 
         String[] array = create.read(modelClass);
         if (array == null)
             return;
 
+        String dataSource = this.dataSource.getKey(modelTable.getDataSource());
         String tableName = modelTable.getTableName(null);
         long now = System.currentTimeMillis();
-        for (String string : array)
+        for (String string : array) {
             for (int i = 0; i < 3; i++)
                 executer.execute(dataSource, string.replaceFirst(tableName, modelTable.getTableName(
                         new Date(now + i * TimeUnit.Day.getTime()))), false);
+
+            if (string.startsWith("DROP TABLE"))
+                for (int i = modelTable.getDailyOverdue(), max = i << 1; i < max; i++)
+                    executer.execute(dataSource, string.replaceFirst(tableName, modelTable.getTableName(
+                            new Date(now - i * TimeUnit.Day.getTime()))), false);
+        }
     }
 }
