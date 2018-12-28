@@ -64,6 +64,13 @@ public interface ModelTable {
     void setTableName(String tableName);
 
     /**
+     * 设置瞬时表名称。
+     *
+     * @param tableName 表名称，null或空字符串表示移除。
+     */
+    void setInstantTableName(String tableName);
+
+    /**
      * 获取内存表名称。
      *
      * @return 内存表名称。

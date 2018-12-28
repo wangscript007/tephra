@@ -60,6 +60,7 @@ public class ModelTableImpl implements ModelTable {
     private Map<String, String> lowerCases = new HashMap<>();
     private Map<String, String> columns = new HashMap<>();
     private Set<String> natives = new HashSet<>();
+    private ThreadLocal<String> instantTableName = new ThreadLocal<>();
 
     @Override
     public Class<? extends Model> getModelClass() {
@@ -83,6 +84,10 @@ public class ModelTableImpl implements ModelTable {
 
     @Override
     public String getTableName() {
+        String iTableName = instantTableName.get();
+        if (!validator.isEmpty(iTableName))
+            return iTableName;
+
         return dailyOverdue > 0 ? getTableName(dateTime.today()) : tableName;
     }
 
@@ -94,6 +99,14 @@ public class ModelTableImpl implements ModelTable {
     @Override
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+
+    @Override
+    public void setInstantTableName(String tableName) {
+        if (validator.isEmpty(tableName))
+            instantTableName.remove();
+        else
+            instantTableName.set(tableName);
     }
 
     @Override
