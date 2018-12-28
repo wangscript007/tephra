@@ -4,6 +4,7 @@ import org.lpw.tephra.dao.jdbc.DataSource;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelTable;
 import org.lpw.tephra.dao.model.ModelTables;
+import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.sql.Date;
@@ -14,6 +15,7 @@ import java.util.Set;
 /**
  * @author lpw
  */
+@Repository(AutoModel.NAME + ".daily")
 public class DailyImpl implements Daily {
     @Inject
     private ModelTables modelTables;
