@@ -5,7 +5,7 @@ import org.lpw.tephra.dao.model.Model;
 /**
  * @author lpw
  */
-interface Executer {
+public interface Executer {
     /**
      * 保存SQL。
      *
