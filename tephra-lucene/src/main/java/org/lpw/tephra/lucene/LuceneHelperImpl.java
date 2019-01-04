@@ -110,7 +110,7 @@ public class LuceneHelperImpl implements LuceneHelper {
         StringBuilder query = new StringBuilder();
         words.forEach(word -> {
             if (!validator.isEmpty(word))
-                query.append(" \"").append(word).append('"');
+                query.append(' ').append(word);
         });
         if (query.length() == 0)
             return null;
