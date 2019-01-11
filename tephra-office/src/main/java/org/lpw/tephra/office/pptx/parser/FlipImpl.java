@@ -19,7 +19,7 @@ import javax.inject.Inject;
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.filp")
-public class FlipImpl implements Simple {
+public class FlipImpl implements Simple, Zero {
     @Inject
     private Json json;
 
@@ -71,5 +71,22 @@ public class FlipImpl implements Simple {
             xslfSimpleShape.setFlipHorizontal(true);
         if (json.hasTrue(flip, "vertical"))
             xslfSimpleShape.setFlipVertical(true);
+    }
+
+    @Override
+    public void zero(XSLFSimpleShape xslfSimpleShape, JSONObject shape) {
+        if (!shape.containsKey("flip"))
+            return;
+
+        JSONObject flip = shape.getJSONObject("flip");
+        if (flip.containsKey("horizontal"))
+            xslfSimpleShape.setFlipHorizontal(!xslfSimpleShape.getFlipHorizontal());
+        if (flip.containsKey("vertical"))
+            xslfSimpleShape.setFlipVertical(!xslfSimpleShape.getFlipVertical());
+    }
+
+    @Override
+    public void reset(XSLFSimpleShape xslfSimpleShape, JSONObject shape) {
+        zero(xslfSimpleShape, shape);
     }
 }

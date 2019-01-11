@@ -8,7 +8,6 @@ import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFGroupShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
-import org.lpw.tephra.office.GeometryConverter;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.parser.Parser;
@@ -44,11 +43,11 @@ public class PptxReaderImpl implements PptxReader {
     private Parser parser;
 
     @Override
-    public JSONObject read(InputStream inputStream, MediaWriter mediaWriter, GeometryConverter geometryConverter) {
+    public JSONObject read(InputStream inputStream, MediaWriter mediaWriter) {
         JSONObject object = new JSONObject();
         try (XMLSlideShow xmlSlideShow = new XMLSlideShow(inputStream)) {
             parseSize(xmlSlideShow, object);
-            ReaderContext readerContext = new ReaderContext(mediaWriter, geometryConverter, xmlSlideShow);
+            ReaderContext readerContext = new ReaderContext(mediaWriter, xmlSlideShow);
             Map<String, Map<Integer, String>> layouts = new HashMap<>();
             JSONArray slides = new JSONArray();
             xmlSlideShow.getSlides().forEach(xslfSlide -> {

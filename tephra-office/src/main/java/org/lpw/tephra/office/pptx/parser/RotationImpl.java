@@ -14,7 +14,7 @@ import javax.inject.Inject;
  * @author lpw
  */
 @Component("tephra.office.pptx.parser.rotation")
-public class RotationImpl implements Simple {
+public class RotationImpl implements Simple, Zero {
     @Inject
     private Numeric numeric;
 
@@ -41,5 +41,23 @@ public class RotationImpl implements Simple {
     public void parseShape(WriterContext writerContext, XSLFSimpleShape xslfSimpleShape, JSONObject shape) {
         if (shape.containsKey("rotation"))
             xslfSimpleShape.setRotation(shape.getDoubleValue("rotation"));
+    }
+
+    @Override
+    public void zero(XSLFSimpleShape xslfSimpleShape, JSONObject shape) {
+        if (shape.containsKey("rotation"))
+            xslfSimpleShape.setRotation(0.0D);
+    }
+
+    @Override
+    public void reset(XSLFSimpleShape xslfSimpleShape, JSONObject shape) {
+        if (!shape.containsKey("rotation"))
+            return;
+
+        int rotation = shape.getIntValue("rotation");
+        if (rotation == 0)
+            return;
+
+        xslfSimpleShape.setRotation(rotation);
     }
 }

@@ -4,7 +4,6 @@ import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTheme;
-import org.lpw.tephra.office.GeometryConverter;
 import org.lpw.tephra.office.MediaWriter;
 
 /**
@@ -14,24 +13,18 @@ import org.lpw.tephra.office.MediaWriter;
  */
 public class ReaderContext {
     private MediaWriter mediaWriter;
-    private GeometryConverter geometryConverter;
     private XMLSlideShow xmlSlideShow;
     private XSLFTheme xslfTheme;
     private XSLFSlide xslfSlide;
     private boolean layout;
 
-    ReaderContext(MediaWriter mediaWriter, GeometryConverter geometryConverter, XMLSlideShow xmlSlideShow) {
+    ReaderContext(MediaWriter mediaWriter, XMLSlideShow xmlSlideShow) {
         this.mediaWriter = mediaWriter;
-        this.geometryConverter = geometryConverter;
         this.xmlSlideShow = xmlSlideShow;
     }
 
     public MediaWriter getMediaWriter() {
         return mediaWriter;
-    }
-
-    public GeometryConverter getGeometryConverter() {
-        return geometryConverter;
     }
 
     public XMLSlideShow getXmlSlideShow() {
