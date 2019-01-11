@@ -14,8 +14,8 @@ import org.lpw.tephra.office.pptx.parser.Parser;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Numeric;
+import org.openxmlformats.schemas.drawingml.x2006.chartDrawing.CTGroupShape;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -116,9 +116,9 @@ public class PptxReaderImpl implements PptxReader {
             slide.put("background", background);
     }
 
-    private void parseShapes(ReaderContext readerContext, List<XSLFShape> xslfSlides, JSONArray shapes,
+    private void parseShapes(ReaderContext readerContext, List<XSLFShape> xslfShapes, JSONArray shapes,
                              Map<Integer, String> layout, Map<Integer, JSONObject> fromLayout) {
-        xslfSlides.forEach(xslfShape -> {
+        xslfShapes.forEach(xslfShape -> {
             if (xslfShape instanceof XSLFSimpleShape) {
                 JSONObject shape = getOrNew(fromLayout, xslfShape.getShapeId());
                 parser.parseShape(readerContext, (XSLFSimpleShape) xslfShape, shape);
