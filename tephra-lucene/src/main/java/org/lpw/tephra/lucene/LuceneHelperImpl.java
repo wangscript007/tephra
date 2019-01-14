@@ -80,8 +80,8 @@ public class LuceneHelperImpl implements LuceneHelper {
                 document.add(new StoredField("id", file.getName()));
                 document.add(new TextField("data", io.readAsString(file.getAbsolutePath()), Field.Store.YES));
                 indexWriter.addDocument(document);
+                indexWriter.flush();
             }
-            indexWriter.flush();
         } catch (Throwable throwable) {
             logger.warn(throwable, "创建Lucene索引时发生异常！");
         }
