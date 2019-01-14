@@ -11,6 +11,9 @@ import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.ReaderContext;
 import org.lpw.tephra.office.pptx.WriterContext;
 import org.lpw.tephra.util.Logger;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTCustomGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2D;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
@@ -45,6 +48,8 @@ public class GeometryImpl implements Simple {
         if (xslfSimpleShape.getLineWidth() == 0.0D && xslfSimpleShape.getLineColor() == null && xslfSimpleShape.getFillColor() == null)
             return;
 
+        System.out.println("3333:" + xslfSimpleShape.getAnchor());
+
         zeros.forEach(zero -> zero.zero(xslfSimpleShape, shape));
         try {
             shape.put("geometry", save(readerContext, xslfSimpleShape));
@@ -57,7 +62,7 @@ public class GeometryImpl implements Simple {
     private String save(ReaderContext readerContext, XSLFSimpleShape xslfSimpleShape) throws IOException {
         SVGGraphics2D svgGraphics2D = new SVGGraphics2D(GenericDOMImplementation.getDOMImplementation()
                 .createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null));
-        Rectangle2D rectangle2D = xslfSimpleShape.getAnchor();
+        Rectangle2D rectangle2D = size(xslfSimpleShape);
         xslfSimpleShape.draw(svgGraphics2D, new Rectangle2D.Double(0.0D, 0.0D, rectangle2D.getWidth(), rectangle2D.getHeight()));
         Element root = svgGraphics2D.getRoot();
         root.setAttribute("viewBox", "0 0 " + rectangle2D.getWidth() + " " + rectangle2D.getHeight());
@@ -77,7 +82,22 @@ public class GeometryImpl implements Simple {
         String image = readerContext.getMediaWriter().write(MediaType.SVG, "geometry.svg", inputStream);
         inputStream.close();
 
+        size(xslfSimpleShape);
+
         return image;
+    }
+
+    private Rectangle2D size(XSLFSimpleShape xslfSimpleShape) {
+        CTCustomGeometry2D ctCustomGeometry2D = ((CTShape) xslfSimpleShape.getXmlObject()).getSpPr().getCustGeom();
+        if (ctCustomGeometry2D == null)
+            return xslfSimpleShape.getAnchor();
+
+        CTPath2D ctPath2D = ctCustomGeometry2D.getPathLst().getPathArray(0);
+        if (ctPath2D == null)
+            return xslfSimpleShape.getAnchor();
+
+        return new Rectangle2D.Double(0.0D, 0.0D, officeHelper.pixelToPoint(officeHelper.emuToPixel(ctPath2D.getW())),
+                officeHelper.pixelToPoint(officeHelper.emuToPixel(ctPath2D.getH())));
     }
 
     @Override
