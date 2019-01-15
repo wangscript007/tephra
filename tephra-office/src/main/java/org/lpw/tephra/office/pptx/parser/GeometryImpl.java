@@ -13,6 +13,7 @@ import org.lpw.tephra.office.pptx.WriterContext;
 import org.lpw.tephra.util.Logger;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTCustomGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2DList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
@@ -66,6 +67,7 @@ public class GeometryImpl implements Simple {
         xslfSimpleShape.draw(svgGraphics2D, new Rectangle2D.Double(0.0D, 0.0D, rectangle2D.getWidth(), rectangle2D.getHeight()));
         Element root = svgGraphics2D.getRoot();
         root.setAttribute("viewBox", "0 0 " + rectangle2D.getWidth() + " " + rectangle2D.getHeight());
+        System.out.println(rectangle2D);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         svgGraphics2D.stream(root, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), false, false);
@@ -89,15 +91,18 @@ public class GeometryImpl implements Simple {
 
     private Rectangle2D size(XSLFSimpleShape xslfSimpleShape) {
         CTCustomGeometry2D ctCustomGeometry2D = ((CTShape) xslfSimpleShape.getXmlObject()).getSpPr().getCustGeom();
-        if (ctCustomGeometry2D == null)
+        if (ctCustomGeometry2D == null || ctCustomGeometry2D.isNil())
             return xslfSimpleShape.getAnchor();
 
-        CTPath2D ctPath2D = ctCustomGeometry2D.getPathLst().getPathArray(0);
-        if (ctPath2D == null)
+        CTPath2DList ctPath2DList = ctCustomGeometry2D.getPathLst();
+        if (ctPath2DList == null || ctPath2DList.isNil() || ctPath2DList.sizeOfPathArray() == 0)
             return xslfSimpleShape.getAnchor();
 
-        return new Rectangle2D.Double(0.0D, 0.0D, officeHelper.pixelToPoint(officeHelper.emuToPixel(ctPath2D.getW())),
-                officeHelper.pixelToPoint(officeHelper.emuToPixel(ctPath2D.getH())));
+        CTPath2D ctPath2D = ctPath2DList.getPathArray(0);
+        if (ctPath2D == null || ctPath2D.isNil())
+            return xslfSimpleShape.getAnchor();
+
+        return new Rectangle2D.Double(0.0D, 0.0D, officeHelper.emuToPoint(ctPath2D.getW()), officeHelper.emuToPoint(ctPath2D.getH()));
     }
 
     @Override

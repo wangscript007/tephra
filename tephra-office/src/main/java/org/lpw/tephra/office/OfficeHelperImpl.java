@@ -40,6 +40,11 @@ public class OfficeHelperImpl implements OfficeHelper {
     }
 
     @Override
+    public double emuToPoint(long emu) {
+        return emu / 9525.0D * 72 / 96;
+    }
+
+    @Override
     public int pointToPixel(double point) {
         return numeric.toInt(point * 96 / 72);
     }

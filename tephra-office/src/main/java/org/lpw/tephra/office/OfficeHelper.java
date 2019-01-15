@@ -33,6 +33,14 @@ public interface OfficeHelper {
     int emuToPixel(long emu);
 
     /**
+     * EMU值转化为磅值。
+     *
+     * @param emu EMU值。
+     * @return 磅值。
+     */
+    double emuToPoint(long emu);
+
+    /**
      * 磅值转化为像素值。
      *
      * @param point 磅值。
