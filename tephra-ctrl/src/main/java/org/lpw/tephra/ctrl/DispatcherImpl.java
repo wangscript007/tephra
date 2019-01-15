@@ -140,7 +140,8 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
             return new ExecuteInvocation(interceptors, validators, executorHelper.get()).invoke();
         } catch (Throwable e) {
             failables.forEach(failable -> failable.fail(e));
-            logger.warn(e, "执行请求[{}:{}]时发生异常！", request.getUri(), executorHelper.get().getMethod());
+            logger.warn(e, "执行请求[{}:{}:{}:{}]时发生异常！", request.getUri(), header.getMap(), request.getMap(),
+                    executorHelper.get().getMethod());
 
             return Failure.Exception;
         }
