@@ -78,9 +78,8 @@ public class LuceneHelperImpl implements LuceneHelper {
         if (directory == null)
             return;
 
-        IndexWriterConfig config = new IndexWriterConfig(new HanLPAnalyzer());
         for (File file : files) {
-            try (IndexWriter indexWriter = new IndexWriter(directory, config)) {
+            try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig(new HanLPAnalyzer()))) {
                 Document document = new Document();
                 document.add(new StoredField("id", file.getName()));
                 document.add(new TextField("data", io.readAsString(file.getAbsolutePath()), Field.Store.YES));
