@@ -49,11 +49,11 @@ public class GeometryImpl implements Simple {
         if (xslfSimpleShape.getLineWidth() == 0.0D && xslfSimpleShape.getLineColor() == null && xslfSimpleShape.getFillColor() == null)
             return;
 
-        System.out.println("3333:" + xslfSimpleShape.getAnchor());
-
         zeros.forEach(zero -> zero.zero(xslfSimpleShape, shape));
         try {
-            shape.put("geometry", save(readerContext, xslfSimpleShape));
+            String geometry = save(readerContext, xslfSimpleShape);
+            if (geometry != null)
+                shape.put("geometry", geometry);
         } catch (Exception e) {
             logger.warn(e, "保存图形[{}]为SVG图片文件时发生异常！", xslfSimpleShape);
         }
@@ -63,11 +63,12 @@ public class GeometryImpl implements Simple {
     private String save(ReaderContext readerContext, XSLFSimpleShape xslfSimpleShape) throws IOException {
         SVGGraphics2D svgGraphics2D = new SVGGraphics2D(GenericDOMImplementation.getDOMImplementation()
                 .createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null));
-        Rectangle2D rectangle2D = size(xslfSimpleShape);
+        Rectangle2D rectangle2D = xslfSimpleShape.getAnchor();
         xslfSimpleShape.draw(svgGraphics2D, new Rectangle2D.Double(0.0D, 0.0D, rectangle2D.getWidth(), rectangle2D.getHeight()));
         Element root = svgGraphics2D.getRoot();
-        root.setAttribute("viewBox", "0 0 " + rectangle2D.getWidth() + " " + rectangle2D.getHeight());
-        System.out.println(rectangle2D);
+        double[] viewBox = getViewBox(xslfSimpleShape);
+        root.setAttribute("viewBox", "0 0 " + (viewBox == null ? (rectangle2D.getWidth() + " " + rectangle2D.getHeight())
+                : (viewBox[0] + " " + viewBox[1])));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         svgGraphics2D.stream(root, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), false, false);
@@ -75,34 +76,39 @@ public class GeometryImpl implements Simple {
         outputStream.flush();
         outputStream.close();
 
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toString().trim()
+        String svg = outputStream.toString().trim()
                 .replaceAll("\\s+", " ")
                 .replaceAll(" >", ">")
                 .replaceAll("> <", "><")
                 .replaceAll("<text [^>]+>[^<]*</text>", "")
-                .replaceAll("<g [^>]+></g>", "").getBytes());
+                .replaceAll("<g [^>]+></g>", "");
+        if (!svg.contains("<path "))
+            return null;
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes());
         String image = readerContext.getMediaWriter().write(MediaType.SVG, "geometry.svg", inputStream);
         inputStream.close();
-
-        size(xslfSimpleShape);
 
         return image;
     }
 
-    private Rectangle2D size(XSLFSimpleShape xslfSimpleShape) {
+    private double[] getViewBox(XSLFSimpleShape xslfSimpleShape) {
+        if (!(xslfSimpleShape.getXmlObject() instanceof CTShape))
+            return null;
+
         CTCustomGeometry2D ctCustomGeometry2D = ((CTShape) xslfSimpleShape.getXmlObject()).getSpPr().getCustGeom();
         if (ctCustomGeometry2D == null || ctCustomGeometry2D.isNil())
-            return xslfSimpleShape.getAnchor();
+            return null;
 
         CTPath2DList ctPath2DList = ctCustomGeometry2D.getPathLst();
         if (ctPath2DList == null || ctPath2DList.isNil() || ctPath2DList.sizeOfPathArray() == 0)
-            return xslfSimpleShape.getAnchor();
+            return null;
 
         CTPath2D ctPath2D = ctPath2DList.getPathArray(0);
         if (ctPath2D == null || ctPath2D.isNil())
-            return xslfSimpleShape.getAnchor();
+            return null;
 
-        return new Rectangle2D.Double(0.0D, 0.0D, officeHelper.emuToPoint(ctPath2D.getW()), officeHelper.emuToPoint(ctPath2D.getH()));
+        return new double[]{officeHelper.emuToPoint(ctPath2D.getW()), officeHelper.emuToPoint(ctPath2D.getH())};
     }
 
     @Override
