@@ -32,6 +32,15 @@ public interface LuceneHelper {
     void index(String key);
 
     /**
+     * 创建索引。
+     *
+     * @param key  引用key。
+     * @param id   数据ID。
+     * @param data 数据。
+     */
+    void index(String key, String id, String data);
+
+    /**
      * 检索。
      *
      * @param key   引用key。

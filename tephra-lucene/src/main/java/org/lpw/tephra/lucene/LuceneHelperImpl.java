@@ -78,16 +78,28 @@ public class LuceneHelperImpl implements LuceneHelper {
         if (directory == null)
             return;
 
-        for (File file : files) {
-            try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig(new HanLPAnalyzer()))) {
-                Document document = new Document();
-                document.add(new StoredField("id", file.getName()));
-                document.add(new TextField("data", io.readAsString(file.getAbsolutePath()), Field.Store.YES));
-                indexWriter.addDocument(document);
-                indexWriter.flush();
-            } catch (Throwable throwable) {
-                logger.warn(throwable, "创建Lucene索引时发生异常！");
-            }
+        for (File file : files)
+            index(directory, file.getName(), io.readAsString(file.getAbsolutePath()));
+    }
+
+    @Override
+    public void index(String key, String id, String data) {
+        Directory directory = get(key);
+        if (directory == null)
+            return;
+
+        index(directory, id, data);
+    }
+
+    private void index(Directory directory, String id, String data) {
+        try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig(new HanLPAnalyzer()))) {
+            Document document = new Document();
+            document.add(new StoredField("id", id));
+            document.add(new TextField("data", data, Field.Store.YES));
+            indexWriter.addDocument(document);
+            indexWriter.flush();
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "创建Lucene索引时发生异常！");
         }
     }
 
