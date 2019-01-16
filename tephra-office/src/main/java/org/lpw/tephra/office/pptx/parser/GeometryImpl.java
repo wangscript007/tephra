@@ -51,16 +51,14 @@ public class GeometryImpl implements Simple {
 
         zeros.forEach(zero -> zero.zero(xslfSimpleShape, shape));
         try {
-            String geometry = save(readerContext, xslfSimpleShape);
-            if (geometry != null)
-                shape.put("geometry", geometry);
+            parseGeometry(readerContext, xslfSimpleShape, shape);
         } catch (Exception e) {
             logger.warn(e, "保存图形[{}]为SVG图片文件时发生异常！", xslfSimpleShape);
         }
         zeros.forEach(zero -> zero.reset(xslfSimpleShape, shape));
     }
 
-    private String save(ReaderContext readerContext, XSLFSimpleShape xslfSimpleShape) throws IOException {
+    private void parseGeometry(ReaderContext readerContext, XSLFSimpleShape xslfSimpleShape, JSONObject shape) throws IOException {
         SVGGraphics2D svgGraphics2D = new SVGGraphics2D(GenericDOMImplementation.getDOMImplementation()
                 .createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null));
         Rectangle2D rectangle2D = xslfSimpleShape.getAnchor();
@@ -83,13 +81,13 @@ public class GeometryImpl implements Simple {
                 .replaceAll("<text [^>]+>[^<]*</text>", "")
                 .replaceAll("<g [^>]+></g>", "");
         if (!svg.contains("<path "))
-            return null;
+            return;
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes());
-        String image = readerContext.getMediaWriter().write(MediaType.SVG, "geometry.svg", inputStream);
+        String geometry = readerContext.getMediaWriter().write(MediaType.SVG, "geometry.svg", inputStream);
         inputStream.close();
 
-        return image;
+        shape.put("geometry", geometry);
     }
 
     private double[] getViewBox(XSLFSimpleShape xslfSimpleShape) {
