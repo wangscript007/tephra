@@ -14,8 +14,6 @@ import org.lpw.tephra.office.pptx.parser.Parser;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Numeric;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -151,25 +149,16 @@ public class PptxReaderImpl implements PptxReader {
 
     private void parseGroup(ReaderContext readerContext, XSLFGroupShape xslfGroupShape, JSONArray shapes,
                             Map<Integer, String> layout, Map<Integer, JSONObject> fromLayout) {
-        CTGroupShape ctGroupShape = (CTGroupShape) xslfGroupShape.getXmlObject();
-        CTGroupTransform2D ctGroupTransform2D = ctGroupShape.getGrpSpPr().getXfrm();
-        int chX = officeHelper.emuToPixel(ctGroupTransform2D.getChOff().getX() - ctGroupTransform2D.getOff().getX());
-        int chY = officeHelper.emuToPixel(ctGroupTransform2D.getChOff().getY() - ctGroupTransform2D.getOff().getY());
-        double chW = 1.0D * ctGroupTransform2D.getExt().getCx() / ctGroupTransform2D.getChExt().getCx();
-        double chH = 1.0D * ctGroupTransform2D.getExt().getCy() / ctGroupTransform2D.getChExt().getCy();
-
-        System.out.println("1111:"+xslfGroupShape.getAnchor());
-        System.out.println("2222:"+xslfGroupShape.getInteriorAnchor());
-
         JSONArray array = new JSONArray();
         parseShapes(readerContext, xslfGroupShape.getShapes(), array, layout, fromLayout);
+        double rate = xslfGroupShape.getAnchor().getWidth() / xslfGroupShape.getInteriorAnchor().getWidth();
         for (int i = 0, size = array.size(); i < size; i++) {
             JSONObject object = array.getJSONObject(i);
-//            JSONObject anchor = object.getJSONObject("anchor");
-//            anchor.put("x", anchor.getIntValue("x") - chX);
-//            anchor.put("y", anchor.getIntValue("y") - chY);
-//            anchor.put("width", numeric.toInt(anchor.getIntValue("width") * chW));
-//            anchor.put("height", numeric.toInt(anchor.getIntValue("height") * chH));
+            JSONObject anchor = object.getJSONObject("anchor");
+            anchor.put("x", numeric.toInt(anchor.getIntValue("x") * rate));
+            anchor.put("y", numeric.toInt(anchor.getIntValue("y") * rate));
+            anchor.put("width", numeric.toInt(anchor.getIntValue("width") * rate));
+            anchor.put("height", numeric.toInt(anchor.getIntValue("height") * rate));
             add(shapes, object);
         }
     }
