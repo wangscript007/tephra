@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.poi.xslf.usermodel.XSLFFreeformShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.lpw.tephra.office.MediaType;
@@ -46,7 +47,8 @@ public class GeometryImpl implements Simple {
 
     @Override
     public void parseShape(ReaderContext readerContext, XSLFSimpleShape xslfSimpleShape, JSONObject shape) {
-        if (xslfSimpleShape.getLineWidth() == 0.0D && xslfSimpleShape.getLineColor() == null && xslfSimpleShape.getFillColor() == null)
+        if (xslfSimpleShape.getLineWidth() == 0.0D && xslfSimpleShape.getLineColor() == null
+                && xslfSimpleShape.getFillColor() == null && !(xslfSimpleShape instanceof XSLFFreeformShape))
             return;
 
         zeros.forEach(zero -> zero.zero(xslfSimpleShape, shape));

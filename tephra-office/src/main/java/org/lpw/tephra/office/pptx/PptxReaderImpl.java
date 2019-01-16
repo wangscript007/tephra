@@ -105,6 +105,10 @@ public class PptxReaderImpl implements PptxReader {
         JSONObject background = layout.containsKey(0) ? json.toObject(layout.get(0)) : new JSONObject();
         parser.parseShape(readerContext, xslfBackground, background);
         background.remove("anchor");
+
+        if (xslfBackground.getFillColor() != null)
+            background.put("color", officeHelper.colorToJson(xslfBackground.getFillColor()));
+
         if (background.isEmpty())
             return;
 
