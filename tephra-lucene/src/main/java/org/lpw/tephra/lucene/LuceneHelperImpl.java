@@ -74,16 +74,21 @@ public class LuceneHelperImpl implements LuceneHelper {
         if (files == null || files.length == 0)
             return;
 
-        try (IndexWriter indexWriter = new IndexWriter(get(key), new IndexWriterConfig(new HanLPAnalyzer()))) {
-            for (File file : files) {
+        Directory directory = get(key);
+        if (directory == null)
+            return;
+
+        IndexWriterConfig config = new IndexWriterConfig(new HanLPAnalyzer());
+        for (File file : files) {
+            try (IndexWriter indexWriter = new IndexWriter(directory, config)) {
                 Document document = new Document();
                 document.add(new StoredField("id", file.getName()));
                 document.add(new TextField("data", io.readAsString(file.getAbsolutePath()), Field.Store.YES));
                 indexWriter.addDocument(document);
                 indexWriter.flush();
+            } catch (Throwable throwable) {
+                logger.warn(throwable, "创建Lucene索引时发生异常！");
             }
-        } catch (Throwable throwable) {
-            logger.warn(throwable, "创建Lucene索引时发生异常！");
         }
     }
 
@@ -142,7 +147,7 @@ public class LuceneHelperImpl implements LuceneHelper {
         return list;
     }
 
-    private Directory get(String key) throws IOException {
+    private Directory get(String key) {
         if (map.containsKey(key))
             return map.get(key);
 
@@ -150,8 +155,12 @@ public class LuceneHelperImpl implements LuceneHelper {
         io.mkdirs(path.toFile());
         if (logger.isInfoEnable())
             logger.info("设置Lucene索引根目录[{}:{}]。", key, path);
-        Directory directory = FSDirectory.open(path);
-        map.put(key, directory);
+        Directory directory = null;
+        try {
+            map.put(key, directory = FSDirectory.open(path));
+        } catch (IOException e) {
+            logger.warn(e, "打开Lucene索引目录[{}:{}]时发生异常！", key, path);
+        }
 
         return directory;
     }
