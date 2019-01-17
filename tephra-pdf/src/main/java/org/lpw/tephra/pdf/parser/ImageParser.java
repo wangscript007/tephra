@@ -1,5 +1,7 @@
 package org.lpw.tephra.pdf.parser;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.pdfbox.contentstream.PDFStreamEngine;
 import org.apache.pdfbox.contentstream.operator.DrawObject;
 import org.apache.pdfbox.contentstream.operator.Operator;
@@ -13,6 +15,9 @@ import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.util.Matrix;
+import org.lpw.tephra.pdf.MediaType;
+import org.lpw.tephra.pdf.MediaWriter;
+import org.lpw.tephra.pdf.PdfHelper;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,8 +26,16 @@ import java.util.List;
  * @author lpw
  */
 public class ImageParser extends PDFStreamEngine {
-    public ImageParser() {
+    private JSONArray array;
+    private PdfHelper pdfHelper;
+    private MediaWriter mediaWriter;
+
+    public ImageParser(PdfHelper pdfHelper, MediaWriter mediaWriter) {
         super();
+
+        array = new JSONArray();
+        this.pdfHelper = pdfHelper;
+        this.mediaWriter = mediaWriter;
 
         addOperator(new Concatenate());
         addOperator(new DrawObject());
@@ -50,8 +63,20 @@ public class ImageParser extends PDFStreamEngine {
 
         PDImageXObject pdImageXObject = (PDImageXObject) pdxObject;
         Matrix matrix = getGraphicsState().getCurrentTransformationMatrix();
-        System.out.println(pdImageXObject.getSuffix() + ";" + pdImageXObject.getWidth() + ";" + pdImageXObject.getHeight() + ";"
-                + matrix.getTranslateX() + ";" + matrix.getTranslateY());
+        JSONObject object = new JSONObject();
+        JSONObject anchor = new JSONObject();
+        anchor.put("x", pdfHelper.pointToPixel(matrix.getTranslateX()));
+        anchor.put("y", pdfHelper.pointToPixel(matrix.getTranslateY()));
+        anchor.put("width", pdImageXObject.getWidth());
+        anchor.put("height", pdImageXObject.getHeight());
+        object.put("anchor",anchor);
+
+        JSONObject image=new JSONObject();
+        MediaType mediaType = pdImageXObject.getSuffix().equals("png") ? MediaType.Png : MediaType.Jpeg;
+        image.put("contentType", mediaType.getContentType());
+        image.put("url", mediaWriter.write(mediaType, "pdf." + pdImageXObject.getSuffix(), pdImageXObject.createInputStream()));
+        object.put("image",image);
+        array.add(object);
     }
 
     private COSName findName(List<COSBase> operands) {
@@ -60,5 +85,9 @@ public class ImageParser extends PDFStreamEngine {
                 return (COSName) cosBase;
 
         return null;
+    }
+
+    public JSONArray getArray() {
+        return array;
     }
 }

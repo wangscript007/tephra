@@ -21,7 +21,7 @@ public enum MediaType {
     /**
      * SVG图片。
      */
-    SVG("image/svg+xml");
+    Svg("image/svg+xml");
 
     private String contentType;
 
