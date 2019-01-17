@@ -19,7 +19,10 @@ import org.lpw.tephra.pdf.MediaType;
 import org.lpw.tephra.pdf.MediaWriter;
 import org.lpw.tephra.pdf.PdfHelper;
 
+import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.List;
 
 /**
@@ -79,7 +82,7 @@ public class ImageParser extends PDFStreamEngine {
 
         MediaType mediaType = pdImageXObject.getSuffix().equals("png") ? MediaType.Png : MediaType.Jpeg;
         image.put("contentType", mediaType.getContentType());
-        image.put("url", mediaWriter.write(mediaType, "pdf." + pdImageXObject.getSuffix(), pdImageXObject.createInputStream()));
+        image.put("url", getUrl(pdImageXObject, mediaWriter, mediaType));
         object.put("image", image);
         array.add(object);
     }
@@ -90,6 +93,15 @@ public class ImageParser extends PDFStreamEngine {
                 return (COSName) cosBase;
 
         return null;
+    }
+
+    private String getUrl(PDImageXObject pdImageXObject, MediaWriter mediaWriter, MediaType mediaType) throws IOException {
+        PipedOutputStream outputStream = new PipedOutputStream();
+        ImageIO.write(pdImageXObject.getImage(), pdImageXObject.getSuffix().toUpperCase(), outputStream);
+        String url = mediaWriter.write(mediaType, "pdf." + pdImageXObject.getSuffix(), new PipedInputStream(outputStream));
+        outputStream.close();
+
+        return url;
     }
 
     public JSONArray getArray() {
