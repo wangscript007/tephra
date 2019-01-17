@@ -18,6 +18,7 @@
         <module>tephra-chrome</module>
         <module>tephra-office</module>
         <module>tephra-lucene</module>
+        <module>tephra-pdf</module>
         <module>tephra-carousel</module>
         <module>tephra-hadoop</module>
         <module>tephra-web</module>
