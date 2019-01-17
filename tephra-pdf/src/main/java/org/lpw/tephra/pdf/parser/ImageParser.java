@@ -20,9 +20,9 @@ import org.lpw.tephra.pdf.MediaWriter;
 import org.lpw.tephra.pdf.PdfHelper;
 
 import javax.imageio.ImageIO;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.util.List;
 
 /**
@@ -32,13 +32,15 @@ public class ImageParser extends PDFStreamEngine {
     private JSONArray array;
     private PdfHelper pdfHelper;
     private MediaWriter mediaWriter;
+    private int pageHeight;
 
-    public ImageParser(PdfHelper pdfHelper, MediaWriter mediaWriter) {
+    public ImageParser(PdfHelper pdfHelper, MediaWriter mediaWriter, int pageHeight) {
         super();
 
         array = new JSONArray();
         this.pdfHelper = pdfHelper;
         this.mediaWriter = mediaWriter;
+        this.pageHeight = pageHeight;
 
         addOperator(new Concatenate());
         addOperator(new DrawObject());
@@ -68,10 +70,11 @@ public class ImageParser extends PDFStreamEngine {
         Matrix matrix = getGraphicsState().getCurrentTransformationMatrix();
         JSONObject object = new JSONObject();
         JSONObject anchor = new JSONObject();
+        anchor.put("width", pdfHelper.pointToPixel(matrix.getScalingFactorX()));
+        int height = pdfHelper.pointToPixel(matrix.getScalingFactorY());
+        anchor.put("height", height);
         anchor.put("x", pdfHelper.pointToPixel(matrix.getTranslateX()));
-        anchor.put("y", pdfHelper.pointToPixel(matrix.getTranslateY()));
-        anchor.put("width", pdImageXObject.getWidth());
-        anchor.put("height", pdImageXObject.getHeight());
+        anchor.put("y", pageHeight - height - pdfHelper.pointToPixel(matrix.getTranslateY()));
         object.put("anchor", anchor);
 
         JSONObject image = new JSONObject();
@@ -96,13 +99,13 @@ public class ImageParser extends PDFStreamEngine {
     }
 
     private String getUrl(PDImageXObject pdImageXObject, MediaWriter mediaWriter, MediaType mediaType) throws IOException {
-        PipedOutputStream outputStream = new PipedOutputStream();
-        PipedInputStream inputStream = new PipedInputStream();
-        inputStream.connect(outputStream);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageIO.write(pdImageXObject.getImage(), pdImageXObject.getSuffix().toUpperCase(), outputStream);
+        outputStream.close();
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
         String url = mediaWriter.write(mediaType, "pdf." + pdImageXObject.getSuffix(), inputStream);
         inputStream.close();
-        outputStream.close();
 
         return url;
     }

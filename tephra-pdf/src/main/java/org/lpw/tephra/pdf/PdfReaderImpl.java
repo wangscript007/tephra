@@ -27,6 +27,7 @@ public class PdfReaderImpl implements PdfReader {
     public JSONObject read(InputStream inputStream, MediaWriter mediaWriter) {
         JSONObject object = new JSONObject();
         JSONArray pages = new JSONArray();
+        int pageHeight = 0;
         try (PDDocument pdDocument = PDDocument.load(inputStream)) {
             int size = pdDocument.getNumberOfPages();
             if (size == 0)
@@ -34,11 +35,13 @@ public class PdfReaderImpl implements PdfReader {
 
             for (int i = 0; i < size; i++) {
                 PDPage pdPage = pdDocument.getPage(i);
-                if (i == 0)
+                if (i == 0) {
                     parseSize(object, pdPage);
+                    pageHeight = object.getJSONObject("size").getIntValue("height");
+                }
 
                 JSONArray elements = new JSONArray();
-                parseImage(elements, pdPage, mediaWriter);
+                parseImage(elements, pdPage, mediaWriter, pageHeight);
                 JSONObject page = new JSONObject();
                 page.put("elements", elements);
                 pages.add(page);
@@ -62,8 +65,8 @@ public class PdfReaderImpl implements PdfReader {
         object.put("size", size);
     }
 
-    private void parseImage(JSONArray elements, PDPage pdPage, MediaWriter mediaWriter) throws IOException {
-        ImageParser imageParser = new ImageParser(pdfHelper, mediaWriter);
+    private void parseImage(JSONArray elements, PDPage pdPage, MediaWriter mediaWriter, int pageHeight) throws IOException {
+        ImageParser imageParser = new ImageParser(pdfHelper, mediaWriter, pageHeight);
         imageParser.processPage(pdPage);
         JSONArray array = imageParser.getArray();
         if (!array.isEmpty())
