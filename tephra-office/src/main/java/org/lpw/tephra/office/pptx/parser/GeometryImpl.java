@@ -86,7 +86,7 @@ public class GeometryImpl implements Simple {
             return;
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes());
-        String geometry = readerContext.getMediaWriter().write(MediaType.SVG, "geometry.svg", inputStream);
+        String geometry = readerContext.getMediaWriter().write(MediaType.Svg, "geometry.svg", inputStream);
         inputStream.close();
 
         shape.put("geometry", geometry);
