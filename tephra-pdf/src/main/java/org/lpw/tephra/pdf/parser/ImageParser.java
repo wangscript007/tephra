@@ -69,13 +69,18 @@ public class ImageParser extends PDFStreamEngine {
         anchor.put("y", pdfHelper.pointToPixel(matrix.getTranslateY()));
         anchor.put("width", pdImageXObject.getWidth());
         anchor.put("height", pdImageXObject.getHeight());
-        object.put("anchor",anchor);
+        object.put("anchor", anchor);
 
-        JSONObject image=new JSONObject();
+        JSONObject size = new JSONObject();
+        size.put("width", pdImageXObject.getWidth());
+        size.put("height", pdImageXObject.getHeight());
+        object.put("size", size);
+
+        JSONObject image = new JSONObject();
         MediaType mediaType = pdImageXObject.getSuffix().equals("png") ? MediaType.Png : MediaType.Jpeg;
         image.put("contentType", mediaType.getContentType());
         image.put("url", mediaWriter.write(mediaType, "pdf." + pdImageXObject.getSuffix(), pdImageXObject.createInputStream()));
-        object.put("image",image);
+        object.put("image", image);
         array.add(object);
     }
 
