@@ -98,7 +98,10 @@ public class ImageParser extends PDFStreamEngine {
     private String getUrl(PDImageXObject pdImageXObject, MediaWriter mediaWriter, MediaType mediaType) throws IOException {
         PipedOutputStream outputStream = new PipedOutputStream();
         ImageIO.write(pdImageXObject.getImage(), pdImageXObject.getSuffix().toUpperCase(), outputStream);
-        String url = mediaWriter.write(mediaType, "pdf." + pdImageXObject.getSuffix(), new PipedInputStream(outputStream));
+        PipedInputStream inputStream = new PipedInputStream();
+        inputStream.connect(outputStream);
+        String url = mediaWriter.write(mediaType, "pdf." + pdImageXObject.getSuffix(), inputStream);
+        inputStream.close();
         outputStream.close();
 
         return url;
