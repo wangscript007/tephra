@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.common.PDStream;
 import org.lpw.tephra.pdf.parser.ImageParser;
 import org.lpw.tephra.pdf.parser.TextParser;
 import org.lpw.tephra.util.Logger;
@@ -43,13 +42,13 @@ public class PdfReaderImpl implements PdfReader {
 
                 JSONArray elements = new JSONArray();
                 parseImage(elements, pdPage, mediaWriter, pageHeight);
+                parseText(elements, pdDocument, i);
+
                 JSONObject page = new JSONObject();
                 page.put("elements", elements);
                 pages.add(page);
             }
 
-            TextParser textParser = new TextParser();
-            textParser.getText(pdDocument);
         } catch (IOException e) {
             logger.warn(e, "解析PDF数据时发生异常！");
         }
@@ -69,11 +68,19 @@ public class PdfReaderImpl implements PdfReader {
     private void parseImage(JSONArray elements, PDPage pdPage, MediaWriter mediaWriter, int pageHeight) throws IOException {
         ImageParser imageParser = new ImageParser(pdfHelper, mediaWriter, pageHeight);
         imageParser.processPage(pdPage);
-        JSONArray array = imageParser.getArray();
-        if (!array.isEmpty())
-            elements.addAll(array);
+        merge(elements, imageParser.getArray());
     }
 
-    private void parseText(JSONArray elements, PDPage pdPage){
+    private void parseText(JSONArray elements, PDDocument pdDocument, int page) throws IOException {
+        TextParser textParser = new TextParser(pdfHelper);
+        textParser.setStartPage(page + 1);
+        textParser.setEndPage(page + 1);
+        textParser.getText(pdDocument);
+        merge(elements, textParser.getArray());
+    }
+
+    private void merge(JSONArray elements, JSONArray array) {
+        if (!array.isEmpty())
+            elements.addAll(array);
     }
 }
