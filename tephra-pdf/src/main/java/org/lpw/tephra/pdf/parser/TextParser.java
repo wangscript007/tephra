@@ -14,12 +14,14 @@ import java.io.IOException;
  */
 public class TextParser extends PDFTextStripper {
     private PdfHelper pdfHelper;
+    private int pageHeight;
     private JSONArray array;
 
-    public TextParser(PdfHelper pdfHelper) throws IOException {
+    public TextParser(PdfHelper pdfHelper,int pageHeight) throws IOException {
         super();
 
         this.pdfHelper = pdfHelper;
+        this.pageHeight=pageHeight;
         array = new JSONArray();
 
         setSortByPosition(true);
@@ -29,11 +31,12 @@ public class TextParser extends PDFTextStripper {
     protected void processTextPosition(TextPosition textPosition) {
         JSONObject object = new JSONObject();
         JSONObject anchor = new JSONObject();
-        Matrix matrix = textPosition.getFont().getFontMatrix();
-        anchor.put("x", pdfHelper.pointToPixel(matrix.getTranslateX()));
-        anchor.put("y", pdfHelper.pointToPixel(matrix.getTranslateY()));
+        Matrix matrix = textPosition.getTextMatrix();
         anchor.put("width", pdfHelper.pointToPixel(matrix.getScalingFactorX()));
-        anchor.put("height", pdfHelper.pointToPixel(matrix.getScalingFactorY()));
+        int height = pdfHelper.pointToPixel(matrix.getScalingFactorY());
+        anchor.put("height", height);
+        anchor.put("x", pdfHelper.pointToPixel(matrix.getTranslateX()));
+        anchor.put("y", pageHeight - height - pdfHelper.pointToPixel(matrix.getTranslateY()));
         object.put("anchor", anchor);
 
 

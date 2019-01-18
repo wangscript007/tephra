@@ -42,7 +42,7 @@ public class PdfReaderImpl implements PdfReader {
 
                 JSONArray elements = new JSONArray();
                 parseImage(elements, pdPage, mediaWriter, pageHeight);
-                parseText(elements, pdDocument, i);
+                parseText(elements, pdDocument, pageHeight, i);
 
                 JSONObject page = new JSONObject();
                 page.put("elements", elements);
@@ -71,8 +71,8 @@ public class PdfReaderImpl implements PdfReader {
         merge(elements, imageParser.getArray());
     }
 
-    private void parseText(JSONArray elements, PDDocument pdDocument, int page) throws IOException {
-        TextParser textParser = new TextParser(pdfHelper);
+    private void parseText(JSONArray elements, PDDocument pdDocument, int pageHeight, int page) throws IOException {
+        TextParser textParser = new TextParser(pdfHelper, pageHeight);
         textParser.setStartPage(page + 1);
         textParser.setEndPage(page + 1);
         textParser.getText(pdDocument);
