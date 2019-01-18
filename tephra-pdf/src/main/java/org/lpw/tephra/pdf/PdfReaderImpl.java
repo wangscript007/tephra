@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDStream;
 import org.lpw.tephra.pdf.parser.ImageParser;
 import org.lpw.tephra.pdf.parser.TextParser;
 import org.lpw.tephra.util.Logger;
@@ -71,5 +72,8 @@ public class PdfReaderImpl implements PdfReader {
         JSONArray array = imageParser.getArray();
         if (!array.isEmpty())
             elements.addAll(array);
+    }
+
+    private void parseText(JSONArray elements, PDPage pdPage){
     }
 }
