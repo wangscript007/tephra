@@ -29,18 +29,18 @@ import java.util.List;
  * @author lpw
  */
 public class ImageParser extends PDFStreamEngine {
-    private JSONArray array;
     private PdfHelper pdfHelper;
     private MediaWriter mediaWriter;
     private int pageHeight;
+    private JSONArray array;
 
     public ImageParser(PdfHelper pdfHelper, MediaWriter mediaWriter, int pageHeight) {
         super();
 
-        array = new JSONArray();
         this.pdfHelper = pdfHelper;
         this.mediaWriter = mediaWriter;
         this.pageHeight = pageHeight;
+        array = new JSONArray();
 
         addOperator(new Concatenate());
         addOperator(new DrawObject());

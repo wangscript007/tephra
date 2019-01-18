@@ -12,14 +12,14 @@ import java.io.IOException;
  * @author lpw
  */
 public class TextParser extends PDFTextStripper {
-    private JSONArray array;
     private PdfHelper pdfHelper;
+    private JSONArray array;
 
     public TextParser(PdfHelper pdfHelper) throws IOException {
         super();
 
-        array = new JSONArray();
         this.pdfHelper = pdfHelper;
+        array = new JSONArray();
 
         setSortByPosition(true);
     }
@@ -37,7 +37,6 @@ public class TextParser extends PDFTextStripper {
         JSONArray words = new JSONArray();
         JSONObject word = new JSONObject();
         word.put("fontFamily", textPosition.getFont().getFontDescriptor().getFontFamily());
-        word.put("fontSize", pdfHelper.pointToPixel(textPosition.getFontSizeInPt()));
         word.put("word", textPosition.getUnicode());
         words.add(word);
 
@@ -46,6 +45,7 @@ public class TextParser extends PDFTextStripper {
         JSONArray paragraphs = new JSONArray();
         paragraphs.add(paragraph);
         JSONObject text = new JSONObject();
+        text.put("fontSize", pdfHelper.pointToPixel(textPosition.getFontSizeInPt()));
         text.put("paragraphs", paragraphs);
         object.put("text", text);
         array.add(object);
