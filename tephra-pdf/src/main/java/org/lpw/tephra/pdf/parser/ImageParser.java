@@ -66,7 +66,6 @@ public class ImageParser extends PDFStreamEngine {
         if (!(pdxObject instanceof PDImageXObject))
             return;
 
-        PDImageXObject pdImageXObject = (PDImageXObject) pdxObject;
         Matrix matrix = getGraphicsState().getCurrentTransformationMatrix();
         JSONObject object = new JSONObject();
         JSONObject anchor = new JSONObject();
@@ -79,6 +78,7 @@ public class ImageParser extends PDFStreamEngine {
 
         JSONObject image = new JSONObject();
         JSONObject size = new JSONObject();
+        PDImageXObject pdImageXObject = (PDImageXObject) pdxObject;
         size.put("width", pdImageXObject.getWidth());
         size.put("height", pdImageXObject.getHeight());
         image.put("size", size);

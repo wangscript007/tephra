@@ -2,15 +2,26 @@ package org.lpw.tephra.pdf.parser;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingColor;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingColorN;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingColorSpace;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingDeviceCMYKColor;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingDeviceGrayColor;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingDeviceRGBColor;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingColor;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingColorN;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingColorSpace;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceCMYKColor;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceGrayColor;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceRGBColor;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 import org.apache.pdfbox.util.Matrix;
 import org.lpw.tephra.pdf.PdfHelper;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,9 +30,12 @@ import java.util.Map;
 public class TextParser extends PDFTextStripper {
     private PdfHelper pdfHelper;
     private int pageHeight;
-    private List<List<TextPosition>> positions;
-    private Matrix prevMatrix;
     private JSONArray array;
+    private JSONArray words;
+    private JSONObject word;
+    private double width;
+    private TextPosition prevTextPosition;
+    private JSONObject anchor;
     private String[] merges = {"horizontalAlign", "fontFamily", "fontSize", "color", "bold", "italic", "underline", "strikethrough",
             "subscript", "superscript"};
 
@@ -30,81 +44,86 @@ public class TextParser extends PDFTextStripper {
 
         this.pdfHelper = pdfHelper;
         this.pageHeight = pageHeight;
-        positions = new ArrayList<>();
+        array = new JSONArray();
 
         setSortByPosition(true);
+        addOperator(new SetStrokingColorSpace());
+        addOperator(new SetNonStrokingColorSpace());
+        addOperator(new SetStrokingDeviceCMYKColor());
+        addOperator(new SetNonStrokingDeviceCMYKColor());
+        addOperator(new SetNonStrokingDeviceRGBColor());
+        addOperator(new SetStrokingDeviceRGBColor());
+        addOperator(new SetNonStrokingDeviceGrayColor());
+        addOperator(new SetStrokingDeviceGrayColor());
+        addOperator(new SetStrokingColor());
+        addOperator(new SetStrokingColorN());
+        addOperator(new SetNonStrokingColor());
+        addOperator(new SetNonStrokingColorN());
     }
 
     @Override
     protected void processTextPosition(TextPosition textPosition) {
+        Matrix prevMatrix;
         Matrix matrix = textPosition.getTextMatrix();
-        if (prevMatrix == null || prevMatrix.getTranslateY() != matrix.getTranslateY()
-                || prevMatrix.getTranslateX() + prevMatrix.getScalingFactorX() < matrix.getTranslateX() - 0.05D)
-            positions.add(new ArrayList<>());
+        if (prevTextPosition == null || (prevMatrix = prevTextPosition.getTextMatrix()).getTranslateY() != matrix.getTranslateY()
+                || prevMatrix.getTranslateX() + prevMatrix.getScalingFactorX() < matrix.getTranslateX() - 0.05D) {
+            addLine();
+            words = new JSONArray();
+            word=null;
+            width = 0.0D;
 
-        prevMatrix = matrix;
-        positions.get(positions.size() - 1).add(textPosition);
-    }
-
-    public JSONArray getArray() {
-        if (array == null)
-            parse();
-
-        return array;
-    }
-
-    private void parse() {
-        array = new JSONArray();
-        positions.forEach(list -> {
-            JSONArray words = new JSONArray();
-            JSONObject word = new JSONObject();
-            double width = 0;
-            StringBuilder sb = new StringBuilder();
-            TextPosition prevTextPosition = null;
-            for (TextPosition textPosition : list) {
-                if (prevTextPosition != null && prevTextPosition.getFontSizeInPt() != textPosition.getFontSizeInPt()) {
-                    addWord(words, word, sb, textPosition);
-                    word = new JSONObject();
-                    sb = new StringBuilder();
-                }
-                width += textPosition.getTextMatrix().getScalingFactorX();
-                sb.append(textPosition.getUnicode());
-
-                prevTextPosition = textPosition;
-            }
-            addWord(words, word, sb, prevTextPosition);
-
-            JSONObject paragraph = new JSONObject();
-            paragraph.put("words", words);
-            merge(paragraph, words);
-            JSONArray paragraphs = new JSONArray();
-            paragraphs.add(paragraph);
-            JSONObject text = new JSONObject();
-            text.put("paragraphs", paragraphs);
-            merge(text, paragraphs);
-            JSONObject object = new JSONObject();
-            object.put("text", text);
-
-            JSONObject anchor = new JSONObject();
-            Matrix matrix = list.get(0).getTextMatrix();
-            anchor.put("width", pdfHelper.pointToPixel(width));
+            anchor = new JSONObject();
             int height = pdfHelper.pointToPixel(matrix.getScalingFactorY());
             anchor.put("height", height);
             anchor.put("x", pdfHelper.pointToPixel(matrix.getTranslateX()));
             anchor.put("y", pageHeight - height - pdfHelper.pointToPixel(matrix.getTranslateY()));
-            object.put("anchor", anchor);
-            array.add(object);
-        });
+        }
+
+        addWord(textPosition);
+        width += matrix.getScalingFactorX();
+        prevTextPosition = textPosition;
     }
 
-    private void addWord(JSONArray words, JSONObject word, StringBuilder sb, TextPosition textPosition) {
-        word.put("word", sb.toString());
-        setStyle(word, textPosition);
+    private void addLine() {
+        if (prevTextPosition == null || word==null||word.isEmpty())
+            return;
+
         words.add(word);
+        JSONObject paragraph = new JSONObject();
+        merge(paragraph, words);
+        paragraph.put("words", words);
+        JSONArray paragraphs = new JSONArray();
+        paragraphs.add(paragraph);
+        JSONObject text = new JSONObject();
+        merge(text, paragraphs);
+        text.put("paragraphs", paragraphs);
+        JSONObject object = new JSONObject();
+        object.put("text", text);
+
+        anchor.put("width", pdfHelper.pointToPixel(width));
+        object.put("anchor", anchor);
+        array.add(object);
     }
 
-    private void setStyle(JSONObject object, TextPosition textPosition) {
-        object.put("fontSize", textPosition.getFontSizeInPt());
+    private void addWord(TextPosition textPosition) {
+        JSONObject color = pdfHelper.toColor(getGraphicsState().getNonStrokingColor().getComponents());
+        if (word == null)
+            newWord(textPosition, color);
+        else if (notSameStyle(textPosition, color)) {
+            words.add(word);
+            newWord(textPosition, color);
+        }
+        word.put("word", word.containsKey("word") ? (word.getString("word") + textPosition.getUnicode()) : textPosition.getUnicode());
+    }
+
+    private boolean notSameStyle(TextPosition textPosition, JSONObject color) {
+        return word.getFloatValue("fontSize") != textPosition.getFontSizeInPt() || !word.getJSONObject("color").equals(color);
+    }
+
+    private void newWord(TextPosition textPosition, JSONObject color) {
+        word = new JSONObject();
+        word.put("fontSize", textPosition.getFontSizeInPt());
+        word.put("color", color);
     }
 
     private void merge(JSONObject object, JSONArray array) {
@@ -154,5 +173,11 @@ public class TextParser extends PDFTextStripper {
                     obj.remove(key);
             }
         }
+    }
+
+    public JSONArray getArray() {
+        addLine();
+
+        return array;
     }
 }
