@@ -20,7 +20,6 @@ import org.apache.pdfbox.util.Matrix;
 import org.lpw.tephra.pdf.PdfHelper;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,10 +65,10 @@ public class TextParser extends PDFTextStripper {
         Matrix prevMatrix;
         Matrix matrix = textPosition.getTextMatrix();
         if (prevTextPosition == null || (prevMatrix = prevTextPosition.getTextMatrix()).getTranslateY() != matrix.getTranslateY()
-                || prevMatrix.getTranslateX() + prevMatrix.getScalingFactorX() < matrix.getTranslateX() - 0.05D) {
+                || prevMatrix.getTranslateX() + prevMatrix.getScalingFactorX() < matrix.getTranslateX() - 0.1D * textPosition.getFontSizeInPt()) {
             addLine();
             words = new JSONArray();
-            word=null;
+            word = null;
             width = 0.0D;
 
             anchor = new JSONObject();
@@ -85,7 +84,7 @@ public class TextParser extends PDFTextStripper {
     }
 
     private void addLine() {
-        if (prevTextPosition == null || word==null||word.isEmpty())
+        if (prevTextPosition == null || word == null || word.isEmpty())
             return;
 
         words.add(word);
