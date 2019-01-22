@@ -125,7 +125,7 @@ public class TextParser extends PDFTextStripper {
     }
 
     private void addWord(TextPosition textPosition) {
-        JSONObject color = pdfHelper.toColor(getGraphicsState().getNonStrokingColor().getComponents());
+        JSONObject color = pdfHelper.toJsonColor(getGraphicsState().getNonStrokingColor().getComponents());
         if (word == null)
             newWord(textPosition, color);
         else if (notSameStyle(textPosition, color)) {

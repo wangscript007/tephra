@@ -2,6 +2,8 @@ package org.lpw.tephra.pdf;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.awt.Color;
+
 /**
  * @author lpw
  */
@@ -20,5 +22,13 @@ public interface PdfHelper {
      * @param fs 颜色值数组。
      * @return 颜色值JSON对象。
      */
-    JSONObject toColor(float[] fs);
+    JSONObject toJsonColor(float[] fs);
+
+    /**
+     * 转化为RGB颜色值。
+     *
+     * @param fs 颜色值数组。
+     * @return 颜色值对象。
+     */
+    Color toColor(float[] fs);
 }

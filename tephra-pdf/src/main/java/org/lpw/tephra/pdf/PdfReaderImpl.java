@@ -66,7 +66,7 @@ public class PdfReaderImpl implements PdfReader {
     }
 
     private void parseImage(JSONArray elements, PDPage pdPage, MediaWriter mediaWriter, int pageHeight) throws IOException {
-        ImageParser imageParser = new ImageParser(pdfHelper, mediaWriter, pageHeight);
+        ImageParser imageParser = new ImageParser(pdfHelper, mediaWriter, pdPage, pageHeight);
         imageParser.processPage(pdPage);
         merge(elements, imageParser.getArray());
     }
