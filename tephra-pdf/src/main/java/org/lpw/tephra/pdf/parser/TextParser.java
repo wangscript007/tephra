@@ -14,6 +14,14 @@ import org.apache.pdfbox.contentstream.operator.color.SetStrokingColorSpace;
 import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceCMYKColor;
 import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceGrayColor;
 import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceRGBColor;
+import org.apache.pdfbox.contentstream.operator.state.SetFlatness;
+import org.apache.pdfbox.contentstream.operator.state.SetLineCapStyle;
+import org.apache.pdfbox.contentstream.operator.state.SetLineDashPattern;
+import org.apache.pdfbox.contentstream.operator.state.SetLineJoinStyle;
+import org.apache.pdfbox.contentstream.operator.state.SetLineMiterLimit;
+import org.apache.pdfbox.contentstream.operator.state.SetLineWidth;
+import org.apache.pdfbox.contentstream.operator.state.SetRenderingIntent;
+import org.apache.pdfbox.contentstream.operator.text.SetFontAndSize;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 import org.apache.pdfbox.util.Matrix;
@@ -46,26 +54,38 @@ public class TextParser extends PDFTextStripper {
         array = new JSONArray();
 
         setSortByPosition(true);
+        setSuppressDuplicateOverlappingText(true);
+
         addOperator(new SetStrokingColorSpace());
         addOperator(new SetNonStrokingColorSpace());
+        addOperator(new SetLineDashPattern());
+        addOperator(new SetStrokingDeviceGrayColor());
+        addOperator(new SetNonStrokingDeviceGrayColor());
+        addOperator(new SetFlatness());
+        addOperator(new SetLineJoinStyle());
+        addOperator(new SetLineCapStyle());
         addOperator(new SetStrokingDeviceCMYKColor());
         addOperator(new SetNonStrokingDeviceCMYKColor());
-        addOperator(new SetNonStrokingDeviceRGBColor());
+        addOperator(new SetLineMiterLimit());
         addOperator(new SetStrokingDeviceRGBColor());
-        addOperator(new SetNonStrokingDeviceGrayColor());
-        addOperator(new SetStrokingDeviceGrayColor());
+        addOperator(new SetNonStrokingDeviceRGBColor());
+        addOperator(new SetRenderingIntent());
         addOperator(new SetStrokingColor());
-        addOperator(new SetStrokingColorN());
         addOperator(new SetNonStrokingColor());
+        addOperator(new SetStrokingColorN());
         addOperator(new SetNonStrokingColorN());
+        addOperator(new SetFontAndSize());
+        addOperator(new SetLineWidth());
     }
 
     @Override
     protected void processTextPosition(TextPosition textPosition) {
+        super.processTextPosition(textPosition);
+
         Matrix prevMatrix;
         Matrix matrix = textPosition.getTextMatrix();
         if (prevTextPosition == null || (prevMatrix = prevTextPosition.getTextMatrix()).getTranslateY() != matrix.getTranslateY()
-                || prevMatrix.getTranslateX() + prevMatrix.getScalingFactorX() < matrix.getTranslateX() - 0.1D * textPosition.getFontSizeInPt()) {
+                || prevMatrix.getTranslateX() + prevMatrix.getScalingFactorX() < matrix.getTranslateX() - 0.01D * matrix.getScalingFactorX()) {
             addLine();
             words = new JSONArray();
             word = null;
@@ -116,11 +136,14 @@ public class TextParser extends PDFTextStripper {
     }
 
     private boolean notSameStyle(TextPosition textPosition, JSONObject color) {
-        return word.getFloatValue("fontSize") != textPosition.getFontSizeInPt() || !word.getJSONObject("color").equals(color);
+        return !textPosition.getFont().getName().equals(word.getString("fontFamily"))
+                || word.getFloatValue("fontSize") != textPosition.getFontSizeInPt()
+                || !word.getJSONObject("color").equals(color);
     }
 
     private void newWord(TextPosition textPosition, JSONObject color) {
         word = new JSONObject();
+        word.put("fontFamily", textPosition.getFont().getName());
         word.put("fontSize", textPosition.getFontSizeInPt());
         word.put("color", color);
     }

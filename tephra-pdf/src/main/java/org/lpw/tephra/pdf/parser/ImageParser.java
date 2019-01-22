@@ -55,9 +55,11 @@ public class ImageParser extends PDFStreamEngine {
         super.processOperator(operator, operands);
 
         String name = operator.getName();
-        if (!name.equals("Do"))
-            return;
+        if (name.equals("Do"))
+            image(operands);
+    }
 
+    private void image(List<COSBase> operands) throws IOException {
         COSName cosName = findName(operands);
         if (cosName == null)
             return;
