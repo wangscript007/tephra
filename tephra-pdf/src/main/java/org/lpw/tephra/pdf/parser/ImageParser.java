@@ -127,25 +127,19 @@ public class ImageParser extends PDFStreamEngine {
 
     private void geometry(String name, List<COSBase> operands) throws IOException {
         if (name.equals("m") && operands.size() == 2)
-            startPoint = prevPoint = point(operands);
-        else if (name.equals("l") && operands.size() == 2) {
-            int[] point = point(operands);
-            geometry.add(Geometry.Type.Line, prevPoint, point);
-            prevPoint = point;
-        } else if (name.equals("h") && operands.size() == 2) {
-            int[] point = point(operands);
-            geometry.add(Geometry.Type.Line, point, startPoint);
-            prevPoint = point;
-        } else if (name.equals("f") || name.equals("F") || name.equals("f*"))
+            geometry.add(Geometry.Type.MoveTo, point(operands));
+        else if ((name.equals("l") || name.equals("h")) && operands.size() == 2)
+            geometry.add(Geometry.Type.LineTo, point(operands));
+        else if (name.equals("f") || name.equals("F") || name.equals("f*"))
             draw(true, false);
     }
 
-    private int[] point(List<COSBase> operands) {
+    private double[] point(List<COSBase> operands) {
         Point2D.Float point = super.transformedPoint(((COSNumber) operands.get(0)).floatValue(), ((COSNumber) operands.get(1)).floatValue());
         AffineTransform pageTransform = createCurrentPageTransformation();
         Point2D.Float transformedPoint = (Point2D.Float) pageTransform.transform(point, null);
 
-        return new int[]{pdfHelper.pointToPixel(transformedPoint.getX()), pdfHelper.pointToPixel(transformedPoint.getY())};
+        return new double[]{transformedPoint.getX(), transformedPoint.getY()};
     }
 
     private AffineTransform createCurrentPageTransformation() {
@@ -178,15 +172,15 @@ public class ImageParser extends PDFStreamEngine {
             JSONObject object = new JSONObject();
             object.put("geometry", geometry.getUrl());
             JSONObject anchor = new JSONObject();
-            anchor.put("x", geometry.getX());
-            anchor.put("y", geometry.getY());
-            anchor.put("width", geometry.getWidth());
-            anchor.put("height", geometry.getHeight());
+            anchor.put("x", pdfHelper.pointToPixel(geometry.getX()));
+            anchor.put("y", pdfHelper.pointToPixel(geometry.getY()));
+            anchor.put("width", pdfHelper.pointToPixel(geometry.getWidth()));
+            anchor.put("height", pdfHelper.pointToPixel(geometry.getHeight()));
             object.put("anchor", anchor);
             array.add(object);
             System.out.println(object);
         }
-        geometry = new Geometry();
+        geometry.clear();
     }
 
     public JSONArray getArray() {

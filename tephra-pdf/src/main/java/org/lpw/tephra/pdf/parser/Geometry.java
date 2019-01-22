@@ -8,6 +8,7 @@ import org.lpw.tephra.pdf.MediaWriter;
 import org.w3c.dom.Element;
 
 import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,30 +22,29 @@ import java.util.List;
  */
 class Geometry {
     enum Type {
+        MoveTo,
+        LineTo,
         Line
     }
 
     private List<Type> types;
-    private List<int[]> p1s;
-    private List<int[]> p2s;
-    private int x;
-    private int y;
-    private int maxX;
-    private int maxY;
-    private int width;
-    private int height;
+    private List<double[]> points;
+    private double x;
+    private double y;
+    private double maxX;
+    private double maxY;
+    private double width;
+    private double height;
     private String url;
 
     Geometry() {
         types = new ArrayList<>();
-        p1s = new ArrayList<>();
-        p2s = new ArrayList<>();
+        points = new ArrayList<>();
     }
 
-    void add(Type type, int[] p1, int[] p2) {
+    void add(Type type, double[] point) {
         types.add(type);
-        p1s.add(new int[]{p1[0], p1[1]});
-        p2s.add(new int[]{p2[0], p2[1]});
+        points.add(point);
     }
 
     void draw(MediaWriter mediaWriter, Color fill) throws IOException {
@@ -57,16 +57,7 @@ class Geometry {
                 .createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null));
         if (fill != null)
             svgGraphics2D.setColor(fill);
-        for (int i = 0, size = types.size(); i < size; i++) {
-            int[] p1 = p1s.get(i);
-            int[] p2 = p2s.get(i);
-            switch (types.get(i)) {
-                case Line:
-                    svgGraphics2D.drawLine(p1[0], p1[1], p2[0], p2[1]);
-                    break;
-                default:
-            }
-        }
+        svgGraphics2D.draw(new Rectangle2D.Double(0, 0, width, height));
         Element root = svgGraphics2D.getRoot();
         root.setAttribute("viewBox", "0 0 " + width + " " + height);
 
@@ -86,55 +77,48 @@ class Geometry {
     }
 
     private void transform() {
-        x = y = Integer.MAX_VALUE;
-        min(p1s);
-        min(p2s);
-        max(p1s);
-        max(p2s);
+        x = y = Double.MAX_VALUE;
+        maxX = maxY = 0.0D;
+        for (double[] ns : points) {
+            for (int i = 0; i < ns.length; i += 2) {
+                x = Math.min(x, ns[i]);
+                y = Math.min(y, ns[i + 1]);
+                maxX = Math.max(maxX, ns[i]);
+                maxY = Math.max(maxY, ns[i + 1]);
+            }
+        }
+        for (double[] ns : points) {
+            for (int i = 0; i < ns.length; i += 2) {
+                ns[i] -= x;
+                ns[i + 1] -= y;
+            }
+        }
         width = maxX - x;
         height = maxY - y;
-        transofrm(p1s);
-        transofrm(p2s);
     }
 
-    private void min(List<int[]> list) {
-        for (int[] point : list) {
-            x = Math.min(x, point[0]);
-            y = Math.min(y, point[1]);
-        }
-    }
-
-    private void max(List<int[]> list) {
-        for (int[] point : list) {
-            maxX = Math.max(maxX, point[0]);
-            maxY = Math.max(maxY, point[1]);
-        }
-    }
-
-    private void transofrm(List<int[]> list) {
-        for (int[] point : list) {
-            point[0] -= x;
-            point[1] -= y;
-        }
-    }
-
-    int getX() {
+    double getX() {
         return x;
     }
 
-    int getY() {
+    double getY() {
         return y;
     }
 
-    int getWidth() {
+    double getWidth() {
         return width;
     }
 
-    int getHeight() {
+    double getHeight() {
         return height;
     }
 
     String getUrl() {
         return url;
+    }
+
+    void clear() {
+        types.clear();
+        points.clear();
     }
 }
