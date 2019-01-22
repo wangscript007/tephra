@@ -9,6 +9,7 @@ import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
+import javax.persistence.Table;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,7 +77,8 @@ public class CreateImpl implements Create {
         if (array == null)
             return;
 
+        String name = modelTable.getModelClass().getAnnotation(Table.class).name();
         for (String string : array)
-            executer.execute(dataSource, string.replaceFirst(modelTable.getTableName(), tableName), false);
+            executer.execute(dataSource, string.replaceFirst(name, tableName), false);
     }
 }
