@@ -58,6 +58,11 @@ public class TextParser extends PDFTextStripper {
 
         addOperator(new SetFontAndSize());
         addOperator(new SetNonStrokingColor());
+        addOperator(new SetNonStrokingColorN());
+        addOperator(new SetNonStrokingColorSpace());
+        addOperator(new SetNonStrokingDeviceCMYKColor());
+        addOperator(new SetNonStrokingDeviceGrayColor());
+        addOperator(new SetNonStrokingDeviceRGBColor());
     }
 
     @Override
