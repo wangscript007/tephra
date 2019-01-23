@@ -29,7 +29,6 @@ import org.apache.pdfbox.contentstream.operator.state.SetLineMiterLimit;
 import org.apache.pdfbox.contentstream.operator.state.SetLineWidth;
 import org.apache.pdfbox.contentstream.operator.state.SetMatrix;
 import org.apache.pdfbox.contentstream.operator.state.SetRenderingIntent;
-import org.apache.pdfbox.contentstream.operator.text.SetFontAndSize;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSNumber;
@@ -60,8 +59,6 @@ public class ImageParser extends PDFStreamEngine {
     private int pageHeight;
     private JSONArray array;
     private Geometry geometry;
-    private int[] startPoint;
-    private int[] prevPoint;
 
     public ImageParser(PdfHelper pdfHelper, MediaWriter mediaWriter, PDPage pdPage, int pageHeight) {
         super();
@@ -75,30 +72,28 @@ public class ImageParser extends PDFStreamEngine {
 
         addOperator(new Concatenate());
         addOperator(new DrawObject());
-        addOperator(new SetGraphicsStateParameters());
         addOperator(new Save());
         addOperator(new Restore());
-        addOperator(new SetMatrix());
-        addOperator(new SetStrokingColorSpace());
-        addOperator(new SetNonStrokingColorSpace());
-        addOperator(new SetLineDashPattern());
-        addOperator(new SetStrokingDeviceGrayColor());
-        addOperator(new SetNonStrokingDeviceGrayColor());
         addOperator(new SetFlatness());
-        addOperator(new SetLineJoinStyle());
+        addOperator(new SetGraphicsStateParameters());
         addOperator(new SetLineCapStyle());
-        addOperator(new SetStrokingDeviceCMYKColor());
-        addOperator(new SetNonStrokingDeviceCMYKColor());
+        addOperator(new SetLineDashPattern());
+        addOperator(new SetLineJoinStyle());
         addOperator(new SetLineMiterLimit());
-        addOperator(new SetStrokingDeviceRGBColor());
-        addOperator(new SetNonStrokingDeviceRGBColor());
-        addOperator(new SetRenderingIntent());
-        addOperator(new SetStrokingColor());
-        addOperator(new SetNonStrokingColor());
-        addOperator(new SetStrokingColorN());
-        addOperator(new SetNonStrokingColorN());
-        addOperator(new SetFontAndSize());
         addOperator(new SetLineWidth());
+        addOperator(new SetMatrix());
+        addOperator(new SetNonStrokingColor());
+        addOperator(new SetNonStrokingColorN());
+        addOperator(new SetNonStrokingColorSpace());
+        addOperator(new SetNonStrokingDeviceCMYKColor());
+        addOperator(new SetNonStrokingDeviceGrayColor());
+        addOperator(new SetNonStrokingDeviceRGBColor());
+        addOperator(new SetStrokingColor());
+        addOperator(new SetStrokingColorN());
+        addOperator(new SetStrokingColorSpace());
+        addOperator(new SetStrokingDeviceCMYKColor());
+        addOperator(new SetStrokingDeviceGrayColor());
+        addOperator(new SetStrokingDeviceRGBColor());
     }
 
     @Override
@@ -237,6 +232,7 @@ public class ImageParser extends PDFStreamEngine {
             array.add(object);
         }
         geometry.clear();
+
     }
 
     public JSONArray getArray() {

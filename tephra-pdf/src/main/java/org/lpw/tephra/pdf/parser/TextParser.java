@@ -56,26 +56,8 @@ public class TextParser extends PDFTextStripper {
         setSortByPosition(true);
         setSuppressDuplicateOverlappingText(true);
 
-        addOperator(new SetStrokingColorSpace());
-        addOperator(new SetNonStrokingColorSpace());
-        addOperator(new SetLineDashPattern());
-        addOperator(new SetStrokingDeviceGrayColor());
-        addOperator(new SetNonStrokingDeviceGrayColor());
-        addOperator(new SetFlatness());
-        addOperator(new SetLineJoinStyle());
-        addOperator(new SetLineCapStyle());
-        addOperator(new SetStrokingDeviceCMYKColor());
-        addOperator(new SetNonStrokingDeviceCMYKColor());
-        addOperator(new SetLineMiterLimit());
-        addOperator(new SetStrokingDeviceRGBColor());
-        addOperator(new SetNonStrokingDeviceRGBColor());
-        addOperator(new SetRenderingIntent());
-        addOperator(new SetStrokingColor());
-        addOperator(new SetNonStrokingColor());
-        addOperator(new SetStrokingColorN());
-        addOperator(new SetNonStrokingColorN());
         addOperator(new SetFontAndSize());
-        addOperator(new SetLineWidth());
+        addOperator(new SetNonStrokingColor());
     }
 
     @Override
