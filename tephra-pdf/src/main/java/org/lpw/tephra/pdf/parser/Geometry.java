@@ -8,7 +8,7 @@ import org.lpw.tephra.pdf.MediaWriter;
 import org.w3c.dom.Element;
 
 import java.awt.Color;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.Path2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,15 +24,13 @@ class Geometry {
     enum Type {
         MoveTo,
         LineTo,
-        Line
+        Rectangle
     }
 
     private List<Type> types;
     private List<double[]> points;
     private double x;
     private double y;
-    private double maxX;
-    private double maxY;
     private double width;
     private double height;
     private String url;
@@ -47,17 +45,23 @@ class Geometry {
         points.add(point);
     }
 
-    void draw(MediaWriter mediaWriter, Color fill) throws IOException {
-        if (types.isEmpty())
+    void draw(MediaWriter mediaWriter, Color fill, Color stroke) throws IOException {
+        if (types.isEmpty() || (fill == null && stroke == null))
             return;
-
-        transform();
 
         SVGGraphics2D svgGraphics2D = new SVGGraphics2D(GenericDOMImplementation.getDOMImplementation()
                 .createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null));
-        if (fill != null)
+        if (fill != null) {
             svgGraphics2D.setColor(fill);
-        svgGraphics2D.draw(new Rectangle2D.Double(0, 0, width, height));
+            svgGraphics2D.fill(getPath());
+        }
+        if (stroke != null) {
+            svgGraphics2D.setColor(stroke);
+            svgGraphics2D.draw(getPath());
+        }
+        if (width <= 0 || height <= 0)
+            return;
+
         Element root = svgGraphics2D.getRoot();
         root.setAttribute("viewBox", "0 0 " + width + " " + height);
 
@@ -76,9 +80,35 @@ class Geometry {
         inputStream.close();
     }
 
+    private Path2D.Double getPath() {
+        transform();
+        Path2D.Double path = new Path2D.Double();
+        for (int i = 0, size = types.size(); i < size; i++) {
+            double[] point = points.get(i);
+            switch (types.get(i)) {
+                case MoveTo:
+                    path.moveTo(point[0], point[1]);
+                    break;
+                case LineTo:
+                    path.lineTo(point[0], point[1]);
+                    break;
+                case Rectangle:
+                    path.moveTo(point[0], point[1]);
+                    path.lineTo(point[2], point[1]);
+                    path.lineTo(point[2], point[3]);
+                    path.lineTo(point[0], point[3]);
+                    path.lineTo(point[0], point[1]);
+                    break;
+            }
+        }
+
+        return path;
+    }
+
     private void transform() {
         x = y = Double.MAX_VALUE;
-        maxX = maxY = 0.0D;
+        double maxX = 0.0D;
+        double maxY = 0.0D;
         for (double[] ns : points) {
             for (int i = 0; i < ns.length; i += 2) {
                 x = Math.min(x, ns[i]);

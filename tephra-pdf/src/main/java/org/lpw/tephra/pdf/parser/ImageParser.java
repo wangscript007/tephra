@@ -5,11 +5,31 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.pdfbox.contentstream.PDFStreamEngine;
 import org.apache.pdfbox.contentstream.operator.DrawObject;
 import org.apache.pdfbox.contentstream.operator.Operator;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingColor;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingColorN;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingColorSpace;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingDeviceCMYKColor;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingDeviceGrayColor;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingDeviceRGBColor;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingColor;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingColorN;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingColorSpace;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceCMYKColor;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceGrayColor;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceRGBColor;
 import org.apache.pdfbox.contentstream.operator.state.Concatenate;
 import org.apache.pdfbox.contentstream.operator.state.Restore;
 import org.apache.pdfbox.contentstream.operator.state.Save;
+import org.apache.pdfbox.contentstream.operator.state.SetFlatness;
 import org.apache.pdfbox.contentstream.operator.state.SetGraphicsStateParameters;
+import org.apache.pdfbox.contentstream.operator.state.SetLineCapStyle;
+import org.apache.pdfbox.contentstream.operator.state.SetLineDashPattern;
+import org.apache.pdfbox.contentstream.operator.state.SetLineJoinStyle;
+import org.apache.pdfbox.contentstream.operator.state.SetLineMiterLimit;
+import org.apache.pdfbox.contentstream.operator.state.SetLineWidth;
 import org.apache.pdfbox.contentstream.operator.state.SetMatrix;
+import org.apache.pdfbox.contentstream.operator.state.SetRenderingIntent;
+import org.apache.pdfbox.contentstream.operator.text.SetFontAndSize;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSNumber;
@@ -59,6 +79,26 @@ public class ImageParser extends PDFStreamEngine {
         addOperator(new Save());
         addOperator(new Restore());
         addOperator(new SetMatrix());
+        addOperator(new SetStrokingColorSpace());
+        addOperator(new SetNonStrokingColorSpace());
+        addOperator(new SetLineDashPattern());
+        addOperator(new SetStrokingDeviceGrayColor());
+        addOperator(new SetNonStrokingDeviceGrayColor());
+        addOperator(new SetFlatness());
+        addOperator(new SetLineJoinStyle());
+        addOperator(new SetLineCapStyle());
+        addOperator(new SetStrokingDeviceCMYKColor());
+        addOperator(new SetNonStrokingDeviceCMYKColor());
+        addOperator(new SetLineMiterLimit());
+        addOperator(new SetStrokingDeviceRGBColor());
+        addOperator(new SetNonStrokingDeviceRGBColor());
+        addOperator(new SetRenderingIntent());
+        addOperator(new SetStrokingColor());
+        addOperator(new SetNonStrokingColor());
+        addOperator(new SetStrokingColorN());
+        addOperator(new SetNonStrokingColorN());
+        addOperator(new SetFontAndSize());
+        addOperator(new SetLineWidth());
     }
 
     @Override
@@ -130,16 +170,32 @@ public class ImageParser extends PDFStreamEngine {
             geometry.add(Geometry.Type.MoveTo, point(operands));
         else if ((name.equals("l") || name.equals("h")) && operands.size() == 2)
             geometry.add(Geometry.Type.LineTo, point(operands));
-        else if (name.equals("f") || name.equals("F") || name.equals("f*"))
+        else if (name.equals("re") && operands.size() == 4)
+            geometry.add(Geometry.Type.Rectangle, point(operands));
+        else if (name.equalsIgnoreCase("f") || name.equalsIgnoreCase("f*"))
             draw(true, false);
+        else if (name.equalsIgnoreCase("s") || name.equalsIgnoreCase("s*"))
+            draw(false, true);
+        else if (name.equalsIgnoreCase("b") || name.equalsIgnoreCase("b*"))
+            draw(true, true);
+        else if (name.equals("n"))
+            geometry.clear();
+        else
+            System.out.println(name);
     }
 
     private double[] point(List<COSBase> operands) {
-        Point2D.Float point = super.transformedPoint(((COSNumber) operands.get(0)).floatValue(), ((COSNumber) operands.get(1)).floatValue());
-        AffineTransform pageTransform = createCurrentPageTransformation();
-        Point2D.Float transformedPoint = (Point2D.Float) pageTransform.transform(point, null);
+        double[] ds = new double[operands.size()];
+        for (int i = 0, size = operands.size(); i < size; i += 2) {
+            Point2D.Float point = super.transformedPoint(((COSNumber) operands.get(i)).floatValue(),
+                    ((COSNumber) operands.get(i + 1)).floatValue());
+            AffineTransform pageTransform = createCurrentPageTransformation();
+            Point2D.Float transformedPoint = (Point2D.Float) pageTransform.transform(point, null);
+            ds[i] = transformedPoint.getX();
+            ds[i + 1] = transformedPoint.getY();
+        }
 
-        return new double[]{transformedPoint.getX(), transformedPoint.getY()};
+        return ds;
     }
 
     private AffineTransform createCurrentPageTransformation() {
@@ -167,7 +223,8 @@ public class ImageParser extends PDFStreamEngine {
     }
 
     private void draw(boolean fill, boolean stroke) throws IOException {
-        geometry.draw(mediaWriter, fill ? null : pdfHelper.toColor(getGraphicsState().getNonStrokingColor().getComponents()));
+        geometry.draw(mediaWriter, fill ? pdfHelper.toColor(getGraphicsState().getNonStrokingColor().getComponents()) : null,
+                stroke ? pdfHelper.toColor(getGraphicsState().getStrokingColor().getComponents()) : null);
         if (geometry.getUrl() != null) {
             JSONObject object = new JSONObject();
             object.put("geometry", geometry.getUrl());
@@ -178,7 +235,6 @@ public class ImageParser extends PDFStreamEngine {
             anchor.put("height", pdfHelper.pointToPixel(geometry.getHeight()));
             object.put("anchor", anchor);
             array.add(object);
-            System.out.println(object);
         }
         geometry.clear();
     }

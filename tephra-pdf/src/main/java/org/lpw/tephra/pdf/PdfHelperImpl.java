@@ -45,15 +45,15 @@ public class PdfHelperImpl implements PdfHelper {
     @Override
     public Color toColor(float[] fs) {
         if (validator.isEmpty(fs))
-            return toColor(0.0F,0.0F,0.0F);
+            return toColor(0.0F, 0.0F, 0.0F);
 
-        if(fs.length==1)
+        if (fs.length == 1)
             return toColor(fs[0], fs[0], fs[0]);
 
         return toColor(fs[0], fs[1], fs[2]);
     }
 
-    private Color toColor(float red, float green, float blue){
-        return new Color(numeric.toInt(red * 255),numeric.toInt(green * 255),numeric.toInt(blue * 255));
+    private Color toColor(float red, float green, float blue) {
+        return new Color(numeric.toInt(red * 255), numeric.toInt(green * 255), numeric.toInt(blue * 255));
     }
 }
