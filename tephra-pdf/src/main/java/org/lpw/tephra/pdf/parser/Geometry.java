@@ -62,10 +62,9 @@ class Geometry {
         if (width <= 0 || height <= 0)
             return;
 
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Element root = svgGraphics2D.getRoot();
         root.setAttribute("viewBox", "0 0 " + width + " " + height);
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         svgGraphics2D.stream(root, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), false, false);
         svgGraphics2D.dispose();
         outputStream.flush();
