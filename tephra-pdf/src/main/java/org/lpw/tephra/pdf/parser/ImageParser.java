@@ -17,6 +17,7 @@ import org.apache.pdfbox.contentstream.operator.color.SetStrokingColorSpace;
 import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceCMYKColor;
 import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceGrayColor;
 import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceRGBColor;
+import org.apache.pdfbox.contentstream.operator.graphics.LineTo;
 import org.apache.pdfbox.contentstream.operator.state.Concatenate;
 import org.apache.pdfbox.contentstream.operator.state.Restore;
 import org.apache.pdfbox.contentstream.operator.state.Save;
@@ -175,16 +176,16 @@ public class ImageParser extends PDFStreamEngine {
             transform(points, 0, x, y);
             transform(points, 2, x + floatValue(operands.get(2)), y + floatValue(operands.get(3)));
             geometry.add(Geometry.Type.Rectangle, points);
-        } else if (name.equalsIgnoreCase("f") || name.equalsIgnoreCase("f*"))
+        } else if (name.equalsIgnoreCase("f") )
             draw(true, false);
-        else if (name.equalsIgnoreCase("s") || name.equalsIgnoreCase("s*"))
+        else if (name.equals("S"))
             draw(false, true);
-        else if (name.equalsIgnoreCase("b") || name.equalsIgnoreCase("b*"))
+        else if (name.equals("B") )
             draw(true, true);
         else if (name.equals("n"))
             geometry.clear();
-//        else
-//            System.out.println(name);
+        else
+            System.out.println(name);
     }
 
     private double[] point(List<COSBase> operands) {
