@@ -24,6 +24,8 @@ class Geometry {
     enum Type {
         MoveTo,
         LineTo,
+        CurveTo,
+        QuadTo,
         Rectangle
     }
 
@@ -82,6 +84,8 @@ class Geometry {
     private Path2D.Double getPath() {
         transform();
         Path2D.Double path = new Path2D.Double();
+        double prevX = -1;
+        double prevY = -1;
         for (int i = 0, size = types.size(); i < size; i++) {
             double[] point = points.get(i);
             switch (types.get(i)) {
@@ -91,6 +95,16 @@ class Geometry {
                 case LineTo:
                     path.lineTo(point[0], point[1]);
                     break;
+                case CurveTo:
+                    if (prevX > -1 && prevY > -1)
+                        path.moveTo(prevX, prevY);
+                    path.curveTo(point[0], point[1], point[2], point[3], point[4], point[5]);
+                    break;
+                case QuadTo:
+                    if (prevX > -1 && prevY > -1)
+                        path.moveTo(prevX, prevY);
+                    path.quadTo(point[0], point[1], point[2], point[3]);
+                    break;
                 case Rectangle:
                     path.moveTo(point[0], point[1]);
                     path.lineTo(point[2], point[1]);
@@ -99,6 +113,8 @@ class Geometry {
                     path.lineTo(point[0], point[1]);
                     break;
             }
+            prevX = point[0];
+            prevY = point[1];
         }
 
         return path;

@@ -28,7 +28,6 @@ import org.apache.pdfbox.contentstream.operator.state.SetLineJoinStyle;
 import org.apache.pdfbox.contentstream.operator.state.SetLineMiterLimit;
 import org.apache.pdfbox.contentstream.operator.state.SetLineWidth;
 import org.apache.pdfbox.contentstream.operator.state.SetMatrix;
-import org.apache.pdfbox.contentstream.operator.state.SetRenderingIntent;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSNumber;
@@ -165,9 +164,18 @@ public class ImageParser extends PDFStreamEngine {
             geometry.add(Geometry.Type.MoveTo, point(operands));
         else if ((name.equals("l") || name.equals("h")) && operands.size() == 2)
             geometry.add(Geometry.Type.LineTo, point(operands));
-        else if (name.equals("re") && operands.size() == 4)
-            geometry.add(Geometry.Type.Rectangle, point(operands));
-        else if (name.equalsIgnoreCase("f") || name.equalsIgnoreCase("f*"))
+        else if (name.equals("c") && operands.size() == 6)
+            geometry.add(Geometry.Type.CurveTo, point(operands));
+        else if (name.equalsIgnoreCase("q") && operands.size() == 4)
+            geometry.add(Geometry.Type.QuadTo, point(operands));
+        else if (name.equals("re") && operands.size() == 4) {
+            double[] points = new double[4];
+            float x = floatValue(operands.get(0));
+            float y = floatValue(operands.get(1));
+            transform(points, 0, x, y);
+            transform(points, 2, x + floatValue(operands.get(2)), y + floatValue(operands.get(3)));
+            geometry.add(Geometry.Type.Rectangle, points);
+        } else if (name.equalsIgnoreCase("f") || name.equalsIgnoreCase("f*"))
             draw(true, false);
         else if (name.equalsIgnoreCase("s") || name.equalsIgnoreCase("s*"))
             draw(false, true);
@@ -175,22 +183,28 @@ public class ImageParser extends PDFStreamEngine {
             draw(true, true);
         else if (name.equals("n"))
             geometry.clear();
-        else
-            System.out.println(name);
+//        else
+//            System.out.println(name);
     }
 
     private double[] point(List<COSBase> operands) {
-        double[] ds = new double[operands.size()];
-        for (int i = 0, size = operands.size(); i < size; i += 2) {
-            Point2D.Float point = super.transformedPoint(((COSNumber) operands.get(i)).floatValue(),
-                    ((COSNumber) operands.get(i + 1)).floatValue());
-            AffineTransform pageTransform = createCurrentPageTransformation();
-            Point2D.Float transformedPoint = (Point2D.Float) pageTransform.transform(point, null);
-            ds[i] = transformedPoint.getX();
-            ds[i + 1] = transformedPoint.getY();
-        }
+        double[] points = new double[operands.size()];
+        for (int i = 0, size = operands.size(); i < size; i += 2)
+            transform(points, i, floatValue(operands.get(i)), floatValue(operands.get(i + 1)));
 
-        return ds;
+        return points;
+    }
+
+    private float floatValue(COSBase cosBase) {
+        return cosBase instanceof COSNumber ? ((COSNumber) cosBase).floatValue() : 0.0F;
+    }
+
+    private void transform(double[] points, int index, float x, float y) {
+        Point2D.Float point = transformedPoint(x, y);
+        AffineTransform pageTransform = createCurrentPageTransformation();
+        Point2D.Float transformedPoint = (Point2D.Float) pageTransform.transform(point, null);
+        points[index] = transformedPoint.getX();
+        points[index + 1] = transformedPoint.getY();
     }
 
     private AffineTransform createCurrentPageTransformation() {
@@ -232,7 +246,6 @@ public class ImageParser extends PDFStreamEngine {
             array.add(object);
         }
         geometry.clear();
-
     }
 
     public JSONArray getArray() {
