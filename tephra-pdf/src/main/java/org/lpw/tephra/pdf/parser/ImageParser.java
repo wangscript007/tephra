@@ -162,7 +162,7 @@ public class ImageParser extends PDFStreamEngine {
     private void geometry(String name, List<COSBase> operands) throws IOException {
         if (name.equals("m") && operands.size() == 2)
             geometry.add(Geometry.Type.MoveTo, point(operands));
-        else if ((name.equals("l") || name.equals("h")) && operands.size() == 2)
+        else if (name.equals("l") && operands.size() == 2)
             geometry.add(Geometry.Type.LineTo, point(operands));
         else if (name.equals("c") && operands.size() == 6)
             geometry.add(Geometry.Type.CurveTo, point(operands));
@@ -175,7 +175,9 @@ public class ImageParser extends PDFStreamEngine {
             transform(points, 0, x, y);
             transform(points, 2, x + floatValue(operands.get(2)), y + floatValue(operands.get(3)));
             geometry.add(Geometry.Type.Rectangle, points);
-        } else if (name.equalsIgnoreCase("f") || name.equalsIgnoreCase("f*"))
+        } else if (name.equals("h"))
+            geometry.add(Geometry.Type.Close, new double[0]);
+        else if (name.equalsIgnoreCase("f") || name.equalsIgnoreCase("f*"))
             draw(true, false);
         else if (name.equalsIgnoreCase("s") || name.equalsIgnoreCase("s*"))
             draw(false, true);
@@ -183,8 +185,6 @@ public class ImageParser extends PDFStreamEngine {
             draw(true, true);
         else if (name.equals("n"))
             geometry.clear();
-        else
-            System.out.println(name);
     }
 
     private double[] point(List<COSBase> operands) {

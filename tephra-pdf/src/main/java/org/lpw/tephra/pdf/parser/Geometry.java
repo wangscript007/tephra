@@ -26,7 +26,8 @@ class Geometry {
         LineTo,
         CurveTo,
         QuadTo,
-        Rectangle
+        Rectangle,
+        Close
     }
 
     private List<Type> types;
@@ -112,9 +113,17 @@ class Geometry {
                     path.lineTo(point[0], point[3]);
                     path.lineTo(point[0], point[1]);
                     break;
+                case Close:
+                    path.closePath();
+                    break;
             }
-            prevX = point[0];
-            prevY = point[1];
+            if (point.length > 1) {
+                prevX = point[0];
+                prevY = point[1];
+            } else {
+                prevX = -1;
+                prevY = -1;
+            }
         }
 
         return path;
