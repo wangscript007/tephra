@@ -68,8 +68,13 @@ public class SimpleUploadReader implements UploadReader {
         BeanFactory.getBean(Http.class).get(url, null, null, map, outputStream);
         if (contentType == null && map.containsKey("Content-Type"))
             contentType = map.get("Content-Type");
-        if (fileName == null && contentType != null)
-            fileName = contentType.replace('/', '.');
+        if (fileName == null) {
+            String name = url.substring(url.lastIndexOf('/') + 1);
+            if (name.indexOf('.') == -1 && contentType != null)
+                fileName = contentType.replace('/', '.');
+            else
+                fileName = name.toLowerCase();
+        }
         bytes = outputStream.toByteArray();
     }
 
