@@ -161,11 +161,18 @@ public class ImageImpl implements Image {
             return false;
 
         String suffix = name.substring(indexOf);
-
-        return (contentType.equals("image/jpeg") && (suffix.equals(".jpg") || suffix.equals(".jpeg")))
-                || (contentType.equals("image/png") && suffix.equals(".png"))
-                || (contentType.equals("image/gif") && suffix.equals(".gif"))
-                || (contentType.equals("image/svg+xml") && (suffix.equals(".svg") || suffix.equals(".svg+xml")));
+        switch (contentType) {
+            case "image/jpeg":
+                return suffix.equals(".jpg") || suffix.equals(".jpeg");
+            case "image/png":
+                return suffix.equals(".png");
+            case "image/gif":
+                return suffix.equals(".gif");
+            case "image/svg+xml":
+                return suffix.equals(".svg") || suffix.equals(".svg+xml");
+            default:
+                return false;
+        }
     }
 
     @Override
