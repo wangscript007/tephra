@@ -123,7 +123,7 @@ public class PdfReaderImpl implements PdfReader {
             }
 
             if (together != null)
-                list.add(write(mediaWriter, together, "together.jpeg"));
+                list.add(0, write(mediaWriter, together, "together.jpeg"));
         } catch (IOException e) {
             logger.warn(e, "读取PDF为图片时发生异常！");
         }

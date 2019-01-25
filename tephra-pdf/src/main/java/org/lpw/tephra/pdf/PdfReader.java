@@ -35,7 +35,7 @@ public interface PdfReader {
      *
      * @param inputStream 输入流。
      * @param mediaWriter 媒体输出器。
-     * @return 图片URL地址集。
+     * @return 图片URL地址集，首张为各页合并图。
      */
     List<String> readAsJpeg(InputStream inputStream, MediaWriter mediaWriter);
 }
