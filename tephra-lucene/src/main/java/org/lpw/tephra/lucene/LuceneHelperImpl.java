@@ -1,6 +1,6 @@
 package org.lpw.tephra.lucene;
 
-import com.hankcs.lucene.HanLPAnalyzer;
+import org.apache.lucene.analysis.cjk.CJKAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -92,7 +92,7 @@ public class LuceneHelperImpl implements LuceneHelper {
     }
 
     private void index(Directory directory, String id, String data) {
-        try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig(new HanLPAnalyzer()))) {
+        try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig(new CJKAnalyzer()))) {
             Document document = new Document();
             document.add(new StoredField("id", id));
             document.add(new TextField("data", data, Field.Store.YES));
@@ -145,7 +145,7 @@ public class LuceneHelperImpl implements LuceneHelper {
 
         try (IndexReader indexReader = DirectoryReader.open(get(key))) {
             IndexSearcher indexSearcher = new IndexSearcher(indexReader);
-            QueryParser queryParser = new QueryParser("data", new HanLPAnalyzer());
+            QueryParser queryParser = new QueryParser("data", new CJKAnalyzer());
             if (and)
                 queryParser.setDefaultOperator(QueryParser.Operator.AND);
             TopDocs topDocs = indexSearcher.search(queryParser.parse(string), size);

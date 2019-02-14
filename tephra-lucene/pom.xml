@@ -21,8 +21,8 @@
             <version>LATEST</version>
         </dependency>
         <dependency>
-            <groupId>com.hankcs.nlp</groupId>
-            <artifactId>hanlp-lucene-plugin</artifactId>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-smartcn</artifactId>
             <version>LATEST</version>
         </dependency>
         <dependency>
