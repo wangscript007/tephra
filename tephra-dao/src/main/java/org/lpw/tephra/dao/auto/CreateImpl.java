@@ -79,6 +79,6 @@ public class CreateImpl implements Create {
 
         String name = modelTable.getModelClass().getAnnotation(Table.class).name();
         for (String string : array)
-            executer.execute(dataSource, string.replaceFirst(name, tableName), false);
+            executer.execute(dataSource, string.replaceFirst(name, tableName), true);
     }
 }

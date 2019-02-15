@@ -41,14 +41,14 @@ public class DailyImpl implements Daily {
         String tableName = modelTable.getTableName(null);
         long now = System.currentTimeMillis();
         for (String string : array) {
-            for (int i = 0; i < 3; i++)
-                executer.execute(dataSource, string.replaceFirst(tableName, modelTable.getTableName(
-                        new Date(now + i * TimeUnit.Day.getTime()))), false);
-
             if (string.startsWith("DROP TABLE"))
                 for (int i = modelTable.getDailyOverdue(), max = i << 1; i < max; i++)
                     executer.execute(dataSource, string.replaceFirst(tableName, modelTable.getTableName(
                             new Date(now - i * TimeUnit.Day.getTime()))), false);
+
+            for (int i = 0; i < 3; i++)
+                executer.execute(dataSource, string.replaceFirst(tableName, modelTable.getTableName(
+                        new Date(now + i * TimeUnit.Day.getTime()))), true);
         }
     }
 }
