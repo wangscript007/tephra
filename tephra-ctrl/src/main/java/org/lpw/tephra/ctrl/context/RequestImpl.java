@@ -98,8 +98,10 @@ public class RequestImpl implements Request, RequestAware {
             return null;
 
         String[] array = getAdapter().getAsArray(name);
+        if (validator.isEmpty(array))
+            return converter.toArray(get(name), ",");
 
-        return array == null ? converter.toArray(get(name), ",") : array;
+        return array.length == 1 ? converter.toArray(array[0], ",") : array;
     }
 
     @Override
