@@ -11,7 +11,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lpw
@@ -24,9 +23,12 @@ public class ContextImpl implements Context, Closable, ContextRefreshedListener 
     private Thread thread;
     @Inject
     private Logger logger;
-    @Value("${tephra.util.context.charset:UTF-8}")
+    @Value("${tephra.context.charset:UTF-8}")
     private String charset;
+    @Value("${tephra.context.i18n:zh-cn}")
+    private String i18n;
     private String root;
+    private Locale i18nLocale;
     private ThreadLocal<Locale> locale = new ThreadLocal<>();
     private ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
 
@@ -64,10 +66,16 @@ public class ContextImpl implements Context, Closable, ContextRefreshedListener 
     @Override
     public Locale getLocale() {
         Locale locale = this.locale.get();
-        if (locale == null)
-            locale = Locale.getDefault();
+        if (locale != null)
+            return locale;
 
-        return locale;
+        if (i18nLocale != null)
+            return i18nLocale;
+
+        if (!validator.isEmpty(i18n))
+            return i18nLocale = Locale.forLanguageTag(i18n);
+
+        return Locale.getDefault();
     }
 
     @Override
