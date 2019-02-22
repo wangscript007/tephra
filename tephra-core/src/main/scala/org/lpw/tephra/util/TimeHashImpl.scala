@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
   */
 @Component("tephra.util.time-hash")
 class TimeHashImpl extends TimeHash {
-    @Value("${tephra.util.time-hash.range:0}")
+    @Value("${tephra.time-hash.range:0}")
     protected var range: Int = 0
     private val base: Int = 100000
 

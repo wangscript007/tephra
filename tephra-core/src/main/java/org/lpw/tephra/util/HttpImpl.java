@@ -64,11 +64,11 @@ public class HttpImpl implements Http, ContextRefreshedListener {
     private TimeHash timeHash;
     @Inject
     private Logger logger;
-    @Value("${tephra.util.http.pool.max:256}")
+    @Value("${tephra.http.pool.max:256}")
     private int max;
-    @Value("${tephra.util.http.connect.time-out:5000}")
+    @Value("${tephra.http.connect.time-out:5000}")
     private int connectTimeout;
-    @Value("${tephra.util.http.read.time-out:20000}")
+    @Value("${tephra.http.read.time-out:20000}")
     private int readTimeout;
     private PoolingHttpClientConnectionManager manager;
     private ThreadLocal<Integer> statusCode = new ThreadLocal<>();
