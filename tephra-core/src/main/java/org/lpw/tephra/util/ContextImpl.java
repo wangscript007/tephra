@@ -25,7 +25,7 @@ public class ContextImpl implements Context, Closable, ContextRefreshedListener 
     private Logger logger;
     @Value("${tephra.context.charset:UTF-8}")
     private String charset;
-    @Value("${tephra.context.i18n:zh-cn}")
+    @Value("${tephra.context.i18n:}")
     private String i18n;
     private String root;
     private Locale i18nLocale;
@@ -65,17 +65,12 @@ public class ContextImpl implements Context, Closable, ContextRefreshedListener 
 
     @Override
     public Locale getLocale() {
-        Locale locale = this.locale.get();
-        if (locale != null)
-            return locale;
-
-        if (i18nLocale != null)
-            return i18nLocale;
-
         if (!validator.isEmpty(i18n))
-            return i18nLocale = Locale.forLanguageTag(i18n);
+            return i18nLocale == null ? i18nLocale = Locale.forLanguageTag(i18n) : i18nLocale;
 
-        return Locale.getDefault();
+        Locale locale = this.locale.get();
+
+        return locale == null ? Locale.getDefault() : locale;
     }
 
     @Override
