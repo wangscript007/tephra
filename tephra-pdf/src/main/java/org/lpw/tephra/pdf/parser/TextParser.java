@@ -55,6 +55,7 @@ public class TextParser extends PDFTextStripper {
     private String[] merges = {"horizontalAlign", "fontFamily", "fontSize", "color", "bold", "italic", "underline", "strikethrough",
             "subscript", "superscript"};
     private List<String> fontFamilies = Arrays.asList("Arial", "TimesNewRoman", "SimSun", "YaHei", "SansSerif");
+    private double height;
 
     public TextParser(PdfHelper pdfHelper, int pageHeight) throws IOException {
         super();
@@ -100,21 +101,18 @@ public class TextParser extends PDFTextStripper {
     protected void processTextPosition(TextPosition textPosition) {
         super.processTextPosition(textPosition);
 
-        Matrix prevMatrix;
         Matrix matrix = textPosition.getTextMatrix();
-        if (prevTextPosition == null || (prevMatrix = prevTextPosition.getTextMatrix()).getTranslateY() != matrix.getTranslateY()
-                || prevMatrix.getTranslateX() + prevMatrix.getScalingFactorX() < matrix.getTranslateX() - 0.1D * matrix.getScalingFactorX()) {
+        if (prevTextPosition == null || prevTextPosition.getEndY() != textPosition.getEndY()
+                || prevTextPosition.getEndX() < textPosition.getX() - matrix.getScalingFactorX() / 10) {
             addLine();
             words = new JSONArray();
             word = null;
+            height = 0.0D;
 
             anchor = new JSONObject();
-            int height = pdfHelper.pointToPixel(matrix.getScalingFactorY());
-            anchor.put("height", height);
-            anchor.put("x", pdfHelper.pointToPixel(matrix.getTranslateX()));
-            anchor.put("y", pageHeight - height - pdfHelper.pointToPixel(matrix.getTranslateY()));
+            anchor.put("x", pdfHelper.pointToPixel(textPosition.getX()));
         }
-
+        height = Math.max(height, matrix.getScalingFactorY());
         addWord(textPosition);
         prevTextPosition = textPosition;
     }
@@ -135,8 +133,11 @@ public class TextParser extends PDFTextStripper {
         JSONObject object = new JSONObject();
         object.put("text", text);
 
-        anchor.put("width", pdfHelper.pointToPixel(prevTextPosition.getTextMatrix().getTranslateX()
-                + prevTextPosition.getTextMatrix().getScalingFactorX() * 2) - anchor.getIntValue("x"));
+        int height = pdfHelper.pointToPixel(this.height);
+        anchor.put("y", pageHeight - height - pdfHelper.pointToPixel(prevTextPosition.getEndY()));
+        anchor.put("width", pdfHelper.pointToPixel(prevTextPosition.getEndX() + prevTextPosition.getTextMatrix().getScalingFactorX() / 10)
+                - anchor.getIntValue("x"));
+        anchor.put("height", height);
         object.put("anchor", anchor);
         array.add(object);
     }
