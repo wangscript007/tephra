@@ -50,7 +50,6 @@ public class TextParser extends PDFTextStripper {
     private JSONArray array;
     private JSONArray words;
     private JSONObject word;
-    private double width;
     private TextPosition prevTextPosition;
     private JSONObject anchor;
     private String[] merges = {"horizontalAlign", "fontFamily", "fontSize", "color", "bold", "italic", "underline", "strikethrough",
@@ -108,7 +107,6 @@ public class TextParser extends PDFTextStripper {
             addLine();
             words = new JSONArray();
             word = null;
-            width = 0.0D;
 
             anchor = new JSONObject();
             int height = pdfHelper.pointToPixel(matrix.getScalingFactorY());
@@ -118,7 +116,6 @@ public class TextParser extends PDFTextStripper {
         }
 
         addWord(textPosition);
-        width += matrix.getScalingFactorX();
         prevTextPosition = textPosition;
     }
 
@@ -138,7 +135,8 @@ public class TextParser extends PDFTextStripper {
         JSONObject object = new JSONObject();
         object.put("text", text);
 
-        anchor.put("width", pdfHelper.pointToPixel(width));
+        anchor.put("width", pdfHelper.pointToPixel(prevTextPosition.getTextMatrix().getTranslateX()
+                + prevTextPosition.getTextMatrix().getScalingFactorX() * 2) - anchor.getIntValue("x"));
         object.put("anchor", anchor);
         array.add(object);
     }
