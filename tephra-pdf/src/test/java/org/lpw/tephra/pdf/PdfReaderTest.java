@@ -23,7 +23,7 @@ public class PdfReaderTest extends CoreTestSupport {
     @Test
     public void read() throws IOException {
         long time = System.currentTimeMillis();
-        io.write("target/pdf.json", json.toBytes(pdfReader.read(new FileInputStream("/mnt/hgfs/share/x.pdf"),
+        io.write("target/pdf.json", json.toBytes(pdfReader.read(new FileInputStream("/mnt/hgfs/share/pdf/xx.pdf"),
                 (mediaType, fileName, inputStream) -> "" + io.read(inputStream).length)));
         System.out.println((System.currentTimeMillis() - time) / 1000.0);
     }

@@ -185,6 +185,9 @@ public class ImageParser extends PDFStreamEngine {
             draw(true, true);
         else if (name.equals("n"))
             geometry.clear();
+//        else {
+//            System.out.println(name);
+//        }
     }
 
     private double[] point(List<COSBase> operands) {
