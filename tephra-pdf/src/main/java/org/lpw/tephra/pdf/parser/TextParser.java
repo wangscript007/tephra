@@ -3,6 +3,12 @@ package org.lpw.tephra.pdf.parser;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.pdfbox.contentstream.operator.DrawObject;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingColor;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingColorN;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingColorSpace;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingDeviceCMYKColor;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingDeviceGrayColor;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingDeviceRGBColor;
 import org.apache.pdfbox.contentstream.operator.state.Concatenate;
 import org.apache.pdfbox.contentstream.operator.state.Restore;
 import org.apache.pdfbox.contentstream.operator.state.Save;
@@ -30,7 +36,9 @@ import org.apache.pdfbox.util.Matrix;
 import org.lpw.tephra.pdf.PdfHelper;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,6 +55,7 @@ public class TextParser extends PDFTextStripper {
     private JSONObject anchor;
     private String[] merges = {"horizontalAlign", "fontFamily", "fontSize", "color", "bold", "italic", "underline", "strikethrough",
             "subscript", "superscript"};
+    private List<String> fontFamilies = Arrays.asList("Arial", "TimesNewRoman", "SimSun", "YaHei", "SansSerif");
 
     public TextParser(PdfHelper pdfHelper, int pageHeight) throws IOException {
         super();
@@ -62,22 +71,28 @@ public class TextParser extends PDFTextStripper {
         addOperator(new Concatenate());
         addOperator(new DrawObject());
         addOperator(new EndText());
-        addOperator(new SetGraphicsStateParameters());
-        addOperator(new Save());
-        addOperator(new Restore());
-        addOperator(new NextLine());
-        addOperator(new SetCharSpacing());
         addOperator(new MoveText());
         addOperator(new MoveTextSetLeading());
+        addOperator(new NextLine());
+        addOperator(new Restore());
+        addOperator(new Save());
+        addOperator(new SetCharSpacing());
         addOperator(new SetFontAndSize());
-        addOperator(new ShowText());
-        addOperator(new ShowTextAdjusted());
-        addOperator(new SetTextLeading());
+        addOperator(new SetGraphicsStateParameters());
         addOperator(new SetMatrix());
+        addOperator(new SetNonStrokingColor());
+        addOperator(new SetNonStrokingColorN());
+        addOperator(new SetNonStrokingColorSpace());
+        addOperator(new SetNonStrokingDeviceCMYKColor());
+        addOperator(new SetNonStrokingDeviceGrayColor());
+        addOperator(new SetNonStrokingDeviceRGBColor());
+        addOperator(new SetTextHorizontalScaling());
+        addOperator(new SetTextLeading());
         addOperator(new SetTextRenderingMode());
         addOperator(new SetTextRise());
         addOperator(new SetWordSpacing());
-        addOperator(new SetTextHorizontalScaling());
+        addOperator(new ShowText());
+        addOperator(new ShowTextAdjusted());
         addOperator(new ShowTextLine());
         addOperator(new ShowTextLineAndSpace());
     }
@@ -148,11 +163,19 @@ public class TextParser extends PDFTextStripper {
     private void newWord(TextPosition textPosition, JSONObject color) {
         word = new JSONObject();
         String name = textPosition.getFont().getName();
-        word.put("fontFamily", name);
+        word.put("fontFamily", getFontFamily(name));
         if (name.contains("Bold"))
             word.put("bold", true);
         word.put("fontSize", textPosition.getFontSizeInPt());
         word.put("color", color);
+    }
+
+    private String getFontFamily(String name) {
+        for (String fontFamily : fontFamilies)
+            if (name.contains(fontFamily))
+                return fontFamily;
+
+        return name;
     }
 
     private void merge(JSONObject object, JSONArray array) {
