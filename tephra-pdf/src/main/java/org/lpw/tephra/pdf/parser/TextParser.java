@@ -135,7 +135,7 @@ public class TextParser extends PDFTextStripper {
 
         int height = pdfHelper.pointToPixel(this.height);
         anchor.put("y", pageHeight - height - pdfHelper.pointToPixel(prevTextPosition.getEndY()));
-        anchor.put("width", pdfHelper.pointToPixel(prevTextPosition.getEndX() + prevTextPosition.getTextMatrix().getScalingFactorX() / 10)
+        anchor.put("width", pdfHelper.pointToPixel(prevTextPosition.getEndX() + prevTextPosition.getTextMatrix().getScalingFactorX())
                 - anchor.getIntValue("x"));
         anchor.put("height", height);
         object.put("anchor", anchor);
