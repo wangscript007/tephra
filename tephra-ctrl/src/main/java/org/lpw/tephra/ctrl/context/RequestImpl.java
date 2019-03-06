@@ -15,6 +15,7 @@ import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -90,6 +91,11 @@ public class RequestImpl implements Request, RequestAware {
         Date date = getAsDate(name);
 
         return date == null ? null : new java.sql.Date(date.getTime());
+    }
+
+    @Override
+    public Timestamp getAsTimestamp(String name) {
+        return dateTime.toTime(get(name));
     }
 
     @Override

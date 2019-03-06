@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.dao.model.Model;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 
@@ -86,6 +87,14 @@ public interface Request {
      * @return 日期型参数值。
      */
     java.sql.Date getAsSqlDate(String name);
+
+    /**
+     * 获得日期时间型请求参数值。
+     *
+     * @param name 参数名称。
+     * @return 日期时间型参数值。
+     */
+    Timestamp getAsTimestamp(String name);
 
     /**
      * 获得字符串数组请求参数值。
