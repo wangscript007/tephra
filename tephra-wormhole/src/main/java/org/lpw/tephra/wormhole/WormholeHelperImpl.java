@@ -66,8 +66,14 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     }
 
     @Override
-    public String getUrl(String uri) {
-        return root + uri;
+    public String getUrl(String uri, boolean internal) {
+        if (internal)
+            return root + uri;
+
+        if (validator.isEmpty(hostArray))
+            return "";
+
+        return "http://" + hostArray[generator.random(0, hostArray.length - 1)] + uri;
     }
 
     @Override
@@ -177,7 +183,7 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     @Override
     public void download(String uri, String file) {
         try (OutputStream outputStream = new FileOutputStream(file)) {
-            http.get(getUrl(uri), null, null, null, outputStream);
+            http.get(getUrl(uri, true), null, null, null, outputStream);
         } catch (Throwable throwable) {
             logger.warn(throwable, "下载Wormhole文件[{}:{}]时发生异常！", uri, file);
         }

@@ -27,10 +27,11 @@ public interface WormholeHelper {
     /**
      * 获取URL地址。
      *
-     * @param uri URI地址。
+     * @param uri      URI地址。
+     * @param internal 是否为内部网络。
      * @return URL地址。
      */
-    String getUrl(String uri);
+    String getUrl(String uri, boolean internal);
 
     /**
      * 获取WebSocket URL地址。
