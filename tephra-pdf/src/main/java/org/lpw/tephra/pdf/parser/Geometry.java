@@ -100,8 +100,6 @@ class Geometry {
                     path.curveTo(point[0], point[1], point[2], point[3], point[4], point[5]);
                     break;
                 case QuadTo:
-                    if (prevX > -1 && prevY > -1)
-                        path.moveTo(prevX, prevY);
                     path.quadTo(point[0], point[1], point[2], point[3]);
                     break;
                 case Rectangle:
