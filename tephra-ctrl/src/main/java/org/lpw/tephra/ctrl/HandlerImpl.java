@@ -72,10 +72,8 @@ public class HandlerImpl implements Handler, MinuteJob {
     private void clear(Integer key) {
         if (executors.containsKey(key))
             executors.remove(key).shutdown();
-        if (futures.containsKey(key))
-            futures.remove(key);
-        if (times.containsKey(key))
-            times.remove(key);
+        futures.remove(key);
+        times.remove(key);
     }
 
     private Integer getKey(String key) {
