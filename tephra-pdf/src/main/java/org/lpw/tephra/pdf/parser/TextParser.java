@@ -104,7 +104,7 @@ public class TextParser extends PDFTextStripper {
         Matrix matrix = textPosition.getTextMatrix();
         if (prevTextPosition == null || prevTextPosition.getEndY() != textPosition.getEndY()
                 || prevTextPosition.getFontSizeInPt() != textPosition.getFontSizeInPt()
-                || prevTextPosition.getEndX() + prevTextPosition.getWidth() / 2 < textPosition.getX()) {
+                || prevTextPosition.getEndX() + prevTextPosition.getWidth() < textPosition.getX()) {
             addLine();
             words = new JSONArray();
             word = null;
