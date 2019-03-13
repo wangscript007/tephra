@@ -17,6 +17,9 @@ import org.apache.pdfbox.contentstream.operator.color.SetStrokingColorSpace;
 import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceCMYKColor;
 import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceGrayColor;
 import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceRGBColor;
+import org.apache.pdfbox.contentstream.operator.markedcontent.BeginMarkedContentSequence;
+import org.apache.pdfbox.contentstream.operator.markedcontent.BeginMarkedContentSequenceWithProperties;
+import org.apache.pdfbox.contentstream.operator.markedcontent.EndMarkedContentSequence;
 import org.apache.pdfbox.contentstream.operator.state.Concatenate;
 import org.apache.pdfbox.contentstream.operator.state.Restore;
 import org.apache.pdfbox.contentstream.operator.state.Save;
@@ -28,6 +31,7 @@ import org.apache.pdfbox.contentstream.operator.state.SetLineJoinStyle;
 import org.apache.pdfbox.contentstream.operator.state.SetLineMiterLimit;
 import org.apache.pdfbox.contentstream.operator.state.SetLineWidth;
 import org.apache.pdfbox.contentstream.operator.state.SetMatrix;
+import org.apache.pdfbox.contentstream.operator.state.SetRenderingIntent;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSNumber;
@@ -87,12 +91,16 @@ public class ImageParser extends PDFStreamEngine {
         addOperator(new SetNonStrokingDeviceCMYKColor());
         addOperator(new SetNonStrokingDeviceGrayColor());
         addOperator(new SetNonStrokingDeviceRGBColor());
+        addOperator(new SetRenderingIntent());
         addOperator(new SetStrokingColor());
         addOperator(new SetStrokingColorN());
         addOperator(new SetStrokingColorSpace());
         addOperator(new SetStrokingDeviceCMYKColor());
         addOperator(new SetStrokingDeviceGrayColor());
         addOperator(new SetStrokingDeviceRGBColor());
+        addOperator(new BeginMarkedContentSequence());
+        addOperator(new BeginMarkedContentSequenceWithProperties());
+        addOperator(new EndMarkedContentSequence());
     }
 
     @Override

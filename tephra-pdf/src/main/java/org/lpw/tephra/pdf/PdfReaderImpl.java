@@ -96,7 +96,7 @@ public class PdfReaderImpl implements PdfReader {
     public String readAsJpeg(InputStream inputStream, MediaWriter mediaWriter, int page) {
         String url = null;
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(); PDDocument document = PDDocument.load(inputStream)) {
-            ImageIO.write(new PDFRenderer(document).renderImage(0, 1.0f, ImageType.RGB), "JPEG", byteArrayOutputStream);
+            ImageIO.write(new PDFRenderer(document).renderImage(page, 1.0f, ImageType.RGB), "JPEG", byteArrayOutputStream);
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
             url = mediaWriter.write(MediaType.Jpeg, page + ".jpeg", byteArrayInputStream);
             byteArrayInputStream.close();
