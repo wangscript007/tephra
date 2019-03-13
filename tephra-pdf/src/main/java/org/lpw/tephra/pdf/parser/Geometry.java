@@ -85,8 +85,6 @@ class Geometry {
     private Path2D.Double getPath() {
         transform();
         Path2D.Double path = new Path2D.Double();
-        double prevX = -1;
-        double prevY = -1;
         for (int i = 0, size = types.size(); i < size; i++) {
             double[] point = points.get(i);
             switch (types.get(i)) {
@@ -112,13 +110,6 @@ class Geometry {
                 case Close:
                     path.closePath();
                     break;
-            }
-            if (point.length > 1) {
-                prevX = point[0];
-                prevY = point[1];
-            } else {
-                prevX = -1;
-                prevY = -1;
             }
         }
 

@@ -166,7 +166,10 @@ public class ImageParser extends PDFStreamEngine {
             geometry.add(Geometry.Type.LineTo, point(operands));
         else if (name.equals("c") && operands.size() == 6)
             geometry.add(Geometry.Type.CurveTo, point(operands));
-        else if (name.equalsIgnoreCase("q") && operands.size() == 4)
+        else if (name.equals("y") && operands.size() == 4) {
+            double[] points = point(operands);
+            geometry.add(Geometry.Type.CurveTo, new double[]{points[0], points[1], points[2], points[3], points[2], points[3]});
+        } else if (name.equals("q") && operands.size() == 4)
             geometry.add(Geometry.Type.QuadTo, point(operands));
         else if (name.equals("re") && operands.size() == 4) {
             double[] points = new double[4];
