@@ -98,9 +98,6 @@ public class ImageParser extends PDFStreamEngine {
         addOperator(new SetStrokingDeviceCMYKColor());
         addOperator(new SetStrokingDeviceGrayColor());
         addOperator(new SetStrokingDeviceRGBColor());
-        addOperator(new BeginMarkedContentSequence());
-        addOperator(new BeginMarkedContentSequenceWithProperties());
-        addOperator(new EndMarkedContentSequence());
     }
 
     @Override
