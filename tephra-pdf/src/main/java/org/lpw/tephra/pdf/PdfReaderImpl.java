@@ -6,7 +6,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import org.lpw.tephra.pdf.parser.ImageParser;
+import org.lpw.tephra.pdf.parser.GraphicsParser;
 import org.lpw.tephra.pdf.parser.TextParser;
 import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
@@ -49,7 +49,7 @@ public class PdfReaderImpl implements PdfReader {
                 }
 
                 JSONArray elements = new JSONArray();
-                parseImage(elements, pdPage, mediaWriter, pageHeight);
+                parseImage(elements, pdPage, mediaWriter);
                 parseText(elements, pdDocument, pageHeight, i);
 
                 JSONObject page = new JSONObject();
@@ -73,10 +73,14 @@ public class PdfReaderImpl implements PdfReader {
         object.put("size", size);
     }
 
-    private void parseImage(JSONArray elements, PDPage pdPage, MediaWriter mediaWriter, int pageHeight) throws IOException {
-        ImageParser imageParser = new ImageParser(pdfHelper, mediaWriter, pdPage, pageHeight);
-        imageParser.processPage(pdPage);
-        merge(elements, imageParser.getArray());
+    private void parseImage(JSONArray elements, PDPage pdPage, MediaWriter mediaWriter) throws IOException {
+//        ImageParser imageParser = new ImageParser(pdfHelper, mediaWriter, pdPage, pageHeight);
+//        imageParser.processPage(pdPage);
+//        merge(elements, imageParser.getArray());
+
+        GraphicsParser graphicsParser = new GraphicsParser(pdPage, pdfHelper, mediaWriter);
+        graphicsParser.processPage(pdPage);
+        merge(elements, graphicsParser.getArray());
     }
 
     private void parseText(JSONArray elements, PDDocument pdDocument, int pageHeight, int page) throws IOException {

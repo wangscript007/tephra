@@ -17,9 +17,6 @@ import org.apache.pdfbox.contentstream.operator.color.SetStrokingColorSpace;
 import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceCMYKColor;
 import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceGrayColor;
 import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceRGBColor;
-import org.apache.pdfbox.contentstream.operator.markedcontent.BeginMarkedContentSequence;
-import org.apache.pdfbox.contentstream.operator.markedcontent.BeginMarkedContentSequenceWithProperties;
-import org.apache.pdfbox.contentstream.operator.markedcontent.EndMarkedContentSequence;
 import org.apache.pdfbox.contentstream.operator.state.Concatenate;
 import org.apache.pdfbox.contentstream.operator.state.Restore;
 import org.apache.pdfbox.contentstream.operator.state.Save;
@@ -37,7 +34,6 @@ import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSNumber;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.util.Matrix;
 import org.lpw.tephra.pdf.MediaType;
@@ -62,6 +58,7 @@ public class ImageParser extends PDFStreamEngine {
     private int pageHeight;
     private JSONArray array;
     private Geometry geometry;
+    private boolean clip;
 
     public ImageParser(PdfHelper pdfHelper, MediaWriter mediaWriter, PDPage pdPage, int pageHeight) {
         super();
@@ -105,6 +102,9 @@ public class ImageParser extends PDFStreamEngine {
         super.processOperator(operator, operands);
 
         String name = operator.getName();
+//        System.out.println("########### " + name);
+//        operands.forEach(System.out::print);
+//        System.out.println();
         if (name.equals("Do"))
             image(operands);
         else
@@ -116,8 +116,7 @@ public class ImageParser extends PDFStreamEngine {
         if (cosName == null)
             return;
 
-        PDXObject pdxObject = getResources().getXObject(cosName);
-        if (!(pdxObject instanceof PDImageXObject))
+        if (!(getResources().isImageXObject(cosName)))
             return;
 
         Matrix matrix = getGraphicsState().getCurrentTransformationMatrix();
@@ -132,7 +131,7 @@ public class ImageParser extends PDFStreamEngine {
 
         JSONObject image = new JSONObject();
         JSONObject size = new JSONObject();
-        PDImageXObject pdImageXObject = (PDImageXObject) pdxObject;
+        PDImageXObject pdImageXObject = (PDImageXObject) getResources().getXObject(cosName);
         size.put("width", pdImageXObject.getWidth());
         size.put("height", pdImageXObject.getHeight());
         image.put("size", size);
@@ -185,14 +184,18 @@ public class ImageParser extends PDFStreamEngine {
             geometry.add(Geometry.Type.Rectangle, points);
         } else if (name.equals("h"))
             geometry.add(Geometry.Type.Close, new double[0]);
+        else if (name.equals("W*"))
+            clip = true;
         else if (name.equalsIgnoreCase("f") || name.equalsIgnoreCase("f*"))
             draw(true, false);
         else if (name.equalsIgnoreCase("s") || name.equalsIgnoreCase("s*"))
             draw(false, true);
         else if (name.equalsIgnoreCase("b") || name.equalsIgnoreCase("b*"))
             draw(true, true);
-        else if (name.equals("n"))
+        else if (name.equals("Q")) {
             geometry.clear();
+            clip = false;
+        }
     }
 
     private double[] point(List<COSBase> operands) {
