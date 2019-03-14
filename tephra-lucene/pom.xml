@@ -17,6 +17,11 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-backward-codecs</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queryparser</artifactId>
             <version>LATEST</version>
         </dependency>
