@@ -151,7 +151,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
     @Override
     public void endPath() throws IOException {
-        if (types.size() == 2 && types.get(0).equals("rect") && types.get(1).equals("clip") && (full(true) || full(false)))
+        if (types.size() == 2 && types.get(0).equals("rect") && types.get(1).equals("clip") && full())
             reset();
         else
             types.add("end");
@@ -171,7 +171,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         if (types.isEmpty())
             return;
 
-        if (types.size() == 1 && types.get(0).equals("rect") && full(true)) {
+        if (types.size() == 1 && types.get(0).equals("rect") && full()) {
             Color color = pdfHelper.toColor(getGraphicsState().getNonStrokingColor().getComponents());
             if (color.getRed() == 255 && color.getGreen() == 255 && color.getBlue() == 255) {
                 reset();
@@ -184,20 +184,10 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         reset();
     }
 
-    private boolean full(boolean page) {
+    private boolean full() {
         double[] point = points.get(0);
-        if (page)
-            return equals(point[0], 0.0D) && equals(point[1], 0.0D) && equals(point[2], width) && equals(point[3], height);
 
-        Matrix matrix = getGraphicsState().getCurrentTransformationMatrix();
-
-        return equals(point[0], matrix.getTranslateX()) && equals(point[1], matrix.getTranslateY())
-                && equals(point[2], matrix.getTranslateX() + matrix.getScalingFactorX())
-                && equals(point[3], matrix.getTranslateY() + matrix.getScalingFactorY());
-    }
-
-    private boolean equals(double d1, double d2) {
-        return Math.abs(d1 - d2) < 0.1D;
+        return equals(point[0], 0.0D) && equals(point[1], 0.0D) && equals(point[2], width) && equals(point[3], height);
     }
 
     @Override
@@ -259,7 +249,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         object.put("geometry", url);
         JSONObject obj = new JSONObject();
         obj.put("x", pdfHelper.pointToPixel(anchor[0]));
-        obj.put("y", pdfHelper.pointToPixel(height - anchor[1] + anchor[3]));
+        obj.put("y", pdfHelper.pointToPixel(anchor[1]));
         obj.put("width", pdfHelper.pointToPixel(anchor[2]));
         obj.put("height", pdfHelper.pointToPixel(anchor[3]));
         object.put("anchor", obj);
@@ -283,6 +273,13 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
                             point[4] - anchor[0], point[5] - anchor[1]);
                     break;
                 case "rect":
+//                    if (i == 0 && size > 1 && types.get(1).equals("clip") && equals(point[0], anchor[0]) && equals(point[1], anchor[1])
+//                            && equals(point[2], anchor[0] + anchor[2]) && equals(point[3], anchor[1] + anchor[3])) {
+//                        i++;
+//
+//                        break;
+//                    }
+
                     path.moveTo(point[0] - anchor[0], point[1] - anchor[1]);
                     path.lineTo(point[2] - anchor[0], point[1] - anchor[1]);
                     path.lineTo(point[2] - anchor[0], point[3] - anchor[1]);
@@ -312,6 +309,10 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         anchor[3] -= anchor[1];
 
         return anchor;
+    }
+
+    private boolean equals(double d1, double d2) {
+        return Math.abs(d1 - d2) < 0.1D;
     }
 
     @Override
