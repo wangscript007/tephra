@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,12 +62,10 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
     @Override
     public void appendRectangle(Point2D p0, Point2D p1, Point2D p2, Point2D p3) throws IOException {
-        double[] area = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, 0.0D, 0.0D};
-        area(area, p0.getX(), p0.getY());
-        area(area, p1.getX(), p1.getY());
-        area(area, p2.getX(), p2.getY());
-        area(area, p3.getX(), p3.getY());
-        addPoints((float) area[0], (float) area[1], (float) area[2], (float) area[3]);
+        addPoints((float) p0.getX(), (float) p0.getY(), (float) p2.getX(), (float) p2.getY());
+        double[] point = points.get(types.size());
+        area(point, point[0], point[1]);
+        area(point, point[2], point[3]);
         types.add("rect");
     }
 
@@ -201,6 +200,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
     private boolean full() {
         double[] point = points.get(0);
+        System.out.println(width + ";" + height + ";" + Arrays.toString(point));
 
         return point[0] <= 0.1D && point[1] <= 0.1D && point[2] >= width - 0.1D && point[3] >= height - 0.1D;
     }
