@@ -68,7 +68,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
     @Override
     public void drawImage(PDImage pdImage) throws IOException {
 //        if (clipTypes.isEmpty())
-            image((PDImageXObject) pdImage);
+        image((PDImageXObject) pdImage);
 //        else
 //            draw(false, false, (PDImageXObject) pdImage);
         reset();
@@ -168,7 +168,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         if (types.isEmpty())
             return;
 
-        draw(false, true, null);
+        draw(area, false, true);
         reset();
     }
 
@@ -186,14 +186,14 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
             }
         }
 
-        draw(true, false, null);
+        draw(area, true, false);
         reset();
     }
 
     private boolean full() {
         double[] point = points.get(0);
 
-        return equals(point[0], 0.0D) && equals(point[1], 0.0D) && equals(point[2], width) && equals(point[3], height);
+        return point[0]<=0.1D && point[1]<=0.1D && point[2] >= width - 0.1D && point[3] >= height - 0.1D;
     }
 
     @Override
@@ -201,7 +201,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         if (types.isEmpty())
             return;
 
-        draw(true, true, null);
+        draw(area, true, true);
         reset();
     }
 
@@ -209,7 +209,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
     public void shadingFill(COSName shadingName) throws IOException {
     }
 
-    private void draw(boolean fill, boolean stroke, PDImageXObject pdImageXObject) throws IOException {
+    private void draw(double[] area, boolean fill, boolean stroke) throws IOException {
         double width = area[2] - area[0];
         double height = area[3] - area[1];
         if (width <= 1.0D || height <= 1.0D)
@@ -241,33 +241,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 //                    (int) (matrix.getTranslateX() - clipArea[0]), (int) (matrix.getTranslateY() - clipArea[1]), w, h, null);
 //        }
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Element root = svgGraphics2D.getRoot();
-        root.setAttribute("viewBox", "0 0 " + width + " " + height);
-        svgGraphics2D.stream(root, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), false, false);
-        svgGraphics2D.dispose();
-        outputStream.flush();
-        outputStream.close();
-
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toString().trim()
-                .replaceAll("\\s+", " ")
-                .replaceAll(" >", ">")
-                .replaceAll("> <", "><")
-                .replaceAll("<g [^>]+></g>", "").getBytes());
-        String url = mediaWriter.write(MediaType.Svg, "geometry.svg", inputStream);
-        inputStream.close();
-        if (url == null)
-            return;
-
-        JSONObject object = new JSONObject();
-        object.put("geometry", url);
-        JSONObject anchor = new JSONObject();
-        anchor.put("x", pdfHelper.pointToPixel(area[0]));
-        anchor.put("y", pdfHelper.pointToPixel(area[1]));
-        anchor.put("width", pdfHelper.pointToPixel(width));
-        anchor.put("height", pdfHelper.pointToPixel(height));
-        object.put("anchor", anchor);
-        array.add(object);
+        save(svgGraphics2D, area[0], area[1], width, height);
     }
 
     private Path2D.Double getPath(List<String> types, Map<Integer, double[]> points, double[] area) {
@@ -302,8 +276,34 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         return path;
     }
 
-    private boolean equals(double d1, double d2) {
-        return Math.abs(d1 - d2) < 0.1D;
+    private void save(SVGGraphics2D svgGraphics2D, double x, double y, double width, double height) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Element root = svgGraphics2D.getRoot();
+        root.setAttribute("viewBox", "0 0 " + width + " " + height);
+        svgGraphics2D.stream(root, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), false, false);
+        svgGraphics2D.dispose();
+        outputStream.flush();
+        outputStream.close();
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toString().trim()
+                .replaceAll("\\s+", " ")
+                .replaceAll(" >", ">")
+                .replaceAll("> <", "><")
+                .replaceAll("<g [^>]+></g>", "").getBytes());
+        String url = mediaWriter.write(MediaType.Svg, "geometry.svg", inputStream);
+        inputStream.close();
+        if (url == null)
+            return;
+
+        JSONObject object = new JSONObject();
+        object.put("geometry", url);
+        JSONObject anchor = new JSONObject();
+        anchor.put("x", pdfHelper.pointToPixel(x));
+        anchor.put("y", pdfHelper.pointToPixel(y));
+        anchor.put("width", pdfHelper.pointToPixel(width));
+        anchor.put("height", pdfHelper.pointToPixel(height));
+        object.put("anchor", anchor);
+        array.add(object);
     }
 
     private void reset() {
