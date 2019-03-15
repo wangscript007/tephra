@@ -193,7 +193,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
     private boolean full() {
         double[] point = points.get(0);
 
-        return point[0]<=0.1D && point[1]<=0.1D && point[2] >= width - 0.1D && point[3] >= height - 0.1D;
+        return point[0] <= 0.1D && point[1] <= 0.1D && point[2] >= width - 0.1D && point[3] >= height - 0.1D;
     }
 
     @Override
@@ -223,15 +223,20 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
             if (color != null) {
                 svgGraphics2D.setColor(color);
                 svgGraphics2D.fill(path);
-            }
+            } else
+                fill = false;
         }
         if (stroke) {
             Color color = pdfHelper.toColor(getGraphicsState().getStrokingColor().getComponents());
             if (color != null) {
                 svgGraphics2D.setColor(color);
                 svgGraphics2D.draw(path);
-            }
+            } else
+                stroke = false;
         }
+        if (!fill && !stroke)
+            return;
+
 //        if (pdImageXObject != null) {
 //            Matrix matrix = getGraphicsState().getCurrentTransformationMatrix();
 //            int w = (int) matrix.getScalingFactorX();
