@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,8 +184,9 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         if (types.isEmpty())
             return;
 
-        if (types.size() == 1 && types.get(0).equals("rect") && full()) {
+        if (types.size() == 1 && types.get(0).equals("rect") && full(points.get(0))) {
             Color color = pdfHelper.toColor(getGraphicsState().getNonStrokingColor().getComponents());
+            System.out.println(color);
             if (color.getRed() == 255 && color.getGreen() == 255 && color.getBlue() == 255) {
                 reset();
 
@@ -198,10 +198,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         reset();
     }
 
-    private boolean full() {
-        double[] point = points.get(0);
-        System.out.println(width + ";" + height + ";" + Arrays.toString(point));
-
+    private boolean full(double[] point) {
         return point[0] <= 0.1D && point[1] <= 0.1D && point[2] >= width - 0.1D && point[3] >= height - 0.1D;
     }
 
@@ -219,9 +216,9 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
     }
 
     private void draw(double[] area, boolean fill, boolean stroke) throws IOException {
-        double width = area[2] - area[0];
-        double height = area[3] - area[1];
-        if (width <= 1.0D || height <= 1.0D)
+        double w = area[2] - area[0];
+        double h = area[3] - area[1];
+        if (area[0] >= width - 0.1D || area[1] >= height - 0.1D || w <= 1.0D || h <= 1.0D)
             return;
 
         SVGGraphics2D svgGraphics2D = new SVGGraphics2D(GenericDOMImplementation.getDOMImplementation()
@@ -255,7 +252,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 //                    (int) (matrix.getTranslateX() - clipArea[0]), (int) (matrix.getTranslateY() - clipArea[1]), w, h, null);
 //        }
 
-        save(svgGraphics2D, area[0], area[1], width, height);
+        save(svgGraphics2D, area[0], area[1], w, h);
     }
 
     private Path2D.Double getPath(List<String> types, Map<Integer, double[]> points, double[] area) {
