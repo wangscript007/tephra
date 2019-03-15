@@ -37,9 +37,7 @@ import org.lpw.tephra.pdf.PdfHelper;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author lpw
@@ -48,14 +46,10 @@ public class TextParser extends PDFTextStripper {
     private PdfHelper pdfHelper;
     private int pageHeight;
     private JSONArray array;
-    private JSONArray words;
-    private JSONObject word;
+    private JSONObject text;
     private TextPosition prevTextPosition;
     private JSONObject anchor;
-    private String[] merges = {"horizontalAlign", "fontFamily", "fontSize", "color", "bold", "italic", "underline", "strikethrough",
-            "subscript", "superscript"};
     private List<String> fontFamilies = Arrays.asList("Arial", "TimesNewRoman", "SimSun", "YaHei", "SansSerif");
-    private double height;
 
     public TextParser(PdfHelper pdfHelper, int pageHeight) throws IOException {
         super();
@@ -106,67 +100,50 @@ public class TextParser extends PDFTextStripper {
                 || prevTextPosition.getFontSizeInPt() != textPosition.getFontSizeInPt()
                 || prevTextPosition.getEndX() + prevTextPosition.getWidth() < textPosition.getX()) {
             addLine();
-            words = new JSONArray();
-            word = null;
-            height = 0.0D;
-
             anchor = new JSONObject();
             anchor.put("x", pdfHelper.pointToPixel(textPosition.getX()));
+            anchor.put("y", pageHeight - pdfHelper.pointToPixel(matrix.getScalingFactorY() + textPosition.getEndY()));
+            anchor.put("height", pdfHelper.pointToPixel(matrix.getScalingFactorY()));
         }
-        height = Math.max(height, matrix.getScalingFactorY());
         addWord(textPosition);
         prevTextPosition = textPosition;
     }
 
     private void addLine() {
-        if (prevTextPosition == null || word == null || word.isEmpty())
+        if (prevTextPosition == null || text == null || text.isEmpty())
             return;
 
-        words.add(word);
-        JSONObject paragraph = new JSONObject();
-        merge(paragraph, words);
-        paragraph.put("words", words);
-        JSONArray paragraphs = new JSONArray();
-        paragraphs.add(paragraph);
-        JSONObject text = new JSONObject();
-        merge(text, paragraphs);
-        text.put("paragraphs", paragraphs);
-        JSONObject object = new JSONObject();
-        object.put("text", text);
-
-        int height = pdfHelper.pointToPixel(this.height);
-        anchor.put("y", pageHeight - height - pdfHelper.pointToPixel(prevTextPosition.getEndY()));
         anchor.put("width", pdfHelper.pointToPixel(prevTextPosition.getEndX()) - anchor.getIntValue("x"));
-        anchor.put("height", height);
-        object.put("anchor", anchor);
-        array.add(object);
+        text.put("anchor", anchor);
+        array.add(text);
     }
 
     private void addWord(TextPosition textPosition) {
         JSONObject color = pdfHelper.toJsonColor(getGraphicsState().getNonStrokingColor().getComponents());
-        if (word == null)
+        if (text == null)
             newWord(textPosition, color);
         else if (notSameStyle(textPosition, color)) {
-            words.add(word);
+            addLine();
             newWord(textPosition, color);
         }
-        word.put("word", word.containsKey("word") ? (word.getString("word") + textPosition.getUnicode()) : textPosition.getUnicode());
+        text.put("text", text.containsKey("text") ? (text.getString("text") + textPosition.getUnicode()) : textPosition.getUnicode());
     }
 
     private boolean notSameStyle(TextPosition textPosition, JSONObject color) {
-        return !textPosition.getFont().getName().equals(word.getString("fontFamily"))
-                || word.getFloatValue("fontSize") != textPosition.getFontSizeInPt()
-                || !word.getJSONObject("color").equals(color);
+        return !textPosition.getFont().getName().equals(text.getString("fontFamily"))
+                || text.getFloatValue("fontSize") != textPosition.getFontSizeInPt()
+                || !text.getJSONObject("color").equals(color);
     }
 
     private void newWord(TextPosition textPosition, JSONObject color) {
-        word = new JSONObject();
+        text = new JSONObject();
         String name = textPosition.getFont().getName();
-        word.put("fontFamily", getFontFamily(name));
+        text.put("fontFamily", getFontFamily(name));
         if (name.contains("Bold"))
-            word.put("bold", true);
-        word.put("fontSize", textPosition.getFontSizeInPt());
-        word.put("color", color);
+            text.put("bold", true);
+        text.put("fontSize", textPosition.getFontSizeInPt());
+        text.put("letterSpacing", textPosition.getWidthOfSpace());
+        text.put("color", color);
     }
 
     private String getFontFamily(String name) {
@@ -175,55 +152,6 @@ public class TextParser extends PDFTextStripper {
                 return fontFamily;
 
         return name;
-    }
-
-    private void merge(JSONObject object, JSONArray array) {
-        if (array.isEmpty())
-            return;
-
-        int size = array.size();
-        if (size == 1) {
-            JSONObject obj = array.getJSONObject(0);
-            for (String key : merges)
-                if (obj.containsKey(key))
-                    object.put(key, obj.remove(key));
-
-            return;
-        }
-
-        for (String key : merges) {
-            Map<Object, Integer> map = new HashMap<>();
-            for (int i = 0; i < size; i++) {
-                JSONObject obj = array.getJSONObject(i);
-                if (!obj.containsKey(key))
-                    break;
-
-                Object value = obj.get(key);
-                map.put(value, map.getOrDefault(value, 0) + 1);
-            }
-            if (map.isEmpty())
-                continue;
-
-            Object value = null;
-            int count = 0;
-            for (Object k : map.keySet()) {
-                int v = map.get(k);
-                if (v <= count)
-                    continue;
-
-                count = v;
-                value = k;
-            }
-            object.put(key, value);
-            for (int i = 0; i < size; i++) {
-                JSONObject obj = array.getJSONObject(i);
-                if (!obj.containsKey(key))
-                    break;
-
-                if (obj.get(key).equals(value))
-                    obj.remove(key);
-            }
-        }
     }
 
     public JSONArray getArray() {
