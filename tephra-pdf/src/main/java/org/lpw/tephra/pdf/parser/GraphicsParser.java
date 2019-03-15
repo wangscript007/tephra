@@ -18,7 +18,6 @@ import org.w3c.dom.Element;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.io.ByteArrayInputStream;
@@ -41,6 +40,10 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
     private float height;
     private List<String> types;
     private Map<Integer, double[]> points;
+    private double[] area;
+    private List<String> clipTypes;
+    private Map<Integer, double[]> clipPoints;
+    private double[] clipArea;
     private Point2D point2D;
     private JSONArray array;
 
@@ -51,9 +54,9 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         this.mediaWriter = mediaWriter;
         width = pdPage.getCropBox().getWidth();
         height = pdPage.getCropBox().getHeight();
-        types = new ArrayList<>();
-        points = new HashMap<>();
         array = new JSONArray();
+        reset();
+        resetClip();
     }
 
     @Override
@@ -64,7 +67,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
     @Override
     public void drawImage(PDImage pdImage) throws IOException {
-        if (types.isEmpty())
+        if (clipTypes.isEmpty())
             image((PDImageXObject) pdImage);
         else
             draw(false, false, (PDImageXObject) pdImage);
@@ -108,7 +111,10 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
     @Override
     public void clip(int windingRule) throws IOException {
-        types.add("clip");
+        clipTypes = types;
+        clipPoints = points;
+        clipArea = area;
+        reset();
     }
 
     @Override
@@ -135,6 +141,10 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         for (int i = 0; i < fs.length; i += 2) {
             ds[i] = fs[i];
             ds[i + 1] = height - fs[i + 1];
+            area[0] = Math.min(area[0], ds[i]);
+            area[1] = Math.min(area[1], ds[i + 1]);
+            area[2] = Math.max(area[2], ds[i]);
+            area[3] = Math.max(area[3], ds[i + 1]);
         }
         points.put(types.size(), ds);
     }
@@ -151,10 +161,6 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
     @Override
     public void endPath() throws IOException {
-        if (types.size() == 2 && types.get(0).equals("rect") && types.get(1).equals("clip") && full())
-            reset();
-        else
-            types.add("end");
     }
 
     @Override
@@ -199,11 +205,16 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         reset();
     }
 
+    @Override
+    public void shadingFill(COSName shadingName) throws IOException {
+    }
+
     private void draw(boolean fill, boolean stroke, PDImageXObject pdImageXObject) throws IOException {
         SVGGraphics2D svgGraphics2D = new SVGGraphics2D(GenericDOMImplementation.getDOMImplementation()
                 .createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null));
-        double[] anchor = getAnchor();
-        Path2D.Double path = getPath(anchor);
+        Path2D.Double path = getPath(types, points, area);
+        System.out.println(path.getBounds2D().getX() + ";" + path.getBounds2D().getY() + ";"
+                + path.getBounds2D().getWidth() + ";" + path.getBounds2D().getHeight());
         if (fill) {
             Color color = pdfHelper.toColor(getGraphicsState().getNonStrokingColor().getComponents());
             if (color != null) {
@@ -218,18 +229,20 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
                 svgGraphics2D.draw(path);
             }
         }
-        if (pdImageXObject != null) {
-            Matrix matrix = getGraphicsState().getCurrentTransformationMatrix();
-            int w = (int) matrix.getScalingFactorX();
-            int h = (int) matrix.getScalingFactorY();
-            svgGraphics2D.clip(path);
-            svgGraphics2D.drawImage(pdImageXObject.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH),
-                    (int) (matrix.getTranslateX() - anchor[0]), (int) (matrix.getTranslateY() - anchor[1]), w, h, null);
-        }
+//        if (pdImageXObject != null) {
+//            Matrix matrix = getGraphicsState().getCurrentTransformationMatrix();
+//            int w = (int) matrix.getScalingFactorX();
+//            int h = (int) matrix.getScalingFactorY();
+//            svgGraphics2D.clip(getPath(clipTypes,clipPoints,clipArea));
+//            svgGraphics2D.drawImage(pdImageXObject.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH),
+//                    (int) (matrix.getTranslateX() - clipArea[0]), (int) (matrix.getTranslateY() - clipArea[1]), w, h, null);
+//        }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Element root = svgGraphics2D.getRoot();
-        root.setAttribute("viewBox", "0 0 " + anchor[2] + " " + anchor[3]);
+        double w = area[2] - area[0];
+        double h = area[3] - area[1];
+        root.setAttribute("viewBox", "0 0 " + w + " " + h);
         svgGraphics2D.stream(root, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), false, false);
         svgGraphics2D.dispose();
         outputStream.flush();
@@ -248,43 +261,36 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         JSONObject object = new JSONObject();
         object.put("geometry", url);
         JSONObject obj = new JSONObject();
-        obj.put("x", pdfHelper.pointToPixel(anchor[0]));
-        obj.put("y", pdfHelper.pointToPixel(anchor[1]));
-        obj.put("width", pdfHelper.pointToPixel(anchor[2]));
-        obj.put("height", pdfHelper.pointToPixel(anchor[3]));
+        obj.put("x", pdfHelper.pointToPixel(area[0]));
+        obj.put("y", pdfHelper.pointToPixel(area[1]));
+        obj.put("width", pdfHelper.pointToPixel(w));
+        obj.put("height", pdfHelper.pointToPixel(h));
         object.put("anchor", obj);
         array.add(object);
     }
 
-    private Path2D.Double getPath(double[] anchor) {
+    private Path2D.Double getPath(List<String> types, Map<Integer, double[]> points, double[] area) {
         Path2D.Double path = new Path2D.Double();
         for (int i = 0, size = types.size(); i < size; i++) {
             double[] point = points.get(i);
             switch (types.get(i)) {
                 case "move-to":
-                    path.moveTo(point[0] - anchor[0], point[1] - anchor[1]);
+                    path.moveTo(point[0] - area[0], point[1] - area[1]);
                     break;
                 case "line-to":
-                    path.lineTo(point[0] - anchor[0], point[1] - anchor[1]);
+                    path.lineTo(point[0] - area[0], point[1] - area[1]);
                     break;
                 case "curve-to":
-                    path.curveTo(point[0] - anchor[0], point[1] - anchor[1],
-                            point[2] - anchor[0], point[3] - anchor[1],
-                            point[4] - anchor[0], point[5] - anchor[1]);
+                    path.curveTo(point[0] - area[0], point[1] - area[1],
+                            point[2] - area[0], point[3] - area[1],
+                            point[4] - area[0], point[5] - area[1]);
                     break;
                 case "rect":
-//                    if (i == 0 && size > 1 && types.get(1).equals("clip") && equals(point[0], anchor[0]) && equals(point[1], anchor[1])
-//                            && equals(point[2], anchor[0] + anchor[2]) && equals(point[3], anchor[1] + anchor[3])) {
-//                        i++;
-//
-//                        break;
-//                    }
-
-                    path.moveTo(point[0] - anchor[0], point[1] - anchor[1]);
-                    path.lineTo(point[2] - anchor[0], point[1] - anchor[1]);
-                    path.lineTo(point[2] - anchor[0], point[3] - anchor[1]);
-                    path.lineTo(point[0] - anchor[0], point[3] - anchor[1]);
-                    path.lineTo(point[0] - anchor[0], point[1] - anchor[1]);
+                    path.moveTo(point[0] - area[0], point[1] - area[1]);
+                    path.lineTo(point[2] - area[0], point[1] - area[1]);
+                    path.lineTo(point[2] - area[0], point[3] - area[1]);
+                    path.lineTo(point[0] - area[0], point[3] - area[1]);
+                    path.lineTo(point[0] - area[0], point[1] - area[1]);
                     break;
                 case "close":
                     path.closePath();
@@ -295,33 +301,20 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         return path;
     }
 
-    private double[] getAnchor() {
-        double[] anchor = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, 0.0D, 0.0D};
-        for (double[] ds : points.values()) {
-            for (int i = 0; i < ds.length; i += 2) {
-                anchor[0] = Math.min(anchor[0], ds[i]);
-                anchor[1] = Math.min(anchor[1], ds[i + 1]);
-                anchor[2] = Math.max(anchor[2], ds[i]);
-                anchor[3] = Math.max(anchor[3], ds[i + 1]);
-            }
-        }
-        anchor[2] -= anchor[0];
-        anchor[3] -= anchor[1];
-
-        return anchor;
-    }
-
     private boolean equals(double d1, double d2) {
         return Math.abs(d1 - d2) < 0.1D;
     }
 
-    @Override
-    public void shadingFill(COSName shadingName) throws IOException {
+    private void reset() {
+        types = new ArrayList<>();
+        points = new HashMap<>();
+        area = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, 0.0D, 0.0D};
     }
 
-    private void reset() {
-        types.clear();
-        points.clear();
+    private void resetClip() {
+        clipTypes = new ArrayList<>();
+        clipPoints = new HashMap<>();
+        clipArea = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, 0.0D, 0.0D};
     }
 
     public JSONArray getArray() {
