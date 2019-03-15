@@ -93,6 +93,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
             svgGraphics2D.drawImage(pdImageXObject.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH),
                     (int) (matrix.getTranslateX() - clipArea[0]), (int) (matrix.getTranslateY() - clipArea[1]), w, h, null);
         }
+        save(svgGraphics2D, clipArea[0], clipArea[1], matrix.getScalingFactorX(), matrix.getScalingFactorY());
 
         return true;
     }
