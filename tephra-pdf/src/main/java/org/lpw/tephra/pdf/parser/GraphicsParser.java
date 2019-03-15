@@ -18,6 +18,7 @@ import org.w3c.dom.Element;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.io.ByteArrayInputStream;
@@ -70,15 +71,33 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
     @Override
     public void drawImage(PDImage pdImage) throws IOException {
-//        if (clipTypes.isEmpty())
-        image((PDImageXObject) pdImage);
-//        else
-//            draw(false, false, (PDImageXObject) pdImage);
+        Matrix matrix = getGraphicsState().getCurrentTransformationMatrix();
+        PDImageXObject pdImageXObject = (PDImageXObject) pdImage;
+        if (!clip(matrix, pdImageXObject))
+            image(matrix, pdImageXObject);
         reset();
     }
 
-    private void image(PDImageXObject pdImageXObject) throws IOException {
-        Matrix matrix = getGraphicsState().getCurrentTransformationMatrix();
+    private boolean clip(Matrix matrix, PDImageXObject pdImageXObject) throws IOException {
+        if (clipTypes.isEmpty() || (clipTypes.size() == 1 && clipTypes.get(0).equals("rect")
+                && Math.abs(matrix.getScaleX() / matrix.getScalingFactorY()
+                - (clipArea[2] - clipArea[0]) / (clipArea[3] - clipArea[1])) <= 0.01D))
+            return false;
+
+        SVGGraphics2D svgGraphics2D = new SVGGraphics2D(GenericDOMImplementation.getDOMImplementation()
+                .createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null));
+        if (pdImageXObject != null) {
+            int w = (int) matrix.getScalingFactorX();
+            int h = (int) matrix.getScalingFactorY();
+            svgGraphics2D.clip(getPath(clipTypes, clipPoints, clipArea));
+            svgGraphics2D.drawImage(pdImageXObject.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH),
+                    (int) (matrix.getTranslateX() - clipArea[0]), (int) (matrix.getTranslateY() - clipArea[1]), w, h, null);
+        }
+
+        return true;
+    }
+
+    private void image(Matrix matrix, PDImageXObject pdImageXObject) throws IOException {
         JSONObject object = new JSONObject();
         JSONObject anchor = new JSONObject();
         anchor.put("x", pdfHelper.pointToPixel(matrix.getTranslateX()));
@@ -114,9 +133,13 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
     @Override
     public void clip(int windingRule) throws IOException {
-        clipTypes = types;
-        clipPoints = points;
-        clipArea = area;
+        if (types.size() == 1 && types.get(0).equals("rect") && full(points.get(0)))
+            resetClip();
+        else {
+            clipTypes = types;
+            clipPoints = points;
+            clipArea = area;
+        }
         reset();
     }
 
@@ -186,7 +209,6 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
         if (types.size() == 1 && types.get(0).equals("rect") && full(points.get(0))) {
             Color color = pdfHelper.toColor(getGraphicsState().getNonStrokingColor().getComponents());
-            System.out.println(color);
             if (color.getRed() == 255 && color.getGreen() == 255 && color.getBlue() == 255) {
                 reset();
 
@@ -240,19 +262,8 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
             } else
                 stroke = false;
         }
-        if (!fill && !stroke)
-            return;
-
-//        if (pdImageXObject != null) {
-//            Matrix matrix = getGraphicsState().getCurrentTransformationMatrix();
-//            int w = (int) matrix.getScalingFactorX();
-//            int h = (int) matrix.getScalingFactorY();
-//            svgGraphics2D.clip(getPath(clipTypes,clipPoints,clipArea));
-//            svgGraphics2D.drawImage(pdImageXObject.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH),
-//                    (int) (matrix.getTranslateX() - clipArea[0]), (int) (matrix.getTranslateY() - clipArea[1]), w, h, null);
-//        }
-
-        save(svgGraphics2D, area[0], area[1], w, h);
+        if (fill || stroke)
+            save(svgGraphics2D, area[0], area[1], w, h);
     }
 
     private Path2D.Double getPath(List<String> types, Map<Integer, double[]> points, double[] area) {
