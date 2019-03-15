@@ -67,10 +67,10 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
     @Override
     public void drawImage(PDImage pdImage) throws IOException {
-        if (clipTypes.isEmpty())
+//        if (clipTypes.isEmpty())
             image((PDImageXObject) pdImage);
-        else
-            draw(false, false, (PDImageXObject) pdImage);
+//        else
+//            draw(false, false, (PDImageXObject) pdImage);
         reset();
     }
 
@@ -210,11 +210,14 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
     }
 
     private void draw(boolean fill, boolean stroke, PDImageXObject pdImageXObject) throws IOException {
+        double width = area[2] - area[0];
+        double height = area[3] - area[1];
+        if (width <= 1.0D || height <= 1.0D)
+            return;
+
         SVGGraphics2D svgGraphics2D = new SVGGraphics2D(GenericDOMImplementation.getDOMImplementation()
                 .createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null));
         Path2D.Double path = getPath(types, points, area);
-        System.out.println(path.getBounds2D().getX() + ";" + path.getBounds2D().getY() + ";"
-                + path.getBounds2D().getWidth() + ";" + path.getBounds2D().getHeight());
         if (fill) {
             Color color = pdfHelper.toColor(getGraphicsState().getNonStrokingColor().getComponents());
             if (color != null) {
@@ -240,9 +243,7 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Element root = svgGraphics2D.getRoot();
-        double w = area[2] - area[0];
-        double h = area[3] - area[1];
-        root.setAttribute("viewBox", "0 0 " + w + " " + h);
+        root.setAttribute("viewBox", "0 0 " + width + " " + height);
         svgGraphics2D.stream(root, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), false, false);
         svgGraphics2D.dispose();
         outputStream.flush();
@@ -260,12 +261,12 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
         JSONObject object = new JSONObject();
         object.put("geometry", url);
-        JSONObject obj = new JSONObject();
-        obj.put("x", pdfHelper.pointToPixel(area[0]));
-        obj.put("y", pdfHelper.pointToPixel(area[1]));
-        obj.put("width", pdfHelper.pointToPixel(w));
-        obj.put("height", pdfHelper.pointToPixel(h));
-        object.put("anchor", obj);
+        JSONObject anchor = new JSONObject();
+        anchor.put("x", pdfHelper.pointToPixel(area[0]));
+        anchor.put("y", pdfHelper.pointToPixel(area[1]));
+        anchor.put("width", pdfHelper.pointToPixel(width));
+        anchor.put("height", pdfHelper.pointToPixel(height));
+        object.put("anchor", anchor);
         array.add(object);
     }
 
