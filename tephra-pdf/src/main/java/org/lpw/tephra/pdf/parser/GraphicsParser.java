@@ -61,7 +61,12 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
 
     @Override
     public void appendRectangle(Point2D p0, Point2D p1, Point2D p2, Point2D p3) throws IOException {
-        addPoints((float) p3.getX(), (float) p3.getY(), (float) p1.getX(), (float) p1.getY());
+        double[] area = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, 0.0D, 0.0D};
+        area(area, p0.getX(), p0.getY());
+        area(area, p1.getX(), p1.getY());
+        area(area, p2.getX(), p2.getY());
+        area(area, p3.getX(), p3.getY());
+        addPoints((float) area[0], (float) area[1], (float) area[2], (float) area[3]);
         types.add("rect");
     }
 
@@ -141,12 +146,16 @@ public class GraphicsParser extends PDFGraphicsStreamEngine {
         for (int i = 0; i < fs.length; i += 2) {
             ds[i] = fs[i];
             ds[i + 1] = height - fs[i + 1];
-            area[0] = Math.min(area[0], ds[i]);
-            area[1] = Math.min(area[1], ds[i + 1]);
-            area[2] = Math.max(area[2], ds[i]);
-            area[3] = Math.max(area[3], ds[i + 1]);
+            area(area, ds[i], ds[i + 1]);
         }
         points.put(types.size(), ds);
+    }
+
+    private void area(double[] area, double x, double y) {
+        area[0] = Math.min(area[0], x);
+        area[1] = Math.min(area[1], y);
+        area[2] = Math.max(area[2], x);
+        area[3] = Math.max(area[3], y);
     }
 
     @Override
