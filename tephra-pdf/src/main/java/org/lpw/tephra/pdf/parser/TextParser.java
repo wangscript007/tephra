@@ -32,7 +32,6 @@ import org.apache.pdfbox.contentstream.operator.text.ShowTextLine;
 import org.apache.pdfbox.contentstream.operator.text.ShowTextLineAndSpace;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
-import org.apache.pdfbox.util.Matrix;
 import org.lpw.tephra.pdf.PdfHelper;
 
 import java.io.IOException;
@@ -95,16 +94,10 @@ public class TextParser extends PDFTextStripper {
     protected void processTextPosition(TextPosition textPosition) {
         super.processTextPosition(textPosition);
 
-        Matrix matrix = textPosition.getTextMatrix();
         if (prevTextPosition == null || prevTextPosition.getEndY() != textPosition.getEndY()
                 || prevTextPosition.getFontSizeInPt() != textPosition.getFontSizeInPt()
-                || prevTextPosition.getEndX() + prevTextPosition.getWidth() < textPosition.getX()) {
+                || prevTextPosition.getEndX() + prevTextPosition.getWidth() < textPosition.getX())
             addLine();
-            anchor = new JSONObject();
-            anchor.put("x", pdfHelper.pointToPixel(textPosition.getX()));
-            anchor.put("y", pageHeight - pdfHelper.pointToPixel(matrix.getScalingFactorY() + textPosition.getEndY()));
-            anchor.put("height", pdfHelper.pointToPixel(matrix.getScalingFactorY()));
-        }
         addWord(textPosition);
         prevTextPosition = textPosition;
     }
@@ -116,6 +109,7 @@ public class TextParser extends PDFTextStripper {
         anchor.put("width", pdfHelper.pointToPixel(prevTextPosition.getEndX()) - anchor.getIntValue("x"));
         text.put("anchor", anchor);
         array.add(text);
+        text = null;
     }
 
     private void addWord(TextPosition textPosition) {
@@ -136,13 +130,18 @@ public class TextParser extends PDFTextStripper {
     }
 
     private void newWord(TextPosition textPosition, JSONObject color) {
+        anchor = new JSONObject();
+        anchor.put("x", pdfHelper.pointToPixel(textPosition.getX()));
+        anchor.put("y", pageHeight - pdfHelper.pointToPixel(textPosition.getTextMatrix().getScalingFactorY() + textPosition.getEndY()));
+        anchor.put("height", pdfHelper.pointToPixel(textPosition.getTextMatrix().getScalingFactorY()));
+
         text = new JSONObject();
         String name = textPosition.getFont().getName();
         text.put("fontFamily", getFontFamily(name));
         if (name.contains("Bold"))
             text.put("bold", true);
         text.put("fontSize", textPosition.getFontSizeInPt());
-        text.put("letterSpacing", textPosition.getWidthOfSpace());
+        text.put("letterSpacing", getGraphicsState().getTextState().getCharacterSpacing());
         text.put("color", color);
     }
 
