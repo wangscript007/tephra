@@ -1,5 +1,6 @@
 package org.lpw.tephra.lucene;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cjk.CJKAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -48,12 +49,14 @@ public class LuceneHelperImpl implements LuceneHelper {
     private Logger logger;
     @Value("${tephra.lucene.root:/lucene}")
     private String root;
+    @Value("${tephra.lucene.analyzer:}")
+    private String analyzer;
     private Map<String, Directory> map = new ConcurrentHashMap<>();
 
     @Override
     public void clear(String key) {
         io.delete(Paths.get(context.getAbsoluteRoot(), root, key, "source").toFile());
-        try (IndexWriter indexWriter = new IndexWriter(get(key), new IndexWriterConfig(new StandardAnalyzer()))) {
+        try (IndexWriter indexWriter = new IndexWriter(get(key), new IndexWriterConfig(newAnalyzer()))) {
             indexWriter.deleteAll();
             indexWriter.flush();
         } catch (Throwable throwable) {
@@ -92,7 +95,7 @@ public class LuceneHelperImpl implements LuceneHelper {
     }
 
     private void index(Directory directory, String id, String data) {
-        try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig(new CJKAnalyzer()))) {
+        try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig(newAnalyzer()))) {
             Document document = new Document();
             document.add(new StoredField("id", id));
             document.add(new TextField("data", data, Field.Store.YES));
@@ -145,7 +148,7 @@ public class LuceneHelperImpl implements LuceneHelper {
 
         try (IndexReader indexReader = DirectoryReader.open(get(key))) {
             IndexSearcher indexSearcher = new IndexSearcher(indexReader);
-            QueryParser queryParser = new QueryParser("data", new CJKAnalyzer());
+            QueryParser queryParser = new QueryParser("data", newAnalyzer());
             if (and)
                 queryParser.setDefaultOperator(QueryParser.Operator.AND);
             TopDocs topDocs = indexSearcher.search(queryParser.parse(string), size);
@@ -174,5 +177,9 @@ public class LuceneHelperImpl implements LuceneHelper {
         }
 
         return directory;
+    }
+
+    private Analyzer newAnalyzer() {
+        return analyzer.equals("standard") ? new StandardAnalyzer() : new CJKAnalyzer();
     }
 }
