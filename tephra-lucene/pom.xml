@@ -22,12 +22,12 @@
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-queryparser</artifactId>
+            <artifactId>lucene-analyzers-common</artifactId>
             <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analyzers-smartcn</artifactId>
+            <artifactId>lucene-queryparser</artifactId>
             <version>LATEST</version>
         </dependency>
         <dependency>

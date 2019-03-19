@@ -2,6 +2,7 @@ package org.lpw.tephra.lucene;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cjk.CJKAnalyzer;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -180,6 +181,15 @@ public class LuceneHelperImpl implements LuceneHelper {
     }
 
     private Analyzer newAnalyzer() {
-        return analyzer.equals("standard") ? new StandardAnalyzer() : new CJKAnalyzer();
+        switch (analyzer) {
+            case "char":
+                return new CharAnalyzer();
+            case "simple":
+                return new SimpleAnalyzer();
+            case "standard":
+                return new StandardAnalyzer();
+            default:
+                return new CJKAnalyzer();
+        }
     }
 }
