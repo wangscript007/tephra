@@ -37,6 +37,9 @@ public class LuceneHelperTest extends CoreTestSupport {
             map.put("id " + i, strings[i]);
         }
         luceneHelper.index("test");
+
+        System.out.println("#############################################");
+
         List<String> words = new ArrayList<>();
         words.add("全文");
         words.add("开源");
@@ -47,7 +50,7 @@ public class LuceneHelperTest extends CoreTestSupport {
 
         System.out.println("#############################################");
 
-        words.add("Java");
+        words.clear();
         words.add("检索");
         words.add("工具");
         words.add("能够");
