@@ -62,17 +62,30 @@ public class HandlerImpl implements Handler, ContextRefreshedListener {
         return get(key, true);
     }
 
-    @SuppressWarnings({"unchecked"})
     private <T> T get(String key, boolean remove) {
-        try (Jedis jedis = pool.getResource()) {
-            byte[] k = key.getBytes();
-            byte[] bytes = jedis.get(k);
-            if (remove)
-                jedis.del(k);
+        Jedis jedis = pool.getResource();
+        byte[] k = key.getBytes();
+        byte[] bytes = jedis.get(k);
+        if (validator.isEmpty(bytes)) {
+            jedis.close();
 
-            return (T) serializer.unserialize(bytes);
+            return null;
+        }
+
+        if (remove)
+            jedis.del(k);
+        T t = unserialize(jedis, k, bytes);
+        jedis.close();
+
+        return t;
+    }
+
+    private <T> T unserialize(Jedis jedis, byte[] key, byte[] bytes) {
+        jedis.close();
+        try {
+            return serializer.unserialize(bytes);
         } catch (Throwable throwable) {
-            logger.warn(throwable, "获取Redis缓存[{}:{}]数据时发生异常！", key, remove);
+            jedis.del(key);
 
             return null;
         }
