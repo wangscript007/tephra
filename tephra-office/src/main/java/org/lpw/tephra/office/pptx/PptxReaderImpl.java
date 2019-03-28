@@ -13,16 +13,17 @@ import org.lpw.tephra.office.MediaType;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.parser.Parser;
-import org.lpw.tephra.util.Image;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Component;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -41,8 +42,6 @@ public class PptxReaderImpl implements PptxReader {
     private Json json;
     @Inject
     private Numeric numeric;
-    @Inject
-    private Image image;
     @Inject
     private Logger logger;
     @Inject
@@ -193,19 +192,22 @@ public class PptxReaderImpl implements PptxReader {
         try (XMLSlideShow xmlSlideShow = new XMLSlideShow(inputStream)) {
             List<String> list = new ArrayList<>();
             Dimension dimension = xmlSlideShow.getPageSize();
-            for (XSLFSlide xslfSlide : xmlSlideShow.getSlides()) {
+            List<XSLFSlide> xslfSlides = xmlSlideShow.getSlides();
+            BufferedImage together = null;
+            for (int i = 0, size = xslfSlides.size(); i < size; i++) {
                 BufferedImage bufferedImage = new BufferedImage(dimension.width, dimension.height, BufferedImage.TYPE_4BYTE_ABGR);
                 Graphics2D graphics2D = bufferedImage.createGraphics();
-                xslfSlide.draw(graphics2D);
+                xslfSlides.get(i).draw(graphics2D);
                 graphics2D.dispose();
-                PipedInputStream pipedInputStream = new PipedInputStream();
-                PipedOutputStream pipedOutputStream = new PipedOutputStream();
-                pipedOutputStream.connect(pipedInputStream);
-                image.write(bufferedImage, Image.Format.Png, pipedOutputStream);
-                list.add(mediaWriter.write(MediaType.Png, null, pipedInputStream));
-                pipedOutputStream.close();
-                pipedInputStream.close();
+                list.add(write(mediaWriter, bufferedImage, i + ".png"));
+
+                if (together == null)
+                    together = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight() * size, BufferedImage.TYPE_4BYTE_ABGR);
+                together.getGraphics().drawImage(bufferedImage, 0, i * bufferedImage.getHeight(), null);
             }
+
+            if (together != null)
+                list.add(0, write(mediaWriter, together, "together.png"));
 
             return list;
         } catch (Throwable throwable) {
@@ -213,5 +215,17 @@ public class PptxReaderImpl implements PptxReader {
 
             return null;
         }
+    }
+
+    private String write(MediaWriter mediaWriter, BufferedImage bufferedImage, String fileName) throws IOException {
+        PipedInputStream pipedInputStream = new PipedInputStream();
+        PipedOutputStream pipedOutputStream = new PipedOutputStream();
+        pipedOutputStream.connect(pipedInputStream);
+        ImageIO.write(bufferedImage, "PNG", pipedOutputStream);
+        String url = mediaWriter.write(MediaType.Png, fileName, pipedInputStream);
+        pipedOutputStream.close();
+        pipedInputStream.close();
+
+        return url;
     }
 }

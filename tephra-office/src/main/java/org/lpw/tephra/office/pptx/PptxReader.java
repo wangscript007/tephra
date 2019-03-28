@@ -26,7 +26,7 @@ public interface PptxReader {
      *
      * @param inputStream 输入流。
      * @param mediaWriter 媒体输出器。
-     * @return PNG图集。
+     * @return PNG图集，首张为各页合并图。
      */
     List<String> pngs(InputStream inputStream, MediaWriter mediaWriter);
 }
