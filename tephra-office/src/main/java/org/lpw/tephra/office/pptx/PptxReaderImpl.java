@@ -8,9 +8,12 @@ import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFGroupShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.lpw.tephra.office.MediaType;
 import org.lpw.tephra.office.MediaWriter;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.parser.Parser;
+import org.lpw.tephra.util.Image;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Numeric;
@@ -18,7 +21,12 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,6 +41,8 @@ public class PptxReaderImpl implements PptxReader {
     private Json json;
     @Inject
     private Numeric numeric;
+    @Inject
+    private Image image;
     @Inject
     private Logger logger;
     @Inject
@@ -176,5 +186,32 @@ public class PptxReaderImpl implements PptxReader {
             return;
 
         shapes.add(shape);
+    }
+
+    @Override
+    public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter) {
+        try (XMLSlideShow xmlSlideShow = new XMLSlideShow(inputStream)) {
+            List<String> list = new ArrayList<>();
+            Dimension dimension = xmlSlideShow.getPageSize();
+            for (XSLFSlide xslfSlide : xmlSlideShow.getSlides()) {
+                BufferedImage bufferedImage = new BufferedImage(dimension.width, dimension.height, BufferedImage.TYPE_4BYTE_ABGR);
+                Graphics2D graphics2D = bufferedImage.createGraphics();
+                xslfSlide.draw(graphics2D);
+                graphics2D.dispose();
+                PipedInputStream pipedInputStream = new PipedInputStream();
+                PipedOutputStream pipedOutputStream = new PipedOutputStream();
+                pipedOutputStream.connect(pipedInputStream);
+                image.write(bufferedImage, Image.Format.Png, pipedOutputStream);
+                list.add(mediaWriter.write(MediaType.Png, null, pipedInputStream));
+                pipedOutputStream.close();
+                pipedInputStream.close();
+            }
+
+            return list;
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "读取PPT为PNG图集时发生异常！");
+
+            return null;
+        }
     }
 }
