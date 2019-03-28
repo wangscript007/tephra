@@ -124,6 +124,14 @@ public interface WormholeHelper {
     String file(String path, String name, String sign, File file);
 
     /**
+     * 复制临时文件。
+     *
+     * @param uri 源文件URI。
+     * @return
+     */
+    String temporary(String uri);
+
+    /**
      * 下载文件。
      *
      * @param uri  文件URI地址。

@@ -51,6 +51,8 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     private String image;
     @Value("${tephra.wormhole.file:}")
     private String file;
+    @Value("${tephra.wormhole.temporary:}")
+    private String temporary;
     @Value("${tephra.wormhole.hosts:}")
     private String hosts;
     private String[] hostArray;
@@ -181,6 +183,14 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     }
 
     @Override
+    public String temporary(String uri) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("uri", uri);
+
+        return http.post(temporary, null, parameters);
+    }
+
+    @Override
     public void download(String uri, String file) {
         try (OutputStream outputStream = new FileOutputStream(file)) {
             http.get(getUrl(uri, true), null, null, null, outputStream);
@@ -203,6 +213,8 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
             image = root + "/whimg/save";
         if (validator.isEmpty(file))
             file = root + "/whfile/save";
+        if (validator.isEmpty(temporary))
+            temporary = root + "/whtemp/copy";
         hostArray = converter.toArray(hosts, ",");
     }
 }
