@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,13 +93,13 @@ public class PdfReaderImpl implements PdfReader {
     }
 
     @Override
-    public String readAsJpeg(InputStream inputStream, MediaWriter mediaWriter, int page) {
+    public String png(InputStream inputStream, MediaWriter mediaWriter, int page) {
         String url = null;
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(); PDDocument document = PDDocument.load(inputStream)) {
-            ImageIO.write(new PDFRenderer(document).renderImage(page, 1.0f, ImageType.RGB), "JPEG", byteArrayOutputStream);
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-            url = mediaWriter.write(MediaType.Jpeg, page + ".jpeg", byteArrayInputStream);
-            byteArrayInputStream.close();
+        try (PipedInputStream pipedInputStream = new PipedInputStream(); PipedOutputStream pipedOutputStream = new PipedOutputStream();
+             PDDocument document = PDDocument.load(inputStream)) {
+            pipedOutputStream.connect(pipedInputStream);
+            ImageIO.write(new PDFRenderer(document).renderImage(page, 1.0f, ImageType.RGB), "PNG", pipedOutputStream);
+            url = mediaWriter.write(MediaType.Png, page + ".png", pipedInputStream);
         } catch (IOException e) {
             logger.warn(e, "读取PDF为图片时发生异常！");
         }
@@ -108,22 +108,22 @@ public class PdfReaderImpl implements PdfReader {
     }
 
     @Override
-    public List<String> readAsJpeg(InputStream inputStream, MediaWriter mediaWriter) {
+    public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter) {
         List<String> list = new ArrayList<>();
         try (PDDocument document = PDDocument.load(inputStream)) {
             PDFRenderer renderer = new PDFRenderer(document);
             BufferedImage together = null;
             for (int i = 0, size = document.getNumberOfPages(); i < size; i++) {
                 BufferedImage bufferedImage = renderer.renderImage(i, 1.0f, ImageType.RGB);
-                list.add(write(mediaWriter, bufferedImage, i + ".jpeg"));
+                list.add(write(mediaWriter, bufferedImage, i + ".png"));
 
                 if (together == null)
-                    together = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight() * size, BufferedImage.TYPE_INT_RGB);
+                    together = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight() * size, BufferedImage.TYPE_4BYTE_ABGR);
                 together.getGraphics().drawImage(bufferedImage, 0, i * bufferedImage.getHeight(), null);
             }
 
             if (together != null)
-                list.add(0, write(mediaWriter, together, "together.jpeg"));
+                list.add(0, write(mediaWriter, together, "together.png"));
         } catch (IOException e) {
             logger.warn(e, "读取PDF为图片时发生异常！");
         }
@@ -132,13 +132,13 @@ public class PdfReaderImpl implements PdfReader {
     }
 
     private String write(MediaWriter mediaWriter, BufferedImage bufferedImage, String fileName) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "JPEG", outputStream);
-        outputStream.close();
-
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        String url = mediaWriter.write(MediaType.Jpeg, fileName, inputStream);
-        inputStream.close();
+        PipedInputStream pipedInputStream = new PipedInputStream();
+        PipedOutputStream pipedOutputStream = new PipedOutputStream();
+        pipedOutputStream.connect(pipedInputStream);
+        ImageIO.write(bufferedImage, "PNG", pipedOutputStream);
+        String url = mediaWriter.write(MediaType.Png, fileName, pipedInputStream);
+        pipedOutputStream.close();
+        pipedInputStream.close();
 
         return url;
     }
