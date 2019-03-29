@@ -100,15 +100,6 @@ public interface Io {
     void write(OutputStream outputStream, StringBuffer source) throws IOException;
 
     /**
-     * 重置输入流。
-     *
-     * @param inputStream 输入流。
-     * @return 输入流。
-     * @throws IOException 未处理IO读写异常。
-     */
-    InputStream reset(InputStream inputStream) throws IOException;
-
-    /**
      * 关闭输入流。
      *
      * @param inputStream 输入流。
