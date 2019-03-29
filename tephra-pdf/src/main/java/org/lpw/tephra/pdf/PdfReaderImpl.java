@@ -99,7 +99,7 @@ public class PdfReaderImpl implements PdfReader {
     public String png(InputStream inputStream, MediaWriter mediaWriter, int page) {
         String url = null;
         try (PipedInputStream pipedInputStream = new PipedInputStream(); PipedOutputStream pipedOutputStream = new PipedOutputStream();
-             PDDocument document = PDDocument.load(io.reset(inputStream))) {
+             PDDocument document = PDDocument.load(inputStream)) {
             pipedOutputStream.connect(pipedInputStream);
             ImageIO.write(new PDFRenderer(document).renderImage(page, 1.0f, ImageType.RGB), "PNG", pipedOutputStream);
             url = mediaWriter.write(MediaType.Png, page + ".png", pipedInputStream);
@@ -113,7 +113,7 @@ public class PdfReaderImpl implements PdfReader {
     @Override
     public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter) {
         List<String> list = new ArrayList<>();
-        try (PDDocument document = PDDocument.load(io.reset(inputStream))) {
+        try (PDDocument document = PDDocument.load(inputStream)) {
             PDFRenderer renderer = new PDFRenderer(document);
             BufferedImage together = null;
             for (int i = 0, size = document.getNumberOfPages(); i < size; i++) {
