@@ -97,17 +97,19 @@ public class PdfReaderImpl implements PdfReader {
 
     @Override
     public String png(InputStream inputStream, MediaWriter mediaWriter, int page) {
-        String url = null;
         try (PipedInputStream pipedInputStream = new PipedInputStream(); PipedOutputStream pipedOutputStream = new PipedOutputStream();
              PDDocument document = PDDocument.load(inputStream)) {
             pipedOutputStream.connect(pipedInputStream);
             ImageIO.write(new PDFRenderer(document).renderImage(page, 1.0f, ImageType.RGB), "PNG", pipedOutputStream);
-            url = mediaWriter.write(MediaType.Png, page + ".png", pipedInputStream);
+            String url = mediaWriter.write(MediaType.Png, page + ".png", pipedInputStream);
+            inputStream.close();
+
+            return url;
         } catch (IOException e) {
             logger.warn(e, "读取PDF为图片时发生异常！");
-        }
 
-        return url;
+            return null;
+        }
     }
 
     @Override
@@ -127,6 +129,7 @@ public class PdfReaderImpl implements PdfReader {
 
             if (together != null)
                 list.add(0, write(mediaWriter, together, "together.png"));
+            inputStream.close();
         } catch (IOException e) {
             logger.warn(e, "读取PDF为图片时发生异常！");
         }
