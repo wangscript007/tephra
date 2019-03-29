@@ -189,8 +189,8 @@ public class PptxReaderImpl implements PptxReader {
 
     @Override
     public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter) {
+        List<String> list = new ArrayList<>();
         try (XMLSlideShow xmlSlideShow = new XMLSlideShow(inputStream)) {
-            List<String> list = new ArrayList<>();
             Dimension dimension = xmlSlideShow.getPageSize();
             List<XSLFSlide> xslfSlides = xmlSlideShow.getSlides();
             BufferedImage together = null;
@@ -208,13 +208,12 @@ public class PptxReaderImpl implements PptxReader {
 
             if (together != null)
                 list.add(0, write(mediaWriter, together, "together.png"));
-
-            return list;
+            inputStream.close();
         } catch (Throwable throwable) {
             logger.warn(throwable, "读取PPT为PNG图集时发生异常！");
-
-            return null;
         }
+
+        return list;
     }
 
     private String write(MediaWriter mediaWriter, BufferedImage bufferedImage, String fileName) throws IOException {
