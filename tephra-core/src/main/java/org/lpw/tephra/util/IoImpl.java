@@ -168,6 +168,14 @@ public class IoImpl implements Io {
     }
 
     @Override
+    public InputStream reset(InputStream inputStream) throws IOException {
+        if (inputStream != null)
+            inputStream.reset();
+
+        return inputStream;
+    }
+
+    @Override
     public void close(InputStream inputStream) {
         if (inputStream == null)
             return;
