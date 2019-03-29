@@ -59,7 +59,7 @@ public class PdfReaderImpl implements PdfReader {
                 page.put("elements", elements);
                 pages.add(page);
             }
-
+            inputStream.close();
         } catch (IOException e) {
             logger.warn(e, "解析PDF数据时发生异常！");
         }
