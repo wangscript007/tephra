@@ -64,6 +64,7 @@ public class PptxReaderImpl implements PptxReader {
                 slides.add(slide);
             });
             object.put("slides", slides);
+            inputStream.close();
         } catch (Exception e) {
             logger.warn(e, "读取PPTX数据时发生异常！");
         }
