@@ -8,6 +8,7 @@ import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.lpw.tephra.pdf.parser.GraphicsParser;
 import org.lpw.tephra.pdf.parser.TextParser;
+import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,8 @@ import java.util.List;
  */
 @Component("tephra.pdf.reader")
 public class PdfReaderImpl implements PdfReader {
+    @Inject
+    private Io io;
     @Inject
     private Logger logger;
     @Inject
@@ -96,7 +99,7 @@ public class PdfReaderImpl implements PdfReader {
     public String png(InputStream inputStream, MediaWriter mediaWriter, int page) {
         String url = null;
         try (PipedInputStream pipedInputStream = new PipedInputStream(); PipedOutputStream pipedOutputStream = new PipedOutputStream();
-             PDDocument document = PDDocument.load(inputStream)) {
+             PDDocument document = PDDocument.load(io.reset(inputStream))) {
             pipedOutputStream.connect(pipedInputStream);
             ImageIO.write(new PDFRenderer(document).renderImage(page, 1.0f, ImageType.RGB), "PNG", pipedOutputStream);
             url = mediaWriter.write(MediaType.Png, page + ".png", pipedInputStream);
@@ -110,7 +113,7 @@ public class PdfReaderImpl implements PdfReader {
     @Override
     public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter) {
         List<String> list = new ArrayList<>();
-        try (PDDocument document = PDDocument.load(inputStream)) {
+        try (PDDocument document = PDDocument.load(io.reset(inputStream))) {
             PDFRenderer renderer = new PDFRenderer(document);
             BufferedImage together = null;
             for (int i = 0, size = document.getNumberOfPages(); i < size; i++) {
