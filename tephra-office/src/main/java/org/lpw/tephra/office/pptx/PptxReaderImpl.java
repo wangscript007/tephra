@@ -189,7 +189,7 @@ public class PptxReaderImpl implements PptxReader {
     }
 
     @Override
-    public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter) {
+    public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter, boolean merge) {
         List<String> list = new ArrayList<>();
         try (XMLSlideShow xmlSlideShow = new XMLSlideShow(inputStream)) {
             Dimension dimension = xmlSlideShow.getPageSize();
@@ -201,13 +201,15 @@ public class PptxReaderImpl implements PptxReader {
                 xslfSlides.get(i).draw(graphics2D);
                 graphics2D.dispose();
                 list.add(write(mediaWriter, bufferedImage, i + ".png"));
+                if (!merge)
+                    continue;
 
                 if (together == null)
                     together = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight() * size, BufferedImage.TYPE_4BYTE_ABGR);
                 together.getGraphics().drawImage(bufferedImage, 0, i * bufferedImage.getHeight(), null);
             }
 
-            if (together != null)
+            if (merge && together != null)
                 list.add(0, write(mediaWriter, together, "together.png"));
             inputStream.close();
         } catch (Throwable throwable) {
