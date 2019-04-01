@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.awt.Color;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author lpw
@@ -21,8 +24,23 @@ public class OfficeHelperImpl implements OfficeHelper {
     private Context context;
     @Inject
     private Numeric numeric;
+    private Set<String> contentTypes = new HashSet<>(Arrays.asList("application/octet-stream",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation"));
+    private Set<String> suffixes = new HashSet<>(Arrays.asList(".ppt", ".pptx"));
     @Value("${tephra.office.temp-path:}")
     private String tempPath;
+
+    @Override
+    public boolean isPpt(String contentType, String fileName) {
+        if (contentTypes.contains(contentType) || fileName == null)
+            return false;
+
+        int indexOf = fileName.lastIndexOf('.');
+        if (indexOf == -1)
+            return false;
+
+        return suffixes.contains(fileName.substring(indexOf).toLowerCase());
+    }
 
     @Override
     public String getTempPath(String name) {

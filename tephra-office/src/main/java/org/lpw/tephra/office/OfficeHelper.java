@@ -9,6 +9,15 @@ import java.awt.Color;
  */
 public interface OfficeHelper {
     /**
+     * 是否为PPT文件。
+     *
+     * @param contentType 文件类型。
+     * @param fileName    文件名。
+     * @return 如果是则返回true；否则返回false。
+     */
+    boolean isPpt(String contentType, String fileName);
+
+    /**
      * 获取临时目录。
      *
      * @param name 名称。
