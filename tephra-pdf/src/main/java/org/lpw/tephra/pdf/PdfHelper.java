@@ -9,6 +9,15 @@ import java.awt.Color;
  */
 public interface PdfHelper {
     /**
+     * 验证是否为PDF文件。
+     *
+     * @param contentType 文件类型。
+     * @param fileName    文件名。
+     * @return 如果是则返回true；否则返回false。
+     */
+    boolean is(String contentType, String fileName);
+
+    /**
      * 磅值转化为像素值。
      *
      * @param point 磅值。

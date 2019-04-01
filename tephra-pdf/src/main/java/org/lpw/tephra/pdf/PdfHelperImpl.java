@@ -19,6 +19,18 @@ public class PdfHelperImpl implements PdfHelper {
     private Numeric numeric;
 
     @Override
+    public boolean is(String contentType, String fileName) {
+        if (!"application/pdf".equals(contentType) || fileName == null)
+            return false;
+
+        int indexOf = fileName.lastIndexOf('.');
+        if (indexOf == -1)
+            return false;
+
+        return fileName.substring(indexOf).equalsIgnoreCase(".pdf");
+    }
+
+    @Override
     public int pointToPixel(double point) {
         return numeric.toInt(point * 96 / 72);
     }
