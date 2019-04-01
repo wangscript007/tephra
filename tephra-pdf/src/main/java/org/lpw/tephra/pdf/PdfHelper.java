@@ -9,7 +9,7 @@ import java.awt.Color;
  */
 public interface PdfHelper {
     /**
-     * 验证是否为PDF文件。
+     * 是否为PDF文件。
      *
      * @param contentType 文件类型。
      * @param fileName    文件名。
