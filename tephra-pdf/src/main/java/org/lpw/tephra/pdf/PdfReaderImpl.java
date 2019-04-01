@@ -113,7 +113,7 @@ public class PdfReaderImpl implements PdfReader {
     }
 
     @Override
-    public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter) {
+    public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter, boolean merge) {
         List<String> list = new ArrayList<>();
         try (PDDocument document = PDDocument.load(inputStream)) {
             PDFRenderer renderer = new PDFRenderer(document);
@@ -121,13 +121,15 @@ public class PdfReaderImpl implements PdfReader {
             for (int i = 0, size = document.getNumberOfPages(); i < size; i++) {
                 BufferedImage bufferedImage = renderer.renderImage(i, 1.0f, ImageType.RGB);
                 list.add(write(mediaWriter, bufferedImage, i + ".png"));
+                if (!merge)
+                    continue;
 
                 if (together == null)
                     together = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight() * size, BufferedImage.TYPE_4BYTE_ABGR);
                 together.getGraphics().drawImage(bufferedImage, 0, i * bufferedImage.getHeight(), null);
             }
 
-            if (together != null)
+            if (merge && together != null)
                 list.add(0, write(mediaWriter, together, "together.png"));
             inputStream.close();
         } catch (IOException e) {
