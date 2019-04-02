@@ -32,7 +32,7 @@ public class OfficeHelperImpl implements OfficeHelper {
 
     @Override
     public boolean isPpt(String contentType, String fileName) {
-        if (contentTypes.contains(contentType) || fileName == null)
+        if (!contentTypes.contains(contentType) || fileName == null)
             return false;
 
         int indexOf = fileName.lastIndexOf('.');
