@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
@@ -140,13 +142,12 @@ public class PdfReaderImpl implements PdfReader {
     }
 
     private String write(MediaWriter mediaWriter, BufferedImage bufferedImage, String fileName) throws IOException {
-        PipedInputStream pipedInputStream = new PipedInputStream();
-        PipedOutputStream pipedOutputStream = new PipedOutputStream();
-        pipedOutputStream.connect(pipedInputStream);
-        ImageIO.write(bufferedImage, "PNG", pipedOutputStream);
-        pipedOutputStream.close();
-        String url = mediaWriter.write(MediaType.Png, fileName, pipedInputStream);
-        pipedInputStream.close();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "PNG", byteArrayOutputStream);
+        byteArrayOutputStream.close();
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        String url = mediaWriter.write(MediaType.Png, fileName, byteArrayInputStream);
+        byteArrayInputStream.close();
 
         return url;
     }
