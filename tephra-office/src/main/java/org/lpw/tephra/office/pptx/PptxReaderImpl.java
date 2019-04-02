@@ -224,8 +224,8 @@ public class PptxReaderImpl implements PptxReader {
         PipedOutputStream pipedOutputStream = new PipedOutputStream();
         pipedOutputStream.connect(pipedInputStream);
         ImageIO.write(bufferedImage, "PNG", pipedOutputStream);
-        String url = mediaWriter.write(MediaType.Png, fileName, pipedInputStream);
         pipedOutputStream.close();
+        String url = mediaWriter.write(MediaType.Png, fileName, pipedInputStream);
         pipedInputStream.close();
 
         return url;
