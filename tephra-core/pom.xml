@@ -154,6 +154,11 @@
             <version>LATEST</version>
         </dependency>
         <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
             <groupId>org.lpw.tephra</groupId>
             <artifactId>tephra-core-test</artifactId>
             <version>${version.tephra}</version>
