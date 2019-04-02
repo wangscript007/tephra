@@ -9,24 +9,26 @@ public enum MediaType {
     /**
      * JPEG图片。
      */
-    Jpeg("image/jpeg"),
+    Jpeg("image/jpeg", ".jpeg"),
     /**
      * PNG图片。
      */
-    Png("image/png"),
+    Png("image/png", ".png"),
     /**
      * GIF图片。
      */
-    Gif("image/gif"),
+    Gif("image/gif", ".gif"),
     /**
      * SVG图片。
      */
-    Svg("image/svg+xml");
+    Svg("image/svg+xml", ".svg");
 
     private String contentType;
+    private String suffix;
 
-    MediaType(String contentType) {
+    MediaType(String contentType, String suffix) {
         this.contentType = contentType;
+        this.suffix = suffix;
     }
 
     /**
@@ -36,6 +38,15 @@ public enum MediaType {
      */
     public String getContentType() {
         return contentType;
+    }
+
+    /**
+     * 获取媒体后缀。
+     *
+     * @return 媒体后缀。
+     */
+    public String getSuffix() {
+        return suffix;
     }
 
     /**
