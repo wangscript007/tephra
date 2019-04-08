@@ -104,6 +104,7 @@ public class TemplateImpl extends TemplateSupport implements Template {
         if (request.getId() != null)
             object.put("id", request.getId());
         object.put("time", dispatcher.getTime());
+        object.put("timestamp", System.currentTimeMillis());
     }
 
     private void write(Object data, OutputStream outputStream) throws IOException {
