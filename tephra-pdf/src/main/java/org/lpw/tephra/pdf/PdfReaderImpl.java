@@ -19,8 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,14 +97,8 @@ public class PdfReaderImpl implements PdfReader {
 
     @Override
     public String png(InputStream inputStream, MediaWriter mediaWriter, int page) {
-        try (PipedInputStream pipedInputStream = new PipedInputStream(); PipedOutputStream pipedOutputStream = new PipedOutputStream();
-             PDDocument document = PDDocument.load(inputStream)) {
-            pipedOutputStream.connect(pipedInputStream);
-            ImageIO.write(new PDFRenderer(document).renderImage(page, 1.0f, ImageType.RGB), "PNG", pipedOutputStream);
-            String url = mediaWriter.write(MediaType.Png, page + ".png", pipedInputStream);
-            inputStream.close();
-
-            return url;
+        try (PDDocument document = PDDocument.load(inputStream)) {
+            return write(mediaWriter, new PDFRenderer(document).renderImage(page, 1.0f, ImageType.ARGB), page + ".png");
         } catch (IOException e) {
             logger.warn(e, "读取PDF为图片时发生异常！");
 
@@ -121,7 +113,7 @@ public class PdfReaderImpl implements PdfReader {
             PDFRenderer renderer = new PDFRenderer(document);
             BufferedImage together = null;
             for (int i = 0, size = document.getNumberOfPages(); i < size; i++) {
-                BufferedImage bufferedImage = renderer.renderImage(i, 1.0f, ImageType.RGB);
+                BufferedImage bufferedImage = renderer.renderImage(i, 1.0f, ImageType.ARGB);
                 list.add(write(mediaWriter, bufferedImage, i + ".png"));
                 if (!merge)
                     continue;
