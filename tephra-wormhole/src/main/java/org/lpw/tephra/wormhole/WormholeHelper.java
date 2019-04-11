@@ -127,7 +127,7 @@ public interface WormholeHelper {
      * 复制临时文件。
      *
      * @param uri 源文件URI。
-     * @return
+     * @return 临时文件URI。
      */
     String temporary(String uri);
 
