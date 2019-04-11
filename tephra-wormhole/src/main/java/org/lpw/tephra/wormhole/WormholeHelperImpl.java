@@ -79,6 +79,11 @@ public class WormholeHelperImpl implements WormholeHelper, ContextRefreshedListe
     }
 
     @Override
+    public String getWsUrl(boolean ssl) {
+        return getUrl(ssl ? Protocol.Wss : Protocol.Ws, "/whws", false);
+    }
+
+    @Override
     public boolean auth(AuthType type, String token, String ticket) {
         Map<String, String> map = new HashMap<>();
         map.put("token", token);

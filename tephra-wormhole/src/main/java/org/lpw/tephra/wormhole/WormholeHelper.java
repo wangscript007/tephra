@@ -35,6 +35,14 @@ public interface WormholeHelper {
     String getUrl(Protocol protocol, String uri, boolean internal);
 
     /**
+     * 获取WebSocket URL地址。
+     *
+     * @param ssl 是否SSL。
+     * @return WebSocket URL地址。
+     */
+    String getWsUrl(boolean ssl);
+
+    /**
      * 添加认证。
      *
      * @param type   类型。
