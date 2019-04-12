@@ -70,7 +70,8 @@ public class LuceneHelperImpl implements LuceneHelper {
     public void source(String key, String id, String data) {
         Path path = Paths.get(context.getAbsoluteRoot(), root, key, "source", id);
         io.mkdirs(path.toFile().getParentFile());
-        io.write(path.toString(), data.getBytes());
+        io.write(path.toString(), data.replaceAll("[~!@#$%^&*()+<>?|{}\\[\\]\\\\/.]+"," ")
+                .replaceAll("\\s+", " ").getBytes());
     }
 
     @Override
