@@ -13,6 +13,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
@@ -52,7 +53,7 @@ public class LuceneHelperImpl implements LuceneHelper {
     private String root;
     @Value("${tephra.lucene.analyzer:}")
     private String analyzer;
-    private Map<String, Directory> map = new ConcurrentHashMap<>();
+    private Map<String, Directory> map;
 
     @Override
     public void clear(String key) {
@@ -162,22 +163,25 @@ public class LuceneHelperImpl implements LuceneHelper {
         return list;
     }
 
-    private Directory get(String key) {
-        if (map.containsKey(key))
-            return map.get(key);
-
-        Path path = Paths.get(context.getAbsoluteRoot(), root, key, "index");
-        io.mkdirs(path.toFile());
-        if (logger.isInfoEnable())
-            logger.info("设置Lucene索引根目录[{}:{}]。", key, path);
-        Directory directory = null;
-        try {
-            map.put(key, directory = FSDirectory.open(path));
-        } catch (IOException e) {
-            logger.warn(e, "打开Lucene索引目录[{}:{}]时发生异常！", key, path);
+    private synchronized Directory get(String key) {
+        if (map == null) {
+            map = new ConcurrentHashMap<>();
+            BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
         }
 
-        return directory;
+        return map.computeIfAbsent(key, k -> {
+            Path path = Paths.get(context.getAbsoluteRoot(), root, k, "index");
+            io.mkdirs(path.toFile());
+            if (logger.isInfoEnable())
+                logger.info("设置Lucene索引根目录[{}:{}]。", k, path);
+            try {
+                return FSDirectory.open(path);
+            } catch (IOException e) {
+                logger.warn(e, "打开Lucene索引目录[{}:{}]时发生异常！", k, path);
+
+                return null;
+            }
+        });
     }
 
     private Analyzer newAnalyzer() {
