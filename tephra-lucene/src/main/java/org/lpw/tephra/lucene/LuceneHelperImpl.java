@@ -70,7 +70,7 @@ public class LuceneHelperImpl implements LuceneHelper {
     public void source(String key, String id, String data) {
         Path path = Paths.get(context.getAbsoluteRoot(), root, key, "source", id);
         io.mkdirs(path.toFile().getParentFile());
-        io.write(path.toString(), data.replaceAll("[`~!@#$%^&*()_+-={}\\[\\]|\\\\:;\"'<>?,./\\s]+", " ").getBytes());
+        io.write(path.toString(), replace(data).getBytes());
     }
 
     @Override
@@ -153,7 +153,7 @@ public class LuceneHelperImpl implements LuceneHelper {
             QueryParser queryParser = new QueryParser("data", newAnalyzer());
             if (and)
                 queryParser.setDefaultOperator(QueryParser.Operator.AND);
-            TopDocs topDocs = indexSearcher.search(queryParser.parse(string), size);
+            TopDocs topDocs = indexSearcher.search(queryParser.parse(replace(string)), size);
             for (ScoreDoc scoreDoc : topDocs.scoreDocs)
                 list.add(indexSearcher.doc(scoreDoc.doc).get("id"));
         } catch (Throwable throwable) {
@@ -161,6 +161,10 @@ public class LuceneHelperImpl implements LuceneHelper {
         }
 
         return list;
+    }
+
+    private String replace(String string) {
+        return string.replaceAll("[`~!@#$%^&*()_+-={}\\[\\]|\\\\:;\"'<>?,./\\s]+", " ");
     }
 
     private synchronized Directory get(String key) {
