@@ -9,8 +9,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author lpw
@@ -19,6 +22,30 @@ import java.util.zip.ZipInputStream;
 public class ZipperImpl implements Zipper {
     @Inject
     private Io io;
+
+    @Override
+    public void zip(List<File> input, File output) throws IOException {
+        ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(output));
+        for (File file : input) {
+            zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
+            FileInputStream fileInputStream = new FileInputStream(file);
+            io.copy(fileInputStream, zipOutputStream);
+            fileInputStream.close();
+        }
+        zipOutputStream.close();
+    }
+
+    @Override
+    public void zip(Map<String, File> input, File output) throws IOException {
+        ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(output));
+        for (String name : input.keySet()) {
+            zipOutputStream.putNextEntry(new ZipEntry(name));
+            FileInputStream fileInputStream = new FileInputStream(input.get(name));
+            io.copy(fileInputStream, zipOutputStream);
+            fileInputStream.close();
+        }
+        zipOutputStream.close();
+    }
 
     @Override
     public void unzip(File input, File output) throws IOException {
