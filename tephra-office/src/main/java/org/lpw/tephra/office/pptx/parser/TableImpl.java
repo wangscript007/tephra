@@ -47,12 +47,8 @@ public class TableImpl implements Graphic {
         JSONObject table = new JSONObject();
         XSLFTheme xslfTheme = readerContext.getTheme();
         CTTableStyle ctTableStyle = findTableStyle(readerContext, xslfTable);
-        if (xslfTheme != null && ctTableStyle != null) {
+        if (xslfTheme != null && ctTableStyle != null)
             parseFill(xslfTheme, ctTableStyle, table);
-            System.out.println("#######################");
-            System.out.println(ctTableStyle.getWholeTbl().getTcStyle().getTcBdr().getBottom().getLnRef().getSchemeClr());
-//            System.out.println(ctTableStyle.getBand1H());
-        }
         JSONArray rows = new JSONArray();
         xslfTable.getRows().forEach(xslfTableRow -> {
             JSONArray cells = new JSONArray();
