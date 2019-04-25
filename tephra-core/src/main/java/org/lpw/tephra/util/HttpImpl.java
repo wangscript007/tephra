@@ -282,7 +282,7 @@ public class HttpImpl implements Http, ContextRefreshedListener {
             copy(request, httpEntity, outputStream);
         } catch (Throwable throwable) {
             request.abort();
-            logger.warn(null, "执行HTTP请求时发生异常[{}]！", throwable.getMessage());
+            logger.warn(throwable, "执行HTTP请求时发生异常[{}]！");
         }
     }
 
