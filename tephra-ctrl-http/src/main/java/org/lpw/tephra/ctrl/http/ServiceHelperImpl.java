@@ -138,20 +138,20 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         String uri = getUri(request);
         String lowerCaseUri = uri.toLowerCase();
         if (lowerCaseUri.startsWith(UploadService.ROOT)) {
-            if (!lowerCaseUri.startsWith(UploadService.ROOT + "image/")) {
-                StringBuilder attachment = new StringBuilder("attachment; filename*=").append(context.getCharset(null)).append("''");
-                String filename = request.getParameter("filename");
-                if (validator.isEmpty(filename))
-                    attachment.append(uri.substring(uri.lastIndexOf('/') + 1));
-                else {
-                    attachment.append(coder.encodeUrl(filename, null));
-                    int indexOf;
-                    if (filename.indexOf('.') == -1 && (indexOf = uri.lastIndexOf('.')) > -1)
-                        attachment.append(uri.substring(indexOf));
-                }
-                response.setHeader("Content-Disposition", attachment.toString());
-            }
+            if (lowerCaseUri.startsWith(UploadService.ROOT + "image/"))
+                return false;
 
+            StringBuilder attachment = new StringBuilder("attachment; filename*=").append(context.getCharset(null)).append("''");
+            String filename = request.getParameter("filename");
+            if (validator.isEmpty(filename))
+                attachment.append(uri.substring(uri.lastIndexOf('/') + 1));
+            else {
+                attachment.append(coder.encodeUrl(filename, null));
+                int indexOf;
+                if (filename.indexOf('.') == -1 && (indexOf = uri.lastIndexOf('.')) > -1)
+                    attachment.append(uri.substring(indexOf));
+            }
+            response.setHeader("Content-Disposition", attachment.toString());
             if (logger.isDebugEnable())
                 logger.debug("请求[{}]非图片上传资源。", uri);
 
