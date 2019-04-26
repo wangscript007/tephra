@@ -45,9 +45,10 @@ public class SshImpl implements Ssh {
                 string = io.readAsString(inputStream);
             writer.close();
             inputStream.close();
+            channelShell.disconnect();
             session.disconnect();
-            if (logger.isDebugEnable())
-                logger.debug("执行SSH[{}:{}:{}:{}:{}]完成[{}]。", host, port, user, password, Arrays.toString(commands), string);
+            if (logger.isInfoEnable())
+                logger.info("执行SSH[{}:{}:{}:{}:{}]完成[{}]。", host, port, user, password, Arrays.toString(commands), string);
 
             return string;
         } catch (Throwable throwable) {
@@ -70,6 +71,8 @@ public class SshImpl implements Ssh {
             outputStream.close();
             channelSftp.disconnect();
             session.disconnect();
+            if (logger.isInfoEnable())
+                logger.info("下载[{}:{}:{}:{}]文件[{}]完成。", host, port, user, password, path);
 
             return true;
         } catch (Throwable throwable) {
@@ -92,6 +95,8 @@ public class SshImpl implements Ssh {
             inputStream.close();
             channelSftp.disconnect();
             session.disconnect();
+            if (logger.isInfoEnable())
+                logger.info("上传[{}:{}:{}:{}]文件[{}]完成。", host, port, user, password, path);
 
             return true;
         } catch (Throwable throwable) {
