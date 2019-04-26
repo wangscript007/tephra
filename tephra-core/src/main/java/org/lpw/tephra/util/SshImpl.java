@@ -46,6 +46,8 @@ public class SshImpl implements Ssh {
             writer.close();
             inputStream.close();
             session.disconnect();
+            if (logger.isDebugEnable())
+                logger.debug("执行SSH[{}:{}:{}:{}:{}]完成[{}]。", host, port, user, password, Arrays.toString(commands), string);
 
             return string;
         } catch (Throwable throwable) {
