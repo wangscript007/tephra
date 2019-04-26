@@ -22,6 +22,18 @@ public interface Ssh {
     String shell(String host, int port, String user, String password, String... commands);
 
     /**
+     * 执行指令。
+     *
+     * @param host     主机。
+     * @param port     端口号。
+     * @param user     用户。
+     * @param password 密码。
+     * @param command  指令。
+     * @return 执行结果；如果执行失败则返回null。
+     */
+    String exec(String host, int port, String user, String password, String command);
+
+    /**
      * 下载文件。
      *
      * @param host         主机。

@@ -1,5 +1,6 @@
 package org.lpw.tephra.util;
 
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
@@ -53,6 +54,34 @@ public class SshImpl implements Ssh {
             return string;
         } catch (Throwable throwable) {
             logger.warn(throwable, "执行SSH[{}:{}:{}:{}:{}]时发生异常！", host, port, user, password, Arrays.toString(commands));
+
+            return null;
+        }
+    }
+
+    @Override
+    public String exec(String host, int port, String user, String password, String command) {
+        if (validator.isEmpty(host) || port < 1 || validator.isEmpty(user) || validator.isEmpty(command))
+            return null;
+
+        try {
+            Session session = getSession(host, port, user, password);
+            ChannelExec channelShell = (ChannelExec) session.openChannel("exec");
+            channelShell.setCommand(command);
+            InputStream inputStream = channelShell.getInputStream();
+            channelShell.connect();
+            String string = null;
+            if (inputStream.available() > 0)
+                string = io.readAsString(inputStream);
+            inputStream.close();
+            channelShell.disconnect();
+            session.disconnect();
+            if (logger.isInfoEnable())
+                logger.info("执行SSH[{}:{}:{}:{}:{}]完成[{}]。", host, port, user, password, command, string);
+
+            return string;
+        } catch (Throwable throwable) {
+            logger.warn(throwable, "执行SSH[{}:{}:{}:{}:{}]时发生异常！", host, port, user, password, command);
 
             return null;
         }
