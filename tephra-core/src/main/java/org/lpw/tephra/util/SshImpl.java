@@ -63,35 +63,6 @@ public class SshImpl implements Ssh {
     }
 
     @Override
-    public String exec(String host, int port, String user, String password, String command) {
-        if (validator.isEmpty(host) || port < 1 || validator.isEmpty(user) || validator.isEmpty(command))
-            return null;
-
-        try {
-            Session session = getSession(host, port, user, password);
-            ChannelExec channelExec = (ChannelExec) session.openChannel("exec");
-            channelExec.setPty(true);
-            channelExec.setCommand(command);
-            InputStream inputStream = channelExec.getInputStream();
-            channelExec.connect();
-            String string = null;
-            if (inputStream.available() > 0)
-                string = io.readAsString(inputStream);
-            inputStream.close();
-            channelExec.disconnect();
-            session.disconnect();
-            if (logger.isInfoEnable())
-                logger.info("执行SSH[{}:{}:{}:{}:{}]完成[{}]。", host, port, user, password, command, string);
-
-            return string;
-        } catch (Throwable throwable) {
-            logger.warn(throwable, "执行SSH[{}:{}:{}:{}:{}]时发生异常！", host, port, user, password, command);
-
-            return null;
-        }
-    }
-
-    @Override
     public boolean get(String host, int port, String user, String password, String path, OutputStream outputStream) {
         if (validator.isEmpty(host) || port < 1 || validator.isEmpty(user) || validator.isEmpty(path))
             return false;
