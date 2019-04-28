@@ -116,7 +116,7 @@ public class SshImpl implements Ssh {
         Session session = new JSch().getSession(user, host, port);
         session.setPassword(password);
         session.setConfig("StrictHostKeyChecking", "no");
-        session.connect(60 * 60 * 1000);
+        session.connect(60 * 1000);
 
         return session;
     }
