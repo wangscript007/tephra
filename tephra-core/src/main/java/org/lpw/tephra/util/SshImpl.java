@@ -24,6 +24,8 @@ public class SshImpl implements Ssh {
     @Inject
     private Io io;
     @Inject
+    private Thread thread;
+    @Inject
     private Logger logger;
 
     @Override
@@ -34,14 +36,14 @@ public class SshImpl implements Ssh {
         try {
             Session session = getSession(host, port, user, password);
             ChannelShell channelShell = (ChannelShell) session.openChannel("shell");
-            channelShell.setPty(true);
             InputStream inputStream = channelShell.getInputStream();
             PrintWriter writer = new PrintWriter(channelShell.getOutputStream());
             channelShell.connect();
-            for (String command : commands) {
+            for (String command : commands)
                 writer.println(command);
-                writer.flush();
-            }
+            writer.println("exit");
+            writer.flush();
+            thread.sleep(1, TimeUnit.Second);
             String string = null;
             if (inputStream.available() > 0)
                 string = io.readAsString(inputStream);
