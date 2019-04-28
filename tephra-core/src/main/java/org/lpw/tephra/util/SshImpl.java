@@ -97,6 +97,7 @@ public class SshImpl implements Ssh {
         try {
             Session session = getSession(host, port, user, password);
             ChannelSftp channelSftp = (ChannelSftp) session.openChannel("sftp");
+            channelSftp.setPty(true);
             channelSftp.connect();
             channelSftp.get(path, outputStream);
             outputStream.close();
@@ -121,6 +122,7 @@ public class SshImpl implements Ssh {
         try {
             Session session = getSession(host, port, user, password);
             ChannelSftp channelSftp = (ChannelSftp) session.openChannel("sftp");
+            channelSftp.setPty(true);
             channelSftp.connect();
             channelSftp.put(inputStream, path, mode);
             inputStream.close();
