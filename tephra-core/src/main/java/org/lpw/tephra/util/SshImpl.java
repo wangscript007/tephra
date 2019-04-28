@@ -34,13 +34,14 @@ public class SshImpl implements Ssh {
         try {
             Session session = getSession(host, port, user, password);
             ChannelShell channelShell = (ChannelShell) session.openChannel("shell");
+            channelShell.setPty(true);
             InputStream inputStream = channelShell.getInputStream();
             PrintWriter writer = new PrintWriter(channelShell.getOutputStream());
             channelShell.connect();
-            for (String command : commands)
+            for (String command : commands) {
                 writer.println(command);
-            writer.println("exit");
-            writer.flush();
+                writer.flush();
+            }
             String string = null;
             if (inputStream.available() > 0)
                 string = io.readAsString(inputStream);
@@ -66,15 +67,16 @@ public class SshImpl implements Ssh {
 
         try {
             Session session = getSession(host, port, user, password);
-            ChannelExec channelShell = (ChannelExec) session.openChannel("exec");
-            channelShell.setCommand(command);
-            InputStream inputStream = channelShell.getInputStream();
-            channelShell.connect();
+            ChannelExec channelExec = (ChannelExec) session.openChannel("exec");
+            channelExec.setPty(true);
+            channelExec.setCommand(command);
+            InputStream inputStream = channelExec.getInputStream();
+            channelExec.connect();
             String string = null;
             if (inputStream.available() > 0)
                 string = io.readAsString(inputStream);
             inputStream.close();
-            channelShell.disconnect();
+            channelExec.disconnect();
             session.disconnect();
             if (logger.isInfoEnable())
                 logger.info("执行SSH[{}:{}:{}:{}:{}]完成[{}]。", host, port, user, password, command, string);
