@@ -163,6 +163,7 @@ public class ImageImpl implements Image {
         String suffix = name.substring(indexOf);
         switch (contentType) {
             case "image/jpeg":
+            case "image/jpg":
                 return suffix.equals(".jpg") || suffix.equals(".jpeg");
             case "image/png":
                 return suffix.equals(".png");
