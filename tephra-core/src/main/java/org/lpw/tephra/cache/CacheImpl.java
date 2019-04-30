@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @author lpw
@@ -48,6 +49,25 @@ public class CacheImpl implements Cache, ContextRefreshedListener {
             return null;
 
         return getHandler(null).get(key);
+    }
+
+    @Override
+    public <T> T computeIfAbsent(String key, Function<String, T> function, boolean resident) {
+        return computeIfAbsent(null, key, function, resident);
+    }
+
+    @Override
+    public <T> T computeIfAbsent(String type, String key, Function<String, T> function, boolean resident) {
+        T t = get(type, key);
+        if (t == null) {
+            t = function.apply(key);
+            if (t == null)
+                return null;
+
+            put(key, t, resident);
+        }
+
+        return t;
     }
 
     @Override
