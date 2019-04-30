@@ -278,10 +278,10 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         if (!corsOrigins.contains("*") && !corsOrigins.contains(origin))
             return;
 
-        response.addHeader("Access-Control-Allow-Origin", origin);
+        response.addHeader("Access-Control-Allow-Credentials", "true");
+        response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", corsMethods);
         response.addHeader("Access-Control-Allow-Headers", corsHeaders);
-        response.addHeader("Access-Control-Allow-Credentials", "true");
     }
 
     @Override
