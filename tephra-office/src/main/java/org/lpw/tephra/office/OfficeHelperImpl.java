@@ -24,22 +24,37 @@ public class OfficeHelperImpl implements OfficeHelper {
     private Context context;
     @Inject
     private Numeric numeric;
-    private Set<String> contentTypes = new HashSet<>(Arrays.asList("application/octet-stream",
+    private Set<String> pptContentTypes = new HashSet<>(Arrays.asList("application/octet-stream",
             "application/vnd.openxmlformats-officedocument.presentationml.presentation"));
-    private Set<String> suffixes = new HashSet<>(Arrays.asList(".ppt", ".pptx"));
+    private Set<String> pptSuffixes = new HashSet<>(Arrays.asList(".ppt", ".pptx"));
+    private Set<String> wordContentTypes = new HashSet<>(Arrays.asList("application/msword",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation"));
+    private Set<String> wordSuffixes = new HashSet<>(Arrays.asList(".doc", ".docx"));
     @Value("${tephra.office.temp-path:}")
     private String tempPath;
 
     @Override
     public boolean isPpt(String contentType, String fileName) {
-        if (!contentTypes.contains(contentType) || fileName == null)
+        if (!pptContentTypes.contains(contentType) || fileName == null)
             return false;
 
         int indexOf = fileName.lastIndexOf('.');
         if (indexOf == -1)
             return false;
 
-        return suffixes.contains(fileName.substring(indexOf).toLowerCase());
+        return pptSuffixes.contains(fileName.substring(indexOf).toLowerCase());
+    }
+
+    @Override
+    public boolean isWord(String contentType, String fileName) {
+        if (!wordContentTypes.contains(contentType) || fileName == null)
+            return false;
+
+        int indexOf = fileName.lastIndexOf('.');
+        if (indexOf == -1)
+            return false;
+
+        return wordSuffixes.contains(fileName.substring(indexOf).toLowerCase());
     }
 
     @Override
