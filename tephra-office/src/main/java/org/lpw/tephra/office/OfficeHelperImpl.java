@@ -24,14 +24,29 @@ public class OfficeHelperImpl implements OfficeHelper {
     private Context context;
     @Inject
     private Numeric numeric;
+    private Set<String> excelContentTypes = new HashSet<>(Arrays.asList("application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+    private Set<String> excelSuffixes = new HashSet<>(Arrays.asList(".xls", ".xlsx"));
     private Set<String> pptContentTypes = new HashSet<>(Arrays.asList("application/octet-stream",
             "application/vnd.openxmlformats-officedocument.presentationml.presentation"));
     private Set<String> pptSuffixes = new HashSet<>(Arrays.asList(".ppt", ".pptx"));
     private Set<String> wordContentTypes = new HashSet<>(Arrays.asList("application/msword",
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation"));
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"));
     private Set<String> wordSuffixes = new HashSet<>(Arrays.asList(".doc", ".docx"));
     @Value("${tephra.office.temp-path:}")
     private String tempPath;
+
+    @Override
+    public boolean isExcel(String contentType, String fileName) {
+        if (!excelContentTypes.contains(contentType) || fileName == null)
+            return false;
+
+        int indexOf = fileName.lastIndexOf('.');
+        if (indexOf == -1)
+            return false;
+
+        return excelSuffixes.contains(fileName.substring(indexOf).toLowerCase());
+    }
 
     @Override
     public boolean isPpt(String contentType, String fileName) {
