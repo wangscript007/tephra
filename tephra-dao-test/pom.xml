@@ -17,6 +17,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
             <groupId>org.lpw.tephra</groupId>
             <artifactId>tephra-core</artifactId>
             <version>${version.tephra}</version>
