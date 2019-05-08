@@ -7,6 +7,7 @@ import org.lpw.tephra.ctrl.http.IgnoreUri;
 import org.lpw.tephra.ctrl.http.ServiceHelper;
 import org.lpw.tephra.ctrl.upload.UploadReader;
 import org.lpw.tephra.ctrl.upload.UploadService;
+import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
@@ -29,6 +30,8 @@ import java.util.Map;
  */
 @Service(UploadHelper.PREFIX + "helper")
 public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefreshedListener {
+    @Inject
+    private Context context;
     @Inject
     private Validator validator;
     @Inject
@@ -62,6 +65,7 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
             if (readers.isEmpty())
                 return;
 
+            response.setCharacterEncoding(context.getCharset(null));
             outputStream.write(uploaders.get(uploader).upload(readers));
             outputStream.flush();
             outputStream.close();
