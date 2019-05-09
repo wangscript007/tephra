@@ -97,8 +97,28 @@ public class PdfReaderImpl implements PdfReader {
 
     @Override
     public String png(InputStream inputStream, MediaWriter mediaWriter, int page) {
+        return image(inputStream, mediaWriter, MediaType.Png, true, page);
+    }
+
+    @Override
+    public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter, boolean merge) {
+        return images(inputStream, mediaWriter, MediaType.Png, true, merge);
+    }
+
+    @Override
+    public String jpeg(InputStream inputStream, MediaWriter mediaWriter, int page) {
+        return image(inputStream, mediaWriter, MediaType.Jpeg, false, page);
+    }
+
+    @Override
+    public List<String> jpegs(InputStream inputStream, MediaWriter mediaWriter, boolean merge) {
+        return images(inputStream, mediaWriter, MediaType.Jpeg, false, merge);
+    }
+
+    private String image(InputStream inputStream, MediaWriter mediaWriter, MediaType mediaType, boolean argb, int page) {
         try (PDDocument document = PDDocument.load(inputStream)) {
-            return write(mediaWriter, new PDFRenderer(document).renderImage(page, 1.0f, ImageType.ARGB), page + ".png");
+            return write(mediaWriter, mediaType, new PDFRenderer(document).renderImage(page, 1.0f,
+                    argb ? ImageType.ARGB : ImageType.RGB), page + mediaType.getSuffix());
         } catch (IOException e) {
             logger.warn(e, "读取PDF为图片时发生异常！");
 
@@ -106,25 +126,25 @@ public class PdfReaderImpl implements PdfReader {
         }
     }
 
-    @Override
-    public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter, boolean merge) {
+    private List<String> images(InputStream inputStream, MediaWriter mediaWriter, MediaType mediaType, boolean argb, boolean merge) {
         List<String> list = new ArrayList<>();
         try (PDDocument document = PDDocument.load(inputStream)) {
             PDFRenderer renderer = new PDFRenderer(document);
             BufferedImage together = null;
             for (int i = 0, size = document.getNumberOfPages(); i < size; i++) {
-                BufferedImage bufferedImage = renderer.renderImage(i, 1.0f, ImageType.ARGB);
-                list.add(write(mediaWriter, bufferedImage, i + ".png"));
+                BufferedImage bufferedImage = renderer.renderImage(i, 1.0f, argb ? ImageType.ARGB : ImageType.RGB);
+                list.add(write(mediaWriter, mediaType, bufferedImage, i + mediaType.getSuffix()));
                 if (!merge)
                     continue;
 
                 if (together == null)
-                    together = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight() * size, BufferedImage.TYPE_4BYTE_ABGR);
+                    together = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight() * size,
+                            argb ? BufferedImage.TYPE_4BYTE_ABGR : BufferedImage.TYPE_3BYTE_BGR);
                 together.getGraphics().drawImage(bufferedImage, 0, i * bufferedImage.getHeight(), null);
             }
 
             if (merge && together != null)
-                list.add(0, write(mediaWriter, together, "together.png"));
+                list.add(0, write(mediaWriter, mediaType, together, "together" + mediaType.getSuffix()));
             inputStream.close();
         } catch (IOException e) {
             logger.warn(e, "读取PDF为图片时发生异常！");
@@ -133,12 +153,12 @@ public class PdfReaderImpl implements PdfReader {
         return list;
     }
 
-    private String write(MediaWriter mediaWriter, BufferedImage bufferedImage, String fileName) throws IOException {
+    private String write(MediaWriter mediaWriter, MediaType mediaType, BufferedImage bufferedImage, String fileName) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "PNG", byteArrayOutputStream);
+        ImageIO.write(bufferedImage, mediaType.getFormatName(), byteArrayOutputStream);
         byteArrayOutputStream.close();
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-        String url = mediaWriter.write(MediaType.Png, fileName, byteArrayInputStream);
+        String url = mediaWriter.write(mediaType, fileName, byteArrayInputStream);
         byteArrayInputStream.close();
 
         return url;
