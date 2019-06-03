@@ -96,28 +96,28 @@ public class PdfReaderImpl implements PdfReader {
     }
 
     @Override
-    public String png(InputStream inputStream, MediaWriter mediaWriter, int page) {
-        return image(inputStream, mediaWriter, MediaType.Png, true, page);
+    public String png(InputStream inputStream, MediaWriter mediaWriter, float scale, int page) {
+        return image(inputStream, mediaWriter, MediaType.Png, scale, true, page);
     }
 
     @Override
-    public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter, boolean merge) {
-        return images(inputStream, mediaWriter, MediaType.Png, true, merge);
+    public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter, float scale, boolean merge) {
+        return images(inputStream, mediaWriter, MediaType.Png, scale, true, merge);
     }
 
     @Override
-    public String jpeg(InputStream inputStream, MediaWriter mediaWriter, int page) {
-        return image(inputStream, mediaWriter, MediaType.Jpeg, false, page);
+    public String jpeg(InputStream inputStream, MediaWriter mediaWriter, float scale, int page) {
+        return image(inputStream, mediaWriter, MediaType.Jpeg, scale, false, page);
     }
 
     @Override
-    public List<String> jpegs(InputStream inputStream, MediaWriter mediaWriter, boolean merge) {
-        return images(inputStream, mediaWriter, MediaType.Jpeg, false, merge);
+    public List<String> jpegs(InputStream inputStream, MediaWriter mediaWriter, float scale, boolean merge) {
+        return images(inputStream, mediaWriter, MediaType.Jpeg, scale, false, merge);
     }
 
-    private String image(InputStream inputStream, MediaWriter mediaWriter, MediaType mediaType, boolean argb, int page) {
+    private String image(InputStream inputStream, MediaWriter mediaWriter, MediaType mediaType, float scale, boolean argb, int page) {
         try (PDDocument document = PDDocument.load(inputStream)) {
-            return write(mediaWriter, mediaType, new PDFRenderer(document).renderImage(page, 1.0f,
+            return write(mediaWriter, mediaType, new PDFRenderer(document).renderImage(page, scale,
                     argb ? ImageType.ARGB : ImageType.RGB), page + mediaType.getSuffix());
         } catch (IOException e) {
             logger.warn(e, "读取PDF为图片时发生异常！");
@@ -126,13 +126,14 @@ public class PdfReaderImpl implements PdfReader {
         }
     }
 
-    private List<String> images(InputStream inputStream, MediaWriter mediaWriter, MediaType mediaType, boolean argb, boolean merge) {
+    private List<String> images(InputStream inputStream, MediaWriter mediaWriter, MediaType mediaType, float scale,
+                                boolean argb, boolean merge) {
         List<String> list = new ArrayList<>();
         try (PDDocument document = PDDocument.load(inputStream)) {
             PDFRenderer renderer = new PDFRenderer(document);
             BufferedImage together = null;
             for (int i = 0, size = document.getNumberOfPages(); i < size; i++) {
-                BufferedImage bufferedImage = renderer.renderImage(i, 1.0f, argb ? ImageType.ARGB : ImageType.RGB);
+                BufferedImage bufferedImage = renderer.renderImage(i, scale, argb ? ImageType.ARGB : ImageType.RGB);
                 list.add(write(mediaWriter, mediaType, bufferedImage, i + mediaType.getSuffix()));
                 if (!merge)
                     continue;
