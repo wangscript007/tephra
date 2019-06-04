@@ -96,27 +96,32 @@ public class PdfReaderImpl implements PdfReader {
     }
 
     @Override
-    public String png(InputStream inputStream, MediaWriter mediaWriter, float scale, int page) {
-        return image(inputStream, mediaWriter, MediaType.Png, scale, true, page);
+    public String png(InputStream inputStream, MediaWriter mediaWriter, int page, float scale, int width) {
+        return image(inputStream, mediaWriter, MediaType.Png, scale, width, true, page);
     }
 
     @Override
-    public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter, float scale, boolean merge) {
-        return images(inputStream, mediaWriter, MediaType.Png, scale, true, merge);
+    public List<String> pngs(InputStream inputStream, MediaWriter mediaWriter, float scale, int width, boolean merge) {
+        return images(inputStream, mediaWriter, MediaType.Png, scale, width, true, merge);
     }
 
     @Override
-    public String jpeg(InputStream inputStream, MediaWriter mediaWriter, float scale, int page) {
-        return image(inputStream, mediaWriter, MediaType.Jpeg, scale, false, page);
+    public String jpeg(InputStream inputStream, MediaWriter mediaWriter, int page, float scale, int width) {
+        return image(inputStream, mediaWriter, MediaType.Jpeg, scale, width, false, page);
     }
 
     @Override
-    public List<String> jpegs(InputStream inputStream, MediaWriter mediaWriter, float scale, boolean merge) {
-        return images(inputStream, mediaWriter, MediaType.Jpeg, scale, false, merge);
+    public List<String> jpegs(InputStream inputStream, MediaWriter mediaWriter, float scale, int width, boolean merge) {
+        return images(inputStream, mediaWriter, MediaType.Jpeg, scale, width, false, merge);
     }
 
-    private String image(InputStream inputStream, MediaWriter mediaWriter, MediaType mediaType, float scale, boolean argb, int page) {
+    private String image(InputStream inputStream, MediaWriter mediaWriter, MediaType mediaType, float scale, int width, boolean argb, int page) {
+        if (scale <= 0.0f && width <= 0)
+            scale = 1.0f;
         try (PDDocument document = PDDocument.load(inputStream)) {
+            if (width > 0)
+                scale = width / document.getPage(page).getCropBox().getWidth();
+
             return write(mediaWriter, mediaType, new PDFRenderer(document).renderImage(page, scale,
                     argb ? ImageType.ARGB : ImageType.RGB), page + mediaType.getSuffix());
         } catch (IOException e) {
@@ -126,13 +131,17 @@ public class PdfReaderImpl implements PdfReader {
         }
     }
 
-    private List<String> images(InputStream inputStream, MediaWriter mediaWriter, MediaType mediaType, float scale,
-                                boolean argb, boolean merge) {
+    private List<String> images(InputStream inputStream, MediaWriter mediaWriter, MediaType mediaType,
+                                float scale, int width, boolean argb, boolean merge) {
+        if (scale <= 0.0f && width <= 0)
+            scale = 1.0f;
         List<String> list = new ArrayList<>();
         try (PDDocument document = PDDocument.load(inputStream)) {
             PDFRenderer renderer = new PDFRenderer(document);
             BufferedImage together = null;
             for (int i = 0, size = document.getNumberOfPages(); i < size; i++) {
+                if (width > 0)
+                    scale = width / document.getPage(i).getCropBox().getWidth();
                 BufferedImage bufferedImage = renderer.renderImage(i, scale, argb ? ImageType.ARGB : ImageType.RGB);
                 list.add(write(mediaWriter, mediaType, bufferedImage, i + mediaType.getSuffix()));
                 if (!merge)

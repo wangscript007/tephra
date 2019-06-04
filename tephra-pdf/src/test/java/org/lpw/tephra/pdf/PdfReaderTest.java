@@ -39,6 +39,6 @@ public class PdfReaderTest extends CoreTestSupport {
             }
 
             return fileName;
-        }, 4, false);
+        }, 4, 1080, false);
     }
 }
