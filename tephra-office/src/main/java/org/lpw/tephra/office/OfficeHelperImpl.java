@@ -115,6 +115,9 @@ public class OfficeHelperImpl implements OfficeHelper {
     @Override
     public JSONObject colorToJson(Color color) {
         JSONObject object = new JSONObject();
+        if (color == null)
+            return object;
+
         object.put("red", color.getRed());
         object.put("green", color.getGreen());
         object.put("blue", color.getBlue());
