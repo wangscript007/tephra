@@ -3,6 +3,7 @@ package org.lpw.tephra.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -33,18 +34,20 @@ public interface Zipper {
     /**
      * 解压缩。
      *
-     * @param input  压缩文件。
-     * @param output 输出目录。
+     * @param input   压缩文件。
+     * @param charset 编码。
+     * @param output  输出目录。
      * @throws IOException IO异常。
      */
-    void unzip(File input, File output) throws IOException;
+    void unzip(File input, Charset charset, File output) throws IOException;
 
     /**
      * 解压缩。
      *
      * @param inputStream 压缩输入流。
+     * @param charset     编码。
      * @param output      输出目录。
      * @throws IOException IO异常。
      */
-    void unzip(InputStream inputStream, File output) throws IOException;
+    void unzip(InputStream inputStream, Charset charset, File output) throws IOException;
 }

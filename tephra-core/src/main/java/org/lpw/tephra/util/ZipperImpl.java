@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -48,13 +49,13 @@ public class ZipperImpl implements Zipper {
     }
 
     @Override
-    public void unzip(File input, File output) throws IOException {
-        unzip(new FileInputStream(input), output);
+    public void unzip(File input, Charset charset, File output) throws IOException {
+        unzip(new FileInputStream(input), charset, output);
     }
 
     @Override
-    public void unzip(InputStream inputStream, File output) throws IOException {
-        unzip(new ZipInputStream(inputStream), output);
+    public void unzip(InputStream inputStream, Charset charset, File output) throws IOException {
+        unzip(new ZipInputStream(inputStream, charset), output);
     }
 
     private void unzip(ZipInputStream zipInputStream, File output) throws IOException {
