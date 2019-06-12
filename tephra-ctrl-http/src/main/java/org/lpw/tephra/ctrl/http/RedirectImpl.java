@@ -56,16 +56,24 @@ public class RedirectImpl implements Redirect, StorageListener {
 
     private boolean enable(String to) {
         int indexOf = to.indexOf("://");
-        if (indexOf == -1)
+        if (indexOf == -1) {
+            logger.warn(null, "转发地址[{}]格式解析失败！", to);
+
             return false;
+        }
 
         String host = to.substring(indexOf + 3);
-        if ((indexOf = host.indexOf('/')) == -1)
+        if ((indexOf = host.indexOf('/')) == -1) {
+            logger.warn(null, "转发地址[{}]格式解析失败！", to);
+
             return false;
+        }
 
         host = host.substring(0, indexOf);
         if ((indexOf = host.indexOf(':')) > -1)
             host = host.substring(0, indexOf);
+        if (logger.isDebugEnable())
+            logger.debug("获取转发域名[{}]。", host);
         if (hosts.contains(host))
             return true;
 
