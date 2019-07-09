@@ -98,12 +98,13 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
             return;
         }
 
-        execute(statusService, consoleService);
+        Object object = execute(statusService, consoleService);
         closables.close();
         counter.decrease(uri, ip);
 
         if (logger.isDebugEnable())
-            logger.debug("处理请求[{}]完成，耗时[{}]毫秒。", uri, getTime());
+            logger.debug("处理请求[{}:{}:{}]完成[{}]，耗时[{}]毫秒。", uri, converter.toString(request.getMap()),
+                    converter.toString(header.getMap()), object, getTime());
     }
 
     private void failure(String uri, String ip, Failure failure) {
@@ -111,7 +112,7 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         response.write(failure);
     }
 
-    private void execute(boolean statusService, boolean consoleService) {
+    private Object execute(boolean statusService, boolean consoleService) {
         Object object;
         if (statusService)
             object = status.execute(counter.get());
@@ -120,6 +121,8 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         else
             object = exe();
         response.write(object);
+
+        return object;
     }
 
     @Override
