@@ -206,7 +206,7 @@ public class DateTimeImpl implements DateTime {
         if (dates != null)
             for (int i = 0; i < times.length; i++)
                 if (dates.length > i)
-                    times[i] = dates[i].length() == getDateTimeFormat().length() ? toTime(dates[i]) : getStart(dates[i]);
+                    times[i] = dates[i].length() == getDateTimeFormat().length() ? toTime(dates[i]) : (i == 0 ? getStart(dates[i]) : getEnd(dates[i]));
 
         return times;
     }
