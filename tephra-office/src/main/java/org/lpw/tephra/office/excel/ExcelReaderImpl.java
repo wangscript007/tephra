@@ -38,8 +38,8 @@ public class ExcelReaderImpl implements ExcelReader {
                     JSONArray cells = new JSONArray();
                     row.forEach(cell -> {
                         JSONObject cellJson = new JSONObject();
-                        cellJson.put("type", cell.getCellTypeEnum().name().toLowerCase());
-                        switch (cell.getCellTypeEnum()) {
+                        cellJson.put("type", cell.getCellType().name().toLowerCase());
+                        switch (cell.getCellType()) {
                             case STRING:
                                 cellJson.put("value", cell.getStringCellValue());
                                 break;
