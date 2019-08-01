@@ -99,12 +99,11 @@ public class DispatcherImpl implements Dispatcher, Forward, ContextRefreshedList
         }
 
         Object object = execute(statusService, consoleService);
-        closables.close();
-        counter.decrease(uri, ip);
-
         if (logger.isDebugEnable())
             logger.debug("处理请求[{}:{}:{}]完成[{}]，耗时[{}]毫秒。", uri, converter.toString(request.getMap()),
                     converter.toString(header.getMap()), object, getTime());
+        closables.close();
+        counter.decrease(uri, ip);
     }
 
     private void failure(String uri, String ip, Failure failure) {
