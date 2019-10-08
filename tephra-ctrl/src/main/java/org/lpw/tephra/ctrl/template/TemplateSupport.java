@@ -18,13 +18,13 @@ public abstract class TemplateSupport implements Template {
     protected Validator validator;
     @Inject
     protected Message message;
-    @Value("${tephra.ctrl.dispatcher.exception:9999}")
+    @Value("${tephra.ctrl.exception:999999}")
     protected int exception;
-    @Value("${tephra.ctrl.dispatcher.busy:9998}")
+    @Value("${tephra.ctrl.busy:999998}")
     protected int busy;
-    @Value("${tephra.ctrl.dispatcher.danger:9997}")
+    @Value("${tephra.ctrl.danger:999997}")
     protected int danger;
-    @Value("${tephra.ctrl.dispatcher.not-permit:9996}")
+    @Value("${tephra.ctrl.not-permit:999996}")
     protected int notPermit;
 
     @Override
