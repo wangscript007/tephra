@@ -16,7 +16,7 @@
     <url>https://github.com/heisedebaise/tephra</url>
 
     <properties>
-        <version.netty>4.1.9.Final</version.netty>
+        <version.netty>4.1.42.Final</version.netty>
     </properties>
 
     <dependencies>
