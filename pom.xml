@@ -36,7 +36,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.inject>1</version.inject>
         <version.tephra>1.0.0-RELEASE</version.tephra>
     </properties>
 
