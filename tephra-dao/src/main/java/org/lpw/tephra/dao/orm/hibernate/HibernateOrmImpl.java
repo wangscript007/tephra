@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author lpw
@@ -37,19 +38,20 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         if (lock) {
             session.beginTransaction();
 
-            return session.get(getDataSource(dataSource, null, null, modelClass), Mode.Write).get(modelClass, id, LockOptions.UPGRADE);
+            return session.get(getDataSource(dataSource, null, null, modelClass), Mode.Write).get(modelClass, (Object) id, LockOptions.UPGRADE);
         }
 
-        return session.get(getDataSource(dataSource, null, null, modelClass), Mode.Read).get(modelClass, id);
+        return session.get(getDataSource(dataSource, null, null, modelClass), Mode.Read).get(modelClass, (Object) id);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T extends Model> T findOne(HibernateQuery query, Object[] args) {
         query.size(1).page(1);
-        Iterator<T> iterator = createQuery(getDataSource(null, query, null, null), Mode.Read, getQueryHql(query), args, query.isLocked(), 1, 1).iterate();
+        List<T> list = createQuery(getDataSource(null, query, null, null), Mode.Read, getQueryHql(query),
+                args, query.isLocked(), 1, 1).list();
 
-        return iterator.hasNext() ? iterator.next() : null;
+        return list.isEmpty() ? null : list.get(0);
     }
 
     @SuppressWarnings("unchecked")
@@ -58,7 +60,8 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         PageList<T> models = BeanFactory.getBean(PageList.class);
         if (query.getSize() > 0)
             models.setPage(query.isCountable() ? count(query, args) : query.getSize() * query.getPage(), query.getSize(), query.getPage());
-        models.setList(createQuery(getDataSource(null, query, null, null), Mode.Read, getQueryHql(query), args, query.isLocked(), models.getSize(), models.getNumber()).list());
+        models.setList(createQuery(getDataSource(null, query, null, null), Mode.Read, getQueryHql(query),
+                args, query.isLocked(), models.getSize(), models.getNumber()).list());
 
         return models;
     }
@@ -66,7 +69,8 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
     @SuppressWarnings("unchecked")
     @Override
     public <T extends Model> Iterator<T> iterate(HibernateQuery query, Object[] args) {
-        return createQuery(getDataSource(null, query, null, null), Mode.Read, getQueryHql(query), args, query.isLocked(), query.getSize(), query.getPage()).iterate();
+        return createQuery(getDataSource(null, query, null, null), Mode.Read, getQueryHql(query),
+                args, query.isLocked(), query.getSize(), query.getPage()).list().iterator();
     }
 
     private StringBuilder getQueryHql(HibernateQuery query) {
@@ -89,7 +93,8 @@ public class HibernateOrmImpl extends OrmSupport<HibernateQuery> implements Hibe
         if (!validator.isEmpty(query.getGroup()))
             hql.append(" GROUP BY ").append(query.getGroup());
 
-        return numeric.toInt(createQuery(getDataSource(null, query, null, null), Mode.Read, hql, args, query.isLocked(), 0, 0).iterate().next());
+        return numeric.toInt(createQuery(getDataSource(null, query, null, null), Mode.Read, hql, args,
+                query.isLocked(), 0, 0).list().get(0));
     }
 
     @Override
