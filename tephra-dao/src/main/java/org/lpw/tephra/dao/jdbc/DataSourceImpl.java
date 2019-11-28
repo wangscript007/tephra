@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,6 +38,8 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
     private Generator generator;
     @Inject
     private Logger logger;
+    @Inject
+    private Optional<PasswordDecryptor> decryptor;
     @Inject
     private DialectFactory dialectFactory;
     @Value("${tephra.dao.database.initial-size:0}")
@@ -160,6 +163,9 @@ public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, Conte
             dataSource.setDriverClassName(dialect.getDriver());
             dataSource.setUrl(dialect.getUrl(ips.getString(i), schema));
             dataSource.setUsername(username);
+            if (decryptor.isPresent()) {
+                password = decryptor.get().decrypt(password);
+            }
             dataSource.setPassword(password);
             dataSource.setInitialSize(initialSize);
             dataSource.setMaxActive(maxActive);
