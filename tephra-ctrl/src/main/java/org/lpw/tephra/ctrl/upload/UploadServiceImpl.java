@@ -6,13 +6,7 @@ import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.storage.Storage;
 import org.lpw.tephra.storage.Storages;
-import org.lpw.tephra.util.DateTime;
-import org.lpw.tephra.util.Generator;
-import org.lpw.tephra.util.Image;
-import org.lpw.tephra.util.Json;
-import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Message;
-import org.lpw.tephra.util.Validator;
+import org.lpw.tephra.util.*;
 import org.lpw.tephra.wormhole.WormholeHelper;
 import org.springframework.stereotype.Service;
 
@@ -161,9 +155,7 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
             }
         }
 
-        String path = (ROOT + contentType + "/" + uploadListener.getPath(uploadReader)
-                + "/" + dateTime.toString(dateTime.today(), "yyyyMMdd") + "/" + generator.random(32)
-                + suffix).replaceAll("[/]{2,}", "/");
+        String path = newSavePath(contentType, uploadListener.getPath(uploadReader), suffix);
         object.put("path", path);
         uploadReader.write(storage, path);
         String thumbnail = thumbnail(uploadListener.getImageSize(key), storage, contentType, path);
@@ -233,6 +225,12 @@ public class UploadServiceImpl implements UploadService, ContextRefreshedListene
 
         if (logger.isDebugEnable())
             logger.debug("删除上传的文件[{}:{}]。", listener.getStorage(), uri);
+    }
+
+    @Override
+    public String newSavePath(String contentType, String name, String suffix) {
+        return (ROOT + contentType + "/" + name + "/" + dateTime.toString(dateTime.today(), "yyyyMMdd") + "/" + generator.random(32) + suffix)
+                .replaceAll("[/]{2,}", "/");
     }
 
     @Override

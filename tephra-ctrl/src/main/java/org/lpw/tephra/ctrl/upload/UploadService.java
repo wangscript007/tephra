@@ -62,4 +62,14 @@ public interface UploadService {
      * @param uri 文件URI地址。
      */
     void remove(String key, String uri);
+
+    /**
+     * 获取保存路径。
+     *
+     * @param contentType 文件类型。
+     * @param name        归类。
+     * @param suffix      文件后缀。
+     * @return 文件路径。
+     */
+    String newSavePath(String contentType, String name, String suffix);
 }
