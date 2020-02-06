@@ -103,7 +103,7 @@ public class ValidatorsImpl implements Validators {
         if (failureCode <= 0)
             failureCode = validator.getFailureCode(validate);
 
-        if (failureCode < 100)
+        if (failureCode < 1000)
             return this.failureCode.get(failureCode);
 
         return failureCode;
