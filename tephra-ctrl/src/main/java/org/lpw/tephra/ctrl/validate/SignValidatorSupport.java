@@ -44,7 +44,7 @@ public class SignValidatorSupport extends ValidatorSupport implements SignValida
 
     @Override
     public int getFailureCode(ValidateWrapper validate) {
-        return 9995;
+        return 999995;
     }
 
     @Override
