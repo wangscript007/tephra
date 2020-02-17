@@ -1,7 +1,5 @@
 package org.lpw.tephra.ctrl.http;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.ctrl.Dispatcher;
 import org.lpw.tephra.ctrl.Handler;
@@ -9,25 +7,11 @@ import org.lpw.tephra.ctrl.context.HeaderAware;
 import org.lpw.tephra.ctrl.context.RequestAware;
 import org.lpw.tephra.ctrl.context.ResponseAware;
 import org.lpw.tephra.ctrl.context.SessionAware;
-import org.lpw.tephra.ctrl.http.context.CookieAware;
-import org.lpw.tephra.ctrl.http.context.HeaderAdapterImpl;
-import org.lpw.tephra.ctrl.http.context.RequestAdapterImpl;
-import org.lpw.tephra.ctrl.http.context.ResponseAdapterImpl;
-import org.lpw.tephra.ctrl.http.context.SessionAdapterImpl;
+import org.lpw.tephra.ctrl.http.context.*;
 import org.lpw.tephra.ctrl.http.ws.WsHelper;
 import org.lpw.tephra.ctrl.status.Status;
 import org.lpw.tephra.ctrl.upload.UploadService;
-import org.lpw.tephra.storage.StorageListener;
-import org.lpw.tephra.storage.Storages;
-import org.lpw.tephra.util.Coder;
-import org.lpw.tephra.util.Context;
-import org.lpw.tephra.util.Converter;
-import org.lpw.tephra.util.Io;
-import org.lpw.tephra.util.Json;
-import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Numeric;
-import org.lpw.tephra.util.TimeHash;
-import org.lpw.tephra.util.Validator;
+import org.lpw.tephra.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
@@ -37,19 +21,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lpw
  */
 @Controller("tephra.ctrl.http.service.helper")
-public class ServiceHelperImpl implements ServiceHelper, StorageListener {
+public class ServiceHelperImpl implements ServiceHelper {
     private static final String ROOT = "/";
 
     @Inject
@@ -85,6 +64,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     @Inject
     private Status status;
     @Inject
+    private Cors cors;
+    @Inject
     private Redirect redirect;
     @Inject
     private Optional<IgnoreTimeHash> ignoreTimeHash;
@@ -96,8 +77,6 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private String ignorePrefixes;
     @Value("${tephra.ctrl.http.ignore.suffixes:.ico,.js,.css,.html,.jpg,.jpeg,.gif,.png,.svg,.eot,.woff,.ttf,.txt}")
     private String ignoreSuffixes;
-    @Value("${tephra.ctrl.http.cors:/WEB-INF/http/cors.json}")
-    private String cors;
     @Value("${tephra.ctrl.http.virtual-context:}")
     private String virtualContext;
     private int contextPath;
@@ -108,9 +87,6 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     private Set<String> ignoreUris;
     private Map<String, String> redirectMap = new ConcurrentHashMap<>();
     private Set<String> redirects = Collections.synchronizedSet(new HashSet<>());
-    private Set<String> corsOrigins;
-    private String corsMethods;
-    private String corsHeaders;
 
     @Override
     public void setPath(String real, String context) {
@@ -128,9 +104,8 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
 
     @Override
     public boolean service(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (request.getMethod().equals("OPTIONS")) {
-            setCors(request, response);
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        if (cors.is(request, response)) {
+            cors.set(request, response);
 
             return true;
         }
@@ -198,7 +173,7 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     }
 
     private boolean service(HttpServletRequest request, HttpServletResponse response, String uri, String sessionId) throws IOException {
-        setCors(request, response);
+        cors.set(request, response);
         OutputStream outputStream = setContext(request, response, uri, sessionId);
         if (timeHash.isEnable() && !timeHash.valid(request.getIntHeader("time-hash")) && !status.isStatus(uri)
                 && (!ignoreTimeHash.isPresent() || !ignoreTimeHash.get().ignore())) {
@@ -270,21 +245,6 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
     }
 
     @Override
-    public void setCors(HttpServletRequest request, HttpServletResponse response) {
-        if (validator.isEmpty(corsOrigins))
-            return;
-
-        String origin = request.getHeader("Origin");
-        if (!corsOrigins.contains("*") && !corsOrigins.contains(origin))
-            return;
-
-        response.addHeader("Access-Control-Allow-Credentials", "true");
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Allow-Methods", corsMethods);
-        response.addHeader("Access-Control-Allow-Headers", corsHeaders);
-    }
-
-    @Override
     public OutputStream setContext(HttpServletRequest request, HttpServletResponse response, String uri) throws IOException {
         return setContext(request, response, uri, getSessionId(request));
     }
@@ -322,51 +282,5 @@ public class ServiceHelperImpl implements ServiceHelper, StorageListener {
         request.getSession().setAttribute(SESSION_ID, sessionId);
 
         return sessionId;
-    }
-
-    @Override
-    public String getStorageType() {
-        return Storages.TYPE_DISK;
-    }
-
-    @Override
-    public String[] getScanPathes() {
-        return new String[]{cors};
-    }
-
-    @Override
-    public void onStorageChanged(String path, String absolutePath) {
-        JSONObject object = json.toObject(io.readAsString(absolutePath));
-        if (object == null) {
-            corsOrigins = new HashSet<>();
-            corsMethods = "";
-            corsHeaders = "";
-        } else {
-            corsOrigins = new HashSet<>();
-            if (object.containsKey("origin")) {
-                JSONArray array = object.getJSONArray("origin");
-                for (int i = 0, size = array.size(); i < size; i++)
-                    corsOrigins.add(array.getString(i));
-            }
-            corsMethods = toString(object.getJSONArray("methods")).toUpperCase();
-            corsHeaders = toString(object.getJSONArray("headers"));
-        }
-        if (logger.isInfoEnable())
-            logger.info("设置跨域[{}:{}:{}]。", converter.toString(corsOrigins), corsMethods, corsHeaders);
-    }
-
-    private String toString(JSONArray array) {
-        if (array == null)
-            return "";
-
-        Set<String> set = new HashSet<>();
-        for (int i = 0, size = array.size(); i < size; i++)
-            set.add(array.getString(i));
-
-        StringBuilder sb = new StringBuilder();
-        for (String string : set)
-            sb.append(',').append(string);
-
-        return sb.length() == 0 ? "" : sb.substring(1);
     }
 }

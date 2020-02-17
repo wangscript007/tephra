@@ -3,15 +3,12 @@ package org.lpw.tephra.ctrl.http.upload;
 import org.lpw.tephra.atomic.Closables;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
+import org.lpw.tephra.ctrl.http.Cors;
 import org.lpw.tephra.ctrl.http.IgnoreUri;
 import org.lpw.tephra.ctrl.http.ServiceHelper;
 import org.lpw.tephra.ctrl.upload.UploadReader;
 import org.lpw.tephra.ctrl.upload.UploadService;
-import org.lpw.tephra.util.Context;
-import org.lpw.tephra.util.Converter;
-import org.lpw.tephra.util.Json;
-import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Validator;
+import org.lpw.tephra.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +40,8 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     @Inject
     private Closables closables;
     @Inject
+    private Cors cors;
+    @Inject
     private UploadService uploadService;
     @Inject
     private ServiceHelper serviceHelper;
@@ -53,8 +52,11 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
 
     @Override
     public void upload(HttpServletRequest request, HttpServletResponse response, String uploader) {
+        cors.set(request, response);
+        if (cors.is(request, response))
+            return;
+
         try {
-            serviceHelper.setCors(request, response);
             OutputStream outputStream = serviceHelper.setContext(request, response, uploader);
             List<UploadReader> readers = new ArrayList<>();
             Map<String, String> map = new HashMap<>();
