@@ -4,16 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Dispatcher;
 import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.ctrl.context.Request;
-import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelHelper;
 import org.lpw.tephra.dao.orm.PageList;
 import org.lpw.tephra.util.Json;
-import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Message;
-import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
@@ -24,15 +20,9 @@ import java.io.OutputStream;
  * @author lpw
  */
 @Controller("tephra.ctrl.template.json")
-public class TemplateImpl extends TemplateSupport implements Template {
-    @Inject
-    private Validator validator;
-    @Inject
-    private Message message;
+public class TemplateImpl extends TemplateSupport {
     @Inject
     private Json json;
-    @Inject
-    private Logger logger;
     @Inject
     private ModelHelper modelHelper;
     @Inject

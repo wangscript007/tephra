@@ -3,8 +3,6 @@ package org.lpw.tephra.dao.jdbc;
 import com.alibaba.fastjson.JSONArray;
 import org.lpw.tephra.atomic.Atomicable;
 
-import java.util.List;
-
 /**
  * JDBC操作接口。
  *

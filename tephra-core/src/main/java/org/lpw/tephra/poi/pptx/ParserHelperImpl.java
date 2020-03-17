@@ -9,12 +9,10 @@ import org.lpw.tephra.util.Image;
 import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Numeric;
-import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,8 +26,6 @@ import java.util.Map;
 public class ParserHelperImpl implements ParserHelper, ContextRefreshedListener {
     @Inject
     private Numeric numeric;
-    @Inject
-    private Validator validator;
     @Inject
     private Json json;
     @Inject

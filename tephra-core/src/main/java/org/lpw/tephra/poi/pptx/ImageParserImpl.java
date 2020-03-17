@@ -2,19 +2,14 @@ package org.lpw.tephra.poi.pptx;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.sl.usermodel.PictureData;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFPictureData;
-import org.apache.poi.xslf.usermodel.XSLFPictureShape;
-import org.apache.poi.xslf.usermodel.XSLFShape;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.*;
 import org.lpw.tephra.poi.StreamWriter;
 import org.lpw.tephra.util.Http;
-import org.lpw.tephra.util.Json;
 import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.awt.Insets;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,8 +23,6 @@ import java.util.Map;
 public class ImageParserImpl extends ImageParserSupport implements Parser {
     @Inject
     private Http http;
-    @Inject
-    private Json json;
     @Inject
     private Logger logger;
 

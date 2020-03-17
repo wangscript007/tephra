@@ -3,10 +3,8 @@ package org.lpw.tephra.ctrl.template.stream;
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Failure;
 import org.lpw.tephra.ctrl.context.Response;
-import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
 import org.lpw.tephra.ctrl.template.Templates;
-import org.lpw.tephra.util.Context;
 import org.lpw.tephra.util.Json;
 import org.springframework.stereotype.Controller;
 
@@ -18,9 +16,7 @@ import java.io.OutputStream;
  * @author lpw
  */
 @Controller("tephra.ctrl.template.stream")
-public class TemplateImpl extends TemplateSupport implements Template {
-    @Inject
-    private Context context;
+public class TemplateImpl extends TemplateSupport {
     @Inject
     private Json json;
     @Inject

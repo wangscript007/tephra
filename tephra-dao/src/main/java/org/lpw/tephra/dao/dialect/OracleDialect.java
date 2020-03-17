@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
  * @author lpw
  */
 @Repository("tephra.dao.dialect.oracle")
-public class OracleDialect extends DialectSupport implements Dialect {
+public class OracleDialect extends DialectSupport {
     @Override
     public String getName() {
         return "oracle";

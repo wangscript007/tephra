@@ -2,7 +2,6 @@ package org.lpw.tephra.ctrl.validate;
 
 import org.lpw.tephra.crypto.Sign;
 import org.lpw.tephra.ctrl.context.Header;
-import org.lpw.tephra.ctrl.context.Request;
 import org.lpw.tephra.ctrl.security.TrustfulIp;
 import org.lpw.tephra.util.Logger;
 

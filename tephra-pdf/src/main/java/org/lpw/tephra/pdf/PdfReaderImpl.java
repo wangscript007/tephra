@@ -8,7 +8,6 @@ import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.lpw.tephra.pdf.parser.GraphicsParser;
 import org.lpw.tephra.pdf.parser.TextParser;
-import org.lpw.tephra.util.Io;
 import org.lpw.tephra.util.Logger;
 import org.springframework.stereotype.Component;
 
@@ -27,8 +26,6 @@ import java.util.List;
  */
 @Component("tephra.pdf.reader")
 public class PdfReaderImpl implements PdfReader {
-    @Inject
-    private Io io;
     @Inject
     private Logger logger;
     @Inject

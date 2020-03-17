@@ -1,6 +1,5 @@
 package org.lpw.tephra.aio;
 
-import org.lpw.tephra.scheduler.SchedulerHelper;
 import org.lpw.tephra.util.Logger;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -16,8 +15,6 @@ import java.nio.channels.AsynchronousSocketChannel;
 @Component("tephra.aio.handler.receive")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ReceiveHandlerImpl implements ReceiveHandler {
-    @Inject
-    private SchedulerHelper schedulerHelper;
     @Inject
     private Logger logger;
     @Inject

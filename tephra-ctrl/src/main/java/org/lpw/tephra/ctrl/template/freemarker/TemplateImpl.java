@@ -2,7 +2,6 @@ package org.lpw.tephra.ctrl.template.freemarker;
 
 import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Failure;
-import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.freemarker.Freemarker;
@@ -16,7 +15,7 @@ import java.io.OutputStream;
  * @author lpw
  */
 @Controller("tephra.ctrl.template.freemarker")
-public class TemplateImpl extends TemplateSupport implements Template {
+public class TemplateImpl extends TemplateSupport {
     @Inject
     private Freemarker freemarker;
 

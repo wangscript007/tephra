@@ -2,7 +2,6 @@ package org.lpw.tephra.aio;
 
 import org.lpw.tephra.scheduler.MinuteJob;
 import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Thread;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -23,8 +22,6 @@ import java.util.concurrent.Executors;
 public class AioHelperImpl implements AioHelper, MinuteJob {
     private static final int BUFFER_SZE = 4 * (1 << 10); // 4K
 
-    @Inject
-    private Thread thread;
     @Inject
     private Logger logger;
     private Map<String, AsynchronousSocketChannel> map = new ConcurrentHashMap<>();

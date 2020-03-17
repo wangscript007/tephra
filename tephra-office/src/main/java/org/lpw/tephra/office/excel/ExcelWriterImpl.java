@@ -23,8 +23,7 @@ public class ExcelWriterImpl implements ExcelWriter {
 
     @Override
     public boolean write(JSONObject object, OutputStream outputStream) {
-        try {
-            Workbook workbook = new XSSFWorkbook();
+        try (Workbook workbook = new XSSFWorkbook()) {
             JSONArray sheets = object.getJSONArray("sheets");
             for (int sheetIndex = 0, sheetSize = sheets.size(); sheetIndex < sheetSize; sheetIndex++) {
                 JSONObject sheetJson = sheets.getJSONObject(sheetIndex);

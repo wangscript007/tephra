@@ -21,8 +21,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author lpw
@@ -35,10 +37,6 @@ public class ServiceHelperImpl implements ServiceHelper {
     private Validator validator;
     @Inject
     private Converter converter;
-    @Inject
-    private Io io;
-    @Inject
-    private Json json;
     @Inject
     private Context context;
     @Inject
@@ -85,8 +83,6 @@ public class ServiceHelperImpl implements ServiceHelper {
     private String[] prefixes;
     private String[] suffixes;
     private Set<String> ignoreUris;
-    private Map<String, String> redirectMap = new ConcurrentHashMap<>();
-    private Set<String> redirects = Collections.synchronizedSet(new HashSet<>());
 
     @Override
     public void setPath(String real, String context) {

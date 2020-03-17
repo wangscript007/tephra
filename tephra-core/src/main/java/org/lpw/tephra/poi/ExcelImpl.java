@@ -26,8 +26,7 @@ public class ExcelImpl implements Excel {
 
     @Override
     public void write(String[] titles, String[] names, JSONArray array, OutputStream outputStream) {
-        try {
-            Workbook workbook = new HSSFWorkbook();
+        try (Workbook workbook = new HSSFWorkbook()) {
             Sheet sheet = workbook.createSheet();
             Row row = sheet.createRow(0);
             for (int i = 0; i < titles.length; i++)

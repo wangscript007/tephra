@@ -4,25 +4,17 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.sl.usermodel.FillStyle;
 import org.apache.poi.sl.usermodel.PaintStyle;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFGroupShape;
-import org.apache.poi.xslf.usermodel.XSLFPictureShape;
-import org.apache.poi.xslf.usermodel.XSLFShape;
-import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
-import org.apache.poi.xslf.usermodel.XSLFTextShape;
+import org.apache.poi.xslf.usermodel.*;
 import org.lpw.tephra.poi.pptx.Parser;
 import org.lpw.tephra.poi.pptx.ParserHelper;
 import org.lpw.tephra.util.DateTime;
-import org.lpw.tephra.util.Image;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Numeric;
 import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,8 +35,6 @@ public class PptxImpl implements Pptx {
     private Numeric numeric;
     @Inject
     private DateTime dateTime;
-    @Inject
-    private Image image;
     @Inject
     private Logger logger;
     @Inject

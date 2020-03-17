@@ -13,12 +13,7 @@ import org.lpw.tephra.ctrl.context.json.JsonRequestAdapter;
 import org.lpw.tephra.ctrl.context.json.JsonResponseAdapter;
 import org.lpw.tephra.ctrl.context.json.JsonSessionAdapter;
 import org.lpw.tephra.ctrl.http.ServiceHelper;
-import org.lpw.tephra.util.Context;
-import org.lpw.tephra.util.Converter;
-import org.lpw.tephra.util.Generator;
-import org.lpw.tephra.util.Json;
-import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Validator;
+import org.lpw.tephra.util.*;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -39,8 +34,6 @@ public class WsHelperImpl implements WsHelper, ContextClosedListener {
     private Generator generator;
     @Inject
     private Digest digest;
-    @Inject
-    private Converter converter;
     @Inject
     private Json json;
     @Inject

@@ -52,6 +52,7 @@ public class ExcelReaderImpl implements ExcelReader {
                             case FORMULA:
                                 cellJson.put("formula", cell.getCellFormula());
                                 break;
+                            default:
                         }
                         cells.add(cellJson);
                     });

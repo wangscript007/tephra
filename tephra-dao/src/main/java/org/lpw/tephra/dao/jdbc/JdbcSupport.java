@@ -24,8 +24,6 @@ abstract class JdbcSupport<T extends PreparedStatement> implements Jdbc {
     @Inject
     Logger logger;
     @Inject
-    private DataSource dataSource;
-    @Inject
     private Connection connection;
     @Inject
     private BatchUpdate batchUpdate;

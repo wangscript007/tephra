@@ -1,7 +1,6 @@
 package org.lpw.tephra.ctrl.template.string;
 
 import org.lpw.tephra.ctrl.Failure;
-import org.lpw.tephra.ctrl.template.Template;
 import org.lpw.tephra.ctrl.template.TemplateSupport;
 import org.lpw.tephra.ctrl.template.Templates;
 import org.lpw.tephra.util.Context;
@@ -16,7 +15,7 @@ import java.io.OutputStream;
  * @author lpw
  */
 @Controller("tephra.ctrl.template.string")
-public class TemplateImpl extends TemplateSupport implements Template {
+public class TemplateImpl extends TemplateSupport {
     @Inject
     private Context context;
     @Inject

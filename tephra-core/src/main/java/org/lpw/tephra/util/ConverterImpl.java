@@ -34,7 +34,6 @@ public class ConverterImpl implements Converter {
     @Inject
     private Logger logger;
 
-    @SuppressWarnings({"unchecked"})
     @Override
     public String toString(Object object) {
         if (validator.isEmpty(object))

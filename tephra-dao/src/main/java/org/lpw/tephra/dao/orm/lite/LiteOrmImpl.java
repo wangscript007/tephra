@@ -6,11 +6,9 @@ import org.lpw.tephra.dao.jdbc.DataSource;
 import org.lpw.tephra.dao.jdbc.Sql;
 import org.lpw.tephra.dao.jdbc.SqlTable;
 import org.lpw.tephra.dao.model.Model;
-import org.lpw.tephra.dao.model.ModelHelper;
 import org.lpw.tephra.dao.model.ModelTable;
 import org.lpw.tephra.dao.orm.OrmSupport;
 import org.lpw.tephra.dao.orm.PageList;
-import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Numeric;
 import org.springframework.stereotype.Repository;
@@ -25,13 +23,9 @@ import java.util.List;
 @Repository("tephra.dao.orm.lite")
 public class LiteOrmImpl extends OrmSupport<LiteQuery> implements LiteOrm {
     @Inject
-    private Converter converter;
-    @Inject
     private Numeric numeric;
     @Inject
     private Generator generator;
-    @Inject
-    private ModelHelper modelHelper;
     @Inject
     private DataSource dataSource;
     @Inject

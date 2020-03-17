@@ -7,8 +7,10 @@ import org.lpw.tephra.ctrl.http.Cors;
 import org.lpw.tephra.ctrl.http.IgnoreUri;
 import org.lpw.tephra.ctrl.http.ServiceHelper;
 import org.lpw.tephra.ctrl.upload.UploadReader;
-import org.lpw.tephra.ctrl.upload.UploadService;
-import org.lpw.tephra.util.*;
+import org.lpw.tephra.util.Context;
+import org.lpw.tephra.util.Converter;
+import org.lpw.tephra.util.Logger;
+import org.lpw.tephra.util.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -34,15 +36,11 @@ public class UploadHelperImpl implements UploadHelper, IgnoreUri, ContextRefresh
     @Inject
     private Converter converter;
     @Inject
-    private Json json;
-    @Inject
     private Logger logger;
     @Inject
     private Closables closables;
     @Inject
     private Cors cors;
-    @Inject
-    private UploadService uploadService;
     @Inject
     private ServiceHelper serviceHelper;
     @Value("${" + UploadHelper.PREFIX + "max-size:1m}")

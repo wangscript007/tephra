@@ -3,16 +3,8 @@ package org.lpw.tephra.office.pptx.parser;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.sl.draw.DrawPaint;
-import org.apache.poi.sl.usermodel.Insets2D;
-import org.apache.poi.sl.usermodel.PaintStyle;
-import org.apache.poi.sl.usermodel.TextParagraph;
-import org.apache.poi.sl.usermodel.TextShape;
-import org.apache.poi.sl.usermodel.VerticalAlignment;
-import org.apache.poi.xslf.usermodel.XSLFShape;
-import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
-import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
-import org.apache.poi.xslf.usermodel.XSLFTextRun;
-import org.apache.poi.xslf.usermodel.XSLFTextShape;
+import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.xslf.usermodel.*;
 import org.lpw.tephra.office.OfficeHelper;
 import org.lpw.tephra.office.pptx.ReaderContext;
 import org.lpw.tephra.office.pptx.WriterContext;
@@ -108,6 +100,8 @@ public class TextImpl implements Simple {
                 return;
             case BOTTOM:
                 text.put("verticalAlign", "bottom");
+                return;
+            default:
         }
     }
 
@@ -124,6 +118,8 @@ public class TextImpl implements Simple {
                 return;
             case JUSTIFY:
                 paragraph.put("horizontalAlign", "justify");
+                return;
+            default:
         }
     }
 

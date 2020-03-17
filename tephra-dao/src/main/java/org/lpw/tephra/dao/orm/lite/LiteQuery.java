@@ -2,7 +2,6 @@ package org.lpw.tephra.dao.orm.lite;
 
 import org.lpw.tephra.dao.jdbc.IndexBuilder;
 import org.lpw.tephra.dao.model.Model;
-import org.lpw.tephra.dao.orm.Query;
 import org.lpw.tephra.dao.orm.QuerySupport;
 
 /**
@@ -10,7 +9,7 @@ import org.lpw.tephra.dao.orm.QuerySupport;
  *
  * @author lpw
  */
-public class LiteQuery extends QuerySupport implements Query {
+public class LiteQuery extends QuerySupport {
     private String select;
     private String from;
     private IndexBuilder indexBuilder;

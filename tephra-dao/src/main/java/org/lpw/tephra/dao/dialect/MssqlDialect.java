@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
  * @author lpw
  */
 @Repository("tephra.dao.dialect.mssql")
-public class MssqlDialect extends DialectSupport implements Dialect {
+public class MssqlDialect extends DialectSupport {
     @Override
     public String getName() {
         return "mssql";

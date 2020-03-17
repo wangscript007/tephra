@@ -17,6 +17,8 @@ import java.io.IOException;
 @MultipartConfig
 @WebServlet(name = "UploadPathServlet", urlPatterns = {UploadHelper.UPLOAD_PATH})
 public class UploadPathServlet extends HttpServlet {
+    private static final long serialVersionUID = -3109465051063104929L;
+
     private UploadHelper uploadHelper;
 
     @Override

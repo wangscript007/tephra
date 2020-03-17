@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import java.util.regex.Pattern;
 
 /**
  * @author lpw

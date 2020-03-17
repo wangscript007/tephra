@@ -1,7 +1,6 @@
 package org.lpw.tephra.dao.orm.hibernate;
 
 import org.lpw.tephra.dao.model.Model;
-import org.lpw.tephra.dao.orm.Query;
 import org.lpw.tephra.dao.orm.QuerySupport;
 
 /**
@@ -9,7 +8,7 @@ import org.lpw.tephra.dao.orm.QuerySupport;
  *
  * @author lpw
  */
-public class HibernateQuery extends QuerySupport implements Query {
+public class HibernateQuery extends QuerySupport {
     /**
      * 检索构造器。
      *

@@ -5,13 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.lpw.tephra.ctrl.Coder;
 import org.lpw.tephra.dao.model.Model;
 import org.lpw.tephra.dao.model.ModelHelper;
-import org.lpw.tephra.util.Context;
-import org.lpw.tephra.util.Converter;
-import org.lpw.tephra.util.DateTime;
-import org.lpw.tephra.util.Json;
-import org.lpw.tephra.util.Logger;
-import org.lpw.tephra.util.Numeric;
-import org.lpw.tephra.util.Validator;
+import org.lpw.tephra.util.*;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
@@ -39,8 +33,6 @@ public class RequestImpl implements Request, RequestAware {
     private DateTime dateTime;
     @Inject
     private Json json;
-    @Inject
-    private Logger logger;
     @Inject
     private ModelHelper modelHelper;
     @Inject

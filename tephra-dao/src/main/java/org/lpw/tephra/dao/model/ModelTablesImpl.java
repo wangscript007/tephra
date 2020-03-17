@@ -4,7 +4,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.lpw.tephra.bean.BeanFactory;
 import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.util.Converter;
-import org.lpw.tephra.util.Validator;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
@@ -22,8 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Repository("tephra.model.tables")
 public class ModelTablesImpl implements ModelTables, ContextRefreshedListener {
-    @Inject
-    private Validator validator;
     @Inject
     private Converter converter;
     @Inject

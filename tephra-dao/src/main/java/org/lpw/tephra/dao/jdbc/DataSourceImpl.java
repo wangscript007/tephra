@@ -7,7 +7,6 @@ import org.lpw.tephra.bean.ContextRefreshedListener;
 import org.lpw.tephra.dao.Mode;
 import org.lpw.tephra.dao.dialect.Dialect;
 import org.lpw.tephra.dao.dialect.DialectFactory;
-import org.lpw.tephra.util.Converter;
 import org.lpw.tephra.util.Generator;
 import org.lpw.tephra.util.Logger;
 import org.lpw.tephra.util.Validator;
@@ -16,12 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -32,8 +26,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DataSourceImpl implements org.lpw.tephra.dao.jdbc.DataSource, ContextRefreshedListener {
     @Inject
     private Validator validator;
-    @Inject
-    private Converter converter;
     @Inject
     private Generator generator;
     @Inject

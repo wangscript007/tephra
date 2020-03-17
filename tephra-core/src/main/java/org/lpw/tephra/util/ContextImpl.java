@@ -20,8 +20,6 @@ public class ContextImpl implements Context, Closable, ContextRefreshedListener 
     @Inject
     private Validator validator;
     @Inject
-    private Thread thread;
-    @Inject
     private Logger logger;
     @Value("${tephra.context.charset:UTF-8}")
     private String charset;
